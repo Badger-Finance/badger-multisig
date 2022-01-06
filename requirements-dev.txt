@@ -1,0 +1,9 @@
+ape-safe
+eth-brownie==1.17.0
+pandas
+rich
+tqdm
+
+# dev; testing, linting and committing
+brownie-token-tester
+tox
