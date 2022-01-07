@@ -1,0 +1,14 @@
+__pycache__
+.history
+.hypothesis/
+build/
+reports/
+.env
+*venv*
+.idea/
+.vscode/
+.DS_Store
+.pytest_cache
+Pipfile*
+
+node_modules
