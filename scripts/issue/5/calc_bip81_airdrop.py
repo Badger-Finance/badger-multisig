@@ -13,7 +13,9 @@ def main():
     dff = df[~df['victim'].isin(recovered)].copy()
 
     # add the bibbtc token address
+    dff['token_type'] = 'erc20'
     dff['bibbtc_addr'] = '0xaE96fF08771a109dc6650a1BdCa62F2d558E40af'
+    dff['id'] = pd.NA
 
     # sum up all value_wbtc left in the dataframe
     total_wbtc = dff['value_wbtc'].sum()
@@ -27,13 +29,15 @@ def main():
 
     # build dataframe for airdrop;
     # filter on value > 0 and take only the necessary columns
-    airdrop = dff[dff['pro_rata'] > 0][['bibbtc_addr', 'victim', 'pro_rata']]
+    airdrop = dff[dff['pro_rata'] > 0][
+        ['token_type', 'bibbtc_addr', 'victim', 'pro_rata', 'id']
+    ]
 
     # dump df to csv for gnosis csv airdrop app
     airdrop.to_csv(
-        'scripts/issue/5/airdrop_bip81.csv',
+        'scripts/issue/5/airdrop_bip81_v2.csv',
         index=False,
-        header=['token_address', 'receiver', 'amount'],
+        header=['token_type', 'token_address', 'receiver', 'value', 'id'],
     )
     print(airdrop)
     print(airdrop['pro_rata'].sum())
