@@ -31,7 +31,7 @@ class Badger():
         self.api_url = 'https://api.badger.finance/v2/'
 
 
-    def claim_all_from_tree(self):
+    def claim_all(self):
         """
         note: badger tree checks if `cycle` passed is equal to latest cycle,
         if not it will revert. therefore call is very time-sensitive!
