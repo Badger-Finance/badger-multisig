@@ -35,7 +35,7 @@ class GreatApeSafe(ApeSafe):
 
 
     def __init__(self, address, base_url=None, multisend=None):
-        super().__init__(address, base_url=None, multisend=None)
+        super().__init__(address, base_url, multisend)
 
 
     def init_all(self):
@@ -43,7 +43,6 @@ class GreatApeSafe(ApeSafe):
         self.init_compound()
         self.init_convex()
         self.init_curve()
-        self.init_saddle()
 
 
     def init_aave(self):
