@@ -17,7 +17,6 @@ from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.curve import Curve
-from great_ape_safe.ape_api.saddle import Saddle
 
 
 C = Console()
@@ -65,10 +64,6 @@ class GreatApeSafe(ApeSafe):
 
     def init_curve(self):
         self.curve = Curve(self)
-
-
-    def init_saddle(self):
-        self.saddle = Saddle(self)
 
 
     def take_snapshot(self, tokens):
