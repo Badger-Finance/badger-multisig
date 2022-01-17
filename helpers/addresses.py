@@ -136,6 +136,7 @@ ADDRESSES_ETH = {
         "bcrvTBTC": "0xb9D076fDe463dbc9f915E5392F807315Bf940334",
         "bveCVX": "0xfd05D3C7fe2924020620A8bE4961bBaA747e6305",
         "yvWBTC": "0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E",  ##TODO NO COINGECKO PRICE
+        "aBADGER": "0x43298F9f91a4545dF64748e78a2c777c580573d6", # Across Pool Badger
     },
     #Every slp token listed in treasury tokens above must also be listed here.  The lp_tokens in this list
     #are processed by scount to determine holdings and underlying value and set the price for the token in treasury_tokens
