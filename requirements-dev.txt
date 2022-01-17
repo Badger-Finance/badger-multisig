@@ -3,6 +3,7 @@ eth-brownie==1.17.0
 pandas
 rich
 tqdm
+dotmap
 
 # dev; testing, linting and committing
 brownie-token-tester
