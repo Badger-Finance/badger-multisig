@@ -16,6 +16,6 @@ def main():
     ])
 
     ibbtc_msig.init_badger()
-    ibbtc_msig.badger.claim_all_from_tree()
+    ibbtc_msig.badger.claim_all()
 
     ibbtc_msig.post_safe_tx()
