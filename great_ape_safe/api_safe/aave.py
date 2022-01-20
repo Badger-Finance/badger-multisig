@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from brownie import web3
 from rich.console import Console
+from helpers.addresses import registry
 
 
 C = Console()
@@ -11,12 +12,12 @@ class Aave():
     def __init__(self, safe):
         self.safe       = safe
         # tokens
-        self.aave       = safe.contract('0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9')
-        self.stkaave    = safe.contract('0x4da27a545c0c5B758a6BA100e3a049001de870f5')
+        self.aave       = safe.contract(registry.eth.treasury_tokens.AAVE)
+        self.stkaave    = safe.contract(registry.eth.treasury_tokens.stkAAVE)
         # contracts
-        self.controller = safe.contract('0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5')
-        self.data       = safe.contract('0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d')
-        self.pool       = safe.contract('0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9')
+        self.controller = safe.contract(registry.eth.aave.incentives_controller)
+        self.data       = safe.contract(registry.eth.aave.data_provider)
+        self.pool       = safe.contract(registry.eth.aave.aave_lending_pool_v2)
 
 
     def deposit(self, underlying, mantissa, destination=None):
