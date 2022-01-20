@@ -1,5 +1,7 @@
 import pytest
 from great_ape_safe import GreatApeSafe
+                            # avoid collision with curve registry fixture
+from helpers.addresses import registry as registry_addrs
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -14,7 +16,7 @@ def safe():
 
 @pytest.fixture
 def USDC(safe):
-    return safe.contract('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    return safe.contract(registry_addrs.eth.treasury_tokens.USDC)
 
 # Aave fixtures
 @pytest.fixture
@@ -24,15 +26,15 @@ def aave(safe):
 
 @pytest.fixture
 def aUSDC(safe):
-    return safe.contract('0xBcca60bB61934080951369a648Fb03DF4F96263C')
+    return safe.contract(registry_addrs.eth.treasury_tokens.aUSDC)
 
 @pytest.fixture
 def sktAAVE(safe):
-    return safe.contract('0x4da27a545c0c5B758a6BA100e3a049001de870f5')
+    return safe.contract(registry_addrs.eth.treasury_tokens.stkAAVE)
 
 @pytest.fixture
 def AAVE(safe):
-    return safe.contract('0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9')
+    return safe.contract(registry_addrs.eth.treasury_tokens.AAVE)
 
 
 # Curve fixtures
@@ -43,7 +45,7 @@ def curve(safe):
 
 @pytest.fixture
 def registry(safe):
-    provider = safe.contract('0x0000000022D53366457F9d5E68Ec105046FC4383')
+    provider = safe.contract(registry_addrs.eth.curve.provider)
     return safe.contract(provider.get_registry())
 
 @pytest.fixture
@@ -57,11 +59,11 @@ def tripool_lptoken(safe, registry):
 
 @pytest.fixture
 def threepool_lp(safe):
-    return safe.contract('0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490')
+    return safe.contract(registry_addrs.eth.treasury_tokens.crv3pool)
 
 @pytest.fixture
 def CRV(safe):
-    return safe.contract('0xD533a949740bb3306d119CC777fa900bA034cd52')
+    return safe.contract(registry_addrs.eth.treasury_tokens.CRV)
     
 
 # Compound Fixtures
@@ -72,15 +74,15 @@ def compound(safe):
 
 @pytest.fixture
 def cUSDC(safe):
-    return safe.contract('0x39AA39c021dfbaE8faC545936693aC917d5E7563')
+    return safe.contract(registry_addrs.eth.treasury_tokens.cUSDC)
 
 @pytest.fixture
 def cETH(safe):
-    return safe.contract('0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5')
+    return safe.contract(registry_addrs.eth.treasury_tokens.cETH)
 
 @pytest.fixture
 def COMP(safe):
-    return safe.contract('0xc00e94Cb662C3520282E6f5717214004A7f26888')
+    return safe.contract(registry_addrs.eth.treasury_tokens.COMP)
 
 # Convex
 @pytest.fixture

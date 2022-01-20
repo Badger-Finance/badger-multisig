@@ -17,5 +17,5 @@ def main():
     bal = safe.opolis.work.balanceOf(safe)
     safe.opolis.stake(bal)
     
-    safe.post_safe_tx(post=False)
+    safe.post_safe_tx()
 
