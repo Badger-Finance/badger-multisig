@@ -7,7 +7,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, web3
+from brownie import Contract, interface, web3
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
@@ -69,7 +69,7 @@ class GreatApeSafe(ApeSafe):
         df['decimals'].append(18)
         for token in tqdm(tokens):
             try:
-                token = Contract(token) if type(token) != Contract else token
+                token = interface.ERC20(token) if type(token) != Contract else token
             except:
                 token = Contract.from_explorer(token) if type(token) != Contract else token
             if token.address not in df['address']:
