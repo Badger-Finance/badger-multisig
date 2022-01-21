@@ -3,6 +3,15 @@ import requests
 import pandas as pd
 
 def main():
+    """
+    Get all ERC-20 tokens and their balances in a csv for a given address with ethplorer api
+    
+    `scrape` can be called directly from command line with an address:
+    brownie run scrape_tokens.py scrape <address>
+    
+    edit `wallet_address` if you are running from brownie console
+    """
+    
     wallet_address = ''
     scrape(wallet_address)
 
