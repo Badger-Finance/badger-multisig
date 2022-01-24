@@ -31,7 +31,6 @@ def main():
     pps_before = rembadger.getPricePerFullShare()
 
     # transfer
-    badger.approve(rembadger, mantissa)
     badger.transfer(rembadger, mantissa)
 
     # make sure it arrived
