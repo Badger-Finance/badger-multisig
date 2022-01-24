@@ -16,6 +16,7 @@ from great_ape_safe.api_safe.aave import Aave
 from great_ape_safe.api_safe.compound import Compound
 from great_ape_safe.api_safe.convex import Convex
 from great_ape_safe.api_safe.curve import Curve
+from great_ape_safe.api_safe.opolis import Opolis
 
 
 C = Console()
@@ -42,7 +43,8 @@ class GreatApeSafe(ApeSafe):
         self.init_compound()
         self.init_convex()
         self.init_curve()
-
+        self.init_opolis()
+        
 
     def init_aave(self):
         self.aave = Aave(self)
@@ -58,6 +60,9 @@ class GreatApeSafe(ApeSafe):
 
     def init_curve(self):
         self.curve = Curve(self)
+    
+    def init_opolis(self):
+        self.opolis = Opolis(self)
 
 
     def take_snapshot(self, tokens):

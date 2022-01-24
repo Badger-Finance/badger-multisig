@@ -1,13 +1,14 @@
 import numpy as np
+from helpers.addresses import registry
 
 
 class Curve():
     def __init__(self, safe):
         self.safe       = safe
         # tokens
-        self.crv        = safe.contract('0xD533a949740bb3306d119CC777fa900bA034cd52')
+        self.crv        = safe.contract(registry.eth.treasury_tokens.CRV)
         # contracts
-        self.provider   = safe.contract('0x0000000022D53366457F9d5E68Ec105046FC4383')
+        self.provider   = safe.contract(registry.eth.curve.provider)
         self.registry   = safe.contract(self.provider.get_registry())
         # parameters
         self.max_slippage_and_fees = .02
