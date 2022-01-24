@@ -14,7 +14,7 @@ console = Console()
 def main():
     """
     generate a csv airdrop of all tokens and their balances from `treasurey_tokens` for a given address
-    csv saved to scripts/gnosos/results/<address>_token_balances.csv
+    csv saved to scripts/gnosis/<address>_token_balances.csv
     
     `scrape` can be called directly from command line with an address:
     brownie run scrape_tokens.py scrape <address> <receiver>
@@ -54,4 +54,7 @@ def scrape(address, receiver=''):
             progress.update(scraping, advance=1)
         
     console.print(table)
-    pd.DataFrame(token_data).to_csv(f'{os.getcwd()}/scripts/gnosis/results/{address}_token_balances.csv', index=False)
+    pd.DataFrame(token_data).to_csv(f'{os.getcwd()}/scripts/gnosis/{address}_token_balances.csv', index=False)
+    console.print(f"[bold green]scripts/gnosis/{address}_token_balances.csv")
+    
+    
