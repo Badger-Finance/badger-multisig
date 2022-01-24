@@ -25,19 +25,15 @@ def main():
     scrape(wallet_address, receiver)
 
 def scrape(address, receiver=''):
-    
-    token_data = {'token_type': [], 'token_address': [], 'receiver': [], 'value': [], 'id': [], 'decimals': []}
-    
-    table = Table()
-    table.add_column("token_type", justify="right", style="bright_yellow")
-    table.add_column("token_address", justify="right", style="bright_yellow")
-    table.add_column("receiver", justify="right", style="bright_yellow")
-    table.add_column("value", justify="right", style="bright_yellow")
-    table.add_column("id", justify="right", style="bright_yellow")
-    table.add_column("decimals", justify="right", style="bright_yellow")
-    
     with Progress() as progress:
+        token_data = {'token_type': [], 'token_address': [], 'receiver': [], 'value': [], 'id': [], 'decimals': []}
+        
         scraping = progress.add_task("[yellow]Scraping...", total=len(registry.eth.treasury_tokens))
+        table = Table()
+        
+        for key in token_data:
+            table.add_column(key, justify="right", style="bright_yellow")
+            
         for token_name in registry.eth.treasury_tokens:
             token = interface.ERC20(registry.eth.treasury_tokens[token_name])
             decimals = token.decimals()
