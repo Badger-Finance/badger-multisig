@@ -1,10 +1,9 @@
-from brownie import config, interface
+from brownie import interface
 import os
 import pandas as pd
 from helpers.addresses import registry
 from decimal import Decimal
 from rich.console import Console
-from rich.json import JSON
 from rich.progress import Progress
 from rich.table import Table
 
