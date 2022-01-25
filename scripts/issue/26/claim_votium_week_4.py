@@ -25,4 +25,4 @@ def main():
 
     bribes_dest.print_snapshot()
 
-    safe.post_safe_tx(post=False)
+    safe.post_safe_tx()
