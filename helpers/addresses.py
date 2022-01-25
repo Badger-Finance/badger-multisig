@@ -251,6 +251,7 @@ ADDRESSES_ETH = {
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
+        "native.cvxCrv": "0x1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
@@ -332,6 +333,10 @@ ADDRESSES_ETH = {
         "vlCvxExtraRewardDistribution": "0xDecc7d761496d30F30b92Bdf764fb8803c79360D",
         "booster": "0xF403C135812408BFbE8713b5A23a04b3D48AAE31",
         "claim_zap": "0x92Cf9E5e4D1Dfbf7dA0d2BB3e884a68416a65070",
+        "vlCVX": "0xD18140b4B819b895A3dba5442F959fA44994AF50",
+    },
+    "votium": {
+        "multiMerkleStash": "0x378Ba9B73309bE80BF4C2c027aAD799766a7ED5A",
     },
     "bribe_tokens_claimable": {
         "CVX": "0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B",
