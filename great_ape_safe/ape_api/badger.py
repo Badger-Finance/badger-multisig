@@ -65,6 +65,7 @@ class Badger():
 
 
     def claim_bribes_votium(self, eligible_claims):
+        # this does not leverage the `claimMulti` func yet but just loops
         for symbol, token_addr in eligible_claims.items():
             directory = 'data/Votium/merkle/'
             last_json = sorted(os.listdir(directory + symbol))[-1]
