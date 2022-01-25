@@ -1,3 +1,5 @@
+import json
+import os
 import requests
 
 from brownie import interface
@@ -24,6 +26,10 @@ class Badger():
         # contracts
         self.tree = interface.IBadgerTreeV2(
             registry.eth.badger_wallets.badgertree,
+            owner=self.safe.account
+        )
+        self.strat_bvecvx = interface.IVestedCvx(
+            registry.eth.strategies['native.vestedCVX'],
             owner=self.safe.account
         )
 
@@ -56,3 +62,20 @@ class Badger():
             json_data['proof'],
             amounts_claimable,
         )
+
+
+    def claim_bribes_votium(self, eligible_claims):
+        for symbol, token_addr in eligible_claims.items():
+            directory = 'data/Votium/merkle/'
+            last_json = sorted(os.listdir(directory + symbol))[-1]
+            with open(directory + symbol + f'/{last_json}') as f:
+                leaf = json.load(f)['claims'][
+                    registry.eth.strategies['native.vestedCVX']
+                ]
+                self.strat_bvecvx.claimBribeFromVotium(
+                    token_addr,
+                    leaf['index'],
+                    self.strat_bvecvx.address,
+                    leaf['amount'],
+                    leaf['proof']
+                )
