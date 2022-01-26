@@ -2,7 +2,7 @@ from eth_abi import encode_abi
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
-NEW_LOGIC = registry.eth.logic["native.cvxCrv"] 
+NEW_LOGIC = registry.eth.logic["native.vestedCVX"] 
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 
 def main(queue="true"):
