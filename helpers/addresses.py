@@ -247,12 +247,11 @@ ADDRESSES_ETH = {
         "StrategyCvxHelper": "0x9A12A9141363A5B343B781c4951d42E327B89397", # V1.1
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
-        "native.vestedCVX": "0x36A09dd7Df87D9F6ac2AF9786C55e4d5546Ee6a6", # V1.3
+        "native.vestedCVX": "0x56df16192D586b288F53852466560b445E21939b", # V1.4
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
-        "native.vestedCVX": "0x56df16192D586b288F53852466560b445E21939b",
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
