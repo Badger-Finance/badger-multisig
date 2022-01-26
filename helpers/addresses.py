@@ -319,7 +319,7 @@ ADDRESSES_ETH = {
         "aave_lending_pool_v2": "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
         "data_provider": "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d",
     },
-    "gnosis": {
+    "cow": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
         "settlement": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
     },
