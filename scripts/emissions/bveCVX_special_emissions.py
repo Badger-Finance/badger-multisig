@@ -13,9 +13,9 @@ DURATION = ENDING_TIME - STARTING_TIME
 
 
 def main():
-    safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
+    safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     safe.init_badger()
-    rewards_logger = registry.eth.rewardsLogger
+    rewards_logger = safe.contract(registry.eth.rewardsLogger)
 
     rewards_logger.setUnlockSchedule(
         registry.eth.treasury_tokens.bveCVX,#beneficiary,
