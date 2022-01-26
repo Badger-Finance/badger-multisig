@@ -1,8 +1,7 @@
+from brownie import Wei
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
-
-DEVELOPMENT = False
-
 
 
 # UPDATE THESE VARIABLES WITH THE NEEDS FOR A NEW GUARD LAUNCH OR SIMILAR SCENARIO
