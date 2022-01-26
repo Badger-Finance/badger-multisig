@@ -1,3 +1,5 @@
+from brownie import Wei
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
