@@ -72,14 +72,17 @@ class Badger():
 
 
     def claim_bribes_votium(self, eligible_claims):
+        """
+        accepts a dict with `keys` being equal to the directory names used in
+        the official votium repo (https://github.com/oo-00/Votium) and its
+        `values` being the respective token's address.
+        """
         # this does not leverage the `claimMulti` func yet but just loops
         for symbol, token_addr in eligible_claims.items():
             directory = 'data/Votium/merkle/'
             last_json = sorted(os.listdir(directory + symbol))[-1]
             with open(directory + symbol + f'/{last_json}') as f:
-                leaf = json.load(f)['claims'][
-                    registry.eth.strategies['native.vestedCVX']
-                ]
+                leaf = json.load(f)['claims'][self.strat_bvecvx.address]
                 self.strat_bvecvx.claimBribeFromVotium(
                     token_addr,
                     leaf['index'],
@@ -87,8 +90,25 @@ class Badger():
                     leaf['amount'],
                     leaf['proof']
                 )
+                
+                
+    def claim_bribes_convex(self, eligible_claims):
+        """
+        loop over `eligible_claims` dict to confirm if there are claimable
+        rewards, and pass a list of claimable rewards to the strat to claim
+        in one bulk tx.
+        """
+        self.safe.init_convex()
+        claimables = []
+        for token_addr in eligible_claims.values():
+            claimable = self.safe.convex.cvx_extra_rewards.claimableRewards(
+                self.strat_bvecvx.address, token_addr
+            )
+            if claimable > 0:
+                claimables.append(token_addr)
+        self.strat_bvecvx.claimBribesFromConvex(claimables)                
 
-
+                
     def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
         """
         Queue a call to `target_addr` with `signature` containing `data` into the
@@ -150,3 +170,4 @@ class Badger():
                 with open(f"{queueTx_dir}{filename}") as f:
                     tx = json.load(f)
                 console.print(f"[red]Tx not yet queued:[/red] {tx}")
+

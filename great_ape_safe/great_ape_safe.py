@@ -7,7 +7,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, web3
+from brownie import Contract, interface, web3
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
@@ -79,7 +79,7 @@ class GreatApeSafe(ApeSafe):
         df['decimals'].append(18)
         for token in tqdm(tokens):
             try:
-                token = Contract(token) if type(token) != Contract else token
+                token = interface.ERC20(token) if type(token) != Contract else token
             except:
                 token = Contract.from_explorer(token) if type(token) != Contract else token
             if token.address not in df['address']:
@@ -158,7 +158,7 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, log_name=None):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
@@ -167,6 +167,8 @@ class GreatApeSafe(ApeSafe):
         safe_tx = self.multisend_from_receipts()
         if not skip_preview:
             safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name)
+        if replace_nonce:
+            safe_tx._safe_nonce = replace_nonce
         if not silent:
             pprint(safe_tx.__dict__)
         if hasattr(self, 'snapshot'):
