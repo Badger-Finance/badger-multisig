@@ -251,7 +251,7 @@ ADDRESSES_ETH = {
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
-        "native.cvxCrv": "0x1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+        "native.cvxCrv": "0x56df16192D586b288F53852466560b445E21939b",
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
