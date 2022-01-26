@@ -5,7 +5,7 @@ import sys
 from decimal import Decimal
 from pprint import pprint
 
-from brownie import chain, interface, web3
+from brownie import Contract, chain, interface, web3
 
 from helpers.addresses import registry
 
@@ -23,9 +23,10 @@ class Cow():
         self.prod = prod
 
         # contracts
-        self.vault_relayer = interface.IGPv2VaultRelayer(
-            registry.eth.cow.vault_relayer, owner=self.safe.account
-        )
+        self.vault_relayer = self.safe.contract(registry.eth.cow.vault_relayer)
+        # self.vault_relayer = interface.IGPv2VaultRelayer(
+        #     registry.eth.cow.vault_relayer, owner=self.safe.account
+        # )
         self.settlement = interface.IGPv2Settlement(
             registry.eth.cow.settlement, owner=self.safe.account
         )
