@@ -37,13 +37,13 @@ def multi_sell():
     SAFE.post_safe_tx()
 
 
-def limit_sell_spell():
+def limit_sell_spell(cvxspell_rate):
     SAFE.init_cow()
     spell = interface.ERC20(
         registry.eth.bribe_tokens_claimable.SPELL, owner=SAFE.account
     )
     SAFE.cow.limit_sell(
-        spell, CVX, spell.balanceOf(SAFE), 6100 * 1e18, deadline=60*60*12
+        spell, CVX, spell.balanceOf(SAFE), cvxspell_rate * 1e18, deadline=60*60*12
     )
     SAFE.post_safe_tx()
 
