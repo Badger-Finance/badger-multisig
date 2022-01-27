@@ -2,13 +2,14 @@ import json
 import os
 import requests
 
-from brownie import interface
+from brownie import chain, interface
+from eth_abi import encode_abi
 
 from helpers.addresses import registry
 from rich.console import Console
-from brownie import web3
 
-console = Console()
+
+C = Console()
 
 
 class Badger():
@@ -90,8 +91,8 @@ class Badger():
                     leaf['amount'],
                     leaf['proof']
                 )
-                
-                
+
+
     def claim_bribes_convex(self, eligible_claims):
         """
         loop over `eligible_claims` dict to confirm if there are claimable
@@ -106,9 +107,9 @@ class Badger():
             )
             if claimable > 0:
                 claimables.append(token_addr)
-        self.strat_bvecvx.claimBribesFromConvex(claimables)                
+        self.strat_bvecvx.claimBribesFromConvex(claimables)
 
-                
+
     def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
         """
         Queue a call to `target_addr` with `signature` containing `data` into the
@@ -123,14 +124,14 @@ class Badger():
 
         # calc timestamp of execution
         delay = int(delay_in_days * 60 * 60 * 24)
-        eta = web3.eth.getBlock('latest')['timestamp'] + delay
+        eta = chain.time() + delay
 
         # queue actual action to the timelock
         tx = self.timelock.queueTransaction(target_addr, 0, signature, data, eta)
 
         # dump tx details to json file
         filename = tx.events['QueueTransaction']['txHash']
-        console.print(f"Dump Directory: {dump_dir}")
+        C.print(f"Dump Directory: {dump_dir}")
         os.makedirs(dump_dir, exist_ok=True)
         with open(f'{dump_dir}{filename}.json', 'w') as f:
             tx_data = {
@@ -161,7 +162,7 @@ class Badger():
                 with open(f"{queueTx_dir}{filename}") as f:
                     tx = json.load(f)
 
-                console.print(f"[green]Executing tx with parameters:[/green] {tx}")
+                C.print(f"[green]Executing tx with parameters:[/green] {tx}")
 
                 self.timelock.executeTransaction(
                     tx['target'], 0, tx['signature'], tx['data'], tx['eta']
@@ -169,5 +170,25 @@ class Badger():
             else:
                 with open(f"{queueTx_dir}{filename}") as f:
                     tx = json.load(f)
-                console.print(f"[red]Tx not yet queued:[/red] {tx}")
+                C.print(f"[red]Tx not yet queued:[/red] {tx}")
 
+
+    def whitelist(self, candidate_addr, sett_addr):
+        sett = interface.ISettV4h(sett_addr, owner=self.safe.account)
+        if not sett.approved(candidate_addr):
+            governor = sett.governance()
+            if governor == self.safe.address:
+                C.print(f'whitelisting {candidate_addr} on {sett_addr}...')
+                sett.approveContractAccess(candidate_addr)
+                assert sett.approved(candidate_addr)
+            elif governor == self.timelock.address:
+                C.print(f'whitelisting {candidate_addr} on {sett_addr} through timelock...')
+                self.queue_timelock(
+                    target_addr=sett.address,
+                    signature='approveContractAccess(address)',
+                    data=encode_abi(['address'], [candidate_addr]),
+                    dump_dir=f'data/badger/timelock/whitelister/',
+                    delay_in_days=4.3
+                )
+            else:
+                C.print(f'cannot whitelist on {sett_addr}: no governance\n', style='dark_orange')
