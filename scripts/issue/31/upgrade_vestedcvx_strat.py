@@ -20,7 +20,7 @@ def main(queue="true"):
                 [strat_proxy.address, NEW_LOGIC],
             ),
             dump_dir="data/badger/timelock/upgrade_veCVX_strategy/",
-            delay_in_days=2.3,
+            delay_in_days=4,
         )
     else:   
         # Setting all variables, we'll use them later
