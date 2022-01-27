@@ -5,6 +5,10 @@ import requests
 from brownie import interface
 
 from helpers.addresses import registry
+from rich.console import Console
+from brownie import web3
+
+console = Console()
 
 
 class Badger():
@@ -31,6 +35,9 @@ class Badger():
         self.strat_bvecvx = interface.IVestedCvx(
             registry.eth.strategies['native.vestedCVX'],
             owner=self.safe.account
+        )
+        self.timelock = safe.contract(
+            registry.eth.governance_timelock
         )
 
         # misc
@@ -83,8 +90,8 @@ class Badger():
                     leaf['amount'],
                     leaf['proof']
                 )
-
-
+                
+                
     def claim_bribes_convex(self, eligible_claims):
         """
         loop over `eligible_claims` dict to confirm if there are claimable
@@ -99,4 +106,68 @@ class Badger():
             )
             if claimable > 0:
                 claimables.append(token_addr)
-        self.strat_bvecvx.claimBribesFromConvex(claimables)
+        self.strat_bvecvx.claimBribesFromConvex(claimables)                
+
+                
+    def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
+        """
+        Queue a call to `target_addr` with `signature` containing `data` into the
+        'timelock' contract. Delay is slightly over 48 hours by default.
+        Example of `signature` and `data`:
+        signature = 'approveStrategy(address,address)'
+        data = eth_abi.encode_abi(
+            ['address', 'address'],
+            [addr_var1, addr_var2],
+        )
+        """
+
+        # calc timestamp of execution
+        delay = int(delay_in_days * 60 * 60 * 24)
+        eta = web3.eth.getBlock('latest')['timestamp'] + delay
+
+        # queue actual action to the timelock
+        tx = self.timelock.queueTransaction(target_addr, 0, signature, data, eta)
+
+        # dump tx details to json file
+        filename = tx.events['QueueTransaction']['txHash']
+        console.print(f"Dump Directory: {dump_dir}")
+        os.makedirs(dump_dir, exist_ok=True)
+        with open(f'{dump_dir}{filename}.json', 'w') as f:
+            tx_data = {
+                'target': target_addr,
+                'eth': 0,
+                'signature': signature,
+                'data': data.hex(),
+                'eta': eta,
+            }
+            json.dump(tx_data, f, indent=4, sort_keys=True)
+
+
+    def execute_timelock(self, queueTx_dir):
+        """
+        Loops through all the JSON files within the given 'queueTx_dir' and executes
+        the txs that have already been queued on the 'timelock'.
+        """
+        path = os.path.dirname(queueTx_dir)
+        directory = os.fsencode(path)
+
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if not filename.endswith('.json'):
+                continue
+            txHash = filename.replace(".json", "")
+
+            if self.timelock.queuedTransactions(txHash) == True:
+                with open(f"{queueTx_dir}{filename}") as f:
+                    tx = json.load(f)
+
+                console.print(f"[green]Executing tx with parameters:[/green] {tx}")
+
+                self.timelock.executeTransaction(
+                    tx['target'], 0, tx['signature'], tx['data'], tx['eta']
+                )
+            else:
+                with open(f"{queueTx_dir}{filename}") as f:
+                    tx = json.load(f)
+                console.print(f"[red]Tx not yet queued:[/red] {tx}")
+

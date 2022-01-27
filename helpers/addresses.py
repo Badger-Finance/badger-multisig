@@ -247,7 +247,7 @@ ADDRESSES_ETH = {
         "StrategyCvxHelper": "0x9A12A9141363A5B343B781c4951d42E327B89397", # V1.1
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
-        "native.vestedCVX": "0x36A09dd7Df87D9F6ac2AF9786C55e4d5546Ee6a6", # V1.3
+        "native.vestedCVX": "0x56df16192D586b288F53852466560b445E21939b", # V1.4
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
@@ -333,6 +333,10 @@ ADDRESSES_ETH = {
         "vlCvxExtraRewardDistribution": "0xDecc7d761496d30F30b92Bdf764fb8803c79360D",
         "booster": "0xF403C135812408BFbE8713b5A23a04b3D48AAE31",
         "claim_zap": "0x92Cf9E5e4D1Dfbf7dA0d2BB3e884a68416a65070",
+        "vlCVX": "0xD18140b4B819b895A3dba5442F959fA44994AF50",
+    },
+    "votium": {
+        "multiMerkleStash": "0x378Ba9B73309bE80BF4C2c027aAD799766a7ED5A",
     },
     "bribe_tokens_claimable": {
         "CVX": "0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B",
