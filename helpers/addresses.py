@@ -436,6 +436,11 @@ ADDRESSES_BSC = {
         "bcakebBadgerBtcb": "0x857F91f735f4B03b19D2b5c6E476C73DB8241F55",
         "bcakebDiggBtcb": "0xa861Ba302674b08f7F2F24381b705870521DDfed",
     },
+    "strategies": {
+        "cakeBnbBtcb": "0x120BB9F87bAB3C49b89c7745eDC07FED50786534",
+        "cakeBdiggBtcbV2": "0xC8C53A293edca5a0146d713b9b95b0cd0a2e5ca4",
+        "cakeBbadgerBtcbV2": "0x2A842e01724F10d093aE8a46A01e66DbCf3C7373",
+    },
     "coingecko_tokens": {
         "badger-dao": "0x753fbc5800a8C8e3Fb6DC6415810d627A387Dfc9",
         "badger-sett-badger": "0x1F7216fdB338247512Ec99715587bb97BBf96eae",
@@ -447,7 +452,10 @@ ADDRESSES_BSC = {
     'airdropable_tokens': {
         'EPS': "0xA7f552078dcC247C2684336020c03648500C6d9F"
     },
-    "pancakeswap_routerV2": "0x10ED43C718714eb63d5aA57B78B54704E256024E"
+    "pancakeswap": {
+        "router_v1": "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F",
+        "router_v2": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    },
 }
 
 ADDRESSES_POLYGON = {
