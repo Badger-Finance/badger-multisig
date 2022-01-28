@@ -18,6 +18,7 @@ from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.curve import Curve
 from great_ape_safe.ape_api.opolis import Opolis
+from great_ape_safe.ape_api.univ3 import UniV3
 
 
 C = Console()
@@ -45,6 +46,7 @@ class GreatApeSafe(ApeSafe):
         self.init_convex()
         self.init_curve()
         self.init_opolis()
+        self.init_univ3()
 
 
     def init_aave(self):
@@ -69,6 +71,8 @@ class GreatApeSafe(ApeSafe):
     def init_opolis(self):
         self.opolis = Opolis(self)
 
+    def init_univ3(self):
+        self.univ3 = UniV3(self)
 
     def take_snapshot(self, tokens):
         C.print(f'snapshotting {self.address}...')
@@ -90,7 +94,7 @@ class GreatApeSafe(ApeSafe):
         self.snapshot = pd.DataFrame(df)
 
 
-    def print_snapshot(self):
+    def print_snapshot(self, csv_destination):
         if self.snapshot is None:
             raise
         df = self.snapshot.set_index('address')
@@ -114,6 +118,17 @@ class GreatApeSafe(ApeSafe):
         def locale_decimal(d):
             # format with thousands separator and 18 digits precision
             return '{0:,.18f}'.format(d)
+
+        if csv_destination:
+            # grab only symbol & delta
+            df_csv = pd.DataFrame(columns=["token", "claimable_amount"])
+            df_csv["token"] = df.index
+            df_csv["claimable_amount"] = df['balance_delta'].values
+            df_csv.to_csv(
+                csv_destination,
+                index=False,
+                header=["token", "claimable_amount"]
+            )
 
         C.print(f'snapshot result for {self.address}:')
         C.print(df.to_string(formatters=[locale_decimal, locale_decimal, locale_decimal]), '\n')
@@ -158,7 +173,7 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
@@ -172,6 +187,6 @@ class GreatApeSafe(ApeSafe):
         if not silent:
             pprint(safe_tx.__dict__)
         if hasattr(self, 'snapshot'):
-            self.print_snapshot()
+            self.print_snapshot(csv_destination)
         if post:
             self.post_transaction(safe_tx)
