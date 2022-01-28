@@ -22,7 +22,7 @@ def calc_deposit_amount(amount):
 
 def main():
     
-    safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
+    safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     safe.init_curveV2()
     
     if 'fork' in network.show_active():
@@ -34,10 +34,14 @@ def main():
         WBTC = interface.ERC20(registry.eth.treasury_tokens.WBTC)
         BADGER = interface.ERC20(registry.eth.treasury_tokens.BADGER)
     
+    safe.take_snapshot(tokens=[BADGER, WBTC])
+    
     badger_amount = AMOUNT_BADGER_ETH * 10**BADGER.decimals()
     wbtc_amount = calc_deposit_amount(badger_amount)
     
     print_price_data()
     safe.curve_v2.deposit(TOKEN, POOL, [badger_amount, wbtc_amount])
     print_price_data()
+    
+    safe.post_safe_tx()
     
