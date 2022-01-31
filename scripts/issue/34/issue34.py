@@ -4,8 +4,8 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from brownie_tokens import MintableForkToken
 
-TOKEN = interface.IERC20(registry.eth.treasury_tokens.badgerWBTC_f)
-POOL = interface.ICurveFi(registry.eth.crv_factory_pools.badgerWBTC_f)
+TOKEN = interface.ICurveLP(registry.eth.treasury_tokens.badgerWBTC_f)
+POOL = interface.ICurvePoolV2(registry.eth.crv_factory_pools.badgerWBTC_f)
 
 AMOUNT_BADGER_ETH = 15000 # to deposit into factory pool
 
@@ -24,7 +24,7 @@ def main():
     
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     safe.init_curveV2()
-    
+
     if 'fork' in network.show_active():
         WBTC = MintableForkToken(registry.eth.treasury_tokens.WBTC)
         BADGER = MintableForkToken(registry.eth.treasury_tokens.BADGER)
@@ -40,7 +40,7 @@ def main():
     wbtc_amount = calc_deposit_amount(badger_amount)
     
     print_price_data()
-    safe.curve_v2.deposit(TOKEN, POOL, [badger_amount, wbtc_amount])
+    safe.curveV2.deposit(TOKEN, [badger_amount, wbtc_amount], pool=POOL)
     print_price_data()
     
     safe.post_safe_tx()

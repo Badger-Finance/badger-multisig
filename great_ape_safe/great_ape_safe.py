@@ -17,7 +17,7 @@ from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.curve import Curve
-from great_ape_safe.ape_api.curve_v2 import Curve_v2
+from great_ape_safe.ape_api.curve_v2 import CurveV2
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
@@ -74,13 +74,16 @@ class GreatApeSafe(ApeSafe):
         
     
     def init_curveV2(self):
-        self.curve_v2 = Curve_v2(self)
+        self.curveV2 = CurveV2(self)
+        
 
     def init_opolis(self):
         self.opolis = Opolis(self)
+        
     
     def init_sushi(self):
         self.sushi = Sushi(self)
+        
     
     def init_uniV2(self):
         self.uni_v2 = UniV2(self)
