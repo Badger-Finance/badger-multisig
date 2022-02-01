@@ -37,4 +37,10 @@ interface IStrategy {
     function tend() external;
 
     function harvest() external;
+
+    function performanceFeeGovernance() external view returns (uint256);
+
+    function performanceFeeStrategist() external view returns (uint256);
+
+    function governance() external view returns (address);
 }
