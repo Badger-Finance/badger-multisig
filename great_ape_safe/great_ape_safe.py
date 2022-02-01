@@ -46,7 +46,7 @@ class GreatApeSafe(ApeSafe):
         self.init_convex()
         self.init_curve()
         self.init_opolis()
-        self.init_univ3()
+        self.init_uni_v3()
 
 
     def init_aave(self):
@@ -71,7 +71,7 @@ class GreatApeSafe(ApeSafe):
     def init_opolis(self):
         self.opolis = Opolis(self)
 
-    def init_univ3(self):
+    def init_uni_v3(self):
         self.univ3 = UniV3(self)
 
     def take_snapshot(self, tokens):
@@ -94,7 +94,7 @@ class GreatApeSafe(ApeSafe):
         self.snapshot = pd.DataFrame(df)
 
 
-    def print_snapshot(self, csv_destination):
+    def print_snapshot(self, csv_destination=None):
         if self.snapshot is None:
             raise
         df = self.snapshot.set_index('address')

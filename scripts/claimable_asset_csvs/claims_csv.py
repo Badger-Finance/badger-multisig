@@ -5,6 +5,7 @@ from helpers.addresses import registry
 # we could add tokens here following up new treasury positions
 tokens_claimed = [
     registry.eth.treasury_tokens.AAVE,  # aave collateral
+    registry.eth.treasury_tokens.stkAAVE,
     registry.eth.treasury_tokens.CVX,  # convex lp
     registry.eth.treasury_tokens.CRV,
     registry.eth.treasury_tokens.bcvxCRV,  # tree
@@ -28,12 +29,12 @@ def main():
     vault.convex.claim_all()
 
     # univ3 chunk
-    vault.init_univ3()
+    vault.init_uni_v3()
     vault.univ3.collect_fees()
 
-    # aave chunk, currently `getUserUnclaimedRewards(address)` is zero, asserts jumps
-    # safe.init_aave()
-    # safe.aave.claim_all()
+    # aave chunk
+    vault.init_aave()
+    vault.aave.claim_all(markets=[registry.eth.treasury_tokens.aUSDC])
 
     # badger chunk
     vault.init_badger()

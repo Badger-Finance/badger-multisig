@@ -9,11 +9,11 @@ class UniV3:
         self.safe = safe
 
         # contracts
-        self.NonfungiblePositionManager = safe.contract(
-            registry.eth.uniswap.NonfungiblePositionManager
+        self.nonfungible_position_manager = interface.INonFungiblePositionManager(
+            registry.eth.uniswap.NonfungiblePositionManager, owner=self.safe.account
         )
-        self.pool = interface.IUniswapV3Pool(
-            registry.eth.uniswap.v3pool_wbtc_badger, owner=self.safe.address
+        self.v3pool_wbtc_badger = interface.IUniswapV3Pool(
+            registry.eth.uniswap.v3pool_wbtc_badger, owner=self.safe.account
         )
 
         # constant helpers
@@ -27,11 +27,11 @@ class UniV3:
         path = os.path.dirname(f"scripts/TCL/positionData/")
         directory = os.fsencode(path)
 
-        token0 = Contract(self.pool.token0())
-        token1 = Contract(self.pool.token1())
+        token0 = Contract(self.v3pool_wbtc_badger.token0())
+        token1 = Contract(self.v3pool_wbtc_badger.token1())
 
-        wbtc_bal_init = token0.balanceOf(self.safe.address)
-        badger_bal_init = token1.balanceOf(self.safe.address)
+        token0_bal_init = token0.balanceOf(self.safe.address)
+        token1_bal_init = token1.balanceOf(self.safe.address)
 
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -43,8 +43,8 @@ class UniV3:
                 # https://docs.uniswap.org/protocol/reference/periphery/interfaces/INonfungiblePositionManager#collectparams
                 params = (token_id, self.safe.address, self.Q128 - 1, self.Q128 - 1)
 
-                self.NonfungiblePositionManager.collect(params)
+                self.nonfungible_position_manager.collect(params)
 
         # check that increase the balance off-chain
-        assert token0.balanceOf(self.safe.address) > wbtc_bal_init
-        assert token1.balanceOf(self.safe.address) > badger_bal_init
+        assert token0.balanceOf(self.safe.address) > token0_bal_init
+        assert token1.balanceOf(self.safe.address) > token1_bal_init
