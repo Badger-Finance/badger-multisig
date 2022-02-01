@@ -23,7 +23,7 @@ def calc_deposit_amount(amount):
 def main():
     
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
-    safe.init_curveV2()
+    safe.init_curve_v2()
 
     if 'fork' in network.show_active():
         WBTC = MintableForkToken(registry.eth.treasury_tokens.WBTC)
@@ -40,7 +40,7 @@ def main():
     wbtc_amount = calc_deposit_amount(badger_amount)
     
     print_price_data()
-    safe.curveV2.deposit(TOKEN, [badger_amount, wbtc_amount], pool=POOL)
+    safe.curve_v2.deposit(TOKEN, [badger_amount, wbtc_amount])
     print_price_data()
     
     safe.post_safe_tx()

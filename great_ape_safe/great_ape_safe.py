@@ -47,10 +47,10 @@ class GreatApeSafe(ApeSafe):
         self.init_compound()
         self.init_convex()
         self.init_curve()
-        self.init_curveV2()
+        self.init_curve_v2()
         self.init_opolis()
         self.init_sushi()
-        self.init_uniV2()
+        self.init_uni_v2()
 
 
     def init_aave(self):
@@ -73,8 +73,8 @@ class GreatApeSafe(ApeSafe):
         self.curve = Curve(self)
         
     
-    def init_curveV2(self):
-        self.curveV2 = CurveV2(self)
+    def init_curve_v2(self):
+        self.curve_v2 = CurveV2(self)
         
 
     def init_opolis(self):
@@ -85,7 +85,7 @@ class GreatApeSafe(ApeSafe):
         self.sushi = Sushi(self)
         
     
-    def init_uniV2(self):
+    def init_uni_v2(self):
         self.uni_v2 = UniV2(self)
 
 
