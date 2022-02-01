@@ -72,7 +72,7 @@ class GreatApeSafe(ApeSafe):
         self.opolis = Opolis(self)
 
     def init_uni_v3(self):
-        self.univ3 = UniV3(self)
+        self.uni_v3 = UniV3(self)
 
     def take_snapshot(self, tokens):
         C.print(f'snapshotting {self.address}...')

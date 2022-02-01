@@ -30,7 +30,7 @@ def main():
 
     # univ3 chunk
     vault.init_uni_v3()
-    vault.univ3.collect_fees()
+    vault.uni_v3.collect_fees()
 
     # aave chunk
     vault.init_aave()
