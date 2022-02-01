@@ -214,6 +214,7 @@ ADDRESSES_ETH = {
         "bFpMbtcHbtc": "0x26B8efa69603537AC8ab55768b6740b67664D518",
         "bbveCVX-CVX-f": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
         "remBADGER": "0x6aF7377b5009d7d154F36FE9e235aE1DA27Aea22",
+        "remDIGG": "0x8B2a18b6400338272FDD1B991F5163E21723AF60",
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -241,7 +242,8 @@ ADDRESSES_ETH = {
         "native.mstableFpMbtcHbtc": "0x54D06A0E1cE55a7a60Ee175AbCeaC7e363f603f3",
         "native.vestedCVX": "0x3ff634ce65cDb8CC0D569D6d1697c41aa666cEA9",
         "native.bbveCVX-CVX-f": "0x98Ca7AFa876f0e15494E76E92C5b3658cdE1Ffe1",
-        "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1"
+        "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
+        "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
     },
     "logic": {
         "StrategyConvexStakingOptimizer": "0x0bB87f40D4eb6066a2311B7BE3B45A3D15771557", # V1.1
@@ -265,6 +267,7 @@ ADDRESSES_ETH = {
         "mstable": "0xd35ff2C170CC1e44de4EDdC9f2Fc425C16670250",
         "bbveCVX-CVX-f": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
         "ibBTCCrv": "0xe505F7C2FFcce7Ae4b076456BC02A70D8fe8d4d2",
+        "recovered": "0x3F61344BA56df00dad9bBcA05d98CA2AeC43Ba0B",
     },
     "yearn_vaults": {"byvWBTC": "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5"},
     "peaks": {
