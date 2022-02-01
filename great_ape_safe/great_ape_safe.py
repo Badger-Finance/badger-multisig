@@ -18,7 +18,7 @@ from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.curve import Curve
 from great_ape_safe.ape_api.opolis import Opolis
-from great_ape_safe.ape_api.univ3 import UniV3
+from great_ape_safe.ape_api.uni_v3 import UniV3
 
 
 C = Console()
