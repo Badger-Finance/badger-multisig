@@ -7,7 +7,7 @@ from helpers.addresses import registry
 
 # maximum precision of google sheets
 # https://stackoverflow.com/a/44534232/1838257
-getcontext().prec = 15
+getcontext().prec = 16
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
 
     # exception: convert $weth value of single row to wbtc
     eth_idx = dff[dff['value_weth'] > 0].index
-    dff.at[eth_idx, 'value_wbtc'] = dff['value_usd_2dec'] / 2 / wbtc_rate
+    dff.at[eth_idx, 'value_wbtc'] = dff['value_usd_2dec'] / wbtc_rate
 
     # sum up all value_wbtc in the current dataframe
     total_wbtc = Decimal(dff['value_wbtc'].sum())
