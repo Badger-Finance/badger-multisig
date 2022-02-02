@@ -22,9 +22,10 @@ def main():
     safe.take_snapshot(tokens=[slp, bdigg, digg])
     
     bdigg_before = bdigg.balanceOf(safe)
+    weth_before = weth.balanceOf(safe)
     safe.sushi.remove_liquidity(False, slp, SLP_TO_WITHDRAW * 10** slp.decimals())
     bdigg.withdraw(bdigg.balanceOf(safe) - bdigg_before)
-    safe.sushi.swap_tokens_for_tokens(weth, weth.balanceOf(safe), [weth, wbtc, digg], safe.account)
+    safe.sushi.swap_tokens_for_tokens(weth, weth.balanceOf(safe) - weth_before, [weth, wbtc, digg], safe.account)
     
     safe.print_snapshot()
     safe.post_safe_tx()
