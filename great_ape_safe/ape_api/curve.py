@@ -102,12 +102,22 @@ class Curve():
             
         for i, coin in enumerate(self.registry.get_coins(pool)):
             if coin == asset.address:
-                expected = pool.calc_withdraw_one_coin(mantissa, i)
-                receiveable = pool.remove_liquidity_one_coin(
-                    mantissa,
-                    i,
-                    expected * (1 - self.max_slippage_and_fees)
-                ).return_value
+                # check if factory or not
+                if "Factory" in interface.ICurveLP(lp_token).name():
+                    expected = pool.calc_withdraw_one_coin['uint256,int128'](mantissa, i)
+                    receiveable = pool.remove_liquidity_one_coin['uint256,int128,uint256'](
+                        mantissa,
+                        i,
+                        expected * (1 - self.max_slippage_and_fees)
+                    ).return_value
+                else:
+                    expected = pool.calc_withdraw_one_coin['uint256,uint256'](mantissa, i)
+                    receiveable = pool.remove_liquidity_one_coin['uint256,uint256,uint256'](
+                        mantissa,
+                        i,
+                        expected * (1 - self.max_slippage_and_fees)
+                    ).return_value
+                
                 # some pools (eg 3pool) do not return `receivables` as per the standard api
                 if receiveable is not None:
                     assert receiveable > 0

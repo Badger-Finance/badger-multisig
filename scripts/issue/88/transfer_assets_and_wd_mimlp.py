@@ -27,7 +27,7 @@ def main():
 
     badger.transfer(recipient, Wei("15000 ether"))
     crv.transfer(recipient, crv.balanceOf(safe))
-    cvx.transfer(recipient, crv.balanceOf(safe))
+    cvx.transfer(recipient, cvx.balanceOf(safe))
     bcrvIbBTC.transfer(recipient, Wei("25 ether"))
 
     # wd mim3pool -> 3pool
