@@ -192,3 +192,24 @@ class Badger():
                 )
             else:
                 C.print(f'cannot whitelist on {sett_addr}: no governance\n', style='dark_orange')
+
+    
+    def wire_up_controller(self, controller_addr, vault_addr, strat_addr):
+        controller = interface.IController(controller_addr, owner=self.safe.account)
+        vault = interface.ISettV4h(vault_addr, owner=self.safe.account)
+        strategy = interface.IStrategy(strat_addr, owner=self.safe.account)
+        want = vault.token()
+        
+        assert want == strategy.want()
+        C.print(f'[green]Same want for vault and strategy: {want}[/green]\n')
+
+        C.print(f'Wiring vault: {vault_addr}, on controller: {controller_addr}...')
+        controller.setVault(want, vault_addr)
+        assert controller.vaults(want) == vault_addr
+
+        C.print(f'Wiring strategy: {strat_addr}, on controller: {controller_addr}...')
+        controller.approveStrategy(want, strat_addr)
+        controller.setStrategy(want, strat_addr)
+        assert controller.strategies(want) == strat_addr
+
+        
