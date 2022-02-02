@@ -140,6 +140,7 @@ ADDRESSES_ETH = {
         "bveCVX": "0xfd05D3C7fe2924020620A8bE4961bBaA747e6305",
         "yvWBTC": "0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E",  ##TODO NO COINGECKO PRICE
         "aBADGER": "0x43298F9f91a4545dF64748e78a2c777c580573d6", # Across Pool Badger
+        "badgerWBTC_f": "0x137469B55D1f15651BA46A89D0588e97dD0B6562"
     },
     #Every slp token listed in treasury tokens above must also be listed here.  The lp_tokens in this list
     #are processed by scount to determine holdings and underlying value and set the price for the token in treasury_tokens
@@ -180,6 +181,9 @@ ADDRESSES_ETH = {
         "crvALUSD": "0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c",
         "crvFRAX": "0xd632f22692FaC7611d2AA1C0D552930D43CAEd3B",
         "bveCVX-CVX-f": "0x04c90C198b2eFF55716079bc06d7CCc4aa4d7512"
+    },
+    "crv_factory_pools": {
+        "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d"
     },
     # mStable want tokens
     "mstable_vaults": {
@@ -360,6 +364,12 @@ ADDRESSES_ETH = {
         "routerV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
         "v3pool_wbtc_badger": "0xe15e6583425700993bd08F51bF6e7B73cd5da91B",
         "NonfungiblePositionManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+        "routerV2": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "factoryV2": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    },
+    "sushiswap": {
+        "routerV2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
+        "factoryV2": "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac"
     },
     "curve": {
         "provider": "0x0000000022D53366457F9d5E68Ec105046FC4383",

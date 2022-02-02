@@ -18,6 +18,10 @@ interface IStrategy {
 
     function balanceOf() external view returns (uint256);
 
+    function performanceFeeStrategist() external view returns (uint256);
+
+    function performanceFeeGovernance() external view returns (uint256);
+
     function getName() external pure returns (string memory);
 
     function setStrategist(address _strategist) external;
