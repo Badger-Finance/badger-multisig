@@ -6,7 +6,6 @@ TREASURY_OPS = registry.eth.badger_wallets.treasury_ops_multisig
 
 def main(peak="badger"):
     safe = GreatApeSafe(registry.ibbtc.dfdBadgerShared)
-    safe.init_badger()
 
     if peak == "badger":
         badger_peak = interface.IPeak(registry.ibbtc.badgerPeak, owner=safe.account)
