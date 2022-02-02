@@ -27,15 +27,17 @@ def main():
 
     badger.transfer(recipient, Wei("15000 ether"))
     crv.transfer(recipient, crv.balanceOf(safe))
-    cvx.transfer(recipient, crv.balanceOf(safe))
+    cvx.transfer(recipient, cvx.balanceOf(safe))
     bcrvIbBTC.transfer(recipient, Wei("25 ether"))
 
     # wd mim3pool -> 3pool
     safe.init_curve()
 
-    mim3lp = interface.ICurveLP(registry.eth.treasury_tokens.crvMIM, owner=safe.address)
-    crv3lp = safe.contract(registry.eth.treasury_tokens.crv3pool)
+    mim3lp = interface.IStableSwap2Pool(
+        registry.eth.treasury_tokens.crvMIM, owner=safe.address
+    )
+    crv3lp = interface.ICurveLP(registry.eth.treasury_tokens.crv3pool)
 
-    safe.curve.withdraw_to_one_coin(mim3lp.address, mim3lp.balanceOf(safe), crv3lp)
+    safe.curve.withdraw_to_one_coin(mim3lp, mim3lp.balanceOf(safe), crv3lp)
 
     safe.post_safe_tx()
