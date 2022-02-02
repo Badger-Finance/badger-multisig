@@ -1,9 +1,8 @@
-from brownie import web3
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from helpers.addresses import registry
 
 
-class Pancakeswap(UniV2):
+class PancakeswapV2(UniV2):
     def __init__(self, safe):
         self.safe = safe
 
