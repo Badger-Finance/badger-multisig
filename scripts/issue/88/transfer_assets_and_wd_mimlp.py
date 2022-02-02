@@ -30,6 +30,13 @@ def main():
     cvx.transfer(recipient, cvx.balanceOf(safe))
     bcrvIbBTC.transfer(recipient, Wei("25 ether"))
 
+    # tree top-uo
+    badger.transfer(
+        registry.eth.badger_wallets.badgertree, Wei("79676.9320625347 ether")
+    )
+    # transfer to remBADGER sett, covers 2w
+    badger.transfer(registry.eth.sett_vaults.remBADGER, Wei("11538.461538 ether"))
+
     # wd mim3pool -> 3pool
     safe.init_curve()
 
