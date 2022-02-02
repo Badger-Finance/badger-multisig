@@ -44,6 +44,7 @@ ADDRESSES_ETH = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
+        "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
@@ -139,6 +140,7 @@ ADDRESSES_ETH = {
         "bveCVX": "0xfd05D3C7fe2924020620A8bE4961bBaA747e6305",
         "yvWBTC": "0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E",  ##TODO NO COINGECKO PRICE
         "aBADGER": "0x43298F9f91a4545dF64748e78a2c777c580573d6", # Across Pool Badger
+        "badgerWBTC_f": "0x137469B55D1f15651BA46A89D0588e97dD0B6562"
     },
     #Every slp token listed in treasury tokens above must also be listed here.  The lp_tokens in this list
     #are processed by scount to determine holdings and underlying value and set the price for the token in treasury_tokens
@@ -180,6 +182,9 @@ ADDRESSES_ETH = {
         "crvFRAX": "0xd632f22692FaC7611d2AA1C0D552930D43CAEd3B",
         "bveCVX-CVX-f": "0x04c90C198b2eFF55716079bc06d7CCc4aa4d7512"
     },
+    "crv_factory_pools": {
+        "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d"
+    },
     # mStable want tokens
     "mstable_vaults": {
         "imBTC": "0x17d8CBB6Bce8cEE970a4027d1198F6700A7a6c24",
@@ -213,6 +218,7 @@ ADDRESSES_ETH = {
         "bFpMbtcHbtc": "0x26B8efa69603537AC8ab55768b6740b67664D518",
         "bbveCVX-CVX-f": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
         "remBADGER": "0x6aF7377b5009d7d154F36FE9e235aE1DA27Aea22",
+        "remDIGG": "0x99F39D495C6A5237f43602f3Ab5F49786E46c9B0",
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -240,7 +246,8 @@ ADDRESSES_ETH = {
         "native.mstableFpMbtcHbtc": "0x54D06A0E1cE55a7a60Ee175AbCeaC7e363f603f3",
         "native.vestedCVX": "0x3ff634ce65cDb8CC0D569D6d1697c41aa666cEA9",
         "native.bbveCVX-CVX-f": "0x98Ca7AFa876f0e15494E76E92C5b3658cdE1Ffe1",
-        "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1"
+        "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
+        "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
     },
     "logic": {
         "StrategyConvexStakingOptimizer": "0x0bB87f40D4eb6066a2311B7BE3B45A3D15771557", # V1.1
@@ -264,6 +271,7 @@ ADDRESSES_ETH = {
         "mstable": "0xd35ff2C170CC1e44de4EDdC9f2Fc425C16670250",
         "bbveCVX-CVX-f": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
         "ibBTCCrv": "0xe505F7C2FFcce7Ae4b076456BC02A70D8fe8d4d2",
+        "restitution": "0x3F61344BA56df00dad9bBcA05d98CA2AeC43Ba0B",
     },
     "yearn_vaults": {"byvWBTC": "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5"},
     "peaks": {
@@ -356,6 +364,12 @@ ADDRESSES_ETH = {
         "routerV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
         "v3pool_wbtc_badger": "0xe15e6583425700993bd08F51bF6e7B73cd5da91B",
         "NonfungiblePositionManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+        "routerV2": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "factoryV2": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    },
+    "sushiswap": {
+        "routerV2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
+        "factoryV2": "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac"
     },
     "curve": {
         "provider": "0x0000000022D53366457F9d5E68Ec105046FC4383",
