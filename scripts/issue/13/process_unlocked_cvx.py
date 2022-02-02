@@ -17,7 +17,7 @@ def main():
         registry.eth.strategies['native.vestedCVX'],
         owner=safe.account
     )
-    cvx = interface.IERC20(registry.eth.treasury_tokens.CVX)
+    cvx = interface.ERC20(registry.eth.treasury_tokens.CVX)
 
     bvecvx_vault.take_snapshot(tokens=[cvx.address])
 

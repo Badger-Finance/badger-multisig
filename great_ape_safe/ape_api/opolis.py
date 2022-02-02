@@ -6,7 +6,7 @@ class Opolis():
     def __init__(self, safe):
         self.safe = safe
         # have to use erc20 interface for proxy token
-        self.work = interface.IERC20Metadata(registry.poly.coingecko_tokens.WORK)
+        self.work = interface.ERC20(registry.poly.coingecko_tokens.WORK)
         self.staking_helper = safe.contract(registry.poly.opolis.stakingHelper)
         self.whitelist = safe.contract(registry.poly.opolis.whitelist)
 
