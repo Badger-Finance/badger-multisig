@@ -3,8 +3,6 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-SLP_TO_WITHDRAW = 5 # ether
-
 def main():
     """
     withdraw bdigg slp position and withdraw all to digg
@@ -19,8 +17,8 @@ def main():
 
     safe.take_snapshot(tokens=[slp, bdigg, digg])
     
-    safe.sushi.remove_liquidity(False, slp, SLP_TO_WITHDRAW * 10** slp.decimals())
+    safe.sushi.remove_liquidity(False, slp, slp.balanceOf(safe) * 10** slp.decimals())
     bdigg.withdrawAll()
     
     safe.print_snapshot()
-    safe.post_safe_tx()
+    # safe.post_safe_tx()
