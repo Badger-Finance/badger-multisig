@@ -50,14 +50,18 @@ class Aave():
         assert underlying.balanceOf(destination) > bal_before
 
 
-    def claim_all(self, destination=None):
+    def claim_all(self, markets=[], destination=None):
         # claim all pending rewards from the aave pool
         # https://docs.aave.com/developers/guides/liquidity-mining
         destination = self.safe.address if not destination else destination
         bal_before = self.stkaave.balanceOf(destination)
-        pending = self.controller.getUserUnclaimedRewards(self.safe)
-        assert pending > 0
-        self.controller.claimRewards([], pending, destination)
+        # https://docs.aave.com/developers/v/2.0/guides/liquidity-mining#getuserunclaimedrewards
+        pending_from_last_action = self.controller.getUserUnclaimedRewards(self.safe)
+        # https://docs.aave.com/developers/v/2.0/guides/liquidity-mining#getrewardsbalance
+        pending_from_assets = self.controller.getRewardsBalance(markets, self.safe.address)
+        assert pending_from_last_action > 0 or pending_from_assets > 0
+        pending = pending_from_last_action if pending_from_last_action > 0 else pending_from_assets
+        self.controller.claimRewards(markets, pending, destination)
         assert self.stkaave.balanceOf(destination) > bal_before
 
 
