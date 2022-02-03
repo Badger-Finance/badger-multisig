@@ -388,6 +388,7 @@ ADDRESSES_ETH = {
 ADDRESSES_IBBTC = {
     "zero": "0x0000000000000000000000000000000000000000",
     "badger_multisig": ADDRESSES_ETH["badger_wallets"]["dev_multisig"],
+    "dfdBadgerShared": ADDRESSES_ETH["badger_wallets"]["dfdBadgerShared"],
     "defiDollar_fees": "0x5b5cf8620292249669e1dcc73b753d01543d6ac7",
     "feesink": "0x3b823864cd0cbad8a1f2b65d4807906775becaa7",
     "core": ADDRESSES_ETH["ibBTC"]["core"],
