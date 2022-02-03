@@ -39,6 +39,11 @@ class UniV3:
         self.slippage = 0.98
 
     def burn_token_id(self, file_name, burn_nft=False):
+        """
+        It will decrease the liquidity from a specific NFT
+        and collect the fees earned on it
+        optional: to completly burn the NFT
+        """
         data = open(f"scripts/TCL/positionData/{file_name}")
 
         json_file = json.load(data)
@@ -131,6 +136,11 @@ class UniV3:
     def increase_liquidity(
         self, file_name, token0, token1, token0_amount_topup, token1_amount_topup
     ):
+        """
+        Allows to increase liquidity of a specific NFT,
+        bare in if it is on an activiy NFT range, proportions will depend
+        on where the current tick is
+        """
         # docs: https://docs.uniswap.org/protocol/reference/periphery/NonfungiblePositionManager#increaseliquidity
         data = open(f"scripts/TCL/positionData/{file_name}")
 
@@ -240,6 +250,10 @@ class UniV3:
             json.dump(tx_data, fp, indent=4, sort_keys=True)
 
     def mint_position(self, range0, range1, token0_amount, token1_amount):
+        """
+        Create a NFT on the desired range, adding the liquidity specified 
+        with the params `token0_amount` & `token1_amonunt`
+        """
         # docs: https://docs.uniswap.org/protocol/reference/periphery/NonfungiblePositionManager#mint
         # for now lets port it only with one pool we work with
         token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
