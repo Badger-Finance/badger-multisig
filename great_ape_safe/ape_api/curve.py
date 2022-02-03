@@ -10,6 +10,8 @@ class Curve():
         # contracts
         self.provider   = safe.contract(registry.eth.curve.provider)
         self.registry   = safe.contract(self.provider.get_registry())
+        self.generalised_rates_info = safe.contract(self.provider.get_address(2))
+        self.metapool_registry = safe.contract(self.provider.get_address(3))
         # parameters
         self.max_slippage_and_fees = .02
         self.is_v2 = False
@@ -20,7 +22,33 @@ class Curve():
         pool_addr = self.registry.get_pool_from_lp_token(lp_token)
         true_length = self.registry.get_n_coins(pool_addr)[0]
         return list(self.registry.get_coins(pool_addr))[:true_length]
-    
+
+
+    def _get_registry(self, lp_token):
+        # get corresponding registry of lp token, either metapool or `normal`
+        if self.is_v2:
+            return self.registry
+        try:
+            if "Factory" in lp_token.name():
+                return self.metapool_registry
+            else:
+                return self.registry
+        except:
+            return self.registry
+
+
+    def _get_pool_from_lp_token(self, lp_token):
+        if self.is_v2:
+            pool_addr = interface.ICurveLP(lp_token).minter()
+            return interface.ICurvePoolV2(pool_addr, owner=self.safe.account)
+        else:
+            registry = self._get_registry(lp_token)
+            if registry == self.metapool_registry:
+                return interface.IStableSwap2Pool(lp_token, owner=self.safe.account)
+            else:
+                pool_addr = self.registry.get_pool_from_lp_token(lp_token)
+                return interface.ICurvePool(pool_addr, owner=self.safe.account)
+
 
     def deposit(self, lp_token, mantissas, asset=None):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
@@ -32,13 +60,8 @@ class Curve():
         # TODO: find and route through zaps automatically
         # TODO: could pass dict to mantissas with {address: mantissa} and sort
         #       out proper ordering automatically?
-        if self.is_v2:
-            pool_addr = interface.ICurveLP(lp_token).minter()
-            pool = interface.ICurvePoolV2(pool_addr,  owner=self.safe.account)
-        else:
-            pool_addr = self.registry.get_pool_from_lp_token(lp_token)
-            pool = interface.ICurvePool(pool_addr,  owner=self.safe.account)
-            
+        pool = self._get_pool_from_lp_token(lp_token)
+
         if type(mantissas) is int and asset is not None:
             mantissa = mantissas
             assert mantissa > 0
@@ -51,7 +74,7 @@ class Curve():
             # make sure we found the right slot and populated it
             assert (np.array(mantissas) > 0).any()
         assert self.registry.get_n_coins(pool)[0] == len(mantissas)
-        
+
         if self.is_v2:
             expected = pool.calc_token_amount[f'uint[{len(mantissas)}]'](mantissas)
         else:
@@ -73,17 +96,12 @@ class Curve():
         # unwrap `mantissa` amount of lp_token back to its underlyings
         # (in same ratio as pool is currently in)
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity
-        if self.is_v2:
-            pool_addr = interface.ICurveLP(lp_token).minter()
-            pool = interface.ICurvePoolV2(pool_addr,  owner=self.safe.account)
-        else:
-            pool_addr = self.registry.get_pool_from_lp_token(lp_token)
-            pool = interface.ICurvePool(pool_addr,  owner=self.safe.account)
-            
+        pool = self._get_pool_from_lp_token(lp_token)
+
         n_coins = self.registry.get_n_coins(pool)[0] # note [1] tells us if there is a wrapped coin!
         # TODO: slippage and stuff
         minima = list(np.zeros(n_coins))
-        
+
         receivables = pool.remove_liquidity(mantissa, minima, {'from': self.safe.address}).return_value
         # some pools (eg 3pool) do not return `receivables` as per the standard api
         if receivables is not None:
@@ -93,13 +111,7 @@ class Curve():
     def withdraw_to_one_coin(self, lp_token, mantissa, asset):
         # unwrap `mantissa` amount of `lp_token` but single sided; into `asset`
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity_one_coin
-        if self.is_v2:
-            pool_addr = interface.ICurveLP(lp_token).minter()
-            pool = interface.ICurvePoolV2(pool_addr,  owner=self.safe.account)
-        else:
-            pool_addr = self.registry.get_pool_from_lp_token(lp_token)
-            pool = interface.ICurvePool(pool_addr,  owner=self.safe.account)
-            
+        pool = self._get_pool_from_lp_token(lp_token)
         for i, coin in enumerate(self.registry.get_coins(pool)):
             if coin == asset.address:
                 expected = pool.calc_withdraw_one_coin(mantissa, i)

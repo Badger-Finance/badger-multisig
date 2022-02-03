@@ -22,7 +22,7 @@ interface ICurvePool {
   function calc_token_amount ( uint256[2] calldata amounts, bool deposit ) external view returns ( uint256 );
   function calc_token_amount ( uint256[3] calldata amounts, bool deposit ) external view returns ( uint256 );
   function calc_withdraw_one_coin ( uint256 token_amount, uint256 i ) external view returns ( uint256 );
-  function remove_liquidity_one_coin ( uint256 token_amount, uint256 i, uint256 min_amount ) external;
+  function remove_liquidity_one_coin ( uint256 token_amount, uint256 i, uint256 min_amount ) external returns ( uint256 );
   function claim_admin_fees (  ) external;
   function ramp_A_gamma ( uint256 future_A, uint256 future_gamma, uint256 future_time ) external;
   function stop_ramp_A_gamma (  ) external;
