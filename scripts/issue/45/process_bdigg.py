@@ -17,7 +17,7 @@ def main():
 
     safe.take_snapshot(tokens=[slp, bdigg, digg])
     
-    safe.sushi.remove_liquidity(False, slp, slp.balanceOf(safe) * 10** slp.decimals())
+    safe.sushi.remove_liquidity(False, slp, slp.balanceOf(safe))
     bdigg.withdrawAll()
     
     safe.print_snapshot()
