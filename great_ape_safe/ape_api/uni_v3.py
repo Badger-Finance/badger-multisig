@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import math
 from pathlib import Path
-from brownie import interface, Contract, chain
+from brownie import interface, chain
 from helpers.addresses import registry
 
 # general helpers and sdk
@@ -74,8 +74,8 @@ class UniV3:
         if position["tokensOwed0"] > 0 or position["tokensOwed1"] > 0:
             print("\nTokens pendant of being collected. Collecting...")
 
-            token0 = Contract(self.v3pool_wbtc_badger.token0())
-            token1 = Contract(self.v3pool_wbtc_badger.token1())
+            token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
+            token1 = self.safe.contract(self.v3pool_wbtc_badger.token1())
 
             token0_bal_init = token0.balanceOf(self.safe.address)
             token1_bal_init = token1.balanceOf(self.safe.address)
@@ -109,8 +109,8 @@ class UniV3:
         path = os.path.dirname(f"scripts/TCL/positionData/")
         directory = os.fsencode(path)
 
-        token0 = Contract(self.v3pool_wbtc_badger.token0())
-        token1 = Contract(self.v3pool_wbtc_badger.token1())
+        token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
+        token1 = self.safe.contract(self.v3pool_wbtc_badger.token1())
 
         token0_bal_init = token0.balanceOf(self.safe.address)
         token1_bal_init = token1.balanceOf(self.safe.address)
