@@ -47,7 +47,7 @@ class Curve():
                 return interface.IStableSwap2Pool(lp_token, owner=self.safe.account)
             else:
                 pool_addr = self.registry.get_pool_from_lp_token(lp_token)
-                return interface.ICurvePool(pool_addr, owner=self.safe.account)
+                return interface.IStableSwap(pool_addr, owner=self.safe.account)
 
 
     def deposit(self, lp_token, mantissas, asset=None):
