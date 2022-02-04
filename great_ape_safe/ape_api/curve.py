@@ -130,14 +130,15 @@ class Curve():
     def withdraw_to_one_coin_zapper(self, zapper, base_pool, pool, mantissa, asset):
         zap = interface.ICurveZap(zapper, owner=self.safe.account)
         # note: tried to acess BASE_POOL constant val, but unable..., added another argument
-        # note: coin indices in zapper are different than in base pool wbtc is 2 while in base pool is 1
         for i, coin in enumerate(self.registry.get_coins(base_pool)):
             if coin == asset.address:
-                expected = zap.calc_withdraw_one_coin(pool, mantissa, i)
+                # summing one unit into `i` cause the deduction here of `MAX_COIN`
+                # https://etherscan.io/address/0x7abdbaf29929e7f8621b757d2a7c04d78d633834#code#L194
+                expected = zap.calc_withdraw_one_coin(pool, mantissa, i + 1)
                 receiveable = zap.remove_liquidity_one_coin(
                     pool,
                     mantissa,
-                    i,
+                    i + 1,
                     expected * (1 - self.max_slippage_and_fees)
                 ).return_value
                 if receiveable is not None:
