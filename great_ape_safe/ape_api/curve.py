@@ -44,10 +44,25 @@ class Curve():
         else:
             registry = self._get_registry(lp_token)
             if registry == self.metapool_registry:
-                return interface.IStableSwap2Pool(lp_token, owner=self.safe.account)
+                return interface.IStableSwap2Pool(
+                    lp_token, owner=self.safe.account
+                )
             else:
                 pool_addr = self.registry.get_pool_from_lp_token(lp_token)
                 return interface.ICurvePool(pool_addr, owner=self.safe.account)
+
+
+    def _get_n_coins(self, lp_token):
+        if self.is_v2:
+            # TODO
+            pass
+        else:
+            registry = self._get_registry(lp_token)
+            pool = self._get_pool_from_lp_token(lp_token)
+            if registry == self.metapool_registry:
+                return registry.get_n_coins(pool)
+            else:
+                return registry.get_n_coins(pool)[0] # note [1] tells us if there is a wrapped coin!
 
 
     def deposit(self, lp_token, mantissas, asset=None):
@@ -60,34 +75,36 @@ class Curve():
         # TODO: find and route through zaps automatically
         # TODO: could pass dict to mantissas with {address: mantissa} and sort
         #       out proper ordering automatically?
+        registry = self._get_registry(lp_token)
         pool = self._get_pool_from_lp_token(lp_token)
+        n_coins = self._get_n_coins(lp_token)
 
-        if type(mantissas) is int and asset is not None:
+        if type(mantissas) is not list and asset is not None:
             mantissa = mantissas
             assert mantissa > 0
-            n_coins = self.registry.get_n_coins(pool)[0]
             mantissas = list(np.zeros(n_coins))
-            for i, coin in enumerate(self.registry.get_coins(pool)):
+            for i, coin in enumerate(registry.get_coins(pool)):
                 if coin == asset.address:
                     mantissas[i] = mantissa
                     break
             # make sure we found the right slot and populated it
             assert (np.array(mantissas) > 0).any()
-        assert self.registry.get_n_coins(pool)[0] == len(mantissas)
+        assert n_coins == len(mantissas)
 
         if self.is_v2:
-            expected = pool.calc_token_amount[f'uint[{len(mantissas)}]'](mantissas)
+            expected = pool.calc_token_amount(mantissas)
         else:
-            expected = pool.calc_token_amount[f'uint[{len(mantissas)}],bool'](mantissas, 1)
+            expected = pool.calc_token_amount(mantissas, 1)
         # approve for assets corresponding to mantissas
         for i, mantissa in enumerate(mantissas):
             if mantissa > 0:
                 asset = pool.coins(i)
-                interface.ICurveLP(asset).approve(pool, mantissa, {'from': self.safe.address})
+                interface.ERC20(asset).approve(
+                    pool, mantissa, {'from': self.safe.account}
+                )
         bal_before = lp_token.balanceOf(self.safe)
-        pool.add_liquidity[f'uint[{len(mantissas)}],uint'](
-            mantissas,
-            expected * (1 - self.max_slippage_and_fees)
+        pool.add_liquidity(
+            mantissas, expected * (1 - self.max_slippage_and_fees)
         )
         assert lp_token.balanceOf(self.safe) > bal_before
 
@@ -98,11 +115,11 @@ class Curve():
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity
         pool = self._get_pool_from_lp_token(lp_token)
 
-        n_coins = self.registry.get_n_coins(pool)[0] # note [1] tells us if there is a wrapped coin!
+        n_coins = self._get_n_coins(lp_token)
         # TODO: slippage and stuff
         minima = list(np.zeros(n_coins))
 
-        receivables = pool.remove_liquidity(mantissa, minima, {'from': self.safe.address}).return_value
+        receivables = pool.remove_liquidity(mantissa, minima).return_value
         # some pools (eg 3pool) do not return `receivables` as per the standard api
         if receivables is not None:
             assert (np.array(receivables) > 0).all()
