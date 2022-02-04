@@ -128,8 +128,11 @@ class Curve():
         raise
 
     def withdraw_to_one_coin_zapper(self, zapper, base_pool, pool, mantissa, asset):
+        # approve zapper to allow `transferFrom`
+        lp_token.approve(zapper, mantissa)
+        
         zap = interface.ICurveZap(zapper, owner=self.safe.account)
-        # note: tried to acess BASE_POOL constant val, but unable..., added another argument
+        # note: tried to acess BASE_POOL constant val, but unable..., added another argument 
         for i, coin in enumerate(self.registry.get_coins(base_pool)):
             if coin == asset.address:
                 # summing one unit into `i` cause the deduction here of `MAX_COIN`

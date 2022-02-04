@@ -39,8 +39,6 @@ def main(sim="false"):
 
     # 2. wd into wbtc
     safe.init_curve()
-
-    crvIbBTC.approve(registry.eth.curve.zap_sbtc, crvIbBTC.balanceOf(safe))
     
     safe.curve.withdraw_to_one_coin_zapper(
         registry.eth.curve.zap_sbtc,
