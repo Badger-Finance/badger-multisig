@@ -32,7 +32,7 @@ def main():
 
     bal_cvx = cvx.balanceOf(bvecvxcvx)
     bal_bvecvx = bvecvx.balanceOf(bvecvxcvx)
-    bal_total = bal_cvx + bal_bvecvx
+    bal_total = bal_cvx + bal_bvecvx # TODO: take ppfs (now==1) into account
     cvx_dominance = bal_cvx / bal_total
     bvecvx_dominance = bal_bvecvx / bal_total
     print('cvx\t\t', bal_cvx / 1e18, cvx_dominance)
@@ -51,7 +51,7 @@ def main():
 
     bal_cvx = cvx.balanceOf(bvecvxcvx)
     bal_bvecvx = bvecvx.balanceOf(bvecvxcvx)
-    bal_total = bal_cvx + bal_bvecvx
+    bal_total = bal_cvx + bal_bvecvx # TODO: take ppfs (now==1) into account
     cvx_dominance = bal_cvx / bal_total
     bvecvx_dominance = bal_bvecvx / bal_total
     print('cvx\t\t', bal_cvx / 1e18, cvx_dominance)
