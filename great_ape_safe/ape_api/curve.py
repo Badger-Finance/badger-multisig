@@ -112,7 +112,7 @@ class Curve():
         # unwrap `mantissa` amount of `lp_token` but single sided; into `asset`
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity_one_coin
         pool = self._get_pool_from_lp_token(lp_token)
-        for i, coin in enumerate(self.registry.get_coins(pool)):
+        for i, coin in enumerate(self._get_registry(lp_token).get_coins(pool)):
             if coin == asset.address:
                 expected = pool.calc_withdraw_one_coin(mantissa, i)
                 receiveable = pool.remove_liquidity_one_coin(
