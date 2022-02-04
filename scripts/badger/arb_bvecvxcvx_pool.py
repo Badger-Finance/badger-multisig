@@ -44,9 +44,9 @@ def main():
         mantissa_to_add = solve(
             (int(bal_bvecvx) + x) / (int(bal_total) + x) - TARGET, x
         )[0]
-        assert mantissa_to_add > THRESHOLD * 1e18
         if mantissa_to_add >= bvecvx.balanceOf(safe):
             mantissa_to_add = bvecvx.balanceOf(safe)
+        assert mantissa_to_add > THRESHOLD * 1e18
         safe.curve.deposit(bvecvxcvx, mantissa_to_add, bvecvx)
 
     bal_cvx = cvx.balanceOf(bvecvxcvx)
