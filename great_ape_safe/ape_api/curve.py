@@ -126,3 +126,21 @@ class Curve():
                 return
         # could not find `asset` in `lp_token`
         raise
+
+    def withdraw_to_one_coin_zapper(self, zapper, base_pool, pool, mantissa, asset):
+        zap = interface.ICurveZap(zapper, owner=self.safe.account)
+        # note: tried to acess BASE_POOL constant val, but unable..., added another argument
+        # note: coin indices in zapper are different than in base pool wbtc is 2 while in base pool is 1
+        for i, coin in enumerate(self.registry.get_coins(base_pool)):
+            if coin == asset.address:
+                expected = zap.calc_withdraw_one_coin(pool, mantissa, i)
+                receiveable = zap.remove_liquidity_one_coin(
+                    pool,
+                    mantissa,
+                    i,
+                    expected * (1 - self.max_slippage_and_fees)
+                ).return_value
+                if receiveable is not None:
+                    assert receiveable > 0
+                return
+        raise

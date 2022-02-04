@@ -40,10 +40,13 @@ def main(sim="false"):
     # 2. wd into wbtc
     safe.init_curve()
 
-    # wd to crvSBTC
-    safe.curve.withdraw_to_one_coin(crvIbBTC, crvIbBTC.balanceOf(safe), crvSBTC)
-    # wd to wbtc
-    safe.curve.withdraw_to_one_coin(crvSBTC, crvSBTC.balanceOf(safe) * SLIPPAGE, wbtc)
+    safe.curve.withdraw_to_one_coin_zapper(
+        registry.eth.curve.zap_sbtc,
+        registry.eth.crv_pools.crvSBTC,
+        crvIbBTC,
+        crvIbBTC.balanceOf(safe),
+        wbtc,
+    )
 
     # 3. mint nft
     safe.init_uni_v3()
