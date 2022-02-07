@@ -42,7 +42,7 @@ ADDRESSES_ETH = {
         "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
-        "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
+        "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
@@ -70,6 +70,9 @@ ADDRESSES_ETH = {
         "techOpsProxyAdmin": "0x7D0398D7D7432c47Dffc942Cd097B9eA3d88C385",
         "badgerHunt": "0x394DCfbCf25C5400fcC147EbD9970eD34A474543",
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
+        "_deprecated": {
+            "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
+        },
     },
     # scout stores prices for all tokens here, either from coingecko or
     # interpolation. any token here that does not have a coingeco price must be
@@ -651,9 +654,7 @@ def checksum_address_dict(addresses):
         if isinstance(v, str):
             checksummed[k] = Web3.toChecksumAddress(v)
         elif isinstance(v, dict):
-            checksummed[k] = {
-                name: Web3.toChecksumAddress(address) for name, address in v.items()
-            }
+            checksummed[k] = checksum_address_dict(v)
         else:
             print(k, v, "formatted incorrectly")
     return checksummed
