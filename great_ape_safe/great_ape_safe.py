@@ -7,10 +7,11 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, interface, web3
+from brownie import Contract, interface, web3, network
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
+from helpers.addresses import chain_ids
 
 from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.badger import Badger
@@ -102,7 +103,7 @@ class GreatApeSafe(ApeSafe):
         C.print(f'snapshotting {self.address}...')
         df = {'address': [], 'symbol': [], 'mantissa_before': [], 'decimals': []}
         df['address'].append('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
-        df['symbol'].append('ETH')
+        df['symbol'].append(chain_ids[str(network.chain.id)])
         df['mantissa_before'].append(Decimal(self.account.balance()))
         df['decimals'].append(18)
         for token in tqdm(tokens):

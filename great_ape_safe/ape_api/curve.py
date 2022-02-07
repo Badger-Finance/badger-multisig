@@ -19,9 +19,9 @@ class Curve():
 
     def _get_coins(self, lp_token):
         # get coin addresses from registry for a specific `lp_token`
-        pool_addr = self.registry.get_pool_from_lp_token(lp_token)
-        true_length = self.registry.get_n_coins(pool_addr)[0]
-        return list(self.registry.get_coins(pool_addr))[:true_length]
+        pool = self._get_pool_from_lp_token(lp_token)
+        true_length = self.registry.get_n_coins(pool)[0]
+        return [pool.coins(i) for i in range(true_length)]
 
 
     def _get_registry(self, lp_token):
@@ -48,6 +48,25 @@ class Curve():
             else:
                 pool_addr = self.registry.get_pool_from_lp_token(lp_token)
                 return interface.ICurvePool(pool_addr, owner=self.safe.account)
+   
+ 
+    def _get_coin_indices(self, lp_token, pool, asset_in, asset_out):
+        if self.is_v2:
+            coins = self._get_coins(lp_token)
+            i = None
+            j = None
+            for coin in coins:
+                if coin == asset_in:
+                    i = coins.index(coin)
+                if coin == asset_out:
+                    j = coins.index(coin)
+            assert i != None and j != None
+        else:
+            registry = self._get_registry(lp_token)
+            i, j, _ = registry.get_coin_indices(
+                pool, asset_in, asset_out
+            )
+        return i, j
 
 
     def deposit(self, lp_token, mantissas, asset=None):
@@ -126,3 +145,22 @@ class Curve():
                 return
         # could not find `asset` in `lp_token`
         raise
+    
+    
+    def swap(self, lp_token, asset_in, asset_out, mantissa):
+        # swap `asset_in` (amount: `mantissa`) for `asset_out`
+        # https://curve.readthedocs.io/factory-pools.html?highlight=exchange#StableSwap.exchange
+        # https://curve.readthedocs.io/registry-exchanges.html?highlight=get_best_rate#finding-pools-and-swap-rates
+        pool = self._get_pool_from_lp_token(lp_token)
+        self._swap(lp_token, pool, asset_in, asset_out, mantissa)
+        
+    
+    def _swap(self, lp_token, pool, asset_in, asset_out, mantissa):
+        # helper for common functionalities despite of the registry/pool route
+        initial_asset_out_balance = asset_out.balanceOf(self.safe)
+        asset_in.approve(pool, mantissa)
+        i, j = self._get_coin_indices(lp_token, pool, asset_in, asset_out)
+        expected = pool.get_dy(i, j, mantissa) * (1 - self.max_slippage_and_fees)
+        # L139 docs ref
+        pool.exchange(i, j, mantissa, expected)
+        assert asset_out.balanceOf(self.safe) >= initial_asset_out_balance + expected
