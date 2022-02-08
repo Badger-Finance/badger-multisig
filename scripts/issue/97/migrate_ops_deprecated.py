@@ -32,7 +32,7 @@ def main():
         jersey_nft.balanceOf(
             registry.eth.badger_wallets.treasury_vault_multisig, token_id
         )
-        == 11
+        == jersey_amount
     )
 
     safe.print_snapshot()
