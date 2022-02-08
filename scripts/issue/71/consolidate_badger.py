@@ -45,8 +45,8 @@ def main(upgrade="true", simulation="false"):
         # Beneficiary is currently the DAO_Agent
         assert dao_treasury.beneficiary() == registry.eth.badger_wallets.fees
 
-        # Nonces are messed up on this multi - next in line is 78
-        old_multi.post_safe_tx(replace_nonce=78)
+        # Nonces are messed up on this multi - replace 76 (on-chain rejection)
+        old_multi.post_safe_tx(replace_nonce=76)
 
     else:
         # Simulates upgrade of contract
@@ -115,28 +115,27 @@ def main(upgrade="true", simulation="false"):
         balance_checker.verifyBalance(
             badger_token.address,
             BADGER_GEYSER,
-            geyser_deficit
+            geyser_deficit + geyser_balance
         )
 
         # Once the Geyser has enough BADGER within, we can
         # withdrawAll to transfer all BADGER from strat to the vault
-        assert bBadger_vault.available() == 0
-
         controller.withdrawAll(bBadger_vault.token())
 
-        assert bBadger_vault.available() == strategy_balanceOf
+        assert bBadger_vault.available() >= strategy_balanceOf
         assert bBadger_strat.balanceOf() == 0
         assert badger_token.balanceOf(BADGER_GEYSER) == 0
 
         # Transfer remaining of amount received from the DAO_treasury to
         # the treaury vault multisig
         amount = treasury_balance - geyser_deficit
+        treasury_vault_balance = badger_token.balanceOf(TREASURY_VAULT)
         badger_token.transfer(TREASURY_VAULT, amount, {"from": safe.address})
 
         balance_checker.verifyBalance(
             badger_token.address,
             TREASURY_VAULT,
-            amount
+            amount + treasury_vault_balance
         )
 
         safe.print_snapshot()
