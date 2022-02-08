@@ -395,6 +395,9 @@ ADDRESSES_ETH = {
     "uma": {
         "DIGG_LongShortPair": "0x65DCcd928C71ef98e6eC887FEA24d116765c8A8D",
     },
+    "nft": {
+        "badger_jersey": "0xe1e546e25A5eD890DFf8b8D005537c0d373497F8"
+    }
 }
 
 ADDRESSES_IBBTC = {
