@@ -39,8 +39,12 @@ class Curve():
 
     def _get_pool_from_lp_token(self, lp_token):
         if self.is_v2:
-            pool_addr = interface.ICurveLP(lp_token).minter()
-            return interface.ICurvePoolV2(pool_addr, owner=self.safe.account)
+            try:
+                pool_addr = interface.ICurveLP(lp_token).minter()
+                return interface.ICurvePoolV2(pool_addr, owner=self.safe.account)
+            except:
+                # pool/token are the same
+                return interface.ICurvePoolV2(lp_token, owner=self.safe.account)
         else:
             registry = self._get_registry(lp_token)
             if registry == self.metapool_registry:
