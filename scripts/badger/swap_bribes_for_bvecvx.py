@@ -1,5 +1,6 @@
 """
-swap_bribes_for_bvecvx.py: sell all collected convex and votium bribes for $bvecvx.
+swap_bribes_for_bvecvx.py: sell all collected convex and votium bribes for
+$bvecvx.
 """
 
 from brownie import ETH_ADDRESS, interface
@@ -78,15 +79,18 @@ def lock_cvx():
     TECHOPS.post_safe_tx()
 
 
-def sell_t_curve():
+def sell_t_on_curve():
     t = interface.ERC20(
         registry.eth.bribe_tokens_claimable.T, owner=SAFE.account
     )
     t_v2_pool = interface.ICurvePoolV2(
         registry.eth.crv_factory_pools.t_eth_f, owner=SAFE.account
     )
+    cvx_v2_pool = interface.ICurvePoolV2(
+        registry.eth.crv_factory_pools.cvx_eth_f, owner=SAFE.account
+    )
     SAFE.init_curve_v2()
-    SAFE.take_snapshot([t.address])
+    SAFE.take_snapshot([t.address, CVX.address])
 
     bal_t = t.balanceOf(SAFE)
     t.approve(t_v2_pool, bal_t)
@@ -95,5 +99,12 @@ def sell_t_curve():
         1 - SAFE.curve_v2.max_slippage_and_fees
     )
     t_v2_pool.exchange(i, j, bal_t, expected, True)
+
+    bal_eth = SAFE.account.balance() * .995 # dusty
+    i, j = 0, 1
+    expected = cvx_v2_pool.get_dy(i, j, bal_eth) * (
+        1 - SAFE.curve_v2.max_slippage_and_fees
+    )
+    cvx_v2_pool.exchange(i, j, bal_eth, expected, True, {'value': bal_eth})
 
     SAFE.post_safe_tx()
