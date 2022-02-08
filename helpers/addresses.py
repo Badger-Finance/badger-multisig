@@ -193,6 +193,7 @@ ADDRESSES_ETH = {
     },
     "crv_factory_pools": {
         "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d",
+        "t_eth_f": "0x752eBeb79963cf0732E9c0fec72a49FD1DEfAEAC",
     },
     # mStable want tokens
     "mstable_vaults": {
