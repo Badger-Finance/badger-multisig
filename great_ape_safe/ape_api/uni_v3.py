@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import math
 from pathlib import Path
-from brownie import interface, chain
+from brownie import interface, chain, multicall
 from helpers.addresses import registry
 
 # general helpers and sdk
@@ -38,18 +38,12 @@ class UniV3:
         self.deadline = 60 * 180
         self.slippage = 0.98
 
-    def burn_token_id(self, file_name, burn_nft=False):
+    def burn_token_id(self, token_id, pool_addr, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
         and collect the fees earned on it
         optional: to completly burn the NFT
         """
-        data = open(f"scripts/TCL/positionData/{file_name}")
-
-        json_file = json.load(data)
-
-        token_id = json_file["tokenId"]
-
         position = self.nonfungible_position_manager.positions(token_id)
         deadline = chain.time() + self.deadline
 
@@ -79,8 +73,10 @@ class UniV3:
         if position["tokensOwed0"] > 0 or position["tokensOwed1"] > 0:
             print("\nTokens pendant of being collected. Collecting...")
 
-            token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
-            token1 = self.safe.contract(self.v3pool_wbtc_badger.token1())
+            pool = interface.IUniswapV3Pool(pool_addr, owner=self.safe.account)
+
+            token0 = self.safe.contract(pool.token0())
+            token1 = self.safe.contract(pool.token1())
 
             token0_bal_init = token0.balanceOf(self.safe.address)
             token1_bal_init = token1.balanceOf(self.safe.address)
@@ -106,35 +102,38 @@ class UniV3:
 
         self.nonfungible_position_manager.collect(params)
 
-    def collect_fees(self):
+    def collect_fees(self, pool_addr):
         """
-        loop over `TCL/positionData/` directory to grab each tokenID
+        loop over all token ids owned by the safe
         to allow us to claim the fees earned on each range over time
         """
-        path = os.path.dirname(f"scripts/TCL/positionData/")
-        directory = os.fsencode(path)
+        nfts_owned = self.nonfungible_position_manager.balanceOf(self.safe) - 1
 
-        token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
-        token1 = self.safe.contract(self.v3pool_wbtc_badger.token1())
+        if nfts_owned >= 0:
+            pool = interface.IUniswapV3Pool(pool_addr, owner=self.safe.account)
+            token0 = self.safe.contract(pool.token0())
+            token1 = self.safe.contract(pool.token1())
 
-        token0_bal_init = token0.balanceOf(self.safe.address)
-        token1_bal_init = token1.balanceOf(self.safe.address)
+            token0_bal_init = token0.balanceOf(self.safe.address)
+            token1_bal_init = token1.balanceOf(self.safe.address)
 
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
+            with multicall:
+                token_ids = [
+                    self.nonfungible_position_manager.tokenOfOwnerByIndex(self.safe, i)
+                    for i in range(nfts_owned)
+                ]
 
-            with open(f"scripts/TCL/positionData/{filename}") as f:
-                json_info = json.load(f)
-                token_id = json_info["tokenId"]
-
+            for token_id in token_ids:
                 self.collect_fee(token_id)
 
-        # check that increase the balance off-chain
-        assert token0.balanceOf(self.safe.address) > token0_bal_init
-        assert token1.balanceOf(self.safe.address) > token1_bal_init
+            # check that increase the balance off-chain
+            assert token0.balanceOf(self.safe.address) > token0_bal_init
+            assert token1.balanceOf(self.safe.address) > token1_bal_init
+        else:
+            print(f" === Safe ({self.safe.address}) does not own any NFT === ")
 
     def increase_liquidity(
-        self, file_name, token0, token1, token0_amount_topup, token1_amount_topup
+        self, token_id, token0, token1, token0_amount_topup, token1_amount_topup
     ):
         """
         Allows to increase liquidity of a specific NFT,
@@ -142,13 +141,10 @@ class UniV3:
         on where the current tick is
         """
         # docs: https://docs.uniswap.org/protocol/reference/periphery/NonfungiblePositionManager#increaseliquidity
-        data = open(f"scripts/TCL/positionData/{file_name}")
+        position = self.nonfungible_position_manager.positions(token_id)
 
-        json_file = json.load(data)
-
-        token_id = json_file["tokenId"]
-        lower_tick = json_file["lowerTick"]
-        upper_tick = json_file["upperTick"]
+        lower_tick = position["tickLower"]
+        upper_tick = position["tickUpper"]
         deadline = chain.time() + self.deadline
 
         # check allowances & approve for topup token amounts if needed
@@ -236,28 +232,42 @@ class UniV3:
         assert position_after["tokensOwed0"] >= position_before["tokensOwed0"]
         assert position_after["tokensOwed1"] >= position_before["tokensOwed1"]
 
-        # update the json file with new amounts and liquidity
-        tx_detail_json = Path(f"scripts/TCL/positionData/{file_name}")
-        with tx_detail_json.open("w") as fp:
-            tx_data = {
-                "tokenId": token_id,
-                "liquidity": json_file["liquidity"] + liquidity_returned,
-                "amount0": json_file["amount0"] + amount0 / 10 ** token0.decimals(),
-                "amount1": json_file["amount1"] + amount1 / 10 ** token1.decimals(),
-                "lowerTick": lower_tick,
-                "upperTick": upper_tick,
-            }
-            json.dump(tx_data, fp, indent=4, sort_keys=True)
+        # update the json file with new amounts and liquidity, given the token_id
+        path = os.path.dirname("scripts/TCL/positionData/")
+        directory = os.fsencode(path)
 
-    def mint_position(self, range0, range1, token0_amount, token1_amount):
+        for file in os.listdir(directory):
+            file_name = os.fsdecode(file)
+
+            if token_id in file_name:
+                data = open(f"scripts/TCL/positionData/{file_name}")
+                json_file = json.load(data)
+                tx_detail_json = Path(f"scripts/TCL/positionData/{file_name}")
+
+                with tx_detail_json.open("w") as fp:
+                    tx_data = {
+                        "tokenId": token_id,
+                        "liquidity": json_file["liquidity"] + liquidity_returned,
+                        "amount0": json_file["amount0"]
+                        + amount0 / 10 ** token0.decimals(),
+                        "amount1": json_file["amount1"]
+                        + amount1 / 10 ** token1.decimals(),
+                        "lowerTick": lower_tick,
+                        "upperTick": upper_tick,
+                    }
+                    json.dump(tx_data, fp, indent=4, sort_keys=True)
+
+    def mint_position(self, pool_addr, range0, range1, token0_amount, token1_amount):
         """
-        Create a NFT on the desired range, adding the liquidity specified 
+        Create a NFT on the desired range, adding the liquidity specified
         with the params `token0_amount` & `token1_amonunt`
         """
         # docs: https://docs.uniswap.org/protocol/reference/periphery/NonfungiblePositionManager#mint
-        # for now lets port it only with one pool we work with
-        token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
-        token1 = self.safe.contract(self.v3pool_wbtc_badger.token1())
+
+        pool = interface.IUniswapV3Pool(pool_addr, owner=self.safe.account)
+
+        token0 = self.safe.contract(pool.token0())
+        token1 = self.safe.contract(pool.token1())
 
         if token0_amount > 0:
             token0.approve(self.nonfungible_position_manager, token0_amount)
@@ -340,17 +350,16 @@ class UniV3:
             json.dump(tx_data, fp, indent=4, sort_keys=True)
 
     def positions_info(self):
-        path = os.path.dirname(f"scripts/TCL/positionData/")
-        directory = os.fsencode(path)
+        nfts_owned = self.nonfungible_position_manager.balanceOf(self.safe) - 1
 
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
+        if nfts_owned >= 0:
+            with multicall:
+                token_ids = [
+                    self.nonfungible_position_manager.tokenOfOwnerByIndex(self.safe, i)
+                    for i in range(nfts_owned)
+                ]
 
-            print(f"\nLoading position information for file: '{filename}'...")
-            with open(f"scripts/TCL/positionData/{filename}") as f:
-                json_info = json.load(f)
-                token_id = json_info["tokenId"]
-
+            for token_id in token_ids:
                 print("owner:", self.nonfungible_position_manager.ownerOf(token_id))
                 print_position(self.nonfungible_position_manager, token_id)
 
@@ -364,17 +373,13 @@ class UniV3:
                 print("accumulated fees:")
                 print(fees[0] / 10 ** token0.decimals(), token0.symbol())
                 print(fees[1] / 10 ** token1.decimals(), token1.symbol())
+        else:
+            print(f" === Safe ({self.safe.address}) does not own any NFT === ")
 
-    def transfer_nft(self, file_name, new_owner):
+    def transfer_nft(self, token_id, new_owner):
         """
         transfer the targeted token_id to the new owner
         """
-        data = open(f"scripts/TCL/positionData/{file_name}")
-
-        json_file = json.load(data)
-
-        token_id = json_file["tokenId"]
-
         # assert current owner
         assert self.nonfungible_position_manager.ownerOf(token_id) == self.safe.address
 
