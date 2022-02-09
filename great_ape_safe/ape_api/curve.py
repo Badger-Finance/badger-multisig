@@ -192,7 +192,7 @@ class Curve:
 
     def withdraw_to_one_coin_zapper(self, zapper, base_pool, pool, mantissa, asset):
         # approve zapper to allow `transferFrom`
-        lp_token.approve(zapper, mantissa)
+        pool.approve(zapper, mantissa)
 
         zap = interface.ICurveZap(zapper, owner=self.safe.account)
         # note: tried to acess BASE_POOL constant val, but unable..., added another argument
