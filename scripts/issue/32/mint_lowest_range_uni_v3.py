@@ -1,6 +1,6 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
-from brownie import Contract, accounts, chain, Wei, interface
+from brownie import Contract, Wei, interface
 
 wbtc = Contract(registry.eth.treasury_tokens.WBTC)
 
@@ -13,7 +13,7 @@ WBTC_AMOUNT = 1 * 10 ** wbtc.decimals()
 SLIPPAGE = 0.99
 
 
-def main(sim="false"):
+def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
 
     # sett and curve lp involved
@@ -21,14 +21,6 @@ def main(sim="false"):
         registry.eth.sett_vaults.bcrvIbBTC, owner=safe.address
     )
     crvIbBTC = safe.contract(registry.eth.treasury_tokens.crvIbBTC)
-
-    if sim == "true":
-        biibtc_whale = accounts.at(
-            registry.eth.badger_wallets.treasury_vault_multisig, force=True
-        )
-        # the amount which will come from vault to treasury
-        bcrvIbBTC.transfer(safe.address, Wei("4 ether"), {"from": biibtc_whale})
-        chain.snapshot()
 
     safe.take_snapshot(
         tokens=[
