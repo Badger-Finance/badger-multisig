@@ -4,3 +4,4 @@ pandas
 rich
 tqdm
 dotmap
+sympy

@@ -2,7 +2,7 @@ import pandas as pd
 
 from dotmap import DotMap
 from web3 import Web3
-
+import json
 
 ADDRESSES_ETH = {
     "zero": "0x0000000000000000000000000000000000000000",
@@ -15,6 +15,7 @@ ADDRESSES_ETH = {
     "guardian": "0x6615e67b8B6b6375D38A0A3f937cd8c1a1e96386",
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
+    "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
@@ -42,7 +43,7 @@ ADDRESSES_ETH = {
         "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
-        "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
+        "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
@@ -68,8 +69,12 @@ ADDRESSES_ETH = {
         "devUngatedProxyAdmin": "0x9215cBDCDe25629d0e3D69ee5562d1b444Cf69F9",
         "testProxyAdmin": "0xB10b3Af646Afadd9C62D663dd5d226B15C25CdFA",
         "techOpsProxyAdmin": "0x7D0398D7D7432c47Dffc942Cd097B9eA3d88C385",
+        "opsProxyAdmin_old": "0x4599F2913a3db4E73aA77A304cCC21516dd7270D",
         "badgerHunt": "0x394DCfbCf25C5400fcC147EbD9970eD34A474543",
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
+        "_deprecated": {
+            "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
+        },
     },
     # scout stores prices for all tokens here, either from coingecko or
     # interpolation. any token here that does not have a coingeco price must be
@@ -188,6 +193,8 @@ ADDRESSES_ETH = {
     },
     "crv_factory_pools": {
         "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d",
+        "t_eth_f": "0x752eBeb79963cf0732E9c0fec72a49FD1DEfAEAC",
+        "cvx_eth_f": "0xB576491F1E6e5E62f1d8F26062Ee822B40B0E0d4",
     },
     # mStable want tokens
     "mstable_vaults": {
@@ -263,6 +270,7 @@ ADDRESSES_ETH = {
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
+        "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
@@ -332,7 +340,7 @@ ADDRESSES_ETH = {
         "aave_lending_pool_v2": "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
         "data_provider": "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d",
     },
-    "gnosis": {
+    "cow": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
         "settlement": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
     },
@@ -363,6 +371,8 @@ ADDRESSES_ETH = {
         "TRIBE": "0xc7283b66Eb1EB5FB86327f08e1B5816b0720212B",
         "OGN": "0x8207c1FfC5B6804F6024322CcF34F29c3541Ae26",
         "MTA": "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
+        "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
+        "T": "0xCdF7028ceAB81fA0C6971208e83fa7872994beE5",
     },
     "uniswap": {
         "routerV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
@@ -387,6 +397,9 @@ ADDRESSES_ETH = {
     "uma": {
         "DIGG_LongShortPair": "0x65DCcd928C71ef98e6eC887FEA24d116765c8A8D",
     },
+    "nft": {
+        "badger_jersey": "0xe1e546e25A5eD890DFf8b8D005537c0d373497F8"
+    }
 }
 
 ADDRESSES_IBBTC = {
@@ -651,12 +664,14 @@ def checksum_address_dict(addresses):
         if isinstance(v, str):
             checksummed[k] = Web3.toChecksumAddress(v)
         elif isinstance(v, dict):
-            checksummed[k] = {
-                name: Web3.toChecksumAddress(address) for name, address in v.items()
-            }
+            checksummed[k] = checksum_address_dict(v)
         else:
             print(k, v, "formatted incorrectly")
     return checksummed
+
+
+with open('helpers/chaindata.json') as chaindata:
+    chain_ids = json.load(chaindata)
 
 
 registry = DotMap({

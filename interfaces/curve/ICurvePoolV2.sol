@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.7.0;
 
 interface ICurvePoolV2 {
-  function exchange ( uint256 i, uint256 j, uint256 dx, uint256 min_dy ) external returns ( uint256 );
-  function exchange ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth ) external returns ( uint256 );
-  function exchange ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth, address receiver ) external returns ( uint256 );
-  function exchange_underlying ( uint256 i, uint256 j, uint256 dx, uint256 min_dy ) external returns ( uint256 );
-  function exchange_underlying ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, address receiver ) external returns ( uint256 );
-  function exchange_extended ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth, address sender, address receiver, bytes32 cb ) external returns ( uint256 );
+  function exchange ( int128 i, int128 j, uint256 dx, uint256 min_dy ) external returns ( uint256 );
+  function exchange ( int128 i, int128 j, uint256 dx, uint256 min_dy, bool use_eth ) external returns ( uint256 );
+  function exchange ( int128 i, int128 j, uint256 dx, uint256 min_dy, bool use_eth, address receiver ) external returns ( uint256 );
+  function exchange_underlying ( int128 i, int128 j, uint256 dx, uint256 min_dy ) external returns ( uint256 );
+  function exchange_underlying ( int128 i, int128 j, uint256 dx, uint256 min_dy, address receiver ) external returns ( uint256 );
+  function exchange_extended ( int128 i, int128 j, uint256 dx, uint256 min_dy, bool use_eth, address sender, address receiver, bytes32 cb ) external returns ( uint256 );
   function add_liquidity ( uint256[2] calldata amounts, uint256 min_mint_amount ) external returns ( uint256 );
   function add_liquidity ( uint256[3] calldata amounts, uint256 min_mint_amount ) external returns ( uint256 );
   function add_liquidity ( uint256[2] calldata amounts, uint256 min_mint_amount, bool use_eth ) external returns ( uint256 );
@@ -15,9 +15,9 @@ interface ICurvePoolV2 {
   function remove_liquidity ( uint256 _amount, uint256[2] calldata min_amounts ) external;
   function remove_liquidity ( uint256 _amount, uint256[2] calldata min_amounts, bool use_eth ) external;
   function remove_liquidity ( uint256 _amount, uint256[2] calldata min_amounts, bool use_eth, address receiver ) external;
-  function remove_liquidity_one_coin ( uint256 token_amount, uint256 i, uint256 min_amount ) external returns ( uint256 );
-  function remove_liquidity_one_coin ( uint256 token_amount, uint256 i, uint256 min_amount, bool use_eth ) external returns ( uint256 );
-  function remove_liquidity_one_coin ( uint256 token_amount, uint256 i, uint256 min_amount, bool use_eth, address receiver ) external returns ( uint256 );
+  function remove_liquidity_one_coin ( uint256 token_amount, int128 i, uint256 min_amount ) external returns ( uint256 );
+  function remove_liquidity_one_coin ( uint256 token_amount, int128 i, uint256 min_amount, bool use_eth ) external returns ( uint256 );
+  function remove_liquidity_one_coin ( uint256 token_amount, int128 i, uint256 min_amount, bool use_eth, address receiver ) external returns ( uint256 );
   function claim_admin_fees (  ) external;
   function ramp_A_gamma ( uint256 future_A, uint256 future_gamma, uint256 future_time ) external;
   function stop_ramp_A_gamma (  ) external;

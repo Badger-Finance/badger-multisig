@@ -58,7 +58,7 @@ def main(queue="true"):
                             [TREASURY_OPS],
                         ),
                         dump_dir="data/badger/timelock/set_rewards_to_treasury_ops/",
-                        delay_in_days=4,
+                        delay_in_days=4.7,
                     )
                     C.print(f"[green]Rewards set to TreasuryOps on {controller_id} was queued![green]")
                 else:

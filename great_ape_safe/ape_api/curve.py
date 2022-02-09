@@ -46,10 +46,44 @@ class Curve:
         else:
             registry = self._get_registry(lp_token)
             if registry == self.metapool_registry:
-                return interface.IStableSwap2Pool(lp_token, owner=self.safe.account)
+                return interface.IStableSwap2Pool(
+                    lp_token, owner=self.safe.account
+                )
             else:
                 pool_addr = self.registry.get_pool_from_lp_token(lp_token)
                 return interface.ICurvePool(pool_addr, owner=self.safe.account)
+   
+ 
+    def _get_coin_indices(self, lp_token, pool, asset_in, asset_out):
+        if self.is_v2:
+            coins = self._get_coins(lp_token)
+            i = None
+            j = None
+            for coin in coins:
+                if coin == asset_in:
+                    i = coins.index(coin)
+                if coin == asset_out:
+                    j = coins.index(coin)
+            assert i != None and j != None
+        else:
+            registry = self._get_registry(lp_token)
+            i, j, _ = registry.get_coin_indices(
+                pool, asset_in, asset_out
+            )
+        return i, j
+
+
+    def _get_n_coins(self, lp_token):
+        if self.is_v2:
+            # TODO
+            pass
+        else:
+            registry = self._get_registry(lp_token)
+            pool = self._get_pool_from_lp_token(lp_token)
+            if registry == self.metapool_registry:
+                return registry.get_n_coins(pool)
+            else:
+                return registry.get_n_coins(pool)[0] # note [1] tells us if there is a wrapped coin!
 
     def _get_coin_indices(self, lp_token, pool, asset_in, asset_out):
         if self.is_v2:
@@ -116,10 +150,12 @@ class Curve:
             if mantissa > 0:
                 asset = pool.coins(i)
                 interface.ERC20(asset).approve(
-                    pool, mantissa, {"from": self.safe.account}
+                    pool, mantissa, {'from': self.safe.account}
                 )
         bal_before = lp_token.balanceOf(self.safe)
-        pool.add_liquidity(mantissas, expected * (1 - self.max_slippage_and_fees))
+        pool.add_liquidity(
+            mantissas, expected * (1 - self.max_slippage_and_fees)
+        )
         assert lp_token.balanceOf(self.safe) > bal_before
 
     def withdraw(self, lp_token, mantissa):
@@ -172,7 +208,7 @@ class Curve:
                     assert receiveable > 0
                 return
         raise
-
+        
     def swap(self, lp_token, asset_in, asset_out, mantissa):
         # swap `asset_in` (amount: `mantissa`) for `asset_out`
         # https://curve.readthedocs.io/factory-pools.html?highlight=exchange#StableSwap.exchange
