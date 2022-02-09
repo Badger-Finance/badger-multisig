@@ -9,3 +9,14 @@ A good overview of all its tickets and their status can be found here: https://g
 Read more about the Badger DAO and its community at https://badger.com/dao-and-community.
 
 ![f](https://badger.com/images/badger-logo.svg)
+
+
+# Multisig Adresses
+
+| Name                       | Role                                                 | Address                                      |     Etherscan                                                                          |                                                                                                                                                         | 
+| ------------------------------ | ----------------------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mainnet**                |                                                             |                                              |  
+| `dev_msig`                  | Governance                                               | `0xB65cef03b9B89f99517643226d76e286ee999e77` | [🔗](https://etherscan.io/token/0xB65cef03b9B89f99517643226d76e286ee999e77)   | [gnosis](https://gnosis-safe.io/app/eth:0xB65cef03b9B89f99517643226d76e286ee999e77/transactions/queue)                          |
+| **Arbitrum**                |                                                             |                                              | 
+| `techops_multisig`                  | Emissions                                               | `0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C` | [🔗](https://arbiscan.io/address/0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C)   | [gnosis](https://gnosis-safe.io/app/arb1:0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C/transactions/queue)                          |
+
