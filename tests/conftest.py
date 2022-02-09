@@ -12,7 +12,7 @@ def shared_setup(module_isolation):
 # Global fixtures
 @pytest.fixture
 def safe():
-    return GreatApeSafe('dev.badgerdao.eth')
+    return GreatApeSafe(registry_addrs.eth.badger_wallets.ops_multisig)
 
 @pytest.fixture
 def USDC(safe):

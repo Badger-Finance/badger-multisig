@@ -2,7 +2,7 @@ import pandas as pd
 
 from dotmap import DotMap
 from web3 import Web3
-
+import json
 
 ADDRESSES_ETH = {
     "zero": "0x0000000000000000000000000000000000000000",
@@ -668,6 +668,10 @@ def checksum_address_dict(addresses):
         else:
             print(k, v, "formatted incorrectly")
     return checksummed
+
+
+with open('helpers/chaindata.json') as chaindata:
+    chain_ids = json.load(chaindata)
 
 
 registry = DotMap({
