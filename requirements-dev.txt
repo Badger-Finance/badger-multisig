@@ -4,6 +4,7 @@ pandas
 rich
 tqdm
 dotmap
+sympy
 
 # dev; testing, linting and committing
 brownie-token-tester

@@ -7,7 +7,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, interface, web3, network
+from brownie import Contract, interface, network, web3, ETH_ADDRESS
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
@@ -17,6 +17,7 @@ from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
+from great_ape_safe.ape_api.cow import Cow
 from great_ape_safe.ape_api.curve import Curve
 from great_ape_safe.ape_api.curve_v2 import CurveV2
 from great_ape_safe.ape_api.opolis import Opolis
@@ -34,6 +35,7 @@ class GreatApeSafe(ApeSafe):
     Child of ApeSafe object, with added functionalities:
     - contains a limited library of functions needed to ape in and out of known
       defi platforms (aave, compound, convex, curve)
+    - wrapper functions for setting (limit) orders on the cowswap protocol
     - can take a snapshot of its starting and ending balances and print the
       difference
     - one single function to estimate gas correctly (for both gnosis safe
@@ -47,8 +49,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_all(self):
         self.init_aave()
+        self.init_badger()
         self.init_compound()
         self.init_convex()
+        self.init_cow()
         self.init_curve()
         self.init_curve_v2()
         self.init_opolis()
@@ -74,6 +78,14 @@ class GreatApeSafe(ApeSafe):
         self.convex = Convex(self)
 
 
+    def init_cow(self):
+        self.cow = Cow(self, prod=True)
+
+
+    def init_cow_staging(self):
+        self.cow = Cow(self, prod=False)
+
+
     def init_curve(self):
         self.curve = Curve(self)
         
@@ -81,6 +93,7 @@ class GreatApeSafe(ApeSafe):
     def init_curve_v2(self):
         self.curve_v2 = CurveV2(self)
         
+
 
     def init_opolis(self):
         self.opolis = Opolis(self)
@@ -102,10 +115,10 @@ class GreatApeSafe(ApeSafe):
     def take_snapshot(self, tokens):
         C.print(f'snapshotting {self.address}...')
         df = {'address': [], 'symbol': [], 'mantissa_before': [], 'decimals': []}
-        df['address'].append('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
+        df['address'].append(ETH_ADDRESS)
         df['symbol'].append(labels[network.chain.id])
         df['mantissa_before'].append(Decimal(self.account.balance()))
-        df['decimals'].append(18)
+        df['decimals'].append(Decimal(18))
         for token in tqdm(tokens):
             try:
                 token = Contract(token) if type(token) != Contract else token
@@ -124,10 +137,10 @@ class GreatApeSafe(ApeSafe):
             raise
         df = self.snapshot.set_index('address')
         for token in df.index.to_list():
-            if token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE':
+            if token == ETH_ADDRESS:
                 df.at[token, 'mantissa_after'] = Decimal(self.account.balance())
             else:
-                df.at[token, 'mantissa_after'] = Decimal(Contract(token).balanceOf(self))
+                df.at[token, 'mantissa_after'] = Decimal(interface.ERC20(token).balanceOf(self))
 
         # calc deltas
         df['balance_before'] = df['mantissa_before'] / 10 ** df['decimals']

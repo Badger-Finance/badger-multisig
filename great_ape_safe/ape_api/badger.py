@@ -83,7 +83,11 @@ class Badger():
             directory = 'data/Votium/merkle/'
             last_json = sorted(os.listdir(directory + symbol))[-1]
             with open(directory + symbol + f'/{last_json}') as f:
-                leaf = json.load(f)['claims'][self.strat_bvecvx.address]
+                try:
+                    leaf = json.load(f)['claims'][self.strat_bvecvx.address]
+                except KeyError:
+                    # no claimables for the strat for this particular token
+                    continue
                 self.strat_bvecvx.claimBribeFromVotium(
                     token_addr,
                     leaf['index'],
@@ -193,13 +197,13 @@ class Badger():
             else:
                 C.print(f'cannot whitelist on {sett_addr}: no governance\n', style='dark_orange')
 
-    
+
     def wire_up_controller(self, controller_addr, vault_addr, strat_addr):
         controller = interface.IController(controller_addr, owner=self.safe.account)
         vault = interface.ISettV4h(vault_addr, owner=self.safe.account)
         strategy = interface.IStrategy(strat_addr, owner=self.safe.account)
         want = vault.token()
-        
+
         assert want == strategy.want()
         C.print(f'[green]Same want for vault and strategy: {want}[/green]\n')
 
@@ -211,5 +215,3 @@ class Badger():
         controller.approveStrategy(want, strat_addr)
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
-
-        
