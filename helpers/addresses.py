@@ -375,7 +375,7 @@ ADDRESSES_ETH = {
         "T": "0xCdF7028ceAB81fA0C6971208e83fa7872994beE5",
     },
     "uniswap": {
-        "routerV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
         "v3pool_wbtc_badger": "0xe15e6583425700993bd08F51bF6e7B73cd5da91B",
         "NonfungiblePositionManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
         "routerV2": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
