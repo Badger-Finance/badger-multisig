@@ -29,6 +29,9 @@ class UniV3:
         self.nonfungible_position_manager = interface.INonFungiblePositionManager(
             registry.eth.uniswap.NonfungiblePositionManager, owner=self.safe.account
         )
+        self.factory = interface.IUniswapV3Factory(
+            registry.eth.uniswap.factoryV3, owner=self.safe.account
+        )
         self.v3pool_wbtc_badger = interface.IUniswapV3Pool(
             registry.eth.uniswap.v3pool_wbtc_badger, owner=self.safe.account
         )
@@ -38,7 +41,15 @@ class UniV3:
         self.deadline = 60 * 180
         self.slippage = 0.98
 
-    def burn_token_id(self, token_id, pool_addr, burn_nft=False):
+    def _get_pool(self, position):
+        return interface.IUniswapV3Pool(
+            self.factory.getPool(
+                position["token0"], position["token1"], position["fee"]
+            ),
+            owner=self.safe.account,
+        )
+
+    def burn_token_id(self, token_id, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
         and collect the fees earned on it
@@ -47,8 +58,10 @@ class UniV3:
         position = self.nonfungible_position_manager.positions(token_id)
         deadline = chain.time() + self.deadline
 
+        pool = self._get_pool(position)
+
         liquidity = position["liquidity"]
-        sqrtRatioX96, _, _, _, _, _, _ = self.v3pool_wbtc_badger.slot0()
+        sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
         sqrtRatio_lower_tick = getSqrtRatioAtTick(position["tickLower"])
         sqrtRatio_upper_tick = getSqrtRatioAtTick(position["tickUpper"])
 
@@ -72,8 +85,6 @@ class UniV3:
 
         if position["tokensOwed0"] > 0 or position["tokensOwed1"] > 0:
             print("\nTokens pendant of being collected. Collecting...")
-
-            pool = interface.IUniswapV3Pool(pool_addr, owner=self.safe.account)
 
             token0 = self.safe.contract(pool.token0())
             token1 = self.safe.contract(pool.token1())
@@ -102,7 +113,7 @@ class UniV3:
 
         self.nonfungible_position_manager.collect(params)
 
-    def collect_fees(self, pool_addr):
+    def collect_fees(self):
         """
         loop over all token ids owned by the safe
         to allow us to claim the fees earned on each range over time
@@ -110,13 +121,6 @@ class UniV3:
         nfts_owned = self.nonfungible_position_manager.balanceOf(self.safe) - 1
 
         if nfts_owned >= 0:
-            pool = interface.IUniswapV3Pool(pool_addr, owner=self.safe.account)
-            token0 = self.safe.contract(pool.token0())
-            token1 = self.safe.contract(pool.token1())
-
-            token0_bal_init = token0.balanceOf(self.safe.address)
-            token1_bal_init = token1.balanceOf(self.safe.address)
-
             with multicall:
                 token_ids = [
                     self.nonfungible_position_manager.tokenOfOwnerByIndex(self.safe, i)
@@ -124,11 +128,21 @@ class UniV3:
                 ]
 
             for token_id in token_ids:
+                position = self.nonfungible_position_manager.positions(token_id)
+                # in case token_ids are from diff pools, check bal on each iteration
+                pool = self._get_pool(position)
+
+                token0 = self.safe.contract(pool.token0())
+                token1 = self.safe.contract(pool.token1())
+
+                token0_bal_init = token0.balanceOf(self.safe.address)
+                token1_bal_init = token1.balanceOf(self.safe.address)
+
                 self.collect_fee(token_id)
 
-            # check that increase the balance off-chain
-            assert token0.balanceOf(self.safe.address) > token0_bal_init
-            assert token1.balanceOf(self.safe.address) > token1_bal_init
+                # check that increase the balance off-chain
+                assert token0.balanceOf(self.safe.address) > token0_bal_init
+                assert token1.balanceOf(self.safe.address) > token1_bal_init
         else:
             print(f" === Safe ({self.safe.address}) does not own any NFT === ")
 
@@ -142,6 +156,8 @@ class UniV3:
         """
         # docs: https://docs.uniswap.org/protocol/reference/periphery/NonfungiblePositionManager#increaseliquidity
         position = self.nonfungible_position_manager.positions(token_id)
+
+        pool = self._get_pool(position)
 
         lower_tick = position["tickLower"]
         upper_tick = position["tickUpper"]
@@ -165,7 +181,7 @@ class UniV3:
 
         # calcs for min amounts
         # for now leave it just for our wbtc/badger pool "hardcoded" as for sometime doubt we will operate other univ3 pool
-        sqrtRatioX96, currentTick, _, _, _, _, _ = self.v3pool_wbtc_badger.slot0()
+        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
         sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
         sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
 
@@ -282,7 +298,7 @@ class UniV3:
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
-        sqrtRatioX96, currentTick, _, _, _, _, _ = self.v3pool_wbtc_badger.slot0()
+        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
         sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
         sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
 
@@ -363,12 +379,16 @@ class UniV3:
                 print("owner:", self.nonfungible_position_manager.ownerOf(token_id))
                 print_position(self.nonfungible_position_manager, token_id)
 
+                position = self.nonfungible_position_manager.positions(token_id)
+
+                pool = self._get_pool(position)
+
                 fees = calc_all_accum_fees(
-                    self.nonfungible_position_manager, self.v3pool_wbtc_badger, token_id
+                    self.nonfungible_position_manager, pool, token_id
                 )
 
-                token0 = self.safe.contract(self.v3pool_wbtc_badger.token0())
-                token1 = self.safe.contract(self.v3pool_wbtc_badger.token1())
+                token0 = self.safe.contract(position["token0"])
+                token1 = self.safe.contract(position["token1"])
 
                 print("accumulated fees:")
                 print(fees[0] / 10 ** token0.decimals(), token0.symbol())
