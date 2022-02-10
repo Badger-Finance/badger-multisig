@@ -9,7 +9,6 @@ interface ICurvePoolV2 {
   function exchange_underlying ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, address receiver ) external returns ( uint256 );
   function exchange_extended ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth, address sender, address receiver, bytes32 cb ) external returns ( uint256 );
   function add_liquidity ( uint256[2] calldata amounts, uint256 min_mint_amount ) external returns ( uint256 );
-  function add_liquidity ( uint256[3] calldata amounts, uint256 min_mint_amount ) external returns ( uint256 );
   function add_liquidity ( uint256[2] calldata amounts, uint256 min_mint_amount, bool use_eth ) external returns ( uint256 );
   function add_liquidity ( uint256[2] calldata amounts, uint256 min_mint_amount, bool use_eth, address receiver ) external returns ( uint256 );
   function remove_liquidity ( uint256 _amount, uint256[2] calldata min_amounts ) external;
@@ -26,7 +25,6 @@ interface ICurvePoolV2 {
   function revert_new_parameters (  ) external;
   function get_dy ( uint256 i, uint256 j, uint256 dx ) external view returns ( uint256 );
   function calc_token_amount ( uint256[2] calldata amounts ) external view returns ( uint256 );
-  function calc_token_amount ( uint256[3] calldata amounts ) external view returns ( uint256 );
   function calc_withdraw_one_coin ( uint256 token_amount, uint256 i ) external view returns ( uint256 );
   function lp_price (  ) external view returns ( uint256 );
   function A (  ) external view returns ( uint256 );
