@@ -59,5 +59,5 @@ def main():
     
     safe.print_snapshot()
     
-    # safe.post_safe_tx()
+    safe.post_safe_tx()
     
