@@ -105,8 +105,8 @@ class Curve:
 
 
     def _pool_has_wrapped_coins(self, pool):
-        meta = self.pool_info.get_pool_coins(pool.address).dict()
-        return meta['coins'] != meta['underlying_coins']
+        meta = self.pool_info.get_pool_info(pool.address).dict()
+        return 'underlying_balances' in meta
 
 
     def deposit(self, lp_token, mantissas, asset=None):
