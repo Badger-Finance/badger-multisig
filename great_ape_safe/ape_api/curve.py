@@ -74,16 +74,12 @@ class Curve:
 
 
     def _get_n_coins(self, lp_token):
-        if self.is_v2:
-            # TODO
-            pass
+        registry = self._get_registry(lp_token)
+        pool = self._get_pool_from_lp_token(lp_token)
+        if not self.is_v2 and registry == self.metapool_registry:
+            return registry.get_n_coins(pool)
         else:
-            registry = self._get_registry(lp_token)
-            pool = self._get_pool_from_lp_token(lp_token)
-            if registry == self.metapool_registry:
-                return registry.get_n_coins(pool)
-            else:
-                return registry.get_n_coins(pool)[0] # note [1] tells us if there is a wrapped coin!
+            return registry.get_n_coins(pool)[0] # note [1] tells us if there is a wrapped coin!
 
     def _get_coin_indices(self, lp_token, pool, asset_in, asset_out):
         if self.is_v2:
@@ -100,14 +96,6 @@ class Curve:
             registry = self._get_registry(lp_token)
             i, j, _ = registry.get_coin_indices(pool, asset_in, asset_out)
         return i, j
-
-    def _get_n_coins(self, lp_token):
-        registry = self._get_registry(lp_token)
-        pool = self._get_pool_from_lp_token(lp_token)
-        if not self.is_v2 and registry == self.metapool_registry:
-            return registry.get_n_coins(pool)
-        else:
-            return registry.get_n_coins(pool)[0]
 
     def deposit(self, lp_token, mantissas, asset=None):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
