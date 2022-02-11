@@ -82,7 +82,7 @@ def CRV(safe):
     return safe.contract(registry_addrs.eth.treasury_tokens.CRV)
 
 
-# compound
+# compound fixtures
 @pytest.fixture
 def compound(safe):
     safe.init_compound()
@@ -104,7 +104,7 @@ def COMP(safe):
     return safe.contract(registry_addrs.eth.treasury_tokens.COMP)
 
 
-# convex
+# convex fixtures
 @pytest.fixture
 def convex(safe):
     safe.init_convex()
@@ -130,7 +130,7 @@ def convex_threepool_reward(safe, convex, threepool_lp):
     return safe.contract(reward)
 
 
-# rari
+# rari fixtures
 @pytest.fixture
 def rari(dev):
     dev.init_rari()
