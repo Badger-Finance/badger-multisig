@@ -104,6 +104,10 @@ class Curve:
             return registry.get_n_coins(pool)[0]
 
 
+    def _pool_has_wrapped_coins(self, pool):
+        return 'exchange_underlying' in pool.signatures
+
+
     def deposit(self, lp_token, mantissas, asset=None):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
         # `mantissas` do not need to be balanced in any way
@@ -217,5 +221,8 @@ class Curve:
         i, j = self._get_coin_indices(pool, asset_in, asset_out)
         expected = pool.get_dy(i, j, mantissa) * (1 - self.max_slippage_and_fees)
         # L139 docs ref
-        pool.exchange(i, j, mantissa, expected)
+        if self._pool_has_wrapped_coins(pool):
+            pool.exchange_underlying(i, j, mantissa, expected)
+        else:
+            pool.exchange(i, j, mantissa, expected)
         assert asset_out.balanceOf(self.safe) >= initial_asset_out_balance + expected
