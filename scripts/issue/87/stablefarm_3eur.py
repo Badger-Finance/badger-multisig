@@ -48,7 +48,7 @@ def main():
     # confirm staked balance onchain
     _, _, _, rewards = safe.convex.get_pool_info(three_eur)
     # rough expectation; covert usd -> eur and allow 1% fee and slippage
-    expected = bal_threepool / 1.2 * .99
+    expected = bal_threepool / 1.17 * .99
     balance_checker.verifyBalance(rewards, safe, expected)
 
     # skipping preview; getting timeout of 10s here, probably from
