@@ -11,6 +11,7 @@ class Curve:
         # contracts
         self.provider = safe.contract(registry.eth.curve.provider)
         self.registry = safe.contract(self.provider.get_registry())
+        self.pool_info = safe.contract(self.provider.get_address(1))
         self.exchanger = safe.contract(self.provider.get_address(2))
         self.metapool_registry = safe.contract(self.provider.get_address(3))
         self.crypto_registry = safe.contract(self.provider.get_address(5))
@@ -100,12 +101,12 @@ class Curve:
         if not self.is_v2 and registry == self.metapool_registry:
             return registry.get_n_coins(pool)
         else:
-            # note [1] tells us if there is a wrapped coin!
             return registry.get_n_coins(pool)[0]
 
 
     def _pool_has_wrapped_coins(self, pool):
-        return 'exchange_underlying' in pool.signatures
+        meta = self.pool_info.get_pool_coins(pool.address).dict()
+        return meta['coins'] != meta['underlying_coins']
 
 
     def deposit(self, lp_token, mantissas, asset=None):
