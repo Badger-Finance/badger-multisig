@@ -32,7 +32,7 @@ def main():
     crvIbBTC = safe.contract(registry.eth.treasury_tokens.crvIbBTC)
     
     safe.take_snapshot(tokens=[BADGER, WBTC, TOKEN.address, bcrvIbBTC.address, crvIbBTC.address])
-    
+
     # get amounts to deposit into factory pool
     badger_amount = AMOUNT_BADGER_ETH * 10**BADGER.decimals()
     wbtc_amount = calc_deposit_amount(badger_amount)
@@ -52,8 +52,7 @@ def main():
     print_price_data()
     safe.curve_v2.deposit(TOKEN, [badger_amount, wbtc_amount])
     print_price_data()
-    
+
     safe.print_snapshot()
-    
+
     safe.post_safe_tx()
-    
