@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.7.0;
 
 interface ICurvePool {
   function price_oracle ( uint256 k ) external view returns ( uint256 );
   function price_scale ( uint256 k ) external view returns ( uint256 );
   function last_prices ( uint256 k ) external view returns ( uint256 );
   function token (  ) external view returns ( address );
-  function coins ( uint256 i ) external view returns ( address );
+  function coins ( int128 i ) external view returns ( address );
   function A (  ) external view returns ( uint256 );
   function gamma (  ) external view returns ( uint256 );
   function fee (  ) external view returns ( uint256 );
   function fee_calc ( uint256[3] calldata xp ) external view returns ( uint256 );
   function get_virtual_price (  ) external view returns ( uint256 );
-  function exchange ( uint256 i, uint256 j, uint256 dx, uint256 min_dy ) external;
-  function exchange ( uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth ) external;
-  function get_dy ( uint256 i, uint256 j, uint256 dx ) external view returns ( uint256 );
+  function exchange ( int128 i, int128 j, uint256 dx, uint256 min_dy ) external;
+  function exchange ( int128 i, int128 j, uint256 dx, uint256 min_dy, bool use_eth ) external;
+  function get_dy ( int128 i, int128 j, uint256 dx ) external view returns ( uint256 );
   function calc_token_fee ( uint256[3] calldata amounts, uint256[3] calldata xp ) external view returns ( uint256 );
   function add_liquidity ( uint256[2] calldata amounts, uint256 min_mint_amount ) external;
   function add_liquidity ( uint256[3] calldata amounts, uint256 min_mint_amount ) external;
   function remove_liquidity ( uint256 _amount, uint256[3] calldata min_amounts ) external;
   function calc_token_amount ( uint256[2] calldata amounts, bool deposit ) external view returns ( uint256 );
   function calc_token_amount ( uint256[3] calldata amounts, bool deposit ) external view returns ( uint256 );
-  function calc_withdraw_one_coin ( uint256 token_amount, uint256 i ) external view returns ( uint256 );
-  function remove_liquidity_one_coin ( uint256 token_amount, uint256 i, uint256 min_amount ) external returns ( uint256 );
+  function calc_withdraw_one_coin ( uint256 token_amount, int128 i ) external view returns ( uint256 );
+  function remove_liquidity_one_coin ( uint256 token_amount, int128 i, uint256 min_amount ) external returns ( uint256 );
   function claim_admin_fees (  ) external;
   function ramp_A_gamma ( uint256 future_A, uint256 future_gamma, uint256 future_time ) external;
   function stop_ramp_A_gamma (  ) external;

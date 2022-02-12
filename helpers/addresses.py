@@ -2,7 +2,7 @@ import pandas as pd
 
 from dotmap import DotMap
 from web3 import Web3
-
+import json
 
 ADDRESSES_ETH = {
     "zero": "0x0000000000000000000000000000000000000000",
@@ -375,7 +375,7 @@ ADDRESSES_ETH = {
         "T": "0xCdF7028ceAB81fA0C6971208e83fa7872994beE5",
     },
     "uniswap": {
-        "routerV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
         "v3pool_wbtc_badger": "0xe15e6583425700993bd08F51bF6e7B73cd5da91B",
         "NonfungiblePositionManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
         "routerV2": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
@@ -397,6 +397,9 @@ ADDRESSES_ETH = {
     "uma": {
         "DIGG_LongShortPair": "0x65DCcd928C71ef98e6eC887FEA24d116765c8A8D",
     },
+    "nft": {
+        "badger_jersey": "0xe1e546e25A5eD890DFf8b8D005537c0d373497F8"
+    }
 }
 
 ADDRESSES_IBBTC = {
@@ -665,6 +668,10 @@ def checksum_address_dict(addresses):
         else:
             print(k, v, "formatted incorrectly")
     return checksummed
+
+
+with open('helpers/chaindata.json') as chaindata:
+    chain_ids = json.load(chaindata)
 
 
 registry = DotMap({
