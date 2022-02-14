@@ -316,6 +316,10 @@ ADDRESSES_ETH = {
     "routers": {
         "sushi_router_v2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
     },
+    "fei": {
+        "jump_rate_model_fei_eth": "0xbAB47e4B692195BF064923178A90Ef999A15f819",
+        "jump_rate_model_fei_dai": "0xEDE47399e2aA8f076d40DC52896331CBa8bd40f7",
+    },
     "_deprecated": {
         "native.renCrv": "0x6582a5b139fc1c6360846efdc4440d51aad4df7b",
         "native.sbtcCrv": "0xf1ded284e891943b3e9c657d7fc376b86164ffc2",

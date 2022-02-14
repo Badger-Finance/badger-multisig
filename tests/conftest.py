@@ -19,6 +19,11 @@ def safe():
 
 
 @pytest.fixture
+def dev():
+    return GreatApeSafe(registry_addr.eth.badger_wallets.dev_multisig)
+
+
+@pytest.fixture
 def USDC(safe):
     Contract.from_explorer(registry_addr.eth.treasury_tokens.USDC)
     usdc = MintableForkToken(
@@ -54,9 +59,11 @@ def aUSDC(safe):
     return safe.contract(registry_addr.eth.treasury_tokens.aUSDC)
 
 
+
 @pytest.fixture
 def sktAAVE(safe):
     return safe.contract(registry_addr.eth.treasury_tokens.stkAAVE)
+
 
 
 @pytest.fixture
@@ -90,6 +97,11 @@ def threepool_lptoken(safe):
 
 
 @pytest.fixture
+def threepool_lp(safe):
+    return safe.contract(registry_addr.eth.treasury_tokens.crv3pool)
+
+
+@pytest.fixture
 def CRV(safe):
     Contract.from_explorer(registry_addr.eth.treasury_tokens.CRV)
     crv = MintableForkToken(
@@ -113,9 +125,11 @@ def cUSDC(safe):
     return safe.contract(registry_addr.eth.treasury_tokens.cUSDC)
 
 
+
 @pytest.fixture
 def cETH(safe):
     return safe.contract(registry_addr.eth.treasury_tokens.cETH)
+
 
 
 @pytest.fixture
@@ -159,3 +173,10 @@ def cvxCRV(safe):
     return Contract(
         registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
     )
+
+
+# rari fixtures
+@pytest.fixture
+def rari(dev):
+    dev.init_rari()
+    return dev.rari
