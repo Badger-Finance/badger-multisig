@@ -95,6 +95,8 @@ class Curve:
 
     def _pool_has_wrapped_coins(self, pool):
         registry = self._get_registry(pool)
+        if registry == self.crypto_registry:
+            return False
         try:
             registry.get_underlying_balances(pool)
             return True
