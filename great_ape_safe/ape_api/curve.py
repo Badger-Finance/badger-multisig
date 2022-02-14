@@ -1,6 +1,7 @@
 import numpy as np
 from helpers.addresses import registry
 from brownie import Contract, ZERO_ADDRESS, interface
+from brownie.exceptions import VirtualMachineError
 
 
 class Curve:
@@ -13,7 +14,7 @@ class Curve:
         self.registry = safe.contract(self.provider.get_registry())
         self.pool_info = safe.contract(self.provider.get_address(1))
         self.exchanger = safe.contract(self.provider.get_address(2))
-        self.metapool_registry = safe.contract(self.provider.get_address(3))
+        self.factory_registry = safe.contract(self.provider.get_address(3))
         self.crypto_registry = safe.contract(self.provider.get_address(5))
         # parameters
         self.max_slippage_and_fees = 0.02
@@ -41,8 +42,8 @@ class Curve:
         if pool in cryptos:
             return self.crypto_registry
         try:
-            if "Factory" in pool.name():
-                return self.metapool_registry
+            if 'Factory' in pool.name():
+                return self.factory_registry
             else:
                 return self.registry
         except:
@@ -50,28 +51,17 @@ class Curve:
 
 
     def _get_pool_from_lp_token(self, lp_token):
-        if self.is_v2:
-            try:
-                pool_addr = Contract(lp_token).minter()
-                return Contract(pool_addr, owner=self.safe.account)
-            except:
-                # pool/token are the same
-                return lp_token
-        else:
-            registry = self._get_registry(lp_token)
-            if registry == self.metapool_registry or registry == self.crypto_registry:
-                if len(lp_token.get_balances()) == 2:
-                    return interface.IStableSwap2Pool(
-                        lp_token, owner=self.safe.account
-                    )
-                else:
-                    return interface.IStableSwap3Pool(
-                        lp_token, owner=self.safe.account
-                    )
-            else:
-                pool_addr = self.registry.get_pool_from_lp_token(lp_token)
-                # TODO: sort interfaces
-                return Contract(pool_addr, owner=self.safe.account)
+        pool_addr = None
+        is_normal = self.registry.get_pool_from_lp_token(lp_token)
+        if is_normal != ZERO_ADDRESS:
+            pool_addr = is_normal
+        is_factory = self.factory_registry.get_coins(lp_token)[0]
+        if is_factory != ZERO_ADDRESS:
+            pool_addr = lp_token.address
+        if pool_addr is None:
+            # is crypto or factory-crypto
+            pool_addr = lp_token.minter()
+        return Contract(pool_addr, owner=self.safe.account)
 
 
     def _get_coin_indices(self, pool, asset_in, asset_out):
@@ -96,17 +86,20 @@ class Curve:
 
 
     def _get_n_coins(self, lp_token):
-        registry = self._get_registry(lp_token)
         pool = self._get_pool_from_lp_token(lp_token)
-        if not self.is_v2 and registry == self.metapool_registry:
+        registry = self._get_registry(pool)
+        if not registry == self.registry:
             return registry.get_n_coins(pool)
-        else:
-            return registry.get_n_coins(pool)[0]
+        return registry.get_n_coins(pool)[0]
 
 
     def _pool_has_wrapped_coins(self, pool):
-        meta = self.pool_info.get_pool_info(pool.address).dict()
-        return 'underlying_balances' in meta
+        registry = self._get_registry(pool)
+        try:
+            registry.get_underlying_balances(pool)
+            return True
+        except VirtualMachineError:
+            return False
 
 
     def deposit(self, lp_token, mantissas, asset=None):
@@ -119,8 +112,8 @@ class Curve:
         # TODO: find and route through zaps automatically
         # TODO: could pass dict to mantissas with {address: mantissa} and sort
         #       out proper ordering automatically?
-        registry = self._get_registry(lp_token)
         pool = self._get_pool_from_lp_token(lp_token)
+        registry = self._get_registry(pool)
         n_coins = self._get_n_coins(lp_token)
 
         if type(mantissas) is not list and asset is not None:
@@ -152,6 +145,7 @@ class Curve:
         )
         assert lp_token.balanceOf(self.safe) > bal_before
 
+
     def withdraw(self, lp_token, mantissa):
         # unwrap `mantissa` amount of lp_token back to its underlyings
         # (in same ratio as pool is currently in)
@@ -167,11 +161,13 @@ class Curve:
         if receivables is not None:
             assert (np.array(receivables) > 0).all()
 
+
     def withdraw_to_one_coin(self, lp_token, mantissa, asset):
         # unwrap `mantissa` amount of `lp_token` but single sided; into `asset`
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity_one_coin
         pool = self._get_pool_from_lp_token(lp_token)
-        for i, coin in enumerate(self.registry.get_coins(pool)):
+        registry = self._get_registry(pool)
+        for i, coin in enumerate(registry.get_coins(pool)):
             if coin == asset.address:
                 expected = pool.calc_withdraw_one_coin(mantissa, i)
                 receiveable = pool.remove_liquidity_one_coin(
