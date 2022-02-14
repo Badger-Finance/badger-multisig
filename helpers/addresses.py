@@ -146,6 +146,8 @@ ADDRESSES_ETH = {
         "yvWBTC": "0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E",  ##TODO NO COINGECKO PRICE
         "aBADGER": "0x43298F9f91a4545dF64748e78a2c777c580573d6",
         "badgerWBTC_f": "0x137469B55D1f15651BA46A89D0588e97dD0B6562",
+        "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
+        "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
