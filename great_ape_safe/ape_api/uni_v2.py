@@ -1,4 +1,4 @@
-from brownie import web3
+from brownie import interface, web3
 from helpers.addresses import registry
 
 
@@ -55,7 +55,7 @@ class UniV2:
             >= liquidity * (1 - self.max_slippage) + slp_balance
         )
 
-    def remove_liquidity(self, toETH, slp, slp_amount):
+    def remove_liquidity(self, slp, slp_amount, to_eth=False):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapexacttokensforeth
         slp.approve(self.router, slp_amount)
 
@@ -85,8 +85,10 @@ class UniV2:
             self.safe
         ) >= balance_initial_tokenB + expected_asset1 * (1 - self.max_slippage)
 
-        if toETH:
-            weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
+        if to_eth:
+            weth = interface.IWETH9(
+                registry.eth.treasury_tokens.WETH, owner=self.safe.account
+            )
 
             eth_initial_balance = self.safe.account.balance()
 
