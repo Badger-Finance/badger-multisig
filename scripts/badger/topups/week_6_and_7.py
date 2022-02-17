@@ -39,16 +39,25 @@ def main():
     df['value'].append(topup / Decimal('1e18'))
 
     # https://github.com/Badger-Finance/badger-multisig/issues/118
+    # https://github.com/Badger-Finance/badger-multisig/issues/136
     # add badger to the tree for weekly emissions:
     week_6_emissions = Decimal('33561.65978447947')
-    week_6_rembadger = Decimal('7692.307692')
-    tree_badger_deficit = Decimal('205_000') # roughly
+    week_7_emissions = Decimal('34565.28490125317')
+    week_6_and_7_rembadger_emissions = Decimal('7692.307692') * 2
+    tree_badger_deficit = Decimal('242_000') # roughly on 14th Feb
     catch_up_on_deficit = Decimal('50_000')
     df['token_address'].append(registry.eth.treasury_tokens.BADGER)
     df['receiver'].append(registry.eth.badger_wallets.badgertree)
     df['value'].append(
-        week_6_emissions + week_6_rembadger + catch_up_on_deficit
+        week_6_emissions + week_7_emissions + week_6_and_7_rembadger_emissions + catch_up_on_deficit
     )
+
+    # https://github.com/Badger-Finance/badger-multisig/issues/112
+    # bi-weeky tx to remBADGER sett
+    week_7_biweekly_transfer_rembadger = Decimal('11538.461538')
+    df['token_address'].append(registry.eth.treasury_tokens.BADGER)
+    df['receiver'].append(registry.eth.sett_vaults.remBADGER)
+    df['value'].append(week_7_biweekly_transfer_rembadger)
 
     # turn dict of lists into dataframe and add additional columns needed by
     # the gnosis app
@@ -59,7 +68,7 @@ def main():
     # build dataframe for airdrop and dump to csv
     airdrop = df[['token_type', 'token_address', 'receiver', 'value', 'id']]
     airdrop.to_csv(
-        'scripts/badger/topups/week_6.csv',
+        'scripts/badger/topups/week_6_and_7.csv',
         index=False,
         header=['token_type', 'token_address', 'receiver', 'value', 'id'],
     )
