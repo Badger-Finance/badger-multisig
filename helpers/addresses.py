@@ -312,6 +312,8 @@ ADDRESSES_ETH = {
         "fETH-22": "0xd557C7f29201E296c7b689ef42dc48c9862aFb87",
         "fDAI-22": "0x20D6762fFC948116627d4437C0F0DF7D20198158",
         "fIBBTC-22": "0x6856f0e1BD23c9a1b92f87581Dd2f28E7C84EbcD",
+        "fFRAX-22": "0x60fb6aecf861e3f16f7a4dcaddf8d8820244a1cd",
+        "fDOLA-22": "0x5117D9453cC9Be8c3fBFbA4aE3B858D18fe45903",
     },
     "routers": {
         "sushi_router_v2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
