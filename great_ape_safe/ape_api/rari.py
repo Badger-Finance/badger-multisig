@@ -50,3 +50,12 @@ class Rari():
         ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
         ftoken._setInterestRateModel(rate_model_addr)
         assert self.ftoken_get_rate_model(ftoken_addr) == rate_model_addr
+
+
+    def add_ftoken_to_pool(self, ftoken_addr, cf=None):
+        assert ftoken_addr not in self.unitroller.getAllMarkets()
+        if cf:
+            self.unitroller._supportMarketAndSetCollateralFactor(ftoken_addr, cf)
+        else:
+            self.unitroller._supportMarket(ftoken_addr)
+        assert ftoken_addr in self.unitroller.getAllMarkets()
