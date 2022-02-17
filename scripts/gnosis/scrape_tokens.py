@@ -29,7 +29,6 @@ def scrape(address, receiver=''):
         token_list = list(registry.eth.treasury_tokens.values()) + \
             list(registry.eth.sett_vaults.values()) + \
             list(registry.eth.rari.values())
-        print(token_list)
         token_data = {'token_type': [], 'token_address': [], 'receiver': [], 'value': [], 'id': []}
 
         scraping = progress.add_task("[yellow]Scraping...", total=len(token_list))
