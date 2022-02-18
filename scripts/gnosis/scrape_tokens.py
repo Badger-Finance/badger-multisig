@@ -26,18 +26,18 @@ def main():
 
 def scrape(address, receiver=''):
     with Progress() as progress:
-        token_list = list(registry.eth.treasury_tokens.values()) + \
+        token_set = set(list(registry.eth.treasury_tokens.values()) + \
             list(registry.eth.sett_vaults.values()) + \
-            list(registry.eth.rari.values())
+            list(registry.eth.rari.values()))
         token_data = {'token_type': [], 'token_address': [], 'receiver': [], 'value': [], 'id': []}
 
-        scraping = progress.add_task("[yellow]Scraping...", total=len(token_list))
+        scraping = progress.add_task("[yellow]Scraping...", total=len(token_set))
         table = Table()
 
         for key in token_data:
             table.add_column(key, justify="right", style="bright_yellow")
 
-        for token_addr in token_list:
+        for token_addr in token_set:
             if token_addr in [registry.eth.rari.dai_manager, registry.eth.rari.unitroller]:
                 continue
             token = Contract(token_addr)
