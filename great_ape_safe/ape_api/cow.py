@@ -13,7 +13,7 @@ from helpers.addresses import registry
 class Cow():
     """
     docs: https://docs.cow.fi/
-    explorer: https://gnosis-protocol.io/
+    explorer: https://explorer.cow.fi/
     api reference: https://api.cow.fi/docs/
     """
 
@@ -42,7 +42,7 @@ class Cow():
 
 
     def _sell(self, sell_token, mantissa_sell, buy_token,
-        mantissa_buy, deadline):
+        mantissa_buy, deadline, coef=1):
         """call api to get sell quote and post order"""
 
         # make sure mantissa is an integer
@@ -71,7 +71,7 @@ class Cow():
             assert type(mantissa_buy) == int
             buy_amount_after_fee = mantissa_buy
         else:
-            buy_amount_after_fee = int(r.json()['buyAmountAfterFee'])
+            buy_amount_after_fee = int(int(r.json()['buyAmountAfterFee']) * coef)
         assert fee_amount > 0
         assert buy_amount_after_fee > 0
 
@@ -136,7 +136,7 @@ class Cow():
             sys.exit()
 
 
-    def market_sell(self, asset_sell, asset_buy, mantissa_sell, deadline=60*60, chunks=1):
+    def market_sell(self, asset_sell, asset_buy, mantissa_sell, deadline=60*60, chunks=1, coef=1):
         """
         wrapper for _sell method;
         mantissa_sell is exact and order is submitted at quoted rate
@@ -151,7 +151,8 @@ class Cow():
                 asset_buy,
                 mantissa_buy=None,
                 # without + n api will raise DuplicateOrder when chunks > 1
-                deadline=deadline + n
+                deadline=deadline + n,
+                coef=coef
             )
 
 
