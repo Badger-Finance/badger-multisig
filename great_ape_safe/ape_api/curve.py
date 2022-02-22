@@ -87,10 +87,12 @@ class Curve:
 
     def _get_n_coins(self, lp_token):
         pool = self._get_pool_from_lp_token(lp_token)
-        registry = self._get_registry(pool)
-        if not registry == self.registry:
+        on_normal_registry = self.registry.get_n_coins(pool)
+        if on_normal_registry != (0, 0):
+            return on_normal_registry[0]
+        else:
+            registry = self._get_registry(pool)
             return registry.get_n_coins(pool)
-        return registry.get_n_coins(pool)[0]
 
 
     def _pool_has_wrapped_coins(self, pool):

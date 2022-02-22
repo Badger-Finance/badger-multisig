@@ -148,7 +148,11 @@ class GreatApeSafe(ApeSafe):
             if token == ETH_ADDRESS:
                 df.at[token, 'mantissa_after'] = Decimal(self.account.balance())
             else:
-                df.at[token, 'mantissa_after'] = Decimal(interface.ERC20(token).balanceOf(self))
+                try:
+                    token = Contract(token) if type(token) != Contract else token
+                except:
+                    token = Contract.from_explorer(token) if type(token) != Contract else token
+                df.at[token.address, 'mantissa_after'] = Decimal(token.balanceOf(self))
 
         # calc deltas
         df['balance_before'] = df['mantissa_before'] / 10 ** df['decimals']
