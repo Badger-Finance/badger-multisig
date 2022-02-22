@@ -19,7 +19,11 @@ def main():
         owner=safe.account
     )
 
+    safe.take_snapshot(tokens=[bveCVX.address, bbveCVX.address])
+
     bveCVX.approve(bbveCVX, bveCVX.balanceOf(safe))
     bbveCVX.depositAll()
+
+    safe.print_snapshot()
 
     safe.post_safe_tx()
