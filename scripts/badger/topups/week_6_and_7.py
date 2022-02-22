@@ -59,6 +59,13 @@ def main():
     df['receiver'].append(registry.eth.sett_vaults.remBADGER)
     df['value'].append(week_7_biweekly_transfer_rembadger)
 
+    # https://github.com/Badger-Finance/badger-multisig/issues/154
+    # techops fronted some badger for tree
+    fronted = Decimal('6603.208250737497461487')
+    df['token_address'].append(registry.eth.treasury_tokens.BADGER)
+    df['receiver'].append(registry.eth.badger_wallets.techops_multisig)
+    df['value'].append(fronted)
+
     # turn dict of lists into dataframe and add additional columns needed by
     # the gnosis app
     df = pd.DataFrame(df)
