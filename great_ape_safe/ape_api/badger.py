@@ -3,6 +3,7 @@ import os
 import requests
 
 from brownie import chain, interface
+from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
 
 from helpers.addresses import registry
@@ -80,14 +81,35 @@ class Badger():
         """
         # this does not leverage the `claimMulti` func yet but just loops
         for symbol, token_addr in eligible_claims.items():
+            print(symbol)
             directory = 'data/Votium/merkle/'
-            last_json = sorted(os.listdir(directory + symbol))[-1]
+            try:
+                last_json = sorted(os.listdir(directory + symbol))[-1]
+            except FileNotFoundError:
+                # given token is not a votium reward
+                continue
             with open(directory + symbol + f'/{last_json}') as f:
                 try:
                     leaf = json.load(f)['claims'][self.strat_bvecvx.address]
                 except KeyError:
                     # no claimables for the strat for this particular token
                     continue
+                try:
+                    self.strat_bvecvx.claimBribeFromVotium.call(
+                        token_addr,
+                        leaf['index'],
+                        self.strat_bvecvx.address,
+                        leaf['amount'],
+                        leaf['proof']
+                    )
+                except VirtualMachineError as e:
+                    if str(e) == 'revert: Drop already claimed.':
+                        continue
+                    if str(e) == 'revert: SafeERC20: low-level call failed':
+                        # $ldo claim throws this on .call, dont know why
+                        pass
+                    else:
+                        raise
                 self.strat_bvecvx.claimBribeFromVotium(
                     token_addr,
                     leaf['index'],
@@ -111,7 +133,8 @@ class Badger():
             )
             if claimable > 0:
                 claimables.append(token_addr)
-        self.strat_bvecvx.claimBribesFromConvex(claimables)
+        if len(claimables) > 0:
+            self.strat_bvecvx.claimBribesFromConvex(claimables)
 
 
     def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
