@@ -133,7 +133,8 @@ class Badger():
             )
             if claimable > 0:
                 claimables.append(token_addr)
-        self.strat_bvecvx.claimBribesFromConvex(claimables)
+        if len(claimables) > 0:
+            self.strat_bvecvx.claimBribesFromConvex(claimables)
 
 
     def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
