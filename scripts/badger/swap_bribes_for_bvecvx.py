@@ -35,7 +35,7 @@ def multi_approve():
         if token.balanceOf(SAFE) > 0:
             print(_, token.balanceOf(SAFE))
             token.approve(SAFE.cow.vault_relayer, token.balanceOf(SAFE))
-    SAFE.post_safe_tx(call_trace=True, replace_nonce=18)
+    SAFE.post_safe_tx(call_trace=True)
 
 
 def multi_sell():
