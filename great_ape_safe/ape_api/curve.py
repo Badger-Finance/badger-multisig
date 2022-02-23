@@ -32,7 +32,7 @@ class Curve:
         # get corresponding registry of lp token, either the 'normal' one,
         # metapool, crypto or v2 (factory-crypto).
         if self.is_v2:
-            return self.registry
+            return self.factory_crypto_registry
         cryptos = []
         for i in range(32):
             addr = self.crypto_registry.pool_list(i)
@@ -87,6 +87,8 @@ class Curve:
 
     def _get_n_coins(self, lp_token):
         pool = self._get_pool_from_lp_token(lp_token)
+        if self.is_v2:
+            return self.factory_crypto_registry.get_n_coins(pool)[0]
         on_normal_registry = self.registry.get_n_coins(pool)
         if on_normal_registry != (0, 0):
             return on_normal_registry[0]

@@ -11,11 +11,12 @@ class CurveV2(Curve):
         self.crv = interface.ERC20(registry.eth.treasury_tokens.CRV)
         # contracts
         self.provider = safe.contract(registry.eth.curve.provider)
-        # self.registry = safe.contract(self.provider.get_registry())
-        self.registry   = safe.contract(registry.eth.curve.factory)
+        self.registry = safe.contract(self.provider.get_registry())
+        self.pool_info = safe.contract(self.provider.get_address(1))
         self.exchanger = safe.contract(self.provider.get_address(2))
-        self.metapool_registry = safe.contract(self.provider.get_address(3))
+        self.factory_registry = safe.contract(self.provider.get_address(3))
         self.crypto_registry = safe.contract(self.provider.get_address(5))
+        self.factory_crypto_registry = safe.contract(registry.eth.curve.factory)
         # parameters
         self.max_slippage_and_fees = .02
         self.is_v2 = True
