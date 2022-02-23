@@ -25,7 +25,7 @@ class UniV2:
         )[0]
 
 
-    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None):
+    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
         destination = self.safe.address if not destination else destination
 
