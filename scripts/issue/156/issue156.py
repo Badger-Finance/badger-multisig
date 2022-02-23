@@ -10,19 +10,19 @@ def main():
 
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 
-    bveCVX = interface.ICurveLP(
+    bvecvx_cvx_lp = interface.ICurveLP(
         registry.eth.treasury_tokens['bveCVX-CVX-f'],
         owner=safe.account
 )
-    bbveCVX = interface.ISettV4h(
+    bbveCVX_sett = interface.ISettV4h(
         registry.eth.sett_vaults['bbveCVX-CVX-f'],
         owner=safe.account
     )
 
-    safe.take_snapshot(tokens=[bveCVX.address, bbveCVX.address])
+    safe.take_snapshot(tokens=[bvecvx_cvx_lp.address, bbveCVX.address])
 
-    bveCVX.approve(bbveCVX, bveCVX.balanceOf(safe))
-    bbveCVX.depositAll()
+    bvecvx_cvx_lp.approve(bbveCVX_sett, bvecvx_cvx_lp.balanceOf(safe))
+    bbveCVX_sett.depositAll()
 
     safe.print_snapshot()
 
