@@ -46,16 +46,21 @@ class Badger():
         self.api_url = 'https://api.badger.finance/v2/'
 
 
-    def claim_all(self):
+    def claim_all(self, json_file_path=None):
         """
         note: badger tree checks if `cycle` passed is equal to latest cycle,
         if not it will revert. therefore call is very time-sensitive!
         """
-        url = self.api_url + 'reward/tree/' + self.safe.address
+        
+        if not json_file_path:
+            url = self.api_url + 'reward/tree/' + self.safe.address
 
-        # grab args from api endpoint
-        response = requests.get(url)
-        json_data = response.json()
+            # grab args from api endpoint
+            response = requests.get(url)
+            json_data = response.json()
+        else:
+            file = open(json_file_path)
+            json_data = json.load(file)['claims'][self.safe.address]
 
         amounts_claimable = self.tree.getClaimableFor(
             self.safe.address,
