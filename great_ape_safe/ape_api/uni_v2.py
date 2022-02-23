@@ -1,6 +1,7 @@
 from brownie import interface, web3
 from helpers.addresses import registry
-
+from sympy import Symbol
+from sympy.solvers import solve
 
 class UniV2:
     def __init__(self, safe):
@@ -12,6 +13,16 @@ class UniV2:
         self.max_slippage = 0.02
         self.max_weth_unwrap = 0.01
         self.deadline = 60 * 60 * 12
+
+
+    def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
+        # calc amount of `lp_token` to withdraw from pool to get `mantissa_underlying` of `underlying_token`
+        x = Symbol('x')
+        reserve_index = 0 if lp_token.token0() == underlying_token else 1
+        return solve(
+            (lp_token.getReserves()[reserve_index] * x / lp_token.totalSupply()) - mantissa_underlying, x
+        )[0]
+
 
     def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
