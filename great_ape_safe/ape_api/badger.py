@@ -208,6 +208,7 @@ class Badger():
                 C.print(f'whitelisting {candidate_addr} on {sett_addr}...')
                 sett.approveContractAccess(candidate_addr)
                 assert sett.approved(candidate_addr)
+                return True
             elif governor == self.timelock.address:
                 C.print(f'whitelisting {candidate_addr} on {sett_addr} through timelock...')
                 self.queue_timelock(
@@ -217,8 +218,10 @@ class Badger():
                     dump_dir=f'data/badger/timelock/whitelister/',
                     delay_in_days=4.3
                 )
+                return True
             else:
                 C.print(f'cannot whitelist on {sett_addr}: no governance\n', style='dark_orange')
+                return False
 
 
     def wire_up_controller(self, controller_addr, vault_addr, strat_addr):
