@@ -19,7 +19,7 @@ class UniV2:
         # calc amount of `lp_token` to withdraw from pool to get `mantissa_underlying` of `underlying_token`
         # credit: https://github.com/Badger-Finance/badger-multisig/blob/a0eab1de153d99fd00bb696ba93ba1fab60a1266/scripts/issue/159/withdraw_9_digg_from_tcl.py
         x = Symbol('x')
-        reserve_index = 0 if lp_token.token0() == underlying_token else 1
+        reserve_index = [lp_token.token0(), lp_token.token1()].index(underlying_token)
         return solve(
             (lp_token.getReserves()[reserve_index] * x / lp_token.totalSupply()) - mantissa_underlying, x
         )[0]
