@@ -1,4 +1,4 @@
-from brownie import interface, web3
+from brownie import accounts, interface, web3
 from helpers.addresses import registry
 
 
@@ -13,8 +13,11 @@ class UniV2:
         self.max_weth_unwrap = 0.01
         self.deadline = 60 * 60 * 12
 
-    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None):
+
+    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
+        destination = self.safe.address if not destination else destination
+
         pair_address = self.factory.getPair(tokenA, tokenB)
         pair = self.safe.contract(pair_address)
 
@@ -46,17 +49,20 @@ class UniV2:
             mantissaB,
             quote_token1_min * (1 - self.max_slippage),
             quote_token0_min * (1 - self.max_slippage),
-            self.safe.address,
+            destination,
             web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
         ).return_value
 
         assert (
-            pair.balanceOf(self.safe)
+            pair.balanceOf(destination)
             >= liquidity * (1 - self.max_slippage) + slp_balance
         )
 
-    def remove_liquidity(self, slp, slp_amount, to_eth=False):
+
+    def remove_liquidity(self, slp, slp_amount, destination=None, to_eth=False):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapexacttokensforeth
+        destination = self.safe.address if not destination else destination
+
         slp.approve(self.router, slp_amount)
 
         tokenA = self.safe.contract(slp.token0())
@@ -74,15 +80,15 @@ class UniV2:
             slp_amount,
             expected_asset0 * (1 - self.max_slippage),
             expected_asset1 * (1 - self.max_slippage),
-            self.safe.address,
+            destination,
             web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
         ).return_value
 
         assert tokenA.balanceOf(
-            self.safe
+            destination
         ) >= balance_initial_tokenA + expected_asset0 * (1 - self.max_slippage)
         assert tokenB.balanceOf(
-            self.safe
+            destination
         ) >= balance_initial_tokenB + expected_asset1 * (1 - self.max_slippage)
 
         if to_eth:
@@ -99,8 +105,11 @@ class UniV2:
                 >= eth_initial_balance + received_asset1 * (1 - self.max_weth_unwrap)
             )
 
-    def swap_tokens_for_tokens(self, tokenIn, amountIn, path, recipient):
+
+    def swap_tokens_for_tokens(self, tokenIn, amountIn, path, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapexacttokensfortokens
+        destination = self.safe.address if not destination else destination
+
         tokenOut = path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
 
@@ -111,16 +120,20 @@ class UniV2:
             amountIn,
             amountOut * (1 - self.max_slippage),
             path,
-            recipient,
+            destination,
             web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
         )
 
-        assert tokenOut.balanceOf(self.safe) >= balance_tokenOut + amountOut * (
-            1 - self.max_slippage
+        assert (
+            tokenOut.balanceOf(destination)
+            >= balance_tokenOut + amountOut * (1 - self.max_slippage)
         )
 
-    def swap_exact_eth_for_tokens(self, amountIn, path, recipient):
+
+    def swap_exact_eth_for_tokens(self, amountIn, path, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapethforexacttokens
+        destination = self.safe.address if not destination else destination
+
         tokenOut = path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
 
@@ -134,17 +147,21 @@ class UniV2:
         self.router.swapExactETHForTokens(
             amountOut * (1 - self.max_slippage),
             path,
-            recipient,
+            destination,
             web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
             {"value": amountIn},
         )
 
-        assert tokenOut.balanceOf(self.safe) >= balance_tokenOut + amountOut * (
-            1 - self.max_slippage
+        assert (
+            tokenOut.balanceOf(destination)
+            >= balance_tokenOut + amountOut * (1 - self.max_slippage)
         )
 
-    def swap_exact_tokens_for_eth(self, tokenIn, amountIn, path, recipient):
+
+    def swap_exact_tokens_for_eth(self, tokenIn, amountIn, path, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapexacttokensforeth
+        destination = self.safe.address if not destination else destination
+
         eth_initial_balance = self.safe.account.balance()
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
 
@@ -154,10 +171,11 @@ class UniV2:
             amountIn,
             amountOut * (1 - self.max_slippage),
             path,
-            recipient,
+            destination,
             web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
         )
 
-        assert self.safe.account.balance() >= eth_initial_balance + amountOut * (
-            1 - self.max_slippage
+        assert (
+            accounts.at(destination, force=True).balance()
+            >= eth_initial_balance + amountOut * (1 - self.max_slippage)
         )
