@@ -1,8 +1,10 @@
 from brownie import web3
-
+from rich.console import Console
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
+
+console = Console()
 
 # assuming dev_multisig
 SAFE = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
@@ -15,10 +17,13 @@ def all_setts(candidate_addr):
     the address `candidate` to interact with it. In case of timelock being the
     governor, queue the approval through the timelock.
     """
+    approved = []
     candidate_addr = web3.toChecksumAddress(candidate_addr)
 
     for sett_name, sett_addr in registry.eth.sett_vaults.items():
-        SAFE.badger.whitelist(candidate_addr, sett_addr, sett_name)
+        if SAFE.badger.whitelist(candidate_addr, sett_addr):
+            approved.append(sett_name)
+    console.print('whitelisted/queued:', approved)
     SAFE.post_safe_tx()
 
 
@@ -31,5 +36,6 @@ def single_sett(candidate_addr, sett_addr):
     candidate_addr = web3.toChecksumAddress(candidate_addr)
     sett_addr = web3.toChecksumAddress(sett_addr)
 
-    SAFE.badger.whitelist(candidate_addr, sett_addr)
+    if SAFE.badger.whitelist(candidate_addr, sett_addr):
+        console.print('whitelisted/queued:', sett_addr)
     SAFE.post_safe_tx()
