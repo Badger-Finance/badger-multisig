@@ -55,7 +55,7 @@ class Rari():
     def add_ftoken_to_pool(self, ftoken_addr, cf=None):
         assert ftoken_addr not in self.unitroller.getAllMarkets()
         if cf:
-            self.unitroller._supportMarketAndSetCollateralFactor(ftoken_addr, cf)
+            self.unitroller._supportMarketAndSetCollateralFactor(ftoken_addr, cf * 1e18)
         else:
             self.unitroller._supportMarket(ftoken_addr)
         assert ftoken_addr in self.unitroller.getAllMarkets()
