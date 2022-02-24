@@ -11,6 +11,8 @@ TREASURY_VAULT = registry.eth.badger_wallets.treasury_vault_multisig
 
 BADGER_GEYSER = registry.eth.badger_geyser
 
+TOLERANCE = 0.95
+
 def main(upgrade="true", simulation="false"):
     badger_token = interface.IBadger(registry.eth.treasury_tokens.BADGER)
 
@@ -115,7 +117,7 @@ def main(upgrade="true", simulation="false"):
         balance_checker.verifyBalance(
             badger_token.address,
             BADGER_GEYSER,
-            geyser_deficit + geyser_balance
+            geyser_deficit + (geyser_balance * TOLERANCE) # Geyser balance may change from post
         )
 
         # Once the Geyser has enough BADGER within, we can
