@@ -6,14 +6,14 @@ from helpers.addresses import registry
 
 EXTRA_WALLETS = [] # also consider these badger wallets that do not prefix ops_
 
-DEFAULT_AMOUNT = 20 # target balance for any ops_* badger wallet
-EXEC_AMOUNT = 10 # target balance for any ops_executor* badger wallet
+DEFAULT_AMOUNT = 20e18 # target balance for any ops_* badger wallet
+EXEC_AMOUNT = 10e18 # target balance for any ops_executor* badger wallet
 OVERRIDE_AMOUNT = { # override DEFAULT_AMOUNT for exceptional badger wallets
-    'ops_botsquad': 150,
-    'ops_deployer': 50,
-    'ops_external_harvester': 30,
+    'ops_botsquad': 150e18,
+    'ops_deployer': 50e18,
+    'ops_external_harvester': 30e18,
 }
-MIN_TRANSFER = 2 # if difference is less than min, transfer min amount instead
+MIN_TRANSFER = 2e18 # if difference is less than min, transfer min amount instead
 
 
 def main():
@@ -42,14 +42,14 @@ def main():
             post_topup_amount = DEFAULT_AMOUNT
 
         # figure out deposit amount and transfer
-        if ftm_balance < Wei(f'{post_topup_amount} ether'):
+        if ftm_balance < post_topup_amount:
             # needs top-up
             wallets[wallet_name] = GreatApeSafe(wallet_address)
             wallets[wallet_name].take_snapshot(tokens=[])
-            top_up = Wei(f'{post_topup_amount} ether') - ftm_balance
-            if top_up < Wei(f'{MIN_TRANSFER} ether'):
-                top_up = Wei(f'{MIN_TRANSFER} ether')
-            total_ftm += Wei(top_up).to('ether')
+            top_up = post_topup_amount - ftm_balance
+            if top_up < MIN_TRANSFER:
+                top_up = MIN_TRANSFER
+            total_ftm += top_up
             safe.account.transfer(wallet_address, top_up)
 
     for wallet_name, wallet_obj in wallets.items():
