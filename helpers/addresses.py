@@ -664,6 +664,16 @@ ADDRESSES_RINKEBY = {
     },
 }
 
+ADDRESSES_FANTOM = {
+    "badger_wallets": {
+        "treasury_ops_multisig": "0x337a32FA07eD51Aae1a7923427063B299A2307bd",
+        "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
+        "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
+        "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
+    },
+}
+
 
 def checksum_address_dict(addresses):
     """
@@ -692,6 +702,7 @@ registry = DotMap({
     "poly": checksum_address_dict(ADDRESSES_POLYGON),
     "arbitrum": checksum_address_dict(ADDRESSES_ARBITRUM),
     "rinkeby": checksum_address_dict(ADDRESSES_RINKEBY),
+    "ftm": checksum_address_dict(ADDRESSES_FANTOM),
 })
 
 # flatten nested dicts and invert the resulting key <-> value
