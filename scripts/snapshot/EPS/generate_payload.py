@@ -5,10 +5,10 @@ path_dirname = f"{os.path.dirname(__file__)}/distribution_csv_gnosis"
 
 # PUT HERE THE FILES TO GENERATE FROM THE BIG CSV PAYLOAD FILE
 PAYLOAD_FILES = [
-    "distribution-2022-01-06.csv",
-    "distribution-2022-01-13.csv",
-    "distribution-2022-01-20.csv",
-    "distribution-2022-01-27.csv",
+    "distribution-2022-02-03.csv",
+    "distribution-2022-02-10.csv",
+    "distribution-2022-02-17.csv",
+    "distribution-2022-02-24.csv",
 ]
 
 

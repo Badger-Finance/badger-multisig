@@ -6,6 +6,7 @@ from collections import defaultdict
 from datetime import timezone
 from fractions import Fraction
 from pathlib import Path
+from collections import deque
 
 import numpy as np
 from brownie import Contract, chain, web3, ZERO_ADDRESS
@@ -19,9 +20,12 @@ setts_entitled = [registry.eth.sett_vaults.bcvxCRV]
 
 namings = ["sett_cvxCrv"]
 
+# DAO's msig to blacklist from sett depositors / distribution
 badger_tree = registry.eth.badger_wallets.badgertree
 dev_multi = registry.eth.badger_wallets.dev_multisig
 techops = registry.eth.badger_wallets.techops_multisig
+treasury_ops = registry.eth.badger_wallets.treasury_ops_multisig
+ibbtc_multisig = registry.eth.badger_wallets.ibbtc_multisig
 
 dev_multi_bsc_latest = registry.bsc.badger_wallets.dev_multisig
 # "dev_multisig_deprecated": "0x6DA4c138Dd178F6179091C260de643529A2dAcfe",
@@ -31,10 +35,14 @@ url_deprecated = "https://www.convexfinance.com/api/eps/address-airdrop-info?add
 url = "https://www.convexfinance.com/api/eps/address-airdrop-info?address=0x329543f0F4BB134A3f7a826DC32532398B38a3fA"
 
 last_weeks = [
-    "2022-01-27",
-    "2022-01-20",
-    "2022-01-13",
-    "2022-01-06"
+    "2022-02-24",
+    "2022-02-17",
+    "2022-02-10",
+    "2022-02-03",
+    # "2022-01-27",
+    # "2022-01-20",
+    # "2022-01-13",
+    # "2022-01-06"
     # "2021-12-30",
     # "2021-12-23",
     # "2021-12-16",
@@ -88,10 +96,16 @@ def get_depositors_sett(start_block):
                 if i.args["from"] == ZERO_ADDRESS or i.args["from"] == badger_tree
             )
 
-        # remove from the addresses ----> dev_multi & badgertre
-        addresses.remove(dev_multi)
-        addresses.remove(badger_tree)
-        # addresses.remove(techops)
+        # remove from the addresses ----> DAO's msigs
+        dao_msigs_to_remove = [
+            dev_multi,
+            badger_tree,
+            techops,
+            treasury_ops,
+            ibbtc_multisig,
+        ]
+        for addr in dao_msigs_to_remove:
+            addresses.remove(addr)
 
         sett_name = namings[idx]
         addresses_dict[sett_name] = sorted(addresses)
@@ -164,10 +178,18 @@ def get_proof(balances, snapshot_block, date):
         total_contributed = sum(balances.values())
 
         balances = {
-            k: int(Fraction(v * total_to_distribute / total_contributed))
+            k: int(Fraction(v * total_to_distribute, total_contributed))
             for k, v in balances.items()
         }
         balances = {k: v for k, v in balances.items() if v}
+
+        addresses = deque(balances)
+        while sum(balances.values()) < total_to_distribute:
+            balances[addresses[0]] += 1
+            addresses.rotate()
+
+        # check what is going to be distribute is equal to what was claimed
+        assert sum(balances.values()) == total_to_distribute
 
         elements = [
             (index, account, balances[account])
@@ -220,7 +242,7 @@ def main():
         addresses, height = get_depositors_sett(start_block)
         with addresses_json.open("w") as file:
             json.dump({"addresses": addresses, "latest": height}, file, indent=4)
-
+    
     for date in last_weeks:
         dt = datetime.datetime.strptime(f"{date} 00:00:00", "%Y-%m-%d %H:%M:%S")
         dt = dt.replace(tzinfo=timezone.utc)
