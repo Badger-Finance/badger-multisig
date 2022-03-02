@@ -56,20 +56,20 @@ def main(json_file_name=None):
 
     # generate csv files with deltas at run time
     vault.print_snapshot(
-        csv_destination=f"scripts/claimable_asset_csvs/claimable_snap/claimable_assets_{vault.address}_{datetime.date.today()}_block_{block_height}.csv",
+        csv_destination=f"scripts/claimable_asset_csvs/claimable_snaps/claimable_assets_{vault.address}_{datetime.date.today()}_block_{block_height}.csv",
     )
     dev.print_snapshot(
-        csv_destination=f"scripts/claimable_asset_csvs/claimable_snap/claimable_assets_{dev.address}_{datetime.date.today()}_block_{block_height}.csv"
+        csv_destination=f"scripts/claimable_asset_csvs/claimable_snaps/claimable_assets_{dev.address}_{datetime.date.today()}_block_{block_height}.csv"
     )
 
 
 def csv_diff(address=None, date=None, block_ref=None, block_against=None):
     latest_csv = pd.read_csv(
-        f"{os.path.dirname(__file__)}/claimable_snap/claimable_assets_{address}_{date}_block_{block_ref}.csv"
+        f"{os.path.dirname(__file__)}/claimable_snaps/claimable_assets_{address}_{date}_block_{block_ref}.csv"
     )
 
     oldest_csv = pd.read_csv(
-        f"{os.path.dirname(__file__)}/claimable_snap/claimable_assets_{address}_{date}_block_{block_against}.csv"
+        f"{os.path.dirname(__file__)}/claimable_snaps/claimable_assets_{address}_{date}_block_{block_against}.csv"
     )
 
     diff_csv = latest_csv.set_index("token").subtract(oldest_csv.set_index("token"))
