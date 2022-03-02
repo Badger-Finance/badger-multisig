@@ -18,6 +18,13 @@ def main():
 
     df = {'token_address': [], 'receiver': [], 'value': []}
 
+    # https://github.com/Badger-Finance/badger-multisig/issues/191
+    # send last bit of badger to deployer for bridging to arbi
+    arbi_emissions_q1 = Decimal('1100.4016999999994')
+    df['token_address'].append(registry.eth.treasury_tokens.BADGER)
+    df['receiver'].append(registry.eth.badger_wallets.ops_deployer2)
+    df['value'].append(arbi_emissions_q1)
+
     # https://github.com/Badger-Finance/badger-multisig/issues/196
     # add badger to the tree for weekly emissions
     week_9_badger_emissions = Decimal('35250.256355929996')
