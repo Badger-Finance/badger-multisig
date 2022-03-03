@@ -51,6 +51,15 @@ def main():
     df['receiver'].append(registry.eth.sett_vaults.remBADGER)
     df['value'].append(week_9_biweekly_transfer_rembadger)
 
+    # https://github.com/Badger-Finance/badger-multisig/issues/205
+    # lowest univ3 range has only been fulfilled partially
+    # ppfs makes this calc not precise at all but there is enough dust in trops
+    # to solve that
+    missing_wbtc = Decimal('57.74') - Decimal('30.46831914')
+    df['token_address'].append(registry.eth.sett_vaults.bcrvIbBTC)
+    df['receiver'].append(registry.eth.badger_wallets.treasury_ops_multisig)
+    df['value'].append(missing_wbtc)
+
     # clean usdc and eurs dust from 3eur farming
     dust_usdc = Decimal(usdc.balanceOf(safe)) / 10**usdc.decimals()
     df['token_address'].append(usdc.address)
