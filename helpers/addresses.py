@@ -546,6 +546,13 @@ ADDRESSES_ARBITRUM = {
         "techops_multisig": "0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C",
         "techops_multisig_deprecated": "0xF6BC36280F32398A031A7294e81131aEE787D178",
         "dev_multisig": "0x468A0FF843BC5D185D7B07e4619119259b03619f",
+        "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
+        "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
+        "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
+        "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
     "sett_vaults": {
         "bslpWbtcEth": "0xFc13209cAfE8fb3bb5fbD929eC9F11a39e8Ac041",
