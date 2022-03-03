@@ -7,15 +7,25 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, web3
+from brownie import Contract, interface, network, web3, ETH_ADDRESS
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
+from helpers.chaindata import labels
 
-from great_ape_safe.api_safe.aave import Aave
-from great_ape_safe.api_safe.compound import Compound
-from great_ape_safe.api_safe.convex import Convex
-from great_ape_safe.api_safe.curve import Curve
+from great_ape_safe.ape_api.aave import Aave
+from great_ape_safe.ape_api.badger import Badger
+from great_ape_safe.ape_api.compound import Compound
+from great_ape_safe.ape_api.convex import Convex
+from great_ape_safe.ape_api.cow import Cow
+from great_ape_safe.ape_api.curve import Curve
+from great_ape_safe.ape_api.curve_v2 import CurveV2
+from great_ape_safe.ape_api.opolis import Opolis
+from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
+from great_ape_safe.ape_api.rari import Rari
+from great_ape_safe.ape_api.sushi import Sushi
+from great_ape_safe.ape_api.uni_v2 import UniV2
+from great_ape_safe.ape_api.uni_v3 import UniV3
 
 
 C = Console()
@@ -26,6 +36,7 @@ class GreatApeSafe(ApeSafe):
     Child of ApeSafe object, with added functionalities:
     - contains a limited library of functions needed to ape in and out of known
       defi platforms (aave, compound, convex, curve)
+    - wrapper functions for setting (limit) orders on the cowswap protocol
     - can take a snapshot of its starting and ending balances and print the
       difference
     - one single function to estimate gas correctly (for both gnosis safe
@@ -34,18 +45,31 @@ class GreatApeSafe(ApeSafe):
 
 
     def __init__(self, address, base_url=None, multisend=None):
-        super().__init__(address, base_url=None, multisend=None)
+        super().__init__(address, base_url, multisend)
 
 
     def init_all(self):
         self.init_aave()
+        self.init_badger()
         self.init_compound()
         self.init_convex()
+        self.init_cow()
         self.init_curve()
+        self.init_curve_v2()
+        self.init_opolis()
+        self.init_pancakeswap_v2()
+        self.init_rari()
+        self.init_sushi()
+        self.init_uni_v2()
+        self.init_uni_v3()
 
 
     def init_aave(self):
         self.aave = Aave(self)
+
+
+    def init_badger(self):
+        self.badger = Badger(self)
 
 
     def init_compound(self):
@@ -56,17 +80,53 @@ class GreatApeSafe(ApeSafe):
         self.convex = Convex(self)
 
 
+    def init_cow(self):
+        self.cow = Cow(self, prod=True)
+
+
+    def init_cow_staging(self):
+        self.cow = Cow(self, prod=False)
+
+
     def init_curve(self):
         self.curve = Curve(self)
+
+
+    def init_curve_v2(self):
+        self.curve_v2 = CurveV2(self)
+
+
+    def init_opolis(self):
+        self.opolis = Opolis(self)
+
+
+    def init_pancakeswap_v2(self):
+        self.pancakeswap_v2 = PancakeswapV2(self)
+
+
+    def init_rari(self):
+        self.rari = Rari(self)
+
+
+    def init_sushi(self):
+        self.sushi = Sushi(self)
+
+
+    def init_uni_v2(self):
+        self.uni_v2 = UniV2(self)
+
+
+    def init_uni_v3(self):
+        self.uni_v3 = UniV3(self)
 
 
     def take_snapshot(self, tokens):
         C.print(f'snapshotting {self.address}...')
         df = {'address': [], 'symbol': [], 'mantissa_before': [], 'decimals': []}
-        df['address'].append('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
-        df['symbol'].append('ETH')
+        df['address'].append(ETH_ADDRESS)
+        df['symbol'].append(labels[network.chain.id])
         df['mantissa_before'].append(Decimal(self.account.balance()))
-        df['decimals'].append(18)
+        df['decimals'].append(Decimal(18))
         for token in tqdm(tokens):
             try:
                 token = Contract(token) if type(token) != Contract else token
@@ -80,15 +140,19 @@ class GreatApeSafe(ApeSafe):
         self.snapshot = pd.DataFrame(df)
 
 
-    def print_snapshot(self):
+    def print_snapshot(self, csv_destination=None):
         if self.snapshot is None:
             raise
         df = self.snapshot.set_index('address')
         for token in df.index.to_list():
-            if token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE':
+            if token == ETH_ADDRESS:
                 df.at[token, 'mantissa_after'] = Decimal(self.account.balance())
             else:
-                df.at[token, 'mantissa_after'] = Decimal(Contract(token).balanceOf(self))
+                try:
+                    token = Contract(token) if type(token) != Contract else token
+                except:
+                    token = Contract.from_explorer(token) if type(token) != Contract else token
+                df.at[token.address, 'mantissa_after'] = Decimal(token.balanceOf(self))
 
         # calc deltas
         df['balance_before'] = df['mantissa_before'] / 10 ** df['decimals']
@@ -104,6 +168,17 @@ class GreatApeSafe(ApeSafe):
         def locale_decimal(d):
             # format with thousands separator and 18 digits precision
             return '{0:,.18f}'.format(d)
+
+        if csv_destination:
+            # grab only symbol & delta
+            df_csv = pd.DataFrame(columns=["token", "claimable_amount"])
+            df_csv["token"] = df.index
+            df_csv["claimable_amount"] = df['balance_delta'].values
+            df_csv.to_csv(
+                csv_destination,
+                index=False,
+                header=["token", "claimable_amount"]
+            )
 
         C.print(f'snapshot result for {self.address}:')
         C.print(df.to_string(formatters=[locale_decimal, locale_decimal, locale_decimal]), '\n')
@@ -148,7 +223,7 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, log_name=None):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
@@ -157,9 +232,11 @@ class GreatApeSafe(ApeSafe):
         safe_tx = self.multisend_from_receipts()
         if not skip_preview:
             safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name)
+        if replace_nonce:
+            safe_tx._safe_nonce = replace_nonce
         if not silent:
             pprint(safe_tx.__dict__)
         if hasattr(self, 'snapshot'):
-            self.print_snapshot()
+            self.print_snapshot(csv_destination)
         if post:
             self.post_transaction(safe_tx)
