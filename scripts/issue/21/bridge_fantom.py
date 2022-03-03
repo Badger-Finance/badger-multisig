@@ -1,22 +1,25 @@
 import requests
 from pprint import pprint
 
-from brownie import Wei
+from brownie import interface
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
 FANTOM_CHAIN_ID = 250
-ETH_MANTISSA = 1 * 1e18
+WETH_MANTISSA = 1e18
 
 
 def main():
     """
-    bridge 1 eth over to the fantom msig
+    bridge 1 weth over to the fantom msig
     """
 
     techops = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
+    weth = interface.IWETH9(
+        registry.eth.treasury_tokens.WETH, owner=techops.account
+    )
 
     url = f'https://bridgeapi.anyswap.exchange/v2/serverInfo/'
 
@@ -42,10 +45,11 @@ def main():
 
     dest = info['SrcToken']['DcrmAddress']
 
-    # in case of ether:
-    techops.account.transfer(dest, ETH_MANTISSA)
+    weth.deposit({'value': WETH_MANTISSA})
+    weth.transfer(dest, WETH_MANTISSA)
 
-    # if ERC20; procedure is different
-    # erc20.transfer(dest, ERC20_MANTISSA)
+    # on ftm? by what address? permissionless?
+    # dest_token = interface.IAnyswapV5ERC20(info['DestToken']['ContractAddress'])
+    # dest_token.swapin(tx_hash, account, amount)
 
-    techops.post_safe_tx(post=False)
+    techops.post_safe_tx(post=False, call_trace=True)
