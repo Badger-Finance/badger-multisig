@@ -10,16 +10,24 @@ from helpers.addresses import registry
 FANTOM_CHAIN_ID = 250
 WETH_MANTISSA = 1e18
 
+TECHOPS = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
+WETH = interface.IWETH9(
+    registry.eth.treasury_tokens.WETH, owner=TECHOPS.account
+)
+FTM = interface.ERC20(registry.eth.treasury_tokens.FTM)
+
+
+def swap_eth_to_ftm():
+    #
+    TECHOPS.init_cow_staging()
+    TECHOPS.cow.market_sell_cheap(WETH, FTM, WETH_MANTISSA, deadline=60*60*4)
+    TECHOPS.post_safe_tx()
+
 
 def main():
     """
     bridge 1 weth over to the fantom msig
     """
-
-    techops = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
-    weth = interface.IWETH9(
-        registry.eth.treasury_tokens.WETH, owner=techops.account
-    )
 
     url = f'https://bridgeapi.anyswap.exchange/v2/serverInfo/'
 
@@ -45,11 +53,11 @@ def main():
 
     dest = info['SrcToken']['DcrmAddress']
 
-    weth.deposit({'value': WETH_MANTISSA})
-    weth.transfer(dest, WETH_MANTISSA)
+    WETH.deposit({'value': WETH_MANTISSA})
+    WETH.transfer(dest, WETH_MANTISSA)
 
     # on ftm? by what address? permissionless?
     # dest_token = interface.IAnyswapV5ERC20(info['DestToken']['ContractAddress'])
     # dest_token.swapin(tx_hash, account, amount)
 
-    techops.post_safe_tx(post=False, call_trace=True)
+    TECHOPS.post_safe_tx(post=False, call_trace=True)
