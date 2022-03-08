@@ -241,14 +241,14 @@ class GreatApeSafe(ApeSafe):
         if post:
             self.post_transaction(safe_tx)
 
-    def sign_with_frame_hardware_wallet(self, safe_nonce=None):
+    def sign_with_frame_hardware_wallet(self, safe_tx_nonce=None):
         # allows signing a SafeTx object with hardware wallet
         # posts the signature to gnosis endpoint
-        safe_tx = self.multisend_from_receipts(safe_nonce)
+        safe_tx = self.multisend_from_receipts(safe_nonce=safe_tx_nonce)
         signature = self.sign_with_frame(safe_tx)
         self.post_signature(safe_tx, signature)
 
-    def execute_with_frame_hardware_wallet(self, safe_nonce=None):
+    def execute_with_frame_hardware_wallet(self, safe_tx_nonce=None):
         # executes fully signed tx with frame thru hardware wallet
-        safe_tx = self.multisend_from_receipts(safe_nonce)
+        safe_tx = self.multisend_from_receipts(safe_nonce=safe_tx_nonce)
         self.execute_transaction_with_frame(safe_tx)
