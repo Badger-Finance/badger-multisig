@@ -4,10 +4,8 @@ from brownie import Wei, interface
 
 # Targets
 WD_IBBTC = 27.238487332137918
+MISSING_WBTC_IN_RANGE = 27.271680860000004
 TOKEN_ID = "198350"
-
-# tweaked it as we got some dust in treasury_ops ~ 0.048 wbtc
-SLIPPAGE = 0.998
 
 
 def main():
@@ -47,7 +45,7 @@ def main():
     safe.init_uni_v3()
 
     safe.uni_v3.increase_liquidity(
-        TOKEN_ID, wbtc, badger, wbtc.balanceOf(safe) * SLIPPAGE, 0
+        TOKEN_ID, wbtc, badger, MISSING_WBTC_IN_RANGE * 10 ** wbtc.decimals(), 0
     )
 
     safe.post_safe_tx(skip_preview=True)
