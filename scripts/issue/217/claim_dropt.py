@@ -28,7 +28,7 @@ def main():
     dropt_long_bal = dropt_long.balanceOf(safe)
     # redeem dropt-3 for bdigg
     dropt.settle(dropt_long_bal, 0)
-
+    
     bdigg.withdrawAll()
 
     safe.print_snapshot()
