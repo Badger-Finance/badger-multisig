@@ -17,9 +17,9 @@ def main(
 
     safe_nonce = int(safe_nonce) if safe_nonce is not None else None
 
-    if action_trigger == 0:
+    if int(action_trigger) == 0:
         safe.post_safe_tx()
-    elif action_trigger == 1:
+    elif int(action_trigger) == 1:
         safe.sign_with_frame_hardware_wallet(safe_nonce)
     else:
         safe.execute_with_frame_hardware_wallet(safe_nonce)
