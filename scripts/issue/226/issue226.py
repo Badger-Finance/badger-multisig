@@ -11,7 +11,7 @@ def main():
     safe.init_rari()
 
     fbveCVX = interface.IFToken(registry.eth.rari['fbveCVX-22'])
-    safe.rari.add_ftoken_to_pool(fbveCVX)
+    safe.rari.add_ftoken_to_pool(fbveCVX, cf=COLLATERAL_FACTOR)
     safe.rari.ftoken_pause(fbveCVX)
 
     safe.post_safe_tx()
