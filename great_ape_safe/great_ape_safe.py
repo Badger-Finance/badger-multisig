@@ -241,14 +241,52 @@ class GreatApeSafe(ApeSafe):
         if post:
             self.post_transaction(safe_tx)
 
+
+    def _safe_tx_to_dict(self, safe_tx):
+        # convert SafeTx obj to dict for readability
+        return {
+            'to': safe_tx.to,
+            'value': safe_tx.value,
+            'data': safe_tx.data.hex() if safe_tx.data else None,
+            'operation': safe_tx.operation,
+            'gasToken': safe_tx.gas_token,
+            'safeTxGas': safe_tx.safe_tx_gas,
+            'baseGas': safe_tx.base_gas,
+            'gasPrice': safe_tx.gas_price,
+            'refundReceiver': safe_tx.refund_receiver,
+            'nonce': safe_tx.safe_nonce,
+            'contractTransactionHash': safe_tx.safe_tx_hash.hex(),
+            'sender': safe_tx.sorted_signers[0],
+            'signature': safe_tx.signatures.hex() if safe_tx.signatures else None,
+        }
+
+
+    def _get_safe_tx_by_nonce(self, safe_nonce):
+        # retrieve SafeTx obj from pending transactions based on nonce
+        pending = self.pending_transactions
+        for safe_tx in pending:
+            if safe_tx.safe_nonce == safe_nonce:
+                return safe_tx
+        raise # didnt find safe_tx with corresponding nonce
+
+
     def sign_with_frame_hardware_wallet(self, safe_tx_nonce=None):
         # allows signing a SafeTx object with hardware wallet
         # posts the signature to gnosis endpoint
-        safe_tx = self.multisend_from_receipts(safe_nonce=safe_tx_nonce)
+        if safe_tx_nonce:
+            safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
+        else:
+            safe_tx = self.pending_transactions[0]
+        pprint(self._safe_tx_to_dict(safe_tx))
         signature = self.sign_with_frame(safe_tx)
         self.post_signature(safe_tx, signature)
 
+
     def execute_with_frame_hardware_wallet(self, safe_tx_nonce=None):
         # executes fully signed tx with frame thru hardware wallet
-        safe_tx = self.multisend_from_receipts(safe_nonce=safe_tx_nonce)
+        if safe_tx_nonce:
+            safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
+        else:
+            safe_tx = self.pending_transactions[0]
+        pprint(self._safe_tx_to_dict(safe_tx))
         self.execute_transaction_with_frame(safe_tx)
