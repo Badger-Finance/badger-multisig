@@ -29,6 +29,7 @@ def main():
     ])
 
     safe.badger.claim_all()
+    assert dropt_long.balanceOf(safe.badger.tree) == 0
 
     dropt_long_bal = dropt_long.balanceOf(safe)
     # redeem dropt-3 for bdigg
