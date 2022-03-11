@@ -221,7 +221,14 @@ interface IRariComptroller {
 
     function pendingAdmin() external view returns (address);
 
+    function _setPendingImplementation(address newPendingImplementation)
+        external
+        returns (uint256);
+
+    function _acceptImplementation() external returns (uint256);
+
     function pendingComptrollerImplementation() external view returns (address);
+    
 
     function redeemAllowed(
         address cToken,
