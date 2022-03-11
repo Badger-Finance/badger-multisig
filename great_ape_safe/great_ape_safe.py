@@ -256,7 +256,7 @@ class GreatApeSafe(ApeSafe):
             'refundReceiver': safe_tx.refund_receiver,
             'nonce': safe_tx.safe_nonce,
             'contractTransactionHash': safe_tx.safe_tx_hash.hex(),
-            'sender': safe_tx.sorted_signers[0],
+            'sender': safe_tx.sorted_signers[0] if safe_tx.sorted_signers else None,
             'signature': safe_tx.signatures.hex() if safe_tx.signatures else None,
         }
 
