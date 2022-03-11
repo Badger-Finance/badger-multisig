@@ -196,7 +196,6 @@ class GreatApeSafe(ApeSafe):
             # as we are modifying the tx, previous signatures are not valid anymore
             safe_tx.signatures = b''
         else:
-            safe_tx.safe_tx_gas = int(web3.eth.getBlock('latest').gasLimit * .8)
             receipt = self.preview(safe_tx, events, call_trace, reset)
             safe_tx.safe_tx_gas = 0
         if log_name:
