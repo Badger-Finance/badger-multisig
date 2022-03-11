@@ -86,7 +86,6 @@ class Badger():
         """
         aggregate = {'tokens': [], 'indexes': [], 'amounts': [], 'proofs': []}
         for symbol, token_addr in eligible_claims.items():
-            print(symbol)
             directory = 'data/Votium/merkle/'
             try:
                 last_json = sorted(os.listdir(directory + symbol))[-1]
