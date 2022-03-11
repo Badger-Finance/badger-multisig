@@ -686,6 +686,7 @@ ADDRESSES_FANTOM = {
         "dev_multisig": "0x4c56ee3295042f8A5dfC83e770a21c707CB46f5b",
         "techops_multisig": "0x781E82D5D49042baB750efac91858cB65C6b0582",
         "treasury_ops_multisig": "0xf109c50684EFa12d4dfBF501eD4858F25A4300B3",
+        "treasury_vault_multisig": "0x45b798384c236ef0d78311D98AcAEc222f8c6F54",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
