@@ -51,7 +51,7 @@ class Badger():
         note: badger tree checks if `cycle` passed is equal to latest cycle,
         if not it will revert. therefore call is very time-sensitive!
         """
-        
+
         if not json_file_path:
             url = self.api_url + 'reward/tree/' + self.safe.address
 
@@ -61,6 +61,10 @@ class Badger():
         else:
             file = open(json_file_path)
             json_data = json.load(file)['claims'][self.safe.address]
+
+        if 'message' in json_data.keys():
+            if json_data['message'] == f'{self.safe.address} does not have claimable rewards.':
+                return
 
         amounts_claimable = self.tree.getClaimableFor(
             self.safe.address,

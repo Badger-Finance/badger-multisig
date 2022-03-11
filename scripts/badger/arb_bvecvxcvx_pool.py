@@ -8,6 +8,7 @@ from helpers.addresses import registry
 
 TARGET = .55
 THRESHOLD = 5000
+MAX = 50_000e18 - 24_119e18 - 18_561e18
 
 
 def main():
@@ -47,6 +48,8 @@ def main():
         if mantissa_to_add >= bvecvx.balanceOf(safe):
             mantissa_to_add = bvecvx.balanceOf(safe)
         assert mantissa_to_add > THRESHOLD * 1e18
+        if mantissa_to_add > MAX:
+            mantissa_to_add = MAX
         safe.curve.deposit(bvecvxcvx, mantissa_to_add, bvecvx)
 
     bal_cvx = cvx.balanceOf(bvecvxcvx)
@@ -60,4 +63,5 @@ def main():
 
     assert bvecvx_dominance <= TARGET
 
+    safe.print_snapshot()
     safe.post_safe_tx()

@@ -24,6 +24,11 @@ def dev():
 
 
 @pytest.fixture
+def ibbtc_msig():
+    return GreatApeSafe(registry_addr.eth.badger_wallets.ibbtc_multisig)
+
+
+@pytest.fixture
 def USDC(safe):
     Contract.from_explorer(registry_addr.eth.treasury_tokens.USDC)
     usdc = MintableForkToken(
