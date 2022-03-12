@@ -88,9 +88,8 @@ class Badger():
         the official votium repo (https://github.com/oo-00/Votium) and its
         `values` being the respective token's address.
         """
-        # this does not leverage the `claimMulti` func yet but just loops
+        aggregate = {'tokens': [], 'indexes': [], 'amounts': [], 'proofs': []}
         for symbol, token_addr in eligible_claims.items():
-            print(symbol)
             directory = 'data/Votium/merkle/'
             try:
                 last_json = sorted(os.listdir(directory + symbol))[-1]
@@ -119,13 +118,18 @@ class Badger():
                         pass
                     else:
                         raise
-                self.strat_bvecvx.claimBribeFromVotium(
-                    token_addr,
-                    leaf['index'],
-                    self.strat_bvecvx.address,
-                    leaf['amount'],
-                    leaf['proof']
-                )
+                aggregate['tokens'].append(token_addr)
+                aggregate['indexes'].append(leaf['index'])
+                aggregate['amounts'].append(leaf['amount'])
+                aggregate['proofs'].append(leaf['proof'])
+        if len(aggregate['tokens']) > 0:
+            self.strat_bvecvx.claimBribesFromVotium(
+                self.strat_bvecvx.address,
+                aggregate['tokens'],
+                aggregate['indexes'],
+                aggregate['amounts'],
+                aggregate['proofs'],
+            )
 
 
     def claim_bribes_convex(self, eligible_claims):
