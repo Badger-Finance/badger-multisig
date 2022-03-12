@@ -70,5 +70,5 @@ class Rari():
 
     def upgrade_ftoken(self, ftoken_addr, implementation, allow_resign=False):
         ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
-        ftoken._setImplementation(implementation, False, b'')
+        ftoken._setImplementation(implementation, allow_resign, b'')
         assert ftoken.implementation() == implementation
