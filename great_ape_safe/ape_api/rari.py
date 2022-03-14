@@ -64,7 +64,9 @@ class Rari():
     def upgrade_comptroller(self, implementation):
         self.unitroller._setPendingImplementation(implementation)
         assert self.unitroller.pendingComptrollerImplementation() == implementation
-        comptroller = interface.IRariComptroller(implementation, self.safe.account)
+        comptroller = interface.IRariComptroller(
+            implementation, owner=self.safe.account
+        )
         comptroller._become(self.unitroller.address)
         assert self.unitroller.comptrollerImplementation() == implementation
 
