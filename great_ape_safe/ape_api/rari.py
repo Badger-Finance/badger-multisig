@@ -11,6 +11,9 @@ class Rari():
             registry.eth.rari.unitroller, owner=self.safe.account
         )
 
+        self.comptroller = interface.IRariComptroller(
+            registry.eth.rari.comptroller, self.safe.account
+        )
 
     def ftoken_is_paused(self, ftoken_addr):
         return self.unitroller.borrowGuardianPaused(ftoken_addr)
@@ -64,7 +67,8 @@ class Rari():
     def upgrade_comptroller(self, implementation):
         self.unitroller._setPendingImplementation(implementation)
         assert self.unitroller.pendingComptrollerImplementation() == implementation
-        self.unitroller._acceptImplementation()
+        comptroller = interface.IRariComptroller(implementation, self.safe.account)
+        comptroller._become(self.unitroller.address)
         assert self.unitroller.comptrollerImplementation() == implementation
 
 
