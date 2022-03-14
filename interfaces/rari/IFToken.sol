@@ -62,6 +62,12 @@ interface IFToken {
         uint256 reduceAmount,
         uint256 newTotalReserves
     );
+
+    event NewImplementation(
+        address oldImplementation,
+        address newImplementation
+    );
+
     event Transfer(address indexed from, address indexed to, uint256 amount);
 
     function _acceptAdmin() external returns (uint256);
