@@ -11,9 +11,6 @@ class Rari():
             registry.eth.rari.unitroller, owner=self.safe.account
         )
 
-        self.comptroller = interface.IRariComptroller(
-            registry.eth.rari.comptroller, self.safe.account
-        )
 
     def ftoken_is_paused(self, ftoken_addr):
         return self.unitroller.borrowGuardianPaused(ftoken_addr)
