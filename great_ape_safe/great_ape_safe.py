@@ -250,10 +250,6 @@ class GreatApeSafe(ApeSafe):
         raise # didnt find safe_tx with corresponding nonce
 
 
-    def post_safe_tx_for_frame_hardware_wallet(self):
-        pass
-
-
     def sign_with_frame_hardware_wallet(self, safe_tx_nonce=None):
         # allows signing a SafeTx object with hardware wallet
         # posts the signature to gnosis endpoint
