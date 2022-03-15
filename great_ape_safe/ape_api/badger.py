@@ -46,16 +46,25 @@ class Badger():
         self.api_url = 'https://api.badger.finance/v2/'
 
 
-    def claim_all(self):
+    def claim_all(self, json_file_path=None):
         """
         note: badger tree checks if `cycle` passed is equal to latest cycle,
         if not it will revert. therefore call is very time-sensitive!
         """
-        url = self.api_url + 'reward/tree/' + self.safe.address
 
-        # grab args from api endpoint
-        response = requests.get(url)
-        json_data = response.json()
+        if not json_file_path:
+            url = self.api_url + 'reward/tree/' + self.safe.address
+
+            # grab args from api endpoint
+            response = requests.get(url)
+            json_data = response.json()
+        else:
+            file = open(json_file_path)
+            json_data = json.load(file)['claims'][self.safe.address]
+
+        if 'message' in json_data.keys():
+            if json_data['message'] == f'{self.safe.address} does not have claimable rewards.':
+                return
 
         amounts_claimable = self.tree.getClaimableFor(
             self.safe.address,
@@ -79,9 +88,8 @@ class Badger():
         the official votium repo (https://github.com/oo-00/Votium) and its
         `values` being the respective token's address.
         """
-        # this does not leverage the `claimMulti` func yet but just loops
+        aggregate = {'tokens': [], 'indexes': [], 'amounts': [], 'proofs': []}
         for symbol, token_addr in eligible_claims.items():
-            print(symbol)
             directory = 'data/Votium/merkle/'
             try:
                 last_json = sorted(os.listdir(directory + symbol))[-1]
@@ -110,13 +118,18 @@ class Badger():
                         pass
                     else:
                         raise
-                self.strat_bvecvx.claimBribeFromVotium(
-                    token_addr,
-                    leaf['index'],
-                    self.strat_bvecvx.address,
-                    leaf['amount'],
-                    leaf['proof']
-                )
+                aggregate['tokens'].append(token_addr)
+                aggregate['indexes'].append(leaf['index'])
+                aggregate['amounts'].append(leaf['amount'])
+                aggregate['proofs'].append(leaf['proof'])
+        if len(aggregate['tokens']) > 0:
+            self.strat_bvecvx.claimBribesFromVotium(
+                self.strat_bvecvx.address,
+                aggregate['tokens'],
+                aggregate['indexes'],
+                aggregate['amounts'],
+                aggregate['proofs'],
+            )
 
 
     def claim_bribes_convex(self, eligible_claims):

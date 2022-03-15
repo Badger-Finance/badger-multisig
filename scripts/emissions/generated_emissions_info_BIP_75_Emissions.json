@@ -1,0 +1,582 @@
+{
+    "18-11-21": {
+        "timerange": {
+            "starttime": 1637254800,
+            "endtime": 1637798400
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 727.86,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Tricrypto Arb",
+                "address": "0x4591890225394BF66044347653e112621AF7DDeb",
+                "badger_allocation": 727.86,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Swapr ibBTC",
+                "address": "0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546",
+                "badger_allocation": 654.34,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 436.23,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Tricrypto",
+                "address": "0x27E98fC7d05f54E544d16F58C194C2D7ba71e3B5",
+                "badger_allocation": 1090.56,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable mBTC",
+                "address": "0x599D92B453C010b1050d31C364f6ee17E819f193",
+                "badger_allocation": 546.07,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable hBTC",
+                "address": "0x26B8efa69603537AC8ab55768b6740b67664D518",
+                "badger_allocation": 546.07,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1090.56,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Badger SLP",
+                "address": "0x1862A18181346EBd9EdAf800804f89190DeF24a5",
+                "badger_allocation": 4362.26,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "25-11-21": {
+        "timerange": {
+            "starttime": 1637798400,
+            "endtime": 1638403200
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 681.82,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Tricrypto Arb",
+                "address": "0x4591890225394BF66044347653e112621AF7DDeb",
+                "badger_allocation": 681.82,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Swapr ibBTC",
+                "address": "0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546",
+                "badger_allocation": 649.4,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 432.93,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Tricrypto",
+                "address": "0x27E98fC7d05f54E544d16F58C194C2D7ba71e3B5",
+                "badger_allocation": 1082.33,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 32377.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable mBTC",
+                "address": "0x599D92B453C010b1050d31C364f6ee17E819f193",
+                "badger_allocation": 541.64,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable hBTC",
+                "address": "0x26B8efa69603537AC8ab55768b6740b67664D518",
+                "badger_allocation": 541.64,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bveCVX/CVX",
+                "address": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
+                "badger_allocation": 2164.66,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1082.33,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Badger SLP",
+                "address": "0x1862A18181346EBd9EdAf800804f89190DeF24a5",
+                "badger_allocation": 4329.31,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "02-12-21": {
+        "timerange": {
+            "starttime": 1638403200,
+            "endtime": 1639008000
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 638.7,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Tricrypto Arb",
+                "address": "0x4591890225394BF66044347653e112621AF7DDeb",
+                "badger_allocation": 638.7,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Swapr ibBTC",
+                "address": "0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546",
+                "badger_allocation": 644.49,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 429.66,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Tricrypto",
+                "address": "0x27E98fC7d05f54E544d16F58C194C2D7ba71e3B5",
+                "badger_allocation": 1074.15,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 28687.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable mBTC",
+                "address": "0x599D92B453C010b1050d31C364f6ee17E819f193",
+                "badger_allocation": 537.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable hBTC",
+                "address": "0x26B8efa69603537AC8ab55768b6740b67664D518",
+                "badger_allocation": 537.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bveCVX/CVX",
+                "address": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
+                "badger_allocation": 2148.31,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1074.15,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Badger SLP",
+                "address": "0x1862A18181346EBd9EdAf800804f89190DeF24a5",
+                "badger_allocation": 4296.61,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "09-12-21": {
+        "timerange": {
+            "starttime": 1639008000,
+            "endtime": 1639612800
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 598.3,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Tricrypto Arb",
+                "address": "0x4591890225394BF66044347653e112621AF7DDeb",
+                "badger_allocation": 598.3,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Swapr ibBTC",
+                "address": "0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546",
+                "badger_allocation": 639.62,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 426.42,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Tricrypto",
+                "address": "0x27E98fC7d05f54E544d16F58C194C2D7ba71e3B5",
+                "badger_allocation": 1066.04,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 25034.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable mBTC",
+                "address": "0x599D92B453C010b1050d31C364f6ee17E819f193",
+                "badger_allocation": 533.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable hBTC",
+                "address": "0x26B8efa69603537AC8ab55768b6740b67664D518",
+                "badger_allocation": 533.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bveCVX/CVX",
+                "address": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
+                "badger_allocation": 2132.08,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1066.04,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Badger SLP",
+                "address": "0x1862A18181346EBd9EdAf800804f89190DeF24a5",
+                "badger_allocation": 4264.17,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "16-12-21": {
+        "timerange": {
+            "starttime": 1639612800,
+            "endtime": 1640217600
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 560.45,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Tricrypto Arb",
+                "address": "0x4591890225394BF66044347653e112621AF7DDeb",
+                "badger_allocation": 560.45,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Swapr ibBTC",
+                "address": "0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546",
+                "badger_allocation": 634.79,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 423.2,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Tricrypto",
+                "address": "0x27E98fC7d05f54E544d16F58C194C2D7ba71e3B5",
+                "badger_allocation": 1057.99,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 23819.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable mBTC",
+                "address": "0x599D92B453C010b1050d31C364f6ee17E819f193",
+                "badger_allocation": 529.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable hBTC",
+                "address": "0x26B8efa69603537AC8ab55768b6740b67664D518",
+                "badger_allocation": 529.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bveCVX/CVX",
+                "address": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
+                "badger_allocation": 2115.98,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1057.99,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Badger SLP",
+                "address": "0x1862A18181346EBd9EdAf800804f89190DeF24a5",
+                "badger_allocation": 4231.96,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "23-12-21": {
+        "timerange": {
+            "starttime": 1640217600,
+            "endtime": 1640822400
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 525.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Tricrypto Arb",
+                "address": "0x4591890225394BF66044347653e112621AF7DDeb",
+                "badger_allocation": 525.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Swapr ibBTC",
+                "address": "0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546",
+                "badger_allocation": 630.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 420.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Tricrypto",
+                "address": "0x27E98fC7d05f54E544d16F58C194C2D7ba71e3B5",
+                "badger_allocation": 1050.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 22611.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable mBTC",
+                "address": "0x599D92B453C010b1050d31C364f6ee17E819f193",
+                "badger_allocation": 525.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Mstable hBTC",
+                "address": "0x26B8efa69603537AC8ab55768b6740b67664D518",
+                "badger_allocation": 525.57,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bveCVX/CVX",
+                "address": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
+                "badger_allocation": 2100.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1050.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "Badger SLP",
+                "address": "0x1862A18181346EBd9EdAf800804f89190DeF24a5",
+                "badger_allocation": 4200.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    }
+}

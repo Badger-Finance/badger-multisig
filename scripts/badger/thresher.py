@@ -25,6 +25,9 @@ SBTC = interface.ERC20(registry.eth.treasury_tokens.sBTC, owner=SAFE.account)
 CRV = interface.ERC20(registry.eth.treasury_tokens.CRV, owner=SAFE.account)
 CVX = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=SAFE.account)
 CVXCRV = interface.ERC20(registry.eth.treasury_tokens.cvxCRV, owner=SAFE.account)
+BCVX = interface.ISettV4h(
+    registry.eth.treasury_tokens.bCVX, owner=SAFE.account
+)
 BCVXCRV = interface.ISettV4h(
     registry.eth.sett_vaults.bcvxCRV, owner=SAFE.account
 )
@@ -38,18 +41,24 @@ USDT = interface.ERC20(registry.eth.treasury_tokens.USDT, owner=SAFE.account)
 
 
 def consolidate_stables():
-    SAFE.curve.deposit(THREEPOOL, [
-        DAI.balanceOf(SAFE), USDC.balanceOf(SAFE), USDT.balanceOf(SAFE)
-    ])
+    amounts = [DAI.balanceOf(SAFE), USDC.balanceOf(SAFE), USDT.balanceOf(SAFE)]
+    if sum(amounts) > 0:
+        SAFE.curve.deposit(THREEPOOL, amounts)
 
 
 def dogfood_curve_convex():
-    SAFE.curve.swap(CRV, CVXCRV, CRV.balanceOf(SAFE))
-    CVXCRV.approve(BCVXCRV, 2**256-1)
-    BCVXCRV.depositAll()
-    CVXCRV.approve(BCVXCRV, 0)
-    CVX.approve(BVECVX, CVX.balanceOf(SAFE))
-    BVECVX.depositAll()
+    if CRV.balanceOf(SAFE) > 0:
+        SAFE.curve.swap(CRV, CVXCRV, CRV.balanceOf(SAFE))
+    if CVXCRV.balanceOf(SAFE) > 0:
+        CVXCRV.approve(BCVXCRV, 2**256-1)
+        BCVXCRV.depositAll()
+        CVXCRV.approve(BCVXCRV, 0)
+    if BCVX.balanceOf(SAFE) > 0:
+        BCVX.withdraw(BCVX.balanceOf(SAFE))
+    if CVX.balanceOf(SAFE) > 0:
+        CVX.approve(BVECVX, 2**256-1)
+        BVECVX.depositAll()
+        CVX.approve(BVECVX, 0)
 
 
 def unwind_lps():
@@ -77,6 +86,7 @@ def unwind_lps():
     setts.pop('bcvxCRV')
     setts.pop('bveCVX')
     setts.pop('bbveCVX-CVX-f')
+    setts.pop('remDIGG')
     for addr in setts.values():
         sett = interface.ISettV4h(addr, owner=SAFE.account)
         if sett.balanceOf(SAFE) > 0:
@@ -129,12 +139,14 @@ def dogfood_btc():
     )
 
     # deposit sbtc_lp directly into ibbtc_lp
-    SAFE.curve.deposit(IBBTC_LP, [0, SBTC_LP.balanceOf(SAFE) * DUSTY])
+    if SBTC_LP.balanceOf(SAFE) > 0:
+        SAFE.curve.deposit(IBBTC_LP, [0, SBTC_LP.balanceOf(SAFE) * DUSTY])
 
     # finally dogfood all into our own ibbtc sett
-    IBBTC_LP.approve(BIBBTC, 2**256-1)
-    BIBBTC.depositAll()
-    IBBTC_LP.approve(BIBBTC, 0)
+    if IBBTC_LP.balanceOf(SAFE) > 0:
+        IBBTC_LP.approve(BIBBTC, 2**256-1)
+        BIBBTC.depositAll()
+        IBBTC_LP.approve(BIBBTC, 0)
 
 
 def main():
