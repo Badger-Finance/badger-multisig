@@ -693,12 +693,6 @@ ADDRESSES_FANTOM = {
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
     },
-}
-
-ADDRESSES_FANTOM = {
-    "badger_wallets": {
-        "fantom_multisig": "0x337a32FA07eD51Aae1a7923427063B299A2307bd",
-    },
     "treasury_tokens": {
         "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
     }
