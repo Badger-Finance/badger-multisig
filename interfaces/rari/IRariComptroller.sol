@@ -26,6 +26,19 @@ interface IRariComptroller {
     event NewPauseGuardian(address oldPauseGuardian, address newPauseGuardian);
     event NewPriceOracle(address oldPriceOracle, address newPriceOracle);
 
+    event AdminRightsRenounced();
+    event FuseAdminRightsRenounced();
+    event NewAdmin(address oldAdmin, address newAdmin);
+    event NewImplementation(
+        address oldImplementation,
+        address newImplementation
+    );
+    event NewPendingAdmin(address oldPendingAdmin, address newPendingAdmin);
+    event NewPendingImplementation(
+        address oldPendingImplementation,
+        address newPendingImplementation
+    );
+
     function _become(address unitroller) external;
 
     function _borrowGuardianPaused() external view returns (bool);
@@ -221,7 +234,14 @@ interface IRariComptroller {
 
     function pendingAdmin() external view returns (address);
 
+    function _setPendingImplementation(address newPendingImplementation)
+        external
+        returns (uint256);
+
+    function _acceptImplementation() external returns (uint256);
+
     function pendingComptrollerImplementation() external view returns (address);
+    
 
     function redeemAllowed(
         address cToken,
