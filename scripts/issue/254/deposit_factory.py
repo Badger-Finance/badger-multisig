@@ -38,7 +38,8 @@ def main():
     console.print('wBTC needed:', wbtc_amount / 10 ** wbtc.decimals())
     console.print('wBTC have:', wbtc.balanceOf(safe) / 10 ** wbtc.decimals())
 
-    bibBTC.withdraw(Wei(f'{wbtc_amount / 10**wbtc.decimals()} ether'))
+    amount_to_withdraw = (wbtc_amount / 10**wbtc.decimals()) - (wbtc.balanceOf(safe) / 10**wbtc.decimals())
+    bibBTC.withdraw(Wei(f'{amount_to_withdraw} ether'))
 
     # zap curve lp to wbtc for deposit
     safe.curve.withdraw_to_one_coin_zapper(
