@@ -154,6 +154,7 @@ ADDRESSES_ETH = {
         "badgerWBTC_f": "0x137469B55D1f15651BA46A89D0588e97dD0B6562",
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
+        "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -693,6 +694,9 @@ ADDRESSES_FANTOM = {
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
     },
+    "treasury_tokens": {
+        "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
+    }
 }
 
 
