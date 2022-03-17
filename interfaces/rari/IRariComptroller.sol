@@ -219,9 +219,11 @@ interface IRariComptroller {
 
     function pauseGuardian() external view returns (address);
 
-    function pendingAdmin() external view returns (address);
-
-    function pendingComptrollerImplementation() external view returns (address);
+    function _deployMarket(
+        bool isCEther,
+        bytes calldata constructorData,
+        uint collateralFactorMantissa
+    ) external returns (uint256);
 
     function redeemAllowed(
         address cToken,
