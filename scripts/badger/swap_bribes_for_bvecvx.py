@@ -16,14 +16,12 @@ BVECVX = interface.ISettV4h(
 )
 TREE = GreatApeSafe(registry.eth.badger_wallets.badgertree)
 TECHOPS = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
-TROPS = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
+VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 
 WANT_TO_SELL = registry.eth.bribe_tokens_claimable.copy()
 WANT_TO_SELL.pop('CVX') # SameBuyAndSellToken
-WANT_TO_SELL.pop('T') # UnsupportedToken
 
 # not enough volume to make gas for swap worth it
-WANT_TO_SELL.pop('SPELL')
 WANT_TO_SELL.pop('MTA')
 WANT_TO_SELL.pop('NSBT')
 
@@ -49,7 +47,7 @@ def multi_sell():
     SAFE.post_safe_tx()
 
 
-def multi_sell_cheap(coef=.99):
+def multi_sell_cheap(coef=.98):
     SAFE.init_cow()
     for _, addr in WANT_TO_SELL.items():
         token = SAFE.contract(addr)
@@ -72,16 +70,16 @@ def swap_bvecvxcvxf_pool():
 def lock_cvx(perf_perc=.1575):
     SAFE.take_snapshot(tokens=[CVX.address, BVECVX.address])
     TREE.take_snapshot(tokens=[CVX.address, BVECVX.address])
-    TROPS.take_snapshot(tokens=[CVX.address, BVECVX.address])
+    VAULT.take_snapshot(tokens=[CVX.address, BVECVX.address])
 
     CVX.approve(BVECVX, CVX.balanceOf(SAFE))
     total = CVX.balanceOf(SAFE)
-    perf_fee = int(total * perf_perc)
+    perf_fee = int(total * float(perf_perc))
     emissions = total - perf_fee
-    BVECVX.depositFor(TROPS, perf_fee)
+    BVECVX.depositFor(VAULT, perf_fee)
     BVECVX.depositFor(TREE, emissions)
 
-    TROPS.print_snapshot()
+    VAULT.print_snapshot()
     TREE.print_snapshot()
     SAFE.print_snapshot()
 

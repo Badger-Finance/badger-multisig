@@ -7,17 +7,17 @@ from brownie import interface, chain, multicall
 from helpers.addresses import registry
 
 # general helpers and sdk
-from great_ape_safe.ape_api_helpers.uniswap_v3_sdk import (
+from great_ape_safe.ape_api.helpers.uni_v3 import (
+    print_position,
+    calc_all_accum_fees,
+)
+from great_ape_safe.ape_api.helpers.uni_v3_sdk import (
     getAmountsForLiquidity,
     getSqrtRatioAtTick,
     getAmount1Delta,
     getAmount0Delta,
     maxLiquidityForAmounts,
     BASE,
-)
-from great_ape_safe.ape_api_helpers.uniswap_v3_helpers import (
-    print_position,
-    calc_all_accum_fees,
 )
 
 

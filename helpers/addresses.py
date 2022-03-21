@@ -154,6 +154,7 @@ ADDRESSES_ETH = {
         "badgerWBTC_f": "0x137469B55D1f15651BA46A89D0588e97dD0B6562",
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
+        "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -550,7 +551,8 @@ ADDRESSES_ARBITRUM = {
         "badgertree": "0x635EB2C39C75954bb53Ebc011BDC6AfAAcE115A6",
         "techops_multisig": "0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C",
         "techops_multisig_deprecated": "0xF6BC36280F32398A031A7294e81131aEE787D178",
-        "dev_multisig": "0x468A0FF843BC5D185D7B07e4619119259b03619f",
+        "dev_multisig": "0xb364bAb258ad35dd83c7dd4E8AC78676b7aa1e9F",
+        "dev_multisig_deprecated": "0x468A0FF843BC5D185D7B07e4619119259b03619f",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
@@ -684,12 +686,18 @@ ADDRESSES_RINKEBY = {
 
 ADDRESSES_FANTOM = {
     "badger_wallets": {
-        "treasury_ops_multisig": "0x337a32FA07eD51Aae1a7923427063B299A2307bd",
+        "dev_multisig": "0x4c56ee3295042f8A5dfC83e770a21c707CB46f5b",
+        "techops_multisig": "0x781E82D5D49042baB750efac91858cB65C6b0582",
+        "treasury_ops_multisig": "0xf109c50684EFa12d4dfBF501eD4858F25A4300B3",
+        "treasury_vault_multisig": "0x45b798384c236ef0d78311D98AcAEc222f8c6F54",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
     },
+    "treasury_tokens": {
+        "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
+    }
 }
 
 

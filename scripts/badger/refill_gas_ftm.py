@@ -17,7 +17,7 @@ MIN_TRANSFER = 2e18 # if difference is less than min, transfer min amount instea
 
 
 def main():
-    safe = GreatApeSafe(registry.ftm.badger_wallets.treasury_ops_multisig)
+    safe = GreatApeSafe(registry.ftm.badger_wallets.techops_multisig)
     safe.take_snapshot(tokens=[])
 
     candidates = registry.ftm.badger_wallets.copy()
@@ -28,7 +28,7 @@ def main():
         # only refill ops_* wallets
         if not(wallet_name.startswith('ops_') or wallet_name in EXTRA_WALLETS):
             continue
-        if wallet_name == 'treasury_ops_multisig':
+        if wallet_name == 'techops_multisig':
             # no need to send ourselves eth
             continue
 
