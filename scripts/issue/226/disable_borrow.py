@@ -8,8 +8,8 @@ from eth_abi import encode_abi
 def main(ftoken_addr):
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_rari()
-
-    safe.rari.ftoken_pause(ftoken_addr)
+    
+    safe.rari.ftoken_pause(ftoken_addr, rf=0)
 
     if safe.rari.ftoken_get_admin_fee != 0:
         safe.rari.ftoken_set_admin_fee(0)
