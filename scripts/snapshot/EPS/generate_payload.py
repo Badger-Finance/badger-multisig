@@ -1,3 +1,5 @@
+from pycoingecko import CoinGeckoAPI
+
 import pandas as pd
 import os
 
@@ -13,6 +15,17 @@ PAYLOAD_FILES = [
 
 
 def main():
+    cg = CoinGeckoAPI()
+
+    spot_eps_price = cg.get_price(ids="ellipsis", vs_currencies="usd")["ellipsis"][
+        "usd"
+    ]
+
+    distribution_threshold = 1 / spot_eps_price
+
+    # for records to drop it into ticket
+    print(f"\nThreshold is {distribution_threshold} EPSs and current EPS price is ${spot_eps_price}\n")
+
     # create directory
     os.makedirs(f"{os.path.dirname(__file__)}/payload_gnosis_csv", exist_ok=True)
 
@@ -31,10 +44,13 @@ def main():
                 .reset_index()
             )
 
+    # removes dusty, only distribute those >= $1 of value
+    payload_df = payload_df[payload_df["value"] >= distribution_threshold]
+
     payload_df = payload_df.sort_values(by=["value"], ascending=False)
 
     # leave id section blank
-    payload_df['id'] = ''
+    payload_df["id"] = ""
 
     payload_df.to_csv(
         f"{os.path.dirname(__file__)}/payload_gnosis_csv/{PAYLOAD_FILES[0].replace('.csv', '')}_until_{PAYLOAD_FILES[-1].replace('.csv', '')}.csv",

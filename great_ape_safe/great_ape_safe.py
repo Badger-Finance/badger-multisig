@@ -7,13 +7,14 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, interface, network, web3, ETH_ADDRESS
+from brownie import Contract, network, ETH_ADDRESS
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
 from helpers.chaindata import labels
 
 from great_ape_safe.ape_api.aave import Aave
+from great_ape_safe.ape_api.anyswap import Anyswap
 from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
@@ -50,6 +51,7 @@ class GreatApeSafe(ApeSafe):
 
     def init_all(self):
         self.init_aave()
+        self.init_anyswap()
         self.init_badger()
         self.init_compound()
         self.init_convex()
@@ -66,6 +68,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_aave(self):
         self.aave = Aave(self)
+
+
+    def init_anyswap(self):
+        self.anyswap = Anyswap(self)
 
 
     def init_badger(self):
@@ -196,7 +202,6 @@ class GreatApeSafe(ApeSafe):
             # as we are modifying the tx, previous signatures are not valid anymore
             safe_tx.signatures = b''
         else:
-            safe_tx.safe_tx_gas = int(web3.eth.getBlock('latest').gasLimit * .8)
             receipt = self.preview(safe_tx, events, call_trace, reset)
             safe_tx.safe_tx_gas = 0
         if log_name:

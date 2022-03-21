@@ -10,5 +10,7 @@ reports/
 .DS_Store
 .pytest_cache
 Pipfile*
+data/Convex_EPS
+data/Votium
 
 node_modules

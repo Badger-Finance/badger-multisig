@@ -78,3 +78,19 @@ class Rari():
         else:
             self.unitroller._supportMarket(ftoken_addr)
         assert ftoken_addr in self.unitroller.getAllMarkets()
+
+
+    def upgrade_comptroller(self, implementation):
+        self.unitroller._setPendingImplementation(implementation)
+        assert self.unitroller.pendingComptrollerImplementation() == implementation
+        comptroller = interface.IRariComptroller(
+            implementation, owner=self.safe.account
+        )
+        comptroller._become(self.unitroller.address)
+        assert self.unitroller.comptrollerImplementation() == implementation
+
+
+    def upgrade_ftoken(self, ftoken_addr, implementation, allow_resign=False):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        ftoken._setImplementation(implementation, allow_resign, b'')
+        assert ftoken.implementation() == implementation
