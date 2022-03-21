@@ -16,27 +16,36 @@ class Rari():
         return self.unitroller.borrowGuardianPaused(ftoken_addr)
 
 
-    def ftoken_pause(self, ftoken_addr):
-        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+    def ftoken_pause(self, ftoken_addr, rf=None):
         self.unitroller._setBorrowPaused(ftoken_addr, True)
-        if ftoken.reserveFactorMantissa() != 0:
-            ftoken._setReserveFactor(0)
+        if rf:
+            if self.ftoken_get_rf(ftoken_addr) != rf:
+                self.ftoken_set_rf(ftoken_addr, rf)
         assert self.ftoken_is_paused(ftoken_addr)
-        assert ftoken.reserveFactor() == 0
 
 
-    def ftoken_unpause(self, ftoken_addr, rf=0.15):
-        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+    def ftoken_unpause(self, ftoken_addr, rf=None):
         self.unitroller._setBorrowPaused(ftoken_addr, False)
-        if ftoken.reserveFactorMantissa() / 1e18 != rf:
-            ftoken._setReserveFactor(rf * 1e18)
+        if rf:
+            if self.ftoken_get_rf() != rf:
+                self.ftoken_set_rf(ftoken_addr, rf)
         assert self.ftoken_is_paused(ftoken_addr) is False
-        assert ftoken.reserveFactorMantissa() / 1e18 == rf
 
 
     def ftoken_is_listed(self, ftoken_addr):
         is_listed, _ = self.unitroller.markets(ftoken_addr)
         return is_listed
+
+
+    def ftoken_get_rf(self, ftoken_addr):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        return ftoken.reserveFactorMantissa() / 1e18
+
+
+    def ftoken_set_rf(self, ftoken_addr, rf):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        ftoken._setReserveFactor(rf * 1e18)
+        assert self.ftoken_get_rf(ftoken_addr) == rf
 
 
     def ftoken_get_cf(self, ftoken_addr):
