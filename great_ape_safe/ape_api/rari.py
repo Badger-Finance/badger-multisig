@@ -18,7 +18,7 @@ class Rari():
 
     def ftoken_pause(self, ftoken_addr, rf=None):
         self.unitroller._setBorrowPaused(ftoken_addr, True)
-        if rf:
+        if rf is not None:
             if self.ftoken_get_rf(ftoken_addr) != rf:
                 self.ftoken_set_rf(ftoken_addr, rf)
         assert self.ftoken_is_paused(ftoken_addr)
@@ -26,7 +26,7 @@ class Rari():
 
     def ftoken_unpause(self, ftoken_addr, rf=None):
         self.unitroller._setBorrowPaused(ftoken_addr, False)
-        if rf:
+        if rf is not None:
             if self.ftoken_get_rf() != rf:
                 self.ftoken_set_rf(ftoken_addr, rf)
         assert self.ftoken_is_paused(ftoken_addr) is False
