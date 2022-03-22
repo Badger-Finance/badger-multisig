@@ -5,6 +5,7 @@ import requests
 from brownie import chain, interface
 from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
+from helpers.constants import AddressZero
 
 from helpers.addresses import registry
 from rich.console import Console
@@ -254,3 +255,15 @@ class Badger():
         controller.approveStrategy(want, strat_addr)
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
+
+
+    def set_key_on_registry(self, registry_addr, key, target_addr):
+        registry = interface.IBadgerRegistry(registry_addr, owner=self.safe.account)
+        
+        # Ensures key doesn't currently exist
+        assert registry.get(key) == AddressZero
+
+        registry.set(key, target_addr)
+
+        assert registry.get(key) == target_addr
+        C.print(f'{key} was added to the registry at {target_addr}')
