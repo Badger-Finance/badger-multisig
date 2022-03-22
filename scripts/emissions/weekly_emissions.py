@@ -3,7 +3,7 @@ from decimal import Decimal
 import json
 import datetime
 from rich.console import Console
-from brownie import Wei
+from brownie import Wei, Contract
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from scripts.emissions.dynamic_tvl_emissions import (
@@ -43,7 +43,8 @@ def weekly_emissions(data):
 
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     digg = safe.contract(treasury_tokens["DIGG"])
-    bcvxCRV = safe.contract(sett_vaults["bcvxCRV"])
+
+    #bcvxCRV = safe.contract(sett_vaults["bcvxCRV"])
 
     rewards_logger = safe.contract(registry.eth.rewardsLogger)
 
@@ -93,6 +94,11 @@ def weekly_emissions(data):
 
     # handle individually out of loop scope emissions for `bveCVX` as changes from BIP-75, they may change also in future better to leave them more accessible
 
+    """
+    #### LEAVING IT FOR RECORDS, REMOVED AS PER BIP-87 ####
+    
+    LINK -> https://forum.badger.finance/t/bip-87-bvecvx-restructure-voting-strategy-and-emissions-revised-with-community-feedback/5521
+
     # 1. here we will handle the cvxCrv emissions - pffs checkup for bcvxCRV sett
     # 20k as per BIP-75
     weekly_cvxCrv_target_amount = 20000
@@ -122,6 +128,7 @@ def weekly_emissions(data):
         time_range["endtime"],
         DURATION,
     )
+    """
 
     # console output
     print(
