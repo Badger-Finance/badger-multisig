@@ -8,14 +8,12 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     vault = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 
-    crvbadger = Contract(
+    crvbadger = interface.ICurveTokenV5(
         registry.eth.treasury_tokens.badgerWBTC_f, owner=safe.account
     )
     bcrvbadger = interface.ISettV4h(
         registry.eth.sett_vaults.bcrvBadger, owner=safe.account
     )
-
-    # bcrvbadger.approveContractAccess(safe, {'from': bcrvbadger.governance()})
 
     vault.take_snapshot([crvbadger, bcrvbadger])
     safe.take_snapshot([crvbadger, bcrvbadger])
