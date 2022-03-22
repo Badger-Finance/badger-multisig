@@ -16,19 +16,36 @@ class Rari():
         return self.unitroller.borrowGuardianPaused(ftoken_addr)
 
 
-    def ftoken_pause(self, ftoken_addr):
+    def ftoken_pause(self, ftoken_addr, rf=None):
         self.unitroller._setBorrowPaused(ftoken_addr, True)
+        if rf is not None:
+            if self.ftoken_get_rf(ftoken_addr) != rf:
+                self.ftoken_set_rf(ftoken_addr, rf)
         assert self.ftoken_is_paused(ftoken_addr)
 
 
-    def ftoken_unpause(self, ftoken_addr):
+    def ftoken_unpause(self, ftoken_addr, rf=None):
         self.unitroller._setBorrowPaused(ftoken_addr, False)
+        if rf is not None:
+            if self.ftoken_get_rf() != rf:
+                self.ftoken_set_rf(ftoken_addr, rf)
         assert self.ftoken_is_paused(ftoken_addr) is False
 
 
     def ftoken_is_listed(self, ftoken_addr):
         is_listed, _ = self.unitroller.markets(ftoken_addr)
         return is_listed
+
+
+    def ftoken_get_rf(self, ftoken_addr):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        return ftoken.reserveFactorMantissa() / 1e18
+
+
+    def ftoken_set_rf(self, ftoken_addr, rf):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        ftoken._setReserveFactor(rf * 1e18)
+        assert self.ftoken_get_rf(ftoken_addr) == rf
 
 
     def ftoken_get_cf(self, ftoken_addr):
@@ -50,6 +67,17 @@ class Rari():
         ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
         ftoken._setInterestRateModel(rate_model_addr)
         assert self.ftoken_get_rate_model(ftoken_addr) == rate_model_addr
+
+
+    def ftoken_get_admin_fee(self, ftoken_addr):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        return ftoken.adminFeeMantissa() / 1e18
+
+
+    def ftoken_set_admin_fee(self, ftoken_addr, admin_fee):
+        ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
+        ftoken._setAdminFee(admin_fee * 1e18)
+        assert self.ftoken_get_admin_fee(ftoken_addr) == admin_fee
 
 
     def add_ftoken_to_pool(self, ftoken_addr, cf=None):

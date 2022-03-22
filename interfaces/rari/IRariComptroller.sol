@@ -232,6 +232,12 @@ interface IRariComptroller {
 
     function pauseGuardian() external view returns (address);
 
+    function _deployMarket(
+        bool isCEther,
+        bytes calldata constructorData,
+        uint collateralFactorMantissa
+    ) external returns (uint256);
+
     function pendingAdmin() external view returns (address);
 
     function _setPendingImplementation(address newPendingImplementation)
