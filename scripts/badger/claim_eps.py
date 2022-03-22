@@ -47,10 +47,13 @@ last_weeks = [
     # "2022-01-13",
     # "2022-01-20",
     # "2022-01-27",
-    "2022-02-03",
-    "2022-02-10",
-    "2022-02-17",
-    "2022-02-24",
+    #"2022-02-03",
+    #"2022-02-10",
+    #"2022-02-17",
+    #"2022-02-24",
+    "2022-03-03",
+    "2022-03-10",
+    "2022-03-17", # last eps airdrop week, no 52w
 ]
 
 # claim contracts for the old multisig
@@ -90,10 +93,13 @@ merkle_airdrops_new = [
     # "0x7eB841876ca7b41e5c5b9E40718214e9Bf8c8186",
     # "0xF776ad79740115B826Ec4BcF3641329852625399",
     # "0x15418C448AE061e8765f4936e2df73C2852BF5e4",
-    "0xa0f8aeD5E5274D03114880bae562828314dE149d",
-    "0x16c0b34Dcee8a57A068500c5364A323B41Bd05cB",
-    "0xDAB55C39784b24C68C20b54f3f14494E208BA215",
-    "0xC850B3F0737B59C47Be7E3b3439C45567A0E95fB",
+    # "0xa0f8aeD5E5274D03114880bae562828314dE149d",
+    # "0x16c0b34Dcee8a57A068500c5364A323B41Bd05cB",
+    # "0xDAB55C39784b24C68C20b54f3f14494E208BA215",
+    # "0xC850B3F0737B59C47Be7E3b3439C45567A0E95fB",
+    "0x158F8f5B1cCb172bb79EAb75ED11eE70083f0e12",
+    "0x3EE776BE4Eb9Ac0a7D2DF18052d33fD13abaA476",
+    "0xfB5b140b85EC3a05b2E934dbABEc2c9251A3CEaf"
 ]
 
 
@@ -141,7 +147,7 @@ def claim(
 
     if last_week_or_pendandts:
         target_json = (
-            f"data/Convex_EPS/airdrop/eps/{claimable_weeks[-1].replace('-', '_')}/drop_proofs.json"
+            f"data/Convex_EPS/airdrop/eps/{claimable_weeks[-1]}/drop_proofs.json"
         )
         merkle_airdrop_contract = safe.contract(merkle_airdrop_source[-1])
         with open(target_json) as f:
@@ -190,4 +196,4 @@ def claim(
     print(f"\nEPS balance before claiming: {(eps_balance_before/DIVISOR):,.18f}")
     print(f"\nEPS balance after claiming: {(eps_balance_after/DIVISOR):,.18f}")
 
-    safe.post_safe_tx(skip_preview=True)
+    safe.post_safe_tx()
