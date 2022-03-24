@@ -42,8 +42,11 @@ class Cow():
 
 
     def _sell(self, sell_token, mantissa_sell, buy_token,
-        mantissa_buy, deadline, coef=1):
+        mantissa_buy, deadline, coef, destination):
         """call api to get sell quote and post order"""
+
+        # set destination to self if not specified
+        destination = self.safe.address if not destination else destination
 
         # make sure mantissa is an integer
         assert type(mantissa_sell) == int
@@ -82,7 +85,7 @@ class Cow():
         order_payload = {
             'sellToken': sell_token.address,
             'buyToken': buy_token.address,
-            'receiver': self.safe.address,
+            'receiver': destination,
             'sellAmount': str(mantissa_sell - fee_amount),
             'buyAmount': str(buy_amount_after_fee),
             'validTo': deadline,
@@ -136,7 +139,7 @@ class Cow():
             sys.exit()
 
 
-    def market_sell(self, asset_sell, asset_buy, mantissa_sell, deadline=60*60, chunks=1, coef=1):
+    def market_sell(self, asset_sell, asset_buy, mantissa_sell, deadline=60*60, chunks=1, coef=1, destination=None):
         """
         wrapper for _sell method;
         mantissa_sell is exact and order is submitted at quoted rate
@@ -152,11 +155,12 @@ class Cow():
                 mantissa_buy=None,
                 # without + n api will raise DuplicateOrder when chunks > 1
                 deadline=deadline + n,
-                coef=coef
+                coef=coef,
+                destination=destination
             )
 
 
-    def limit_sell(self, asset_sell, asset_buy, mantissa_sell, mantissa_buy, deadline=60*60, chunks=1):
+    def limit_sell(self, asset_sell, asset_buy, mantissa_sell, mantissa_buy, deadline=60*60, chunks=1, destination=None):
         """
         wrapper for _sell method;
         both the sell and buy mantissas are exact, resulting in a limit order
@@ -172,7 +176,9 @@ class Cow():
                 asset_buy,
                 mantissa_buy,
                 # without + n api will raise DuplicateOrder when chunks > 1
-                deadline + n
+                deadline=deadline + n,
+                coef=1,
+                destination=destination
             )
 
 
