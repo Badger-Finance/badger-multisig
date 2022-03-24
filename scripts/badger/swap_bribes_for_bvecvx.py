@@ -75,10 +75,10 @@ def swap_for_cvx_and_badger():
     SAFE.init_cow()
     SAFE.cow.allow_relayer(WETH, WETH.balanceOf(SAFE))
     SAFE.cow.market_sell(
-        WETH, BADGER, badger_share, deadline=60*60, coef=.98,
+        WETH, BADGER, badger_share, deadline=60*60, coef=.985,
         destination=TREE.address
     )
-    SAFE.cow.market_sell(WETH, CVX, cvx_share, deadline=60*60, coef=.98)
+    SAFE.cow.market_sell(WETH, CVX, cvx_share, deadline=60*60, coef=.985)
     SAFE.post_safe_tx()
 
 
