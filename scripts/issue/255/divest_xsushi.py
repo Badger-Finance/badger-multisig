@@ -37,11 +37,11 @@ def post_orders_to_cowswap():
     rest = SUSHI.balanceOf(TROPS) - half - 4 * a_tenth
     assert half + 4 * a_tenth + rest == SUSHI.balanceOf(TROPS)
     TROPS.cow.market_sell(SUSHI, CVX, half, deadline=60*60*24)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.99)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.98)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.97)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.96)
-    TROPS.cow.market_sell(SUSHI, CVX, rest, deadline=60*60*24*10, coef=.95)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.101)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.102)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.103)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=.104)
+    TROPS.cow.market_sell(SUSHI, CVX, rest, deadline=60*60*24*10, coef=.105)
     TROPS.post_safe_tx()
 
 
