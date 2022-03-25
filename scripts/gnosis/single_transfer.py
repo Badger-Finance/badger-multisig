@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from great_ape_safe import GreatApeSafe
 
 
@@ -11,6 +13,6 @@ def main(origin, token_addr, destination, mantissa):
 
     safe.take_snapshot(tokens=[token.address])
 
-    token.transfer(destination, float(mantissa))
+    token.transfer(destination, Decimal(mantissa))
 
     safe.post_safe_tx(call_trace=True)
