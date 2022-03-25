@@ -32,4 +32,6 @@ interface IPeak {
     function setGuardian(address) external;
 
     function paused() external view returns (bool);
+
+    function sweepUnprotectedToken(address _token, address _destination) external;
 }
