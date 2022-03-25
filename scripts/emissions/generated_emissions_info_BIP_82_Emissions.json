@@ -1071,7 +1071,7 @@
                 "network": "ETHEREUM",
                 "name": "bveCVX/CVX",
                 "address": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
-                "badger_allocation": 1904.22,
+                "badger_allocation": 0,
                 "digg_allocation": 0
             },
             {
