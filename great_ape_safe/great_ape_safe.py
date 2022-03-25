@@ -190,7 +190,7 @@ class GreatApeSafe(ApeSafe):
         C.print(df.to_string(formatters=[locale_decimal, locale_decimal, locale_decimal]), '\n')
 
 
-    def _set_safe_tx_gas(self, safe_tx, events, call_trace, reset, log_name):
+    def _set_safe_tx_gas(self, safe_tx, events, call_trace, reset, log_name, gas_coef):
         versions = safe_tx._safe_version.split('.')
         # safe_tx_gas is a hack for getting correct gas estimation in end user wallet's ui
         # but it is only needed on older versions of gnosis safes (<1.3.0)
@@ -198,7 +198,7 @@ class GreatApeSafe(ApeSafe):
             receipt = self.preview(safe_tx, events, call_trace, reset)
             gas_used = receipt.gas_used
             safe_tx_gas = max(gas_used * 64 // 63, gas_used + 2500) + 500
-            safe_tx.safe_tx_gas = 35_000 + int(1.5 * safe_tx_gas)
+            safe_tx.safe_tx_gas = 35_000 + int(gas_coef * safe_tx_gas)
             # as we are modifying the tx, previous signatures are not valid anymore
             safe_tx.signatures = b''
         else:
@@ -228,7 +228,7 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
@@ -236,7 +236,7 @@ class GreatApeSafe(ApeSafe):
         # post=True: make the actual live posting of the tx to the gnosis api
         safe_tx = self.multisend_from_receipts()
         if not skip_preview:
-            safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name)
+            safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name, gas_coef)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
@@ -245,3 +245,34 @@ class GreatApeSafe(ApeSafe):
             self.print_snapshot(csv_destination)
         if post:
             self.post_transaction(safe_tx)
+
+
+    def _get_safe_tx_by_nonce(self, safe_nonce):
+        # retrieve SafeTx obj from pending transactions based on nonce
+        pending = self.pending_transactions
+        for safe_tx in pending:
+            if safe_tx.safe_nonce == safe_nonce:
+                return safe_tx
+        raise # didnt find safe_tx with corresponding nonce
+
+
+    def sign_with_frame_hardware_wallet(self, safe_tx_nonce=None):
+        # allows signing a SafeTx object with hardware wallet
+        # posts the signature to gnosis endpoint
+        if safe_tx_nonce:
+            safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
+        else:
+            safe_tx = self.pending_transactions[0]
+        pprint(safe_tx.__dict__)
+        signature = self.sign_with_frame(safe_tx)
+        self.post_signature(safe_tx, signature)
+
+
+    def execute_with_frame_hardware_wallet(self, safe_tx_nonce=None):
+        # executes fully signed tx with frame thru hardware wallet
+        if safe_tx_nonce:
+            safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
+        else:
+            safe_tx = self.pending_transactions[0]
+        pprint(safe_tx.__dict__)
+        self.execute_transaction_with_frame(safe_tx)

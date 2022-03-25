@@ -17,6 +17,8 @@ BIBBTC = interface.ISettV4h(
 IBBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvIbBTC)
 IBBTC = interface.ERC20(registry.eth.treasury_tokens.ibBTC, owner=SAFE.account)
 SBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvSBTC)
+YVWBTC = SAFE.contract(registry.eth.treasury_tokens.yvWBTC)
+BYVWBTC = SAFE.contract(registry.eth.yearn_vaults.byvWBTC)
 RENBTC = interface.ERC20(
     registry.eth.treasury_tokens.renBTC, owner=SAFE.account
 )
@@ -111,6 +113,12 @@ def unwind_lps():
                         SAFE.curve.withdraw_to_one_coin(lp, bal_start, THREEPOOL)
                     except:
                         SAFE.curve.withdraw(lp, bal_start)
+
+    # exception: yearn vault and its sett
+    if BYVWBTC.balanceOf(SAFE):
+        BYVWBTC.withdraw()
+    if YVWBTC.balanceOf(SAFE):
+        YVWBTC.withdraw()
 
 
 def dogfood_btc():

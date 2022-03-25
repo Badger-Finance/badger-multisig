@@ -104,6 +104,7 @@ class Badger():
                     continue
                 try:
                     self.strat_bvecvx.claimBribeFromVotium.call(
+                        registry.eth.votium.multiMerkleStash,
                         token_addr,
                         leaf['index'],
                         self.strat_bvecvx.address,
@@ -124,6 +125,7 @@ class Badger():
                 aggregate['proofs'].append(leaf['proof'])
         if len(aggregate['tokens']) > 0:
             self.strat_bvecvx.claimBribesFromVotium(
+                registry.eth.votium.multiMerkleStash,
                 self.strat_bvecvx.address,
                 aggregate['tokens'],
                 aggregate['indexes'],
