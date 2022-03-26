@@ -3,6 +3,9 @@ swap_bribes_for_bvecvx.py: sell all collected convex and votium bribes for
 $bvecvx and $badger---as per bip87.
 """
 
+import calendar
+import datetime
+
 from brownie import Contract, interface
 
 from great_ape_safe import GreatApeSafe
@@ -107,6 +110,13 @@ def lock_cvx():
     VOTING_SAFE.print_snapshot()
     TREE.print_snapshot()
     SAFE.print_snapshot()
+
+    today = datetime.date.today()
+    friday = today + datetime.timedelta((4 - today.weekday()) % 7)
+    starting_time = calendar.timegm(friday.timetuple())
+    ending_time = starting_time + 14 * 24 * 60 * 60
+
+    print(f'brownie run emissions/bribes_emissions main {emissions} <badger_bought> {starting_time} {ending_time} {BADGER_SHARE} {OPS_FEE}\n')
 
     SAFE.post_safe_tx()
 
