@@ -283,6 +283,7 @@ ADDRESSES_ETH = {
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
         "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
+        "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
