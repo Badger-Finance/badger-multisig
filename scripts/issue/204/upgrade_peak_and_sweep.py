@@ -8,7 +8,7 @@ SAFE = GreatApeSafe(registry.eth.badger_wallets.dfdBadgerShared)
 NEW_LOGIC = registry.eth.logic["BadgerSettPeak"] 
 PEAK = interface.IPeak(registry.eth.peaks.badgerPeak, owner=SAFE.account)
 BVECVX = interface.ERC20(registry.eth.treasury_tokens.bveCVX)
-TREASURY_VAULT = registry.eth.badger_wallets.treasury_vault_multisig
+BVECVX_VOTING_MULTI = registry.eth.badger_wallets.bvecvx_voting_multisig
 BALANCE_CHECKER = interface.IBalanceChecker(registry.eth.helpers.balance_checker, owner=SAFE.account)
 
 # Atomically upgrades the BadgerSettPeak contract and calls the sweeping function
@@ -39,14 +39,14 @@ def main():
     assert pools == PEAK.pools(0)
 
     # Sweeps stuck bveCVX
-    vault_balance_before = BVECVX.balanceOf(TREASURY_VAULT)
+    vault_balance_before = BVECVX.balanceOf(BVECVX_VOTING_MULTI)
     peak_balance_before = BVECVX.balanceOf(PEAK.address)
 
-    PEAK.sweepUnprotectedToken(BVECVX.address, TREASURY_VAULT)
+    PEAK.sweepUnprotectedToken(BVECVX.address, BVECVX_VOTING_MULTI)
 
     BALANCE_CHECKER.verifyBalance(
         BVECVX.address, 
-        TREASURY_VAULT,
+        BVECVX_VOTING_MULTI,
         vault_balance_before + peak_balance_before
     )
     assert BVECVX.balanceOf(PEAK.address) == 0
