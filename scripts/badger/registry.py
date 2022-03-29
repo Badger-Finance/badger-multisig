@@ -9,13 +9,11 @@ console = Console()
 # assuming techOps
 SAFE = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 SAFE.init_badger()
-REGISTRY = registry.eth.registry
-
 
 def set_key(key, target_addr):
     """
     Sets the input target address on the registry under the specified 'key' 
     """
 
-    SAFE.badger.set_key_on_registry(REGISTRY, key, target_addr)
+    SAFE.badger.set_key_on_registry(key, target_addr)
     SAFE.post_safe_tx()

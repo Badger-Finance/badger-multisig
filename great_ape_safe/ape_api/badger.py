@@ -1,11 +1,12 @@
 import json
 import os
 import requests
+import brownie
 
 from brownie import chain, interface
 from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
-from helpers.constants import AddressZero
+# from helpers.constants import AddressZero
 
 from helpers.addresses import registry
 from rich.console import Console
@@ -41,6 +42,11 @@ class Badger():
         )
         self.timelock = safe.contract(
             registry.eth.governance_timelock
+        )
+
+        self.registry = interface.IBadgerRegistry(
+            registry.eth.registry,
+            owner=self.safe.account
         )
 
         # misc
@@ -257,13 +263,11 @@ class Badger():
         assert controller.strategies(want) == strat_addr
 
 
-    def set_key_on_registry(self, registry_addr, key, target_addr):
-        registry = interface.IBadgerRegistry(registry_addr, owner=self.safe.account)
-        
+    def set_key_on_registry(self, key, target_addr):
         # Ensures key doesn't currently exist
-        assert registry.get(key) == AddressZero
+        assert self.registry.get(key) == brownie.ZERO_ADDRESS
 
-        registry.set(key, target_addr)
+        self.registry.set(key, target_addr)
 
-        assert registry.get(key) == target_addr
+        assert self.registry.get(key) == target_addr
         C.print(f'{key} was added to the registry at {target_addr}')
