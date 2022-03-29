@@ -1,0 +1,652 @@
+{
+    "31-03-22": {
+        "timerange": {
+            "starttime": 1648684800,
+            "endtime": 1649289600
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "07-04-22": {
+        "timerange": {
+            "starttime": 1649289600,
+            "endtime": 1649894400
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "14-04-22": {
+        "timerange": {
+            "starttime": 1649894400,
+            "endtime": 1650499200
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "21-04-22": {
+        "timerange": {
+            "starttime": 1650499200,
+            "endtime": 1651104000
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "28-04-22": {
+        "timerange": {
+            "starttime": 1651104000,
+            "endtime": 1651708800
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "05-05-22": {
+        "timerange": {
+            "starttime": 1651708800,
+            "endtime": 1652313600
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "12-05-22": {
+        "timerange": {
+            "starttime": 1652313600,
+            "endtime": 1652918400
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "19-05-22": {
+        "timerange": {
+            "starttime": 1652918400,
+            "endtime": 1653523200
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "26-05-22": {
+        "timerange": {
+            "starttime": 1653523200,
+            "endtime": 1654128000
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "02-06-22": {
+        "timerange": {
+            "starttime": 1654128000,
+            "endtime": 1654732800
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "09-06-22": {
+        "timerange": {
+            "starttime": 1654732800,
+            "endtime": 1655337600
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "16-06-22": {
+        "timerange": {
+            "starttime": 1655337600,
+            "endtime": 1655942400
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    },
+    "23-06-22": {
+        "timerange": {
+            "starttime": 1655942400,
+            "endtime": 1656547200
+        },
+        "setts": [
+            {
+                "network": "ARBITRUM",
+                "name": "renBTC Arb",
+                "address": "0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843",
+                "badger_allocation": 476.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ARBITRUM",
+                "name": "Badger Swapr",
+                "address": "0xE9C12F06F8AFFD8719263FE4a81671453220389c",
+                "badger_allocation": 381.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "ibBTC/sBTC",
+                "address": "0xaE96fF08771a109dc6650a1BdCa62F2d558E40af",
+                "badger_allocation": 17591.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bcvxCRV",
+                "address": "0x2B5455aac8d64C14786c3a29858E43b5945819C0",
+                "badger_allocation": 1552.0,
+                "digg_allocation": 0
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "bDIGG",
+                "address": "0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a",
+                "badger_allocation": 0,
+                "digg_allocation": 2.5
+            },
+            {
+                "network": "ETHEREUM",
+                "name": "DIGG LP Sushi",
+                "address": "0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6",
+                "badger_allocation": 0,
+                "digg_allocation": 10.0
+            }
+        ]
+    }
+}
