@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+from decimal import Decimal
 
 from brownie import chain, interface
 from brownie.exceptions import VirtualMachineError
@@ -256,3 +257,12 @@ class Badger():
         controller.approveStrategy(want, strat_addr)
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
+
+
+    def from_gdigg_to_digg(self, gdigg):
+        digg = interface.IUFragments(
+            registry.eth.treasury_tokens.DIGG, owner=self.safe.account
+        )
+        return Decimal(
+            gdigg * digg._initialSharesPerFragment() / digg._sharesPerFragment()
+        )
