@@ -14,14 +14,13 @@ def main():
 
     # https://github.com/Badger-Finance/badger-multisig/issues/323
     # add badger to the tree for weekly emissions
-    week_14_badger_emissions = Decimal('17591')
-    week_14_other_emissions = Decimal('1552')
+    week_14_badger_emissions = Decimal('20_000')
     week_14_rembadger_emissions = Decimal('7692.307692')
     df["token_address"].append(registry.eth.treasury_tokens.BADGER)
     df["receiver"].append(registry.eth.badger_wallets.badgertree)
     # multiply by two to catch up on week 13
     df["value"].append(
-        (week_14_badger_emissions + week_14_other_emissions + week_14_rembadger_emissions) * 2
+        (week_14_badger_emissions + week_14_rembadger_emissions) * 2
     )
 
     # https://github.com/Badger-Finance/badger-multisig/issues/324
