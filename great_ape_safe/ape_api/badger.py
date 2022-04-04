@@ -3,9 +3,10 @@ import os
 import requests
 from decimal import Decimal
 
-from brownie import chain, interface
+from brownie import chain, interface, ZERO_ADDRESS
 from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
+# from helpers.constants import AddressZero
 
 from helpers.addresses import registry
 from rich.console import Console
@@ -41,6 +42,11 @@ class Badger():
         )
         self.timelock = safe.contract(
             registry.eth.governance_timelock
+        )
+
+        self.registry = interface.IBadgerRegistry(
+            registry.eth.registry,
+            owner=self.safe.account
         )
 
         # misc
@@ -258,7 +264,17 @@ class Badger():
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
 
+        
+    def set_key_on_registry(self, key, target_addr):
+        # Ensures key doesn't currently exist
+        assert self.registry.get(key) == ZERO_ADDRESS
 
+        self.registry.set(key, target_addr)
+
+        assert self.registry.get(key) == target_addr
+        C.print(f'{key} was added to the registry at {target_addr}')
+        
+        
     def from_gdigg_to_digg(self, gdigg):
         digg = interface.IUFragments(
             registry.eth.treasury_tokens.DIGG, owner=self.safe.account
