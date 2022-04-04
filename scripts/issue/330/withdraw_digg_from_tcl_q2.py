@@ -19,6 +19,7 @@ def main():
     slp_wbtcdigg = safe.contract(registry.eth.treasury_tokens.slpWbtcDigg)
 
     safe.init_badger()
+    # https://forum.badger.finance/t/bip-88-emissions-q2-2022/5533/9
     # 13 weeks in q2
     total_mantissa = safe.badger.from_gdigg_to_digg(12.5 * 13) * Decimal(1e9)
 
