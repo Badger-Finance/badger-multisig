@@ -6,12 +6,12 @@ from helpers.addresses import registry
 
 EXTRA_WALLETS = ['techops_multisig']
 
-DEFAULT_AMOUNT = 2
+DEFAULT_AMOUNT = 2e18
 OVERRIDE_AMOUNT = {
-    'ops_botsquad': 15,
-    'ops_deployer': 5,
-    'ops_external_harvester': 3,
-    'techops_multisig': 15
+    'ops_botsquad': 15e18,
+    'ops_deployer': 5e18,
+    'ops_external_harvester': 3e18,
+    'techops_multisig': 15e18
 }
 
 
@@ -42,14 +42,14 @@ def main():
             post_topup_amount = DEFAULT_AMOUNT
 
         # figure out deposit amount and transfer
-        if eth_balance < Wei(f'{post_topup_amount} ether'):
+        if eth_balance < post_topup_amount:
             # needs top-up
             wallets[wallet_name] = GreatApeSafe(wallet_address)
             wallets[wallet_name].take_snapshot(tokens=[])
-            top_up = Wei(f'{post_topup_amount} ether') - eth_balance
-            if top_up < Wei('0.2 ether'):
-                top_up = Wei('0.2 ether')
-            total_eth += Wei(top_up).to('ether')
+            top_up = post_topup_amount - eth_balance
+            if top_up < .2e18:
+                top_up = .2e18
+            total_eth += top_up
             safe.account.transfer(wallet_address, top_up)
 
     for wallet_name, wallet_obj in wallets.items():
