@@ -36,3 +36,5 @@ def main():
     safe.sushi.remove_liquidity(slp_wbtcdigg, mantissa_to_withdraw, trops)
     safe.print_snapshot()
     trops.print_snapshot()
+
+    safe.post_safe_tx(call_trace=True)
