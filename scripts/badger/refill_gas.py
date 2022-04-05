@@ -37,7 +37,7 @@ def main():
         if wallet_name in OVERRIDE_AMOUNT:
             post_topup_amount = OVERRIDE_AMOUNT[wallet_name]
         elif 'ops_executor' in wallet_name:
-            post_topup_amount = 1
+            post_topup_amount = 1e18
         else:
             post_topup_amount = DEFAULT_AMOUNT
 
