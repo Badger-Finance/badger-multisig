@@ -1,9 +1,9 @@
 import json
 import os
 import requests
-import brownie
+from decimal import Decimal
 
-from brownie import chain, interface
+from brownie import chain, interface, ZERO_ADDRESS
 from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
 # from helpers.constants import AddressZero
@@ -264,12 +264,21 @@ class Badger():
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
 
-
+        
     def set_key_on_registry(self, key, target_addr):
         # Ensures key doesn't currently exist
-        assert self.registry.get(key) == brownie.ZERO_ADDRESS
+        assert self.registry.get(key) == ZERO_ADDRESS
 
         self.registry.set(key, target_addr)
 
         assert self.registry.get(key) == target_addr
         C.print(f'{key} was added to the registry at {target_addr}')
+        
+        
+    def from_gdigg_to_digg(self, gdigg):
+        digg = interface.IUFragments(
+            registry.eth.treasury_tokens.DIGG, owner=self.safe.account
+        )
+        return Decimal(
+            gdigg * digg._initialSharesPerFragment() / digg._sharesPerFragment()
+        )
