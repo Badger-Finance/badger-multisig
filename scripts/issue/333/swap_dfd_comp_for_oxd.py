@@ -24,7 +24,7 @@ def move_dfd_to_trops():
     VAULT.print_snapshot()
     TROPS.print_snapshot()
 
-    TROPS.post_safe_tx(call_trace=True)
+    VAULT.post_safe_tx(call_trace=True)
 
 
 def allow_cowswap_relayer():
@@ -39,7 +39,7 @@ def swap_for_usdc():
     # swap comp for usdc
     TROPS.init_cow()
     TROPS.cow.market_sell(DFD, USDC, DFD.balanceOf(TROPS), coef=.985)
-    TROPS.cow.market_sell(COMP, USDC, DFD.balanceOf(TROPS), coef=.985)
+    TROPS.cow.market_sell(COMP, USDC, COMP.balanceOf(TROPS), coef=.985)
     TROPS.post_safe_tx(call_trace=True)
 
 
