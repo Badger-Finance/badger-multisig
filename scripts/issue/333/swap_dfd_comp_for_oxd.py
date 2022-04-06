@@ -55,7 +55,10 @@ def bridge_usdc_to_ftm(mantissa):
     router = interface.IAnyswapV6Router(info['router'], owner=TROPS.account)
     USDC.approve(router, mantissa)
     router.anySwapOutUnderlying['address,address,uint256,uint256'](
-        anytoken, TROPS, mantissa, 250
+        anytoken,
+        registry.ftm.badger_wallets.treasury_ops_multisig,
+        mantissa,
+        250
     )
 
     TROPS.post_safe_tx(call_trace=True)
