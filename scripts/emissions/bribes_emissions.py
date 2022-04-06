@@ -15,7 +15,7 @@ def main(
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     rewards_logger = safe.contract(registry.eth.rewardsLogger)
 
-    pct_badger_to_bvecvx = 1 - (1 / badger_share * ops_fee)
+    pct_badger_to_bvecvx = 1 - (1 / Decimal(badger_share) * Decimal(ops_fee))
 
     bvecvx_to_emit_to_bvecvx = Decimal(total_bvecvx_emit)
     badger_to_emit_to_bvecvx = \
