@@ -699,6 +699,8 @@ ADDRESSES_FANTOM = {
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
+        "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
+        "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
     "treasury_tokens": {
         "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
