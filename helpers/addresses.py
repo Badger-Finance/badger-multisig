@@ -38,6 +38,7 @@ ADDRESSES_ETH = {
         "treasury_vault_multisig": "0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e",
         "ibbtc_multisig": "0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8",
         "bvecvx_voting_multisig": "0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",
+        "payments_multisig": "0x30a9c1D258F6c2D23005e6450E72bDD42C541105",
         "dfdBadgerShared": "0xCF7346A5E41b0821b80D5B3fdc385EEB6Dc59F44",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
