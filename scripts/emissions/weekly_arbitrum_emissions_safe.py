@@ -12,7 +12,7 @@ C = Console()
 DURATION = 604800
 
 
-def main(target_file="emissions_info_arbitrum"):
+def main(target_file="generated_emissions_info_BIP_88"):
     path = os.getcwd() + f"/scripts/emissions/{target_file}.json"
     with open(path) as f:
         data = json.load(f)
