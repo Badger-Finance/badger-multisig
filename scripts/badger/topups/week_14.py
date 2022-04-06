@@ -37,6 +37,13 @@ def main():
     df["receiver"].append(registry.eth.sett_vaults.remBADGER)
     df["value"].append(week_13_rembadger_deposit)
 
+    # https://github.com/Badger-Finance/badger-multisig/issues/328
+    # bridge badger to arbitrum through eoa
+    q2_arb1_emissions = Decimal('11141')
+    df["token_address"].append(registry.eth.treasury_tokens.BADGER)
+    df["receiver"].append(registry.eth.badger_wallets.ops_executor3)
+    df["value"].append(q2_arb1_emissions)
+
     # turn dict of lists into dataframe and add additional columns needed by
     # the gnosis app
     df = pd.DataFrame(df)
