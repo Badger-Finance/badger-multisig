@@ -703,7 +703,14 @@ ADDRESSES_FANTOM = {
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
     "treasury_tokens": {
+        "WFTM": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
         "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
+        "USDC": "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
+        "OXD": "0xc5A9848b9d145965d821AaeC8fA32aaEE026492d",
+    },
+    "solidly": {
+        "router": "0xa38cd27185a464914D3046f0AB9d43356B34829D",
+        "factory": "0x7dbA586e00D868EeFA13fC549B63D62b4a45a244"
     }
 }
 

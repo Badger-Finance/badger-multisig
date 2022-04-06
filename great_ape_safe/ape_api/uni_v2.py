@@ -13,6 +13,7 @@ class UniV2:
         self.max_slippage = 0.02
         self.max_weth_unwrap = 0.01
         self.deadline = 60 * 60 * 12
+        self.native_symbol = 'ETH'
 
         
     def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
@@ -121,7 +122,7 @@ class UniV2:
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapexacttokensfortokens
         destination = self.safe.address if not destination else destination
 
-        tokenOut = path[-1]
+        tokenOut = path[0][-2] if type(path[0][-1]) == bool else path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
 
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
@@ -145,7 +146,7 @@ class UniV2:
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapethforexacttokens
         destination = self.safe.address if not destination else destination
 
-        tokenOut = path[-1]
+        tokenOut = path[0][-2] if type(path[0][-1]) == bool else path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
 
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
@@ -155,7 +156,8 @@ class UniV2:
         address to,
         uint256 deadline
         """
-        self.router.swapExactETHForTokens(
+        signature = getattr(self.router, f'swapExact{self.native_symbol}ForTokens')
+        signature(
             amountOut * (1 - self.max_slippage),
             path,
             destination,
@@ -178,7 +180,8 @@ class UniV2:
 
         tokenIn.approve(self.router, amountIn)
 
-        self.router.swapExactTokensForETH(
+        signature = getattr(self.router, f'swapExactTokensFor{self.native_symbol}')
+        signature(
             amountIn,
             amountOut * (1 - self.max_slippage),
             path,

@@ -1,16 +1,22 @@
 from decimal import Decimal
 
-from brownie import interface
+from brownie import interface, network
 
 from helpers.addresses import registry
 from great_ape_safe import GreatApeSafe
 
 
-VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
-TROPS = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
-DFD = interface.ERC20(registry.eth.treasury_tokens.DFD, owner=TROPS.account)
-COMP = interface.ERC20(registry.eth.treasury_tokens.COMP, owner=TROPS.account)
-USDC = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=TROPS.account)
+if network.chain.id == 1:
+    VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
+    TROPS = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
+    DFD = interface.ERC20(registry.eth.treasury_tokens.DFD, owner=TROPS.account)
+    COMP = interface.ERC20(registry.eth.treasury_tokens.COMP, owner=TROPS.account)
+    USDC_ETH = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=TROPS.account)
+
+else:
+    TROPS_FTM = GreatApeSafe(registry.ftm.badger_wallets.treasury_ops_multisig)
+    USDC_FTM = interface.ERC20(registry.ftm.treasury_tokens.USDC, owner=TROPS_FTM.account)
+    OXD = interface.ERC20(registry.ftm.treasury_tokens.OXD, owner=TROPS_FTM.account)
 
 
 def move_dfd_to_trops():
@@ -38,8 +44,8 @@ def swap_for_usdc():
     # swap dsd for usdc
     # swap comp for usdc
     TROPS.init_cow()
-    TROPS.cow.market_sell(DFD, USDC, DFD.balanceOf(TROPS), coef=.985)
-    TROPS.cow.market_sell(COMP, USDC, COMP.balanceOf(TROPS), coef=.985)
+    TROPS.cow.market_sell(DFD, USDC_ETH, DFD.balanceOf(TROPS), coef=.985)
+    TROPS.cow.market_sell(COMP, USDC_ETH, COMP.balanceOf(TROPS), coef=.985)
     TROPS.post_safe_tx(call_trace=True)
 
 
@@ -53,10 +59,10 @@ def bridge_usdc_to_ftm(mantissa):
     anytoken = info['anyToken']['address']
 
     router = interface.IAnyswapV6Router(info['router'], owner=TROPS.account)
-    USDC.approve(router, mantissa)
+    USDC_ETH.approve(router, mantissa)
     router.anySwapOutUnderlying['address,address,uint256,uint256'](
         anytoken,
-        registry.ftm.badger_wallets.treasury_ops_multisig,
+        TROPS_FTM.address,
         mantissa,
         250
     )
@@ -64,6 +70,12 @@ def bridge_usdc_to_ftm(mantissa):
     TROPS.post_safe_tx(call_trace=True)
 
 
-def swap_usdc_for_oxd():
+def swap_usdc_for_oxd(amount_mantissa):
     # swap for oxd
-    pass
+    TROPS_FTM.init_solidly()
+    TROPS_FTM.take_snapshot([USDC_FTM, OXD])
+
+    TROPS_FTM.solidly.swap_tokens_for_tokens(USDC_FTM, amount_mantissa, [(USDC_FTM, OXD, True)])
+
+    TROPS_FTM.print_snapshot()
+    TROPS_FTM.post_safe_tx()
