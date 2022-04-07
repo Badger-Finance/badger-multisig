@@ -26,6 +26,17 @@ class UniV2:
         )[0]
 
 
+    def build_path(self, amountIn, path):
+        try:
+            # subscriptable return value implies solidly type router w/ pool type
+            pool_type = self.router.getAmountOut(amountIn, path[0], path[-1])[-1]
+            # build solidly compatible path
+            return [(path[i], path[i+1], pool_type) for i in range(len(path)-1)]
+        except TypeError:
+            # uni router, no changes needed
+            return path
+
+
     def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
         destination = self.safe.address if not destination else destination
@@ -122,8 +133,10 @@ class UniV2:
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapexacttokensfortokens
         destination = self.safe.address if not destination else destination
 
-        tokenOut = path[0][-2] if type(path[0][-1]) == bool else path[-1]
+        tokenOut = path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
+
+        path = self.build_path(amountIn, path)
 
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
@@ -146,8 +159,10 @@ class UniV2:
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#swapethforexacttokens
         destination = self.safe.address if not destination else destination
 
-        tokenOut = path[0][-2] if type(path[0][-1]) == bool else path[-1]
+        tokenOut = path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
+
+        path = self.build_path(amountIn, path)
 
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         """
@@ -177,6 +192,8 @@ class UniV2:
 
         eth_initial_balance = self.safe.account.balance()
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
+
+        path = self.build_path(amountIn, path)
 
         tokenIn.approve(self.router, amountIn)
 

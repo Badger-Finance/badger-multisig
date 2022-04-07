@@ -17,6 +17,7 @@ else:
     TROPS_FTM = GreatApeSafe(registry.ftm.badger_wallets.treasury_ops_multisig)
     USDC_FTM = interface.ERC20(registry.ftm.treasury_tokens.USDC, owner=TROPS_FTM.account)
     OXD = interface.ERC20(registry.ftm.treasury_tokens.OXD, owner=TROPS_FTM.account)
+    WFTM = interface.ERC20(registry.ftm.treasury_tokens.WFTM, owner=TROPS_FTM.account)
 
 
 def move_dfd_to_trops():
@@ -70,15 +71,15 @@ def bridge_usdc_to_ftm(mantissa):
     TROPS.post_safe_tx(call_trace=True)
 
 
-def swap_usdc_for_oxd(amount_mantissa, swap_all=False):
+def swap_usdc_for_oxd(amount_mantissa=None):
     # swap for oxd
     TROPS_FTM.init_solidly()
     TROPS_FTM.take_snapshot([USDC_FTM, OXD])
 
     TROPS_FTM.solidly.swap_tokens_for_tokens(
         USDC_FTM,
-        USDC_FTM.balanceOf(TROPS_FTM) if swap_all else amount_mantissa,
-        [(USDC_FTM, OXD, True)]
+        USDC_FTM.balanceOf(TROPS_FTM) if not amount_mantissa else amount_mantissa,
+        [USDC_FTM, WFTM, OXD]
         )
 
     TROPS_FTM.print_snapshot()
