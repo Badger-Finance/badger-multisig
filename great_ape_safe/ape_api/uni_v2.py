@@ -28,10 +28,10 @@ class UniV2:
 
     def build_path(self, amountIn, path):
         pair_info = self.router.getAmountOut(amountIn, path[0], path[-1])
-        new_path = []
 
         # if return type is subclass of tuple then its a solidly style router
         if isinstance(pair_info, tuple):
+            new_path = []
             for i in range(len(path) - 1):
                 pair = (path[i], path[i + 1])
                 amountIn, pool_type = self.router.getAmountOut(amountIn, *pair)
