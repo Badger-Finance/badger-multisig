@@ -27,14 +27,18 @@ class UniV2:
 
 
     def build_path(self, amountIn, path):
-        try:
-            # subscriptable return value implies solidly type router w/ pool type
-            pool_type = self.router.getAmountOut(amountIn, path[0], path[-1])[-1]
-            # build solidly compatible path
-            return [(path[i], path[i+1], pool_type) for i in range(len(path)-1)]
-        except TypeError:
-            # uni router, no changes needed
-            return path
+        pair_info = self.router.getAmountOut(amountIn, path[0], path[-1])
+        new_path = []
+
+        # if return type is subclass of tuple then its a solidly style router
+        if isinstance(pair_info, tuple):
+            for i in range(len(path) - 1):
+                pair = (path[i], path[i + 1])
+                amountIn, pool_type = self.router.getAmountOut(amountIn, *pair)
+                new_path.append(pair + (pool_type,))
+            return new_path
+        # uni router, no changes needed
+        return path
 
 
     def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
