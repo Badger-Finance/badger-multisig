@@ -195,10 +195,10 @@ class UniV2:
         destination = self.safe.address if not destination else destination
 
         eth_initial_balance = self.safe.account.balance()
-        amountOut = self.router.getAmountsOut(amountIn, path)[-1]
 
         path = self.build_path(amountIn, path)
 
+        amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
         signature = getattr(self.router, f'swapExactTokensFor{self.native_symbol}')
