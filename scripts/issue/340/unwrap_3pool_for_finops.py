@@ -20,4 +20,4 @@ def main():
     usdc.transfer(payments, 50_000e6)
     safe.print_snapshot()
     payments.print_snapshot()
-    safe.post_safe_tx(post=False)
+    safe.post_safe_tx()
