@@ -70,12 +70,16 @@ def bridge_usdc_to_ftm(mantissa):
     TROPS.post_safe_tx(call_trace=True)
 
 
-def swap_usdc_for_oxd(amount_mantissa):
+def swap_usdc_for_oxd(amount_mantissa, swap_all=False):
     # swap for oxd
     TROPS_FTM.init_solidly()
     TROPS_FTM.take_snapshot([USDC_FTM, OXD])
 
-    TROPS_FTM.solidly.swap_tokens_for_tokens(USDC_FTM, amount_mantissa, [(USDC_FTM, OXD, True)])
+    TROPS_FTM.solidly.swap_tokens_for_tokens(
+        USDC_FTM,
+        USDC_FTM.balanceOf(TROPS_FTM) if swap_all else amount_mantissa,
+        [(USDC_FTM, OXD, True)]
+        )
 
     TROPS_FTM.print_snapshot()
     TROPS_FTM.post_safe_tx()

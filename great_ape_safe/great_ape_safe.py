@@ -24,10 +24,10 @@ from great_ape_safe.ape_api.curve_v2 import CurveV2
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
 from great_ape_safe.ape_api.rari import Rari
+from great_ape_safe.ape_api.solidly import Solidly
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from great_ape_safe.ape_api.uni_v3 import UniV3
-from great_ape_safe.ape_api.solidly import Solidly
 
 
 C = Console()
@@ -62,10 +62,10 @@ class GreatApeSafe(ApeSafe):
         self.init_opolis()
         self.init_pancakeswap_v2()
         self.init_rari()
+        self.init_solidly()
         self.init_sushi()
         self.init_uni_v2()
         self.init_uni_v3()
-        self.init_solidly()
 
 
     def init_aave(self):
@@ -116,6 +116,10 @@ class GreatApeSafe(ApeSafe):
         self.rari = Rari(self)
 
 
+    def init_solidly(self):
+        self.solidly = Solidly(self)
+
+
     def init_sushi(self):
         self.sushi = Sushi(self)
 
@@ -126,10 +130,6 @@ class GreatApeSafe(ApeSafe):
 
     def init_uni_v3(self):
         self.uni_v3 = UniV3(self)
-
-
-    def init_solidly(self):
-        self.solidly = Solidly(self)
 
 
     def take_snapshot(self, tokens):
