@@ -67,9 +67,6 @@ contract RemBadgerDripper is VestingWallet {
             _msgSender() == keeper() || _msgSender() == controller() || _msgSender() == governance(),
             "RemBadgerDripper: onlyAuthorized"
         );
-        uint256 releasable = vestedAmount(token, uint64(block.timestamp)) - released(token);
-        _erc20Released[token] += releasable;
-        emit ERC20Released(token, releasable);
-        SafeERC20.safeTransfer(IERC20(token), beneficiary(), releasable);
+        VestingWallet.release(token);
     }
 }
