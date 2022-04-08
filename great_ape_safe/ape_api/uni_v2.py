@@ -13,6 +13,7 @@ class UniV2:
         self.max_slippage = 0.02
         self.max_weth_unwrap = 0.01
         self.deadline = 60 * 60 * 12
+        self.native_symbol = 'ETH'
 
         
     def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
@@ -23,6 +24,21 @@ class UniV2:
         return solve(
             (lp_token.getReserves()[reserve_index] * x / lp_token.totalSupply()) - mantissa_underlying, x
         )[0]
+
+
+    def build_path(self, amountIn, path):
+        pair_info = self.router.getAmountOut(amountIn, path[0], path[-1])
+
+        # if return type is subclass of tuple then its a solidly style router
+        if isinstance(pair_info, tuple):
+            new_path = []
+            for i in range(len(path) - 1):
+                pair = (path[i], path[i + 1])
+                amountIn, pool_type = self.router.getAmountOut(amountIn, *pair)
+                new_path.append(pair + (pool_type,))
+            return new_path
+        # uni router, no changes needed
+        return path
 
 
     def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
@@ -124,6 +140,8 @@ class UniV2:
         tokenOut = path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
 
+        path = self.build_path(amountIn, path)
+
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
@@ -148,6 +166,8 @@ class UniV2:
         tokenOut = path[-1]
         balance_tokenOut = tokenOut.balanceOf(self.safe)
 
+        path = self.build_path(amountIn, path)
+
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         """
         uint256 amountOutMin,
@@ -155,7 +175,8 @@ class UniV2:
         address to,
         uint256 deadline
         """
-        self.router.swapExactETHForTokens(
+        signature = getattr(self.router, f'swapExact{self.native_symbol}ForTokens')
+        signature(
             amountOut * (1 - self.max_slippage),
             path,
             destination,
@@ -174,11 +195,14 @@ class UniV2:
         destination = self.safe.address if not destination else destination
 
         eth_initial_balance = self.safe.account.balance()
-        amountOut = self.router.getAmountsOut(amountIn, path)[-1]
 
+        path = self.build_path(amountIn, path)
+
+        amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
-        self.router.swapExactTokensForETH(
+        signature = getattr(self.router, f'swapExactTokensFor{self.native_symbol}')
+        signature(
             amountIn,
             amountOut * (1 - self.max_slippage),
             path,

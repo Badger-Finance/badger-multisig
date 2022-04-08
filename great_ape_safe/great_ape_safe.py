@@ -24,6 +24,7 @@ from great_ape_safe.ape_api.curve_v2 import CurveV2
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
 from great_ape_safe.ape_api.rari import Rari
+from great_ape_safe.ape_api.solidly import Solidly
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from great_ape_safe.ape_api.uni_v3 import UniV3
@@ -61,6 +62,7 @@ class GreatApeSafe(ApeSafe):
         self.init_opolis()
         self.init_pancakeswap_v2()
         self.init_rari()
+        self.init_solidly()
         self.init_sushi()
         self.init_uni_v2()
         self.init_uni_v3()
@@ -112,6 +114,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_rari(self):
         self.rari = Rari(self)
+
+
+    def init_solidly(self):
+        self.solidly = Solidly(self)
 
 
     def init_sushi(self):
@@ -176,7 +182,7 @@ class GreatApeSafe(ApeSafe):
             return '{0:,.18f}'.format(d)
 
         if csv_destination:
-            # grab only symbol & delta
+            # grab only symbol & delta
             df_csv = pd.DataFrame(columns=["token", "claimable_amount"])
             df_csv["token"] = df.index
             df_csv["claimable_amount"] = df['balance_delta'].values
@@ -257,7 +263,7 @@ class GreatApeSafe(ApeSafe):
 
 
     def sign_with_frame_hardware_wallet(self, safe_tx_nonce=None):
-        # allows signing a SafeTx object with hardware wallet
+        # allows signing a SafeTx object with hardware wallet
         # posts the signature to gnosis endpoint
         if safe_tx_nonce:
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
