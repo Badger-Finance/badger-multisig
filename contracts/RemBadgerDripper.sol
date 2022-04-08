@@ -58,11 +58,11 @@ contract RemBadgerDripper is VestingWallet {
         _keeper = _newKeeper;
     }
 
-    function released(address token) override public view virtual returns (uint256) {
+    function released(address token) public view virtual override returns (uint256) {
         return _erc20Released[token];
     }
 
-    function release(address token) override public virtual {
+    function release(address token) public virtual override {
         require(
             _msgSender() == keeper() || _msgSender() == controller() || _msgSender() == governance(),
             "RemBadgerDripper: onlyAuthorized"
