@@ -23,7 +23,7 @@ def main(broadcast="true"):
     router = Contract(registry.arbitrum.sushi.router)
 
     for key in slp_tokens:
-        slp = interface.IUniswapV2Pair(registry.arbitrum.treasury_tokens[f"{key}"])
+        slp = interface.IUniswapV2Pair(registry.arbitrum.treasury_tokens[key])
 
         slp_balance = slp.balanceOf(safe)
         # 1. approve slp

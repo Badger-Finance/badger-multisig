@@ -5,7 +5,7 @@ from helpers.addresses import registry
 CONSOLE = Console()
 
 # dxs tokens to liquidated
-dxs_tokens = ["dxsWbtcWeth", "dxsBadgerWeth"]
+dxs_tokens = ["dxsWbtcWeth", "dxsBadgerWeth", "dxsSwaprWeth", "dxsIbbtcWeth"]
 
 DEADLINE = 60 * 60 * 12
 MAX_SLIPPAGE = 0.02
@@ -23,7 +23,7 @@ def main(broadcast="true"):
     router = Contract(registry.arbitrum.swapr.router)
 
     for key in dxs_tokens:
-        slp = interface.IUniswapV2Pair(registry.arbitrum.treasury_tokens[f"{key}"])
+        slp = interface.IUniswapV2Pair(registry.arbitrum.treasury_tokens[key])
 
         slp_balance = slp.balanceOf(safe)
         # 1. approve slp

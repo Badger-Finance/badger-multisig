@@ -22,7 +22,7 @@ def main(broadcast="true"):
     for key in tokens_out:
         CONSOLE.print(f"[green] Processing calldata for {key}...[/green]")
 
-        token = interface.IERC20(registry.arbitrum.treasury_tokens[f"{key}"])
+        token = interface.IERC20(registry.arbitrum.treasury_tokens[key])
 
         token_balance = token.balanceOf(safe)
 

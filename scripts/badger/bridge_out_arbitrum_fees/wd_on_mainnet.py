@@ -5,7 +5,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-def main(msig="techops_multisig", token_bridge="CRV", batchNum=0, index=0):
+def main(msig="treasury_ops_multisig", token_bridge="CRV", batchNum=0, index=0):
     safe = GreatApeSafe(registry.eth.badger_wallets[msig])
     outbox = interface.IOutbox(registry.eth.arbitrum.outbox, owner=safe.address)
 

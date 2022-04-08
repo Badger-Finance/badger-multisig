@@ -20,12 +20,12 @@ def main(broadcast="true"):
     )
 
     for key in curve_target_wd:
-        lp_token = interface.IERC20(registry.arbitrum.treasury_tokens[f"{key}"])
+        lp_token = interface.IERC20(registry.arbitrum.treasury_tokens[key])
 
         pool = (
-            interface.ICurvePoolV2(registry.arbitrum.crv_3_pools[f"{key}"])
+            interface.ICurvePoolV2(registry.arbitrum.crv_3_pools[key])
             if "Tricrypto" in key
-            else interface.ICurvePool(registry.arbitrum.crv_pools[f"{key}"])
+            else interface.ICurvePool(registry.arbitrum.crv_pools[key])
         )
 
         lp_token_balance = lp_token.balanceOf(safe)
