@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/finance/VestingWallet.sol";
 
 contract RemBadgerDripper is VestingWallet {
     mapping(address => uint256) private _erc20Released;
-    address private immutable _controller;
-    address private immutable _governance;
+    address public constant controller = 0x86cbD0ce0c087b482782c181dA8d191De18C8275;
+    address public constant governance = 0xB65cef03b9B89f99517643226d76e286ee999e77;
     address private _keeper;
 
     constructor(
