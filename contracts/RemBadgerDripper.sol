@@ -26,19 +26,6 @@ contract RemBadgerDripper is VestingWallet {
         _keeper = keeperAddress;
     }
 
-    /**
-     * @dev Getter for the controller address.
-     */
-    function controller() public view virtual returns (address) {
-        return _controller;
-    }
-
-    /**
-     * @dev Getter for the governance address.
-     */
-    function governance() public view virtual returns (address) {
-        return _governance;
-    }
 
     /**
      * @dev Getter for the keeper address.
