@@ -58,6 +58,10 @@ def test_release_from_keeper(badger, dripper, deployer):
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
+def test_accounting_released(dripper, badger):
+    assert dripper.released(badger, {'from': accounts[1]}) > 0
+
+
 def test_release_from_techops(badger, dripper, techops):
     bal_before = badger.balanceOf(dripper.beneficiary())
     dripper.release(badger, {'from': techops.account})
