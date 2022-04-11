@@ -13,3 +13,4 @@ class Sushi(UniV2):
         self.max_slippage = 0.02
         self.max_weth_unwrap = 0.01
         self.deadline = 60 * 60 * 12
+        self.router_symbol = 'ETH'

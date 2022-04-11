@@ -13,7 +13,7 @@ class UniV2:
         self.max_slippage = 0.02
         self.max_weth_unwrap = 0.01
         self.deadline = 60 * 60 * 12
-        self.native_symbol = 'ETH'
+        self.router_symbol = 'ETH'
 
         
     def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
@@ -27,7 +27,7 @@ class UniV2:
 
 
     def build_path(self, amountIn, path):
-        pair_info = self.router.getAmountOut(amountIn, path[0], path[-1])
+        pair_info = self.router.getAmountOut(amountIn, path[0].address, path[-1].address)
 
         # if return type is subclass of tuple then its a solidly style router
         if isinstance(pair_info, tuple):
@@ -175,7 +175,7 @@ class UniV2:
         address to,
         uint256 deadline
         """
-        signature = getattr(self.router, f'swapExact{self.native_symbol}ForTokens')
+        signature = getattr(self.router, f'swapExact{self.router_symbol}ForTokens')
         signature(
             amountOut * (1 - self.max_slippage),
             path,
@@ -201,7 +201,7 @@ class UniV2:
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
-        signature = getattr(self.router, f'swapExactTokensFor{self.native_symbol}')
+        signature = getattr(self.router, f'swapExactTokensFor{self.router_symbol}')
         signature(
             amountIn,
             amountOut * (1 - self.max_slippage),
