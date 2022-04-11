@@ -1,4 +1,4 @@
-from brownie import accounts, interface, web3
+from brownie import accounts, interface, web3, network
 from helpers.addresses import registry
 from sympy import Symbol
 from sympy.solvers import solve
@@ -7,8 +7,10 @@ class UniV2:
     def __init__(self, safe):
         self.safe = safe
 
-        self.router = safe.contract(registry.eth.uniswap.routerV2)
-        self.factory = safe.contract(registry.eth.uniswap.factoryV2)
+        # handles init called from univ2 child class on different chain
+        if network.chain.id == 1:
+            self.router = safe.contract(registry.eth.uniswap.routerV2)
+            self.factory = safe.contract(registry.eth.uniswap.factoryV2)
 
         self.max_slippage = 0.02
         self.max_weth_unwrap = 0.01

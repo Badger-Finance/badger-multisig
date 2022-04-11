@@ -85,7 +85,7 @@ def swap_usdc_for_oxd(amount_mantissa=None):
 
     TROPS_FTM.solidly.swap_tokens_for_tokens(
         WFTM,
-        WFTM.balanceOf(TROPS_FTM),
+        WFTM.balanceOf(TROPS_FTM) * 0.98,
         [WFTM, OXD]
         )
 
