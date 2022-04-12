@@ -81,12 +81,8 @@ class GreatApeSafe(ApeSafe):
         self.convex = Convex(self)
 
 
-    def init_cow(self):
-        self.cow = Cow(self, prod=True)
-
-
-    def init_cow_staging(self):
-        self.cow = Cow(self, prod=False)
+    def init_cow(self, prod=False):
+        self.cow = Cow(self, prod)
 
 
     def init_curve(self):
