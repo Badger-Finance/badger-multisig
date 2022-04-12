@@ -712,6 +712,10 @@ ADDRESSES_FANTOM = {
     "solidly": {
         "router": "0xa38cd27185a464914D3046f0AB9d43356B34829D",
         "factory": "0x3fAaB499b519fdC5819e3D7ed0C26111904cbc28"
+    },
+    "spookyswap": {
+        "router": "0xF491e7B69E4244ad4002BC14e878a34207E38c29",
+        "factory": "0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3"
     }
 }
 

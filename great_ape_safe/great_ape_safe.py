@@ -7,7 +7,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS
+from brownie import Contract, network, ETH_ADDRESS, exceptions
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
@@ -25,6 +25,7 @@ from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
 from great_ape_safe.ape_api.rari import Rari
 from great_ape_safe.ape_api.solidly import Solidly
+from great_ape_safe.ape_api.spookyswap import SpookySwap
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from great_ape_safe.ape_api.uni_v3 import UniV3
@@ -51,21 +52,13 @@ class GreatApeSafe(ApeSafe):
 
 
     def init_all(self):
-        self.init_aave()
-        self.init_anyswap()
-        self.init_badger()
-        self.init_compound()
-        self.init_convex()
-        self.init_cow()
-        self.init_curve()
-        self.init_curve_v2()
-        self.init_opolis()
-        self.init_pancakeswap_v2()
-        self.init_rari()
-        self.init_solidly()
-        self.init_sushi()
-        self.init_uni_v2()
-        self.init_uni_v3()
+        for method in self.__dir__():
+            if method.startswith('init_') and method != 'init_all':
+                try:
+                    getattr(self, method)()
+                except exceptions.ContractNotFound:
+                    # different chain
+                    pass
 
 
     def init_aave(self):
@@ -88,12 +81,8 @@ class GreatApeSafe(ApeSafe):
         self.convex = Convex(self)
 
 
-    def init_cow(self):
-        self.cow = Cow(self, prod=True)
-
-
-    def init_cow_staging(self):
-        self.cow = Cow(self, prod=False)
+    def init_cow(self, prod=False):
+        self.cow = Cow(self, prod)
 
 
     def init_curve(self):
@@ -118,6 +107,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_solidly(self):
         self.solidly = Solidly(self)
+
+
+    def init_spookyswap(self):
+        self.spookyswap = SpookySwap(self)
 
 
     def init_sushi(self):

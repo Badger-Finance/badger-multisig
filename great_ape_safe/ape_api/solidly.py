@@ -5,11 +5,8 @@ from helpers.addresses import registry
 class Solidly(UniV2):
     def __init__(self, safe):
         self.safe = safe
+        self.router = self.safe.contract(registry.ftm.solidly.router)
+        self.factory = self.safe.contract(self.router.factory())
 
-        self.router = safe.contract(registry.ftm.solidly.router)
-        self.factory = safe.contract(self.router.factory())
-
-        self.max_slippage = 0.05
-        self.max_weth_unwrap = 0.01
-        self.deadline = 60 * 60 * 12
-        self.native_symbol = 'FTM'
+    max_slippage = 0.05
+    router_symbol = 'FTM'

@@ -1,4 +1,4 @@
-from brownie import accounts, interface, web3
+from brownie import accounts, interface, web3, network
 from helpers.addresses import registry
 from sympy import Symbol
 from sympy.solvers import solve
@@ -6,16 +6,15 @@ from sympy.solvers import solve
 class UniV2:
     def __init__(self, safe):
         self.safe = safe
+        self.router = self.safe.contract(registry.eth.uniswap.routerV2)
+        self.factory = self.safe.contract(registry.eth.uniswap.factoryV2)
 
-        self.router = safe.contract(registry.eth.uniswap.routerV2)
-        self.factory = safe.contract(registry.eth.uniswap.factoryV2)
+    max_slippage = 0.02
+    max_weth_unwrap = 0.01
+    deadline = 60 * 60 * 12
+    router_symbol = 'ETH'
 
-        self.max_slippage = 0.02
-        self.max_weth_unwrap = 0.01
-        self.deadline = 60 * 60 * 12
-        self.native_symbol = 'ETH'
 
-        
     def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
         # calc amount of `lp_token` to withdraw from pool to get `mantissa_underlying` of `underlying_token`
         # credit: https://github.com/Badger-Finance/badger-multisig/blob/a0eab1de153d99fd00bb696ba93ba1fab60a1266/scripts/issue/159/withdraw_9_digg_from_tcl.py
@@ -27,7 +26,7 @@ class UniV2:
 
 
     def build_path(self, amountIn, path):
-        pair_info = self.router.getAmountOut(amountIn, path[0], path[-1])
+        pair_info = self.router.getAmountOut(amountIn, path[0].address, path[-1].address)
 
         # if return type is subclass of tuple then its a solidly style router
         if isinstance(pair_info, tuple):
@@ -175,7 +174,7 @@ class UniV2:
         address to,
         uint256 deadline
         """
-        signature = getattr(self.router, f'swapExact{self.native_symbol}ForTokens')
+        signature = getattr(self.router, f'swapExact{self.router_symbol}ForTokens')
         signature(
             amountOut * (1 - self.max_slippage),
             path,
@@ -201,7 +200,7 @@ class UniV2:
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
-        signature = getattr(self.router, f'swapExactTokensFor{self.native_symbol}')
+        signature = getattr(self.router, f'swapExactTokensFor{self.router_symbol}')
         signature(
             amountIn,
             amountOut * (1 - self.max_slippage),
