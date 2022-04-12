@@ -6,18 +6,15 @@ from sympy.solvers import solve
 class UniV2:
     def __init__(self, safe):
         self.safe = safe
+        self.router = self.safe.contract(registry.eth.uniswap.routerV2)
+        self.factory = self.safe.contract(registry.eth.uniswap.factoryV2)
 
-        # handles init called from univ2 child class on different chain
-        if network.chain.id == 1:
-            self.router = safe.contract(registry.eth.uniswap.routerV2)
-            self.factory = safe.contract(registry.eth.uniswap.factoryV2)
+    max_slippage = 0.02
+    max_weth_unwrap = 0.01
+    deadline = 60 * 60 * 12
+    router_symbol = 'ETH'
 
-        self.max_slippage = 0.02
-        self.max_weth_unwrap = 0.01
-        self.deadline = 60 * 60 * 12
-        self.router_symbol = 'ETH'
 
-        
     def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
         # calc amount of `lp_token` to withdraw from pool to get `mantissa_underlying` of `underlying_token`
         # credit: https://github.com/Badger-Finance/badger-multisig/blob/a0eab1de153d99fd00bb696ba93ba1fab60a1266/scripts/issue/159/withdraw_9_digg_from_tcl.py

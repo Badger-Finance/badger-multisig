@@ -5,7 +5,6 @@ from helpers.addresses import registry
 
 class Sushi(UniV2):
     def __init__(self, safe):
-        super().__init__(safe)
-
-        self.router = safe.contract(registry.eth.sushiswap.routerV2)
-        self.factory = safe.contract(registry.eth.sushiswap.factoryV2)
+        self.safe = safe
+        self.router = self.safe.contract(registry.eth.sushiswap.routerV2)
+        self.factory = self.safe.contract(registry.eth.sushiswap.factoryV2)
