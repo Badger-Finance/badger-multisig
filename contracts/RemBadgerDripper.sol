@@ -5,21 +5,24 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/finance/VestingWallet.sol";
 
 contract RemBadgerDripper is VestingWallet {
-    address public constant controller = 0x86cbD0ce0c087b482782c181dA8d191De18C8275;
-    address public constant governance = 0xB65cef03b9B89f99517643226d76e286ee999e77;
+    address public immutable controller;
+    address public immutable governance;
     address private _keeper;
 
     constructor(
         address beneficiaryAddress,
         uint64 startTimestamp,
         uint64 durationSeconds,
+        address controllerAddress,
+        address governanceAddress,
         address keeperAddress
     ) VestingWallet(
         beneficiaryAddress,
         startTimestamp,
         durationSeconds
     ) {
-        require(keeperAddress != address(0), "RemBadgerDripper: keeper is zero address");
+        controller = controllerAddress;
+        governance = governanceAddress;
         _keeper = keeperAddress;
     }
 
