@@ -103,3 +103,11 @@ class Rari():
         ftoken = interface.IFToken(ftoken_addr, owner=self.safe.account)
         ftoken._setImplementation(implementation, allow_resign, b'')
         assert ftoken.implementation() == implementation
+
+    def set_pause_guardian(self, new_guardian):
+        self.unitroller._setPauseGuardian(new_guardian)
+        assert self.unitroller.pauseGuardian() == new_guardian
+
+    def set_borrow_guardian(self, new_guardian):
+        self.unitroller._setBorrowCapGuardian(new_guardian)
+        assert self.unitroller.borrowCapGuardian() == new_guardian
