@@ -13,9 +13,9 @@ def deployer():
 
 
 @pytest.fixture(scope='module')
-def dripper(deployer):
+def dripper():
     from scripts.deployment.deploy_rembadger_dripper import main
-    return main(deployer)
+    return main()
 
 
 @pytest.fixture(scope="module")

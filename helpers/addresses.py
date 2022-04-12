@@ -675,6 +675,7 @@ ADDRESSES_BRIDGE = {
 ADDRESSES_RINKEBY = {
     "badger_wallets": {
         "rinkeby_multisig": "0x6b11a8B734C3eeFd41Ff7b0e2D15F2b0F46D336b",
+        "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
     },
     "treasury_tokens": {
         "WBTC": "0x577D296678535e4903D59A4C929B718e1D575e0A",
