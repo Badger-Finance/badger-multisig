@@ -327,7 +327,7 @@ ADDRESSES_ETH = {
         "fIBBTC-22": "0x6856f0e1BD23c9a1b92f87581Dd2f28E7C84EbcD",
         "fFRAX-22": "0x60fb6aecf861e3f16f7a4dcaddf8d8820244a1cd",
         "fDOLA-22": "0x5117D9453cC9Be8c3fBFbA4aE3B858D18fe45903",
-        "fbveCVX-22": "0x3D9a6A5302a196e3bA41A2374506726e4FE7E14a"
+        "fbveCVX-22": "0x26F6F27fDBc3B9cDe4b1943b1c07606CAF2c4C6C"
     },
     "routers": {
         "sushi_router_v2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
