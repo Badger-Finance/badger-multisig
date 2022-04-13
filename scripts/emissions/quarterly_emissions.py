@@ -23,6 +23,8 @@ AUTOCOMPOUND_100_SETTS = [
     sett_vaults["bDIGG"],
 ]
 
+# 7 days
+WEEK_DURATION = 604800
 
 def main(target_file="generated_emissions_info_BIP_88_Emissions"):
     path = os.getcwd() + f"/scripts/emissions/{target_file}.json"
@@ -38,8 +40,14 @@ def weekly_emissions(data):
 
     emissions_data = data[target_week.strftime("%d-%m-%y")]
     time_range = emissions_data["timerange"]
+
+    last_quarter_time_rage = list(data.keys())[-1]
+    end_quarter_timestamp = data[last_quarter_time_rage]["timerange"]["endtime"]
+
     # do dynamically and sometimes we may have shifts or trials for sync some sett
-    DURATION = time_range["endtime"] - time_range["starttime"]
+    DURATION = end_quarter_timestamp - time_range["starttime"]
+
+    weeks_no = DURATION / WEEK_DURATION
 
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     digg = safe.contract(treasury_tokens["DIGG"])
@@ -60,7 +68,7 @@ def weekly_emissions(data):
                 if beneficiary in AUTOCOMPOUND_100_SETTS:
                     continue  # nothing to emit
                 else:
-                    formatted_amount = Wei(f'{sett["badger_allocation"]} ether')
+                    formatted_amount = Wei(f'{Decimal(sett["badger_allocation"] * weeks_no)} ether')
 
                 totals["badger"] += formatted_amount
 
@@ -69,7 +77,7 @@ def weekly_emissions(data):
                     treasury_tokens["BADGER"],
                     formatted_amount,
                     time_range["starttime"],
-                    time_range["endtime"],
+                    end_quarter_timestamp,
                     DURATION,
                 )
             if sett["digg_allocation"] != 0:
@@ -78,7 +86,7 @@ def weekly_emissions(data):
                 else:
                     initial_fragments = sett["digg_allocation"] * 10 ** digg.decimals()
                     shares = Decimal(
-                        (initial_fragments * digg._initialSharesPerFragment())
+                        (initial_fragments * digg._initialSharesPerFragment()) * weeks_no
                     )
 
                 totals["digg"] += shares
@@ -88,7 +96,7 @@ def weekly_emissions(data):
                     treasury_tokens["DIGG"],
                     shares,
                     time_range["starttime"],
-                    time_range["endtime"],
+                    end_quarter_timestamp,
                     DURATION,
                 )
 
@@ -132,7 +140,7 @@ def weekly_emissions(data):
 
     # console output
     print(
-        f"Total emissions during {target_week.strftime('%d-%m-%y')} : badger={totals['badger']/10**18}, digg={totals['digg']} and bcvxCrv={totals['bcvxCRV']}"
+        f"Total emissions during {target_week.strftime('%d-%m-%y')} to {datetime.datetime.fromtimestamp(end_quarter_timestamp).strftime('%d-%m-%y')}: badger={totals['badger']/10**18}, digg={totals['digg']} and bcvxCrv={totals['bcvxCRV']}"
     )
 
     safe.post_safe_tx()
