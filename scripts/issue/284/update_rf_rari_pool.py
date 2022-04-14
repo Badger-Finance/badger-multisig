@@ -22,8 +22,11 @@ def main():
         if key in TARGET_MARKETS:
             # check rf
             current_rf = dev_msig.rari.ftoken_get_rf(value)
-            print(f"Current RF for {key} is {current_rf}, updating it to {TARGET_RF}\n")
-            # update rf
-            dev_msig.rari.ftoken_set_rf(value, TARGET_RF)
+            if current_rf != TARGET_RF:
+                print(f"Current RF for {key} is {current_rf}, updating it to {TARGET_RF}\n")
+                # update rf
+                dev_msig.rari.ftoken_set_rf(value, TARGET_RF)
+            else:
+                print(f"Current RF for {key} is the targetted value\n")
 
     dev_msig.post_safe_tx()
