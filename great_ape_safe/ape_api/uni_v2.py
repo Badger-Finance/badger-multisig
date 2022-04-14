@@ -60,7 +60,6 @@ class UniV2:
             mantissaB = self.router.getAmountsOut(mantissaA, path)[-1]
 
         elif mantissaB != None:
-            mantissaA = self.router.getAmountsOut(mantissaB, path)
             mantissaA = self.router.getAmountsOut(mantissaB, path)[-1]
 
         if is_solidly:
