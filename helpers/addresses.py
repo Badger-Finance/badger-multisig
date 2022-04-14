@@ -421,7 +421,10 @@ ADDRESSES_ETH = {
     },
     "nft": {
         "badger_jersey": "0xe1e546e25A5eD890DFf8b8D005537c0d373497F8"
-    }
+    },
+    "arbitrum": {
+        "outbox": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
+    },
 }
 
 ADDRESSES_IBBTC = {
@@ -609,6 +612,7 @@ ADDRESSES_ARBITRUM = {
         "ibBTC": "0x9Ab3FD50FcAe73A1AEDa959468FD0D662c881b42",
         "slpWbtcEth": "0x515e252b2b5c22b4b2b6Df66c2eBeeA871AA4d69",
         "slpSushiWeth": "0x3221022e37029923aCe4235D812273C5A42C322d",
+        "slpCrvWeth": "0xbe3B9c3700171183b2B3F827D8833212d0197a96",
         "crvRenBTC": "0x3E01dD8a5E1fb3481F0F589056b428Fc308AF0Fb",
         "crvTricrypto": "0x8e0B8c8BB9db49a46697F3a5Bb8A308e744821D2",
         "dxsSwaprWeth": "0xA66b20912cBEa522278f3056B4aE60D0d3EE271b",
@@ -651,6 +655,14 @@ ADDRESSES_ARBITRUM = {
         "native.DXSBadgerWeth": "0x56EEa3787EfA7D3a78E3c3D047dd9186aC1Ab801",
         "native.DXSIbbtcWeth": "0x6E8807E0d108269D017A8958aae36634FA75742B",
     },
+    "sushi": {
+        "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
+    },
+    "swapr": {
+        "router": "0x530476d5583724A89c8841eB6Da76E7Af4C0F17E"
+    },
+    "arbitrum_node": "0x00000000000000000000000000000000000000C8",
+    "arbitrum_gateway_router": "0x5288c571Fd7aD117beA99bF60FE0846C4E84F933",
     "controller": "0x3811448236d4274705b81C6ab99d617bfab617Cd",
     "rewardsLogger": "0x85E1cACAe9a63429394d68Db59E14af74143c61c",
     "proxyAdminDev": "0x95713d825BcAA799A8e2F2b6c75aeD8b89124852",
