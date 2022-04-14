@@ -244,6 +244,7 @@ class GreatApeSafe(ApeSafe):
             self.print_snapshot(csv_destination)
         if post:
             self.post_transaction(safe_tx)
+        return safe_tx
 
 
     def _get_safe_tx_by_nonce(self, safe_nonce):
