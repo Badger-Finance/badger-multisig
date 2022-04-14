@@ -7,7 +7,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions
+from brownie import Contract, ETH_ADDRESS, interface, network, exceptions
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
@@ -276,3 +276,25 @@ class GreatApeSafe(ApeSafe):
             safe_tx = self.pending_transactions[0]
         pprint(safe_tx.__dict__)
         self.execute_transaction_with_frame(safe_tx)
+
+
+    def post_safe_tx_manually(self, signature=''):
+        safe_tx = self.post_safe_tx(events=False, silent=True, post=False)
+        safe_tx.signatures = bytes.fromhex(signature)
+        self.sign_with_frame(safe_tx)
+
+        print('either copy this signature to the next signer or, if being the last signer, manually post the hex data to its destination')
+        print('signature:\t', safe_tx.signatures.hex())
+        print('destination:\t', self.account)
+        print('hex data:\t', interface.IGnosisSafe_v1_3_0(self.address).execTransaction.encode_input(
+            safe_tx.to, # address to
+            safe_tx.value, # uint256 value
+            safe_tx.data.hex(), # bytes memory data
+            safe_tx.operation, # uint8 operation
+            safe_tx.safe_tx_gas, # uint256 safeTxGas
+            safe_tx.base_gas, # uint256 baseGas
+            safe_tx.gas_price, # uint256 gasPrice
+            safe_tx.gas_token, # address gasToken
+            safe_tx.refund_receiver, # address refundReceiver
+            safe_tx.signatures.hex() # bytes memory signatures
+        ))
