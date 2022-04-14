@@ -29,7 +29,7 @@ def main():
 
     lp_bal = bveoxd_oxd.balanceOf(trops) * 0.99 # dusty
     bveoxd_oxd.approve(bbveoxd_oxd, lp_bal)
-    bbveoxd_oxd.depositAll()
+    bbveoxd_oxd.deposit(lp_bal)
 
     trops.print_snapshot()
 
