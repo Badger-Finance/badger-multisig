@@ -278,8 +278,10 @@ class GreatApeSafe(ApeSafe):
         self.execute_transaction_with_frame(safe_tx)
 
 
-    def post_safe_tx_manually(self, signature=''):
+    def post_safe_tx_manually(self):
         safe_tx = self.post_safe_tx(events=False, silent=True, post=False)
+        signature = C.input('paste signature from previous signer (or leave empty if first signer): ')
+        print(bytes.fromhex(signature))
         safe_tx.signatures = bytes.fromhex(signature)
         self.sign_with_frame(safe_tx)
 
