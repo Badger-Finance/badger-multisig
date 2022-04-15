@@ -1,4 +1,5 @@
 from brownie import accounts, interface, web3, network
+from construct import If
 from helpers.addresses import registry
 from sympy import Symbol
 from sympy.solvers import solve
@@ -40,7 +41,7 @@ class UniV2:
         return path
 
 
-    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
+    def add_liquidity(self, tokenA, tokenB, mantissaA, mantissaB, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
         destination = self.safe.address if not destination else destination
 
@@ -50,40 +51,35 @@ class UniV2:
         if is_solidly:
             is_stable = path[0][-1]
             pair_address = self.factory.getPair(tokenA, tokenB, is_stable)
+
         else:
             pair_address = self.factory.getPair(tokenA, tokenB)
 
         pair = interface.IUniswapV2Pair(pair_address)
         slp_balance = pair.balanceOf(self.safe)
 
-        if mantissaA != None:
-            mantissaB = self.router.getAmountsOut(mantissaA, path)[-1]
-
-        elif mantissaB != None:
-            mantissaA = self.router.getAmountsOut(mantissaB, path)[-1]
-
         if is_solidly:
-            quote_token0_min, quote_token1_min, liq \
+            quote_token0, quote_token1, liq \
             = self.router.quoteAddLiquidity(tokenA, tokenB, is_stable, mantissaA, mantissaB)
 
         else:
             # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/library#quote
             reserve0, reserve1, _ = pair.getReserves()
-            quote_token0_min = self.router.quote(mantissaA, reserve0, reserve1)
-            quote_token1_min = self.router.quote(mantissaB, reserve1, reserve0)
+            quote_token0 = self.router.quote(mantissaA, reserve0, reserve1)
+            quote_token1 = self.router.quote(mantissaB, reserve1, reserve0)
 
         tokenA.approve(self.router, mantissaA)
         tokenB.approve(self.router, mantissaB)
 
         if is_solidly:
-           amountA, amountB, liquidity = self.router.addLiquidity(
+            amountA, amountB, liquidity = self.router.addLiquidity(
                 tokenA,
                 tokenB,
                 is_stable,
-                mantissaA,
-                mantissaB,
-                quote_token0_min * (1 - self.max_slippage),
-                quote_token1_min * (1 - self.max_slippage),
+                quote_token0,
+                quote_token1,
+                quote_token0 * (1 - self.max_slippage),
+                quote_token1 * (1 - self.max_slippage),
                 destination,
                 web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
             ).return_value
@@ -92,10 +88,10 @@ class UniV2:
             amountA, amountB, liquidity = self.router.addLiquidity(
                 tokenA,
                 tokenB,
-                mantissaA,
-                mantissaB,
-                quote_token1_min * (1 - self.max_slippage),
-                quote_token0_min * (1 - self.max_slippage),
+                quote_token0,
+                quote_token1,
+                quote_token0 * (1 - self.max_slippage),
+                quote_token1 * (1 - self.max_slippage),
                 destination,
                 web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
             ).return_value

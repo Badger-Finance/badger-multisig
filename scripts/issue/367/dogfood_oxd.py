@@ -1,5 +1,4 @@
 from brownie import interface
-
 from helpers.addresses import registry
 from great_ape_safe import GreatApeSafe
 
@@ -18,19 +17,20 @@ def main():
     bbveoxd_oxd = interface.ISettV4h(registry.ftm.sett_vaults['bbveOXD-OXD'], owner=trops.account)
 
     trops.init_solidly()
-    trops.take_snapshot(tokens=[oxd, bbveoxd_oxd])
+    trops.take_snapshot(tokens=[oxd, bveoxd, bbveoxd_oxd])
 
     half_oxd = oxd.balanceOf(trops) / 2
     oxd.approve(bveoxd, half_oxd)
     bveoxd.deposit(half_oxd)
 
     oxd_bal = oxd.balanceOf(trops)
-    trops.solidly.add_liquidity(oxd, bveoxd, mantissaA=oxd_bal)
+    bveoxd_bal = bveoxd.balanceOf(trops)
+    trops.solidly.add_liquidity(bveoxd, oxd, bveoxd_bal, oxd_bal)
 
-    lp_bal = bveoxd_oxd.balanceOf(trops) * 0.99 # dusty
+    lp_bal = bveoxd_oxd.balanceOf(trops)
     bveoxd_oxd.approve(bbveoxd_oxd, lp_bal)
-    bbveoxd_oxd.deposit(lp_bal)
+    bbveoxd_oxd.depositAll()
 
     trops.print_snapshot()
 
-    trops.post_safe_tx()
+    trops.post_safe_tx(skip_preview=True)
