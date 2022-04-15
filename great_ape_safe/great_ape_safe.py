@@ -7,11 +7,12 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, ETH_ADDRESS, interface, network, exceptions
+from brownie import Contract, ETH_ADDRESS, chain, interface, network, exceptions
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
-from helpers.chaindata import labels
+from web3 import Web3
+from web3.middleware import geth_poa_middleware
 
 from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.anyswap import Anyswap
@@ -29,6 +30,7 @@ from great_ape_safe.ape_api.spookyswap import SpookySwap
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from great_ape_safe.ape_api.uni_v3 import UniV3
+from helpers.chaindata import labels
 
 
 C = Console()
@@ -281,14 +283,34 @@ class GreatApeSafe(ApeSafe):
     def post_safe_tx_manually(self):
         safe_tx = self.post_safe_tx(events=False, silent=True, post=False)
         signature = C.input('paste signature from previous signer (or leave empty if first signer): ')
-        print(bytes.fromhex(signature))
         safe_tx.signatures = bytes.fromhex(signature)
         self.sign_with_frame(safe_tx)
 
-        print('either copy this signature to the next signer or, if being the last signer, manually post the hex data to its destination')
-        print('signature:\t', safe_tx.signatures.hex())
-        print('destination:\t', self.account)
-        print('hex data:\t', interface.IGnosisSafe_v1_3_0(self.address).execTransaction.encode_input(
+        # tx_hash = interface.IGnosisSafe_v1_3_0(self.address).getTransactionHash(
+        #     safe_tx.to, # address to,
+        #     safe_tx.value, # uint256 value,
+        #     safe_tx.data.hex(), # bytes calldata data,
+        #     safe_tx.operation, # Enum.Operation operation,
+        #     safe_tx.safe_tx_gas, # uint256 safeTxGas,
+        #     safe_tx.base_gas, # uint256 baseGas,
+        #     safe_tx.gas_price, # uint256 gasPrice,
+        #     safe_tx.gas_token, # address gasToken,
+        #     safe_tx.refund_receiver, # address refundReceiver,
+        #     interface.IGnosisSafe_v1_3_0(self.address).nonce(), # uint256 _nonce
+        #     {'from': safe_tx.signers[-1]}
+        # )
+        # try:
+            # interface.IGnosisSafe_v1_3_0(self.address).checkSignatures.call(
+            #     tx_hash, # bytes32 dataHash,
+            #     safe_tx.data.hex(), # bytes memory data,
+            #     safe_tx.signatures.hex(), # bytes memory signatures
+            #     {'from': safe_tx.signers[-1]}
+            # )
+        # except:
+        #     C.print('copy this signature to the next signer:', safe_tx.signatures.hex())
+        #     sys.exit()
+
+        calldata = interface.IGnosisSafe_v1_3_0(self.address).execTransaction.encode_input(
             safe_tx.to, # address to
             safe_tx.value, # uint256 value
             safe_tx.data.hex(), # bytes memory data
@@ -299,4 +321,15 @@ class GreatApeSafe(ApeSafe):
             safe_tx.gas_token, # address gasToken
             safe_tx.refund_receiver, # address refundReceiver
             safe_tx.signatures.hex() # bytes memory signatures
-        ))
+        )
+
+        pprint({'destination': self.address, 'hex data': calldata})
+
+        frame_rpc = 'http://127.0.0.1:1248'
+        frame = Web3(Web3.HTTPProvider(frame_rpc, {'timeout': 600}))
+        if chain.id == 4:
+            # https://web3py.readthedocs.io/en/stable/middleware.html#geth-style-proof-of-authority
+            frame.middleware_onion.inject(geth_poa_middleware, layer=0)
+        frame.eth.send_transaction({
+            'to': self.address, 'value': 0, 'data': calldata
+        })
