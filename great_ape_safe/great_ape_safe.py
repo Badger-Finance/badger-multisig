@@ -307,7 +307,7 @@ class GreatApeSafe(ApeSafe):
             #     {'from': safe_tx.signers[-1]}
             # )
         # except:
-        #     C.print('copy this signature to the next signer:', safe_tx.signatures.hex())
+        C.print('copy this signature to the next signer:', safe_tx.signatures.hex())
         #     sys.exit()
 
         calldata = interface.IGnosisSafe_v1_3_0(self.address).execTransaction.encode_input(
