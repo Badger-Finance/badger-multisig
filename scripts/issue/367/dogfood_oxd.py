@@ -27,9 +27,9 @@ def main():
     bveoxd_bal = bveoxd.balanceOf(trops)
     trops.solidly.add_liquidity(bveoxd, oxd, bveoxd_bal, oxd_bal)
 
-    lp_bal = bveoxd_oxd.balanceOf(trops)
+    lp_bal = bveoxd_oxd.balanceOf(trops) * 0.99
     bveoxd_oxd.approve(bbveoxd_oxd, lp_bal)
-    bbveoxd_oxd.depositAll()
+    bbveoxd_oxd.deposit(lp_bal)
 
     trops.print_snapshot()
 
