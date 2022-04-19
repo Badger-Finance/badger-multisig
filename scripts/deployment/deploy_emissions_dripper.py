@@ -1,14 +1,14 @@
 from  calendar import timegm
 from datetime import date, timedelta
 
-from brownie import RemBadgerDripper, accounts
+from brownie import EmissionsDripper, accounts
 
 from helpers.addresses import registry
 
 
 def main(deployer_label=None):
     deployer = accounts[0] if not deployer_label else accounts.load(deployer_label)
-    return RemBadgerDripper.deploy(
+    return EmissionsDripper.deploy(
         registry.eth.sett_vaults.remBADGER,
         timegm(date(2022, 4, 29).timetuple()),
         int(timedelta(weeks=9).total_seconds()),
@@ -22,7 +22,7 @@ def main(deployer_label=None):
 
 def rinkeby(deployer_label=None):
     deployer = accounts.load(deployer_label)
-    return RemBadgerDripper.deploy(
+    return EmissionsDripper.deploy(
         registry.rinkeby.badger_wallets.solo_multisig,
         timegm(date(2022, 4, 15).timetuple()),
         int(timedelta(weeks=11).total_seconds()),
