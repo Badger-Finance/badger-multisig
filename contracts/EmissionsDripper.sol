@@ -51,7 +51,7 @@ contract EmissionsDripper is VestingWallet {
      * @dev Call VestingWallet's release method, but only on the condition
      * that the caller is authorised.
      */
-    function release(address token) public virtual override {
+    function release(address token) public override {
         require(
             _msgSender() == keeper() || _msgSender() == controller || _msgSender() == governance,
             "EmissionsDripper: onlyAuthorized"
@@ -63,7 +63,7 @@ contract EmissionsDripper is VestingWallet {
      * @dev Sweep the full contract's ether balance to governance. Can only be
      * called by governance.
      */
-    function sweep() public {
+    function sweep() public virtual {
         require(_msgSender() == governance, "EmissionsDripper: onlyAuthorized");
         uint256 balance = address(this).balance;
         emit EtherSwept(balance);
@@ -74,7 +74,7 @@ contract EmissionsDripper is VestingWallet {
      * @dev Sweep the full contract's balance for an ERC20 token to
      * governance. Can only be called by governance.
      */
-    function sweep(address token) public {
+    function sweep(address token) public virtual {
         require(_msgSender() == governance, "EmissionsDripper: onlyAuthorized");
         uint256 balance = IERC20(token).balanceOf(address(this));
         emit ERC20Swept(token, balance);
