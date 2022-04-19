@@ -5,7 +5,7 @@ from helpers.addresses import registry
 def main():
 
     safe = GreatApeSafe(registry.bsc.badger_wallets.dev_multisig)
-    eps = safe.contract(registry.bsc.treasury_tokens.EPS)
+    eps = safe.contract(registry.bsc.airdropable_tokens.EPS)
     wbnb = safe.contract(registry.bsc.treasury_tokens.WBNB)
 
     safe.take_snapshot([eps])
