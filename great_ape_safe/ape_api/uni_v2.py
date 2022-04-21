@@ -1,5 +1,4 @@
 from brownie import accounts, interface, web3, network
-from construct import If
 from helpers.addresses import registry
 from sympy import Symbol
 from sympy.solvers import solve
