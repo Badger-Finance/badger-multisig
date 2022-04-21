@@ -85,16 +85,16 @@ def main(target_file="generated_emissions_info_BIP_88_Emissions"):
                             * weeks_no
                         )
 
-                totals["digg"] += shares
+                    totals["digg"] += shares
 
-                rewards_logger.setUnlockSchedule(
-                    beneficiary,
-                    registry.eth.treasury_tokens.DIGG,
-                    shares,
-                    time_range["starttime"],
-                    end_quarter_timestamp,
-                    duration,
-                )
+                    rewards_logger.setUnlockSchedule(
+                        beneficiary,
+                        registry.eth.treasury_tokens.DIGG,
+                        shares,
+                        time_range["starttime"],
+                        end_quarter_timestamp,
+                        duration,
+                    )
     elif network.chain.id == 42161:
         safe = GreatApeSafe(registry.arbitrum.badger_wallets.techops_multisig)
         rewards_logger = safe.contract(registry.arbitrum.rewardsLogger)
