@@ -9,7 +9,7 @@ EXTRA_WALLETS = [] # also consider these badger wallets that do not prefix ops_
 DEFAULT_AMOUNT = 20e18 # target balance for any ops_* badger wallet
 EXEC_AMOUNT = 10e18 # target balance for any ops_executor* badger wallet
 OVERRIDE_AMOUNT = { # override DEFAULT_AMOUNT for exceptional badger wallets
-    'ops_botsquad': 150e18,
+    'ops_botsquad': 500e18,
     'ops_deployer': 50e18,
     'ops_external_harvester': 30e18,
 }
