@@ -14,20 +14,20 @@ def main():
 
     # https://github.com/Badger-Finance/badger-multisig/issues/383
     # add badger to the tree for weekly emissions
-    week_15_badger_emissions = Decimal('20_000')
-    week_15_rembadger_emissions = Decimal('7692.307692')
+    week_16_badger_emissions = Decimal('20_000')
+    week_16_rembadger_emissions = Decimal('7692.307692')
     df["token_address"].append(registry.eth.treasury_tokens.BADGER)
     df["receiver"].append(registry.eth.badger_wallets.badgertree)
     df["value"].append(
-        week_15_badger_emissions + week_15_rembadger_emissions
+        week_16_badger_emissions + week_16_rembadger_emissions
     )
 
     # https://github.com/Badger-Finance/badger-multisig/issues/384
     # add digg to the tree for weekly emissions
-    week_15_digg_emissions_tree = Decimal('1.302461219')
+    week_16_digg_emissions_tree = Decimal('1.302461219')
     df["token_address"].append(registry.eth.treasury_tokens.DIGG)
     df["receiver"].append(registry.eth.badger_wallets.badgertree)
-    df["value"].append(week_15_digg_emissions_tree)
+    df["value"].append(week_16_digg_emissions_tree)
 
     # turn dict of lists into dataframe and add additional columns needed by
     # the gnosis app
