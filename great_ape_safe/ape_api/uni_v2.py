@@ -40,44 +40,60 @@ class UniV2:
         return path
 
 
-    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
+    def add_liquidity(self, tokenA, tokenB, mantissaA, mantissaB, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
         destination = self.safe.address if not destination else destination
 
-        pair_address = self.factory.getPair(tokenA, tokenB)
-        pair = self.safe.contract(pair_address)
+        path = self.build_path(mantissaA if mantissaA else mantissaB, [tokenA, tokenB])
+        is_solidly = isinstance(path[0], tuple)
 
-        slp_balance = pair.balanceOf(self.safe)
-
-        reserve0, reserve1, _ = pair.getReserves()
-
-        path = [tokenA, tokenB]
-
-        if mantissaA != None:
-            path = [tokenA, tokenB]
-            mantissaB = self.router.getAmountsOut(mantissaA, path)[1]
+        if is_solidly:
+            is_stable = path[0][-1]
+            pair_address = self.factory.getPair(tokenA, tokenB, is_stable)
 
         else:
-            path = [tokenB, tokenA]
-            mantissaA = self.router.getAmountsOut(mantissaB, path)[1]
+            pair_address = self.factory.getPair(tokenA, tokenB)
 
-        # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/library#quote
-        quote_token0_min = self.router.quote(mantissaA, reserve0, reserve1)
-        quote_token1_min = self.router.quote(mantissaB, reserve1, reserve0)
+        pair = interface.IUniswapV2Pair(pair_address)
+        slp_balance = pair.balanceOf(self.safe)
+
+        if is_solidly:
+            quote_token0, quote_token1, liq \
+            = self.router.quoteAddLiquidity(tokenA, tokenB, is_stable, mantissaA, mantissaB)
+
+        else:
+            # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/library#quote
+            reserve0, reserve1, _ = pair.getReserves()
+            quote_token0 = self.router.quote(mantissaA, reserve0, reserve1)
+            quote_token1 = self.router.quote(mantissaB, reserve1, reserve0)
 
         tokenA.approve(self.router, mantissaA)
         tokenB.approve(self.router, mantissaB)
 
-        amountA, amountB, liquidity = self.router.addLiquidity(
-            tokenA,
-            tokenB,
-            mantissaA,
-            mantissaB,
-            quote_token1_min * (1 - self.max_slippage),
-            quote_token0_min * (1 - self.max_slippage),
-            destination,
-            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
-        ).return_value
+        if is_solidly:
+            amountA, amountB, liquidity = self.router.addLiquidity(
+                tokenA,
+                tokenB,
+                is_stable,
+                quote_token0,
+                quote_token1,
+                quote_token0 * (1 - self.max_slippage),
+                quote_token1 * (1 - self.max_slippage),
+                destination,
+                web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
+            ).return_value
+
+        else:
+            amountA, amountB, liquidity = self.router.addLiquidity(
+                tokenA,
+                tokenB,
+                quote_token0,
+                quote_token1,
+                quote_token0 * (1 - self.max_slippage),
+                quote_token1 * (1 - self.max_slippage),
+                destination,
+                web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
+            ).return_value
 
         assert (
             pair.balanceOf(destination)

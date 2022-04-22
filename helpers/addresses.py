@@ -725,9 +725,16 @@ ADDRESSES_FANTOM = {
         "USDC": "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
         "OXD": "0xc5A9848b9d145965d821AaeC8fA32aaEE026492d",
     },
+    "lp_tokens": {
+        "bveOXD-OXD": "0x6519546433dCB0a34A0De908e1032c46906EF664"
+    },
+    "sett_vaults": {
+        "bveOXD": "0x96d4dBdc91Bef716eb407e415c9987a9fAfb8906",
+        "bbveOXD-OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9"
+    },
     "solidly": {
         "router": "0xa38cd27185a464914D3046f0AB9d43356B34829D",
-        "factory": "0x3fAaB499b519fdC5819e3D7ed0C26111904cbc28"
+        "factory": "0x3fAaB499b519fdC5819e3D7ed0C26111904cbc28",
     },
     "spookyswap": {
         "router": "0xF491e7B69E4244ad4002BC14e878a34207E38c29",
