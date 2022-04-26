@@ -16,6 +16,9 @@ ADDRESSES_ETH = {
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
+    "drippers": {
+        "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
+    },
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
@@ -47,6 +50,7 @@ ADDRESSES_ETH = {
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
@@ -716,7 +720,14 @@ ADDRESSES_FANTOM = {
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
+        "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
+        "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
+        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
