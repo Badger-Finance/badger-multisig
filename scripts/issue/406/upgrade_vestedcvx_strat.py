@@ -25,7 +25,7 @@ def main(queue="true", simulation="false"):
                 ["address", "address"],
                 [strat_proxy.address, NEW_LOGIC],
             ),
-            dump_dir="data/badger/timelock/upgrade_veCVX_strategy_V1_6/",
+            dump_dir="data/badger/timelock/upgrade_veCVX_strategy_V1_7/",
             delay_in_days=4,
         )
     else:   
@@ -61,7 +61,7 @@ def main(queue="true", simulation="false"):
             proxyAdmin = interface.IProxyAdmin(DEV_PROXY, owner=timelock)
             proxyAdmin.upgrade(strat_proxy.address, NEW_LOGIC)
         else:
-            safe.badger.execute_timelock("data/badger/timelock/upgrade_veCVX_strategy_V1_6/")
+            safe.badger.execute_timelock("data/badger/timelock/upgrade_veCVX_strategy_V1_7/")
 
         ## Checking all variables are as expected
         assert prev_strategist == strat_proxy.strategist()
