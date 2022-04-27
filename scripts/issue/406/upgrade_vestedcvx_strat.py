@@ -1,8 +1,7 @@
 from eth_abi import encode_abi
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
-from brownie import accounts, interface, chain
-from helpers.constants import EmptyBytes32
+from brownie import accounts, interface
 from rich.console import Console
 
 C = Console()
@@ -16,6 +15,7 @@ def main(queue="true", simulation="false"):
     safe.init_badger()
 
     strat_proxy = safe.badger.strat_bvecvx
+    bribes_processor = interface.IBribesProcessor(registry.eth.bribes_processor)
 
     if queue == "true":
         safe.badger.queue_timelock(
@@ -89,7 +89,10 @@ def main(queue="true", simulation="false"):
         assert prev_CVX_EXTRA_BADGER == strat_proxy.BADGER()
 
         ## Verify new Addresses are setup properly
-        assert strat_proxy.BRIBES_PROCESSOR() == registry.eth.bribes_processor
+        assert strat_proxy.BRIBES_PROCESSOR() == bribes_processor.address
+
+        # Verify that the bribes_processor's manager points to the correct multisig
+        assert bribes_processor.manager() == registry.eth.badger_wallets.techops_multisig
 
         # Test chainlink functions
         if simulation == "true":
