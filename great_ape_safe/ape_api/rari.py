@@ -1,6 +1,5 @@
-from brownie import interface
+from brownie import interface, Wei
 from helpers.addresses import registry
-
 
 class Rari():
     def __init__(self, safe):
@@ -86,7 +85,7 @@ class Rari():
 
     def set_liquidation_incentive(self, new_incentive):
         assert self.get_liquidation_incentive() != new_incentive
-        self.unitroller._setLiquidationIncentive(new_incentive * 1e18)
+        self.unitroller._setLiquidationIncentive(Wei(f"{new_incentive} ether"))
         assert self.get_liquidation_incentive() == new_incentive
 
 
