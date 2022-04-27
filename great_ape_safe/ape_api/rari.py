@@ -85,6 +85,7 @@ class Rari():
 
 
     def set_liquidation_incentive(self, new_incentive):
+        assert self.get_liquidation_incentive() != new_incentive
         self.unitroller._setLiquidationIncentive(new_incentive * 1e18)
         assert self.get_liquidation_incentive() == new_incentive
 
