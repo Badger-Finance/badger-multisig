@@ -70,8 +70,6 @@ def main(queue="true", simulation="false"):
         assert prev_keeper == strat_proxy.keeper()
         assert prev_perFeeG == strat_proxy.performanceFeeGovernance()
         assert prev_perFeeS == strat_proxy.performanceFeeStrategist()
-        C.print(prev_reward)
-        C.print(strat_proxy.reward())
         assert prev_reward == strat_proxy.reward()
         assert prev_unit == strat_proxy.uniswap()
         assert prev_check_withdrawalSafetyCheck == strat_proxy.withdrawalSafetyCheck()
