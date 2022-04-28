@@ -16,6 +16,9 @@ ADDRESSES_ETH = {
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
+    "drippers": {
+        "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
+    },
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
