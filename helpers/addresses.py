@@ -16,6 +16,7 @@ ADDRESSES_ETH = {
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
+    "bribes_processor": "0xbeD8f323456578981952e33bBfbE80D23289246B",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
@@ -278,7 +279,7 @@ ADDRESSES_ETH = {
         "StrategyCvxHelper": "0x9A12A9141363A5B343B781c4951d42E327B89397", # V1.1
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
-        "native.vestedCVX": "0xeA563B601C2Ce9c67a1f41222856E06AAB76D1fa", # V1.5
+        "native.vestedCVX": "0x57961a757bA249E616c1940548401b7CdF83a849", # V1.7
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
