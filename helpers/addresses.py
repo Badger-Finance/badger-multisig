@@ -727,7 +727,7 @@ ADDRESSES_FANTOM = {
         "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
-        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
