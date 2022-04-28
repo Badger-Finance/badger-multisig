@@ -19,6 +19,7 @@ ADDRESSES_ETH = {
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
     },
+    "bribes_processor": "0xbeD8f323456578981952e33bBfbE80D23289246B",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
@@ -282,7 +283,7 @@ ADDRESSES_ETH = {
         "StrategyCvxHelper": "0x9A12A9141363A5B343B781c4951d42E327B89397", # V1.1
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
-        "native.vestedCVX": "0xeA563B601C2Ce9c67a1f41222856E06AAB76D1fa", # V1.5
+        "native.vestedCVX": "0x57961a757bA249E616c1940548401b7CdF83a849", # V1.7
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
@@ -658,10 +659,10 @@ ADDRESSES_ARBITRUM = {
         "bDXSWbtcWeth": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
     },
     "swapr_staking_contracts": {
-        "native.DXSSwaprWeth": "0xD9A998f2998Bc4810A0303B603a7d4ad312fdCb2",
-        "native.DXSWbtcWeth": "0x28f2a93d9e41C703b5199007c3E22692A2D335eF",
-        "native.DXSBadgerWeth": "0x56EEa3787EfA7D3a78E3c3D047dd9186aC1Ab801",
-        "native.DXSIbbtcWeth": "0x6E8807E0d108269D017A8958aae36634FA75742B",
+        "native.DXSSwaprWeth": "0xd090a6b7651d9E51FE4D25c6756623613FdB7950",
+        "native.DXSWbtcWeth": "0xbe7Dbb01E87f4faD154B8AB36125181f32A96B2c",
+        "native.DXSBadgerWeth": "0x0E84da346a2c439970857981f580D664265eBCf0",
+        "native.DXSIbbtcWeth": "0xd1D9210C74deF67eD6D9652552dE77B12C62c00b",
     },
     "sushi": {
         "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
