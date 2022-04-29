@@ -1,0 +1,3 @@
+roles = {
+    '0xDA25ee226E534d868f0Dd8a459536b03fEE9079b': 'some_role',
+}
