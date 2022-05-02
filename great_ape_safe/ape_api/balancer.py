@@ -106,13 +106,9 @@ class Balancer():
             token = self.safe.contract(token)
             token.approve(self.vault, mantissas[i])
 
-        balance_before = pool.balanceOf(self.safe)
 
-        if stake:
-            pool_reciepient = self.safe
-        else:
-            pool_reciepient = destination
-
+        pool_reciepient = self.safe if stake else destination
+        balance_before = pool.balanceOf(pool_reciepient)
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins
         self.vault.joinPool(
