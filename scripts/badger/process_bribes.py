@@ -34,19 +34,20 @@ def step0_1(sim=False):
         from brownie_tokens import MintableForkToken
         alcx = MintableForkToken(registry.eth.treasury_tokens.ALCX)
         alcx._mint_for_testing(SAFE.badger.strat_bvecvx, 500e18)
+        claimed = {alcx.address: 500e18}
     else:
         claimed = SAFE.badger.claim_bribes_votium(
             registry.eth.bribe_tokens_claimable
         )
-        for addr, mantissa in claimed:
-            order_payload, order_uid = SAFE.badger.get_order_for_processor(
-                sell_token=SAFE.contract(addr),
-                mantissa_sell=mantissa,
-                buy_token=WETH,
-                coef=.99,
-                prod=COW_PROD
-            )
-            PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+    for addr, mantissa in claimed:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            sell_token=SAFE.contract(addr),
+            mantissa_sell=mantissa,
+            buy_token=WETH,
+            coef=.99,
+            prod=COW_PROD
+        )
+        PROCESSOR.sellBribeForWeth(order_payload, order_uid)
         SAFE.badger.claim_bribes_convex(registry.eth.bribe_tokens_claimable)
 
     bribes_dest.print_snapshot()
@@ -55,6 +56,7 @@ def step0_1(sim=False):
 
 
 def step0(sim=False):
+    # can be skipped if step0_1 was successful
     strat_logic = interface.IVestedCvx(
         registry.eth.logic['native.vestedCVX'], owner=SAFE.account
     )
