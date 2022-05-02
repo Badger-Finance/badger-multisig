@@ -5,7 +5,8 @@ import sys
 from decimal import Decimal
 from pprint import pprint
 
-from brownie import Contract, chain, interface, web3
+from brownie import chain, interface, web3
+from rich.prompt import Confirm
 
 from helpers.addresses import registry
 
@@ -42,7 +43,7 @@ class Cow():
 
 
     def _sell(self, sell_token, mantissa_sell, buy_token,
-        mantissa_buy, deadline, coef, destination):
+        mantissa_buy, deadline, coef, destination, origin):
         """call api to get sell quote and post order"""
 
         # set destination to self if not specified
@@ -75,6 +76,21 @@ class Cow():
             buy_amount_after_fee = mantissa_buy
         else:
             buy_amount_after_fee = int(int(r.json()['buyAmountAfterFee']) * coef)
+            pricer = interface.IOnChainPricing(
+                interface.IBribesProcessor(registry.eth.bribes_processor).pricer(),
+                owner=self.safe.account
+            )
+            naive_quote = pricer.findOptimalSwap(
+                sell_token, buy_token, mantissa_sell
+            )
+            if naive_quote[1] > buy_amount_after_fee:
+                # manual sanity check whether onchain quote is acceptable
+                override = Confirm.ask(
+f'''cowswap quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {buy_amount_after_fee / 10**buy_token.decimals()} {buy_token.symbol()}
+{naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {naive_quote[1] / 10**buy_token.decimals()} {buy_token.symbol()}
+pass {naive_quote[0]}'s quote to cowswap instead?''')
+                if override:
+                    buy_amount_after_fee = naive_quote[1]
         assert fee_amount > 0
         assert buy_amount_after_fee > 0
 
@@ -96,8 +112,8 @@ class Cow():
             'sellTokenBalance': 'erc20',
             'buyTokenBalance': 'erc20',
             'signingScheme': 'presign',
-            'signature': self.safe.address,
-            'from': self.safe.address,
+            'signature': origin,
+            'from': origin,
         }
         print('ORDER PAYLOAD')
         pprint(order_payload)
@@ -115,6 +131,10 @@ class Cow():
         os.makedirs(path, exist_ok=True)
         with open(f'{path}{order_uid}.json', 'w+') as f:
             f.write(json.dumps(order_payload))
+
+        if origin != self.safe.address:
+            # can only sign if origin is safe
+            return order_payload, order_uid
 
         # pre-approve the order on-chain, as set by `signingScheme`: presign
         # (otherwise signature would go in api order payload)
@@ -156,7 +176,8 @@ class Cow():
                 # without + n api will raise DuplicateOrder when chunks > 1
                 deadline=deadline + n,
                 coef=coef,
-                destination=destination
+                destination=destination,
+                origin=self.safe.address
             )
 
 
@@ -178,7 +199,8 @@ class Cow():
                 # without + n api will raise DuplicateOrder when chunks > 1
                 deadline=deadline + n,
                 coef=1,
-                destination=destination
+                destination=destination,
+                origin=self.safe.address
             )
 
 
