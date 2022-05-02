@@ -430,6 +430,12 @@ ADDRESSES_ETH = {
     "arbitrum": {
         "outbox": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
     },
+    "balancer": {
+        "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+        "gauge_factory": "0x4E7bBd911cf1EFa442BC1b2e9Ea01ffE785412EC",
+        "50-BTC-50-WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5",
+        "50-BTC-50-WETH-G": "0x4E3c048BE671852277Ad6ce29Fd5207aA12fabff"
+    }
 }
 
 ADDRESSES_IBBTC = {
