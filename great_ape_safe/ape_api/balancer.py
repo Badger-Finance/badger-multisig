@@ -2,17 +2,16 @@ from decimal import Decimal
 import requests
 import json
 
-from brownie import ZERO_ADDRESS
+from brownie import ZERO_ADDRESS, Contract
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
 
 from great_ape_safe.ape_api.helpers.balancer.weighted_math \
-    import calc_bpt_out_given_exact_tokens_in
+    import calc_bpt_out_given_exact_tokens_in, calc_tokens_out_given_exact_bpt_in
 
 from great_ape_safe.ape_api.helpers.balancer.queries \
     import pool_tokens_query
-
 
 
 class Balancer():
@@ -40,7 +39,7 @@ class Balancer():
                             Decimal(x['totalLiquidity']) > self.pool_query_liquidity_threshold]
             with open('great_ape_safe/ape_api/helpers/balancer/pools.json','w') as f:
                 json.dump(pool_data_filtered, f)
-            return pool_data
+            return pool_data_filtered
 
         with open('great_ape_safe/ape_api/helpers/balancer/pools.json') as f:
             data = json.load(f)
@@ -70,18 +69,21 @@ class Balancer():
 
 
     def deposit_and_stake(
-        self, underlyings, mantissas, pool_id=None, is_eth=False, stake=True, destination=None
+        self, underlyings, mantissas, pool=None, is_eth=False, stake=True, destination=None
     ):
+        # given underlyings and their amounts, deposit and stake `underlyings`
         destination = self.safe.address if not destination else destination
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#token-ordering
         underlyings, mantissas = \
             self.order_tokens([x.address for x in underlyings], mantissas)
 
-        if not pool_id:
+        if pool:
+            pool_id = pool.getPoolId()
+        else:
             pool_id = self.find_pool_for_underlyings(list(underlyings))
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
 
-        pool = self.safe.contract(self.vault.getPool(pool_id)[0])
         tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
 
         bpt_out = calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
@@ -132,8 +134,61 @@ class Balancer():
             assert gauge.balanceOf(destination) > balance_before
 
 
-    def unstake_all_and_withdraw_all(self):
-        pass
+    def unstake_all_and_withdraw_all(
+        self, underlyings=None, pool=None, unstake=True, is_eth=False, destination=None
+    ):
+        # given underlyings or pool, unstake bpt and withdraw all to underlyings
+        destination = self.safe.address if not destination else destination
+
+        if not underlyings and not pool:
+            raise TypeError('must provide either underlyings or pool')
+
+        if underlyings:
+            underlyings = sorted(underlyings)
+            pool_id = self.find_pool_for_underlyings(underlyings)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+        else:
+            pool_id = pool.getPoolId()
+            underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
+
+        if unstake:
+            balance_before = pool.balanceOf(self.safe)
+
+            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+            gauge.withdraw(gauge.balanceOf(self.safe))
+
+            assert pool.balanceOf(self.safe) > balance_before
+
+        exact_bpt_for_tokens_enum = 1
+        amount_in = pool.balanceOf(self.safe)
+
+        data_encoded = eth_abi.encode_abi(
+            ['uint256', 'uint256'],
+            [exact_bpt_for_tokens_enum, amount_in]
+            )
+
+        underlyings_out = calc_tokens_out_given_exact_bpt_in(
+            pool, reserves, amount_in
+        )
+        min_underlyings_out = \
+            [x * (1 - self.max_slippage) for x in underlyings_out]
+
+        request = (
+            underlyings,
+            min_underlyings_out,
+            data_encoded,
+            is_eth
+        )
+
+        balances_before = [Contract(x).balanceOf(destination) for x in underlyings]
+
+        pool.approve(self.vault, amount_in)
+        self.vault.exitPool(
+            pool_id, self.safe, destination, request
+        )
+
+        balances_after = [Contract(x).balanceOf(destination) for x in underlyings]
+        assert all([x > y for x, y in zip(balances_after, balances_before)])
 
 
     def claim_all(self):

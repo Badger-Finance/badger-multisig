@@ -38,3 +38,16 @@ def calc_bpt_out_given_exact_tokens_in(
         return mulDown(bptTotalSupply, (invariant_ratio - Decimal(1)))
     else:
         return 0
+
+
+def calc_tokens_out_given_exact_bpt_in(
+        pool,
+        reserves,
+        bpt_amount_in,
+    ):
+        total_bpt = Decimal(pool.totalSupply())
+        bpt_ratio = divDown(bpt_amount_in, total_bpt)
+        amounts_out = [None] * len(reserves)
+        for i in range(len(reserves)):
+            amounts_out[i] = mulDown(reserves[i], bpt_ratio)
+        return amounts_out
