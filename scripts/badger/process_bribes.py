@@ -24,7 +24,7 @@ OPS_FEE = .05
 
 
 def step0_1(sim=False):
-    bribes_dest = GreatApeSafe(PROCESSOR)
+    bribes_dest = GreatApeSafe(PROCESSOR.address)
     bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
 
     if sim:
@@ -55,7 +55,7 @@ def step0_1(sim=False):
 def step0(sim=False):
     '''can be skipped if step0_1 was successful'''
 
-    bribes_dest = GreatApeSafe(PROCESSOR)
+    bribes_dest = GreatApeSafe(PROCESSOR.address)
     bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
 
     if sim:
