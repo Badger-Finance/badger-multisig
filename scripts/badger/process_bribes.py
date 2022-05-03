@@ -91,6 +91,7 @@ def step1():
             prod=COW_PROD
         )
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+    SAFE.post_safe_tx(call_trace=True)
 
 
 def step2():
@@ -107,8 +108,10 @@ def step2():
         asset_sell=WETH, mantissa_sell=cvx_share, asset_buy=CVX, coef=.99
     )
     PROCESSOR.swapWethForCVX(order_payload, order_uid)
+    SAFE.post_safe_tx(call_trace=True)
 
 
 def step3():
     PROCESSOR.swapCVXTobveCVXAndEmit()
     PROCESSOR.emitBadger()
+    SAFE.post_safe_tx(call_trace=True)
