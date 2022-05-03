@@ -24,10 +24,7 @@ OPS_FEE = .05
 
 
 def step0_1(sim=False):
-    strat_logic = interface.IVestedCvx(
-        registry.eth.logic['native.vestedCVX'], owner=SAFE.account
-    )
-    bribes_dest = GreatApeSafe(strat_logic.BRIBES_PROCESSOR())
+    bribes_dest = GreatApeSafe(PROCESSOR)
     bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
 
     if sim:
@@ -39,7 +36,7 @@ def step0_1(sim=False):
         claimed = SAFE.badger.claim_bribes_votium(
             registry.eth.bribe_tokens_claimable
         )
-    for addr, mantissa in claimed:
+    for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=SAFE.contract(addr),
             mantissa_sell=mantissa,
@@ -56,11 +53,9 @@ def step0_1(sim=False):
 
 
 def step0(sim=False):
-    # can be skipped if step0_1 was successful
-    strat_logic = interface.IVestedCvx(
-        registry.eth.logic['native.vestedCVX'], owner=SAFE.account
-    )
-    bribes_dest = GreatApeSafe(strat_logic.BRIBES_PROCESSOR())
+    '''can be skipped if step0_1 was successful'''
+
+    bribes_dest = GreatApeSafe(PROCESSOR)
     bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
 
     if sim:
@@ -77,7 +72,8 @@ def step0(sim=False):
 
 
 def step1():
-    # can be skipped if step0_1 was successful
+    '''can be skipped if step0_1 was successful'''
+
     want_to_sell = registry.eth.bribe_tokens_claimable.copy()
     want_to_sell.pop('CVX') # SameBuyAndSellToken
     want_to_sell.pop('MTA') # dust
@@ -110,9 +106,9 @@ def step2():
     order_payload, order_uid = SAFE.cow._sell(
         asset_sell=WETH, mantissa_sell=cvx_share, asset_buy=CVX, coef=.99
     )
-    SAFE.swapWethForCVX(order_payload, order_uid)
+    PROCESSOR.swapWethForCVX(order_payload, order_uid)
 
 
 def step3():
-    SAFE.swapCVXTobveCVXAndEmit()
-    SAFE.emitBadger()
+    PROCESSOR.swapCVXTobveCVXAndEmit()
+    PROCESSOR.emitBadger()
