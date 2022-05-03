@@ -295,7 +295,8 @@ class Badger():
         coef=1,
         prod=False
     ):
-        self.safe.init_cow(prod=prod)
+        if not hasattr(self.safe, 'cow'):
+            self.safe.init_cow(prod=prod)
         order_payload, order_uid = self.safe.cow._sell(
             sell_token,
             mantissa_sell,
