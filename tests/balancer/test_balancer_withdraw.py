@@ -17,13 +17,11 @@ def deposited(dev, balancer, wbtc, weth, bpt, staked_bpt):
 
 
 def test_unstake_and_withdraw_all(dev, balancer, wbtc, weth, bpt, staked_bpt):
-    bal_before_bpt = bpt.balanceOf(dev)
     bal_before_weth = weth.balanceOf(dev)
     bal_before_wbtc = wbtc.balanceOf(dev)
 
     assert staked_bpt.balanceOf(dev) > 0
-
-    balancer.unstake_all_and_withdraw_all(pool=bpt, underlyings=None)
+    balancer.unstake_all_and_withdraw_all(pool=bpt)
 
     assert weth.balanceOf(dev) > bal_before_weth
     assert wbtc.balanceOf(dev) > bal_before_wbtc

@@ -150,7 +150,8 @@ class Balancer():
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
         else:
             pool_id = pool.getPoolId()
-            underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
+
+        underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
 
         if unstake:
             balance_before = pool.balanceOf(self.safe)
