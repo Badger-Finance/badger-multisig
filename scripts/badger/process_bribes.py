@@ -1,6 +1,9 @@
+from decimal import Decimal
+
 from brownie import interface
 
-from great_ape_safe import GreatApeSafe;from helpers.addresses import registry
+from great_ape_safe import GreatApeSafe
+from helpers.addresses import registry
 
 
 # only set to true when actually ready to post and exec on mainnet
@@ -39,7 +42,7 @@ def step0_1(sim=False):
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=SAFE.contract(addr),
-            mantissa_sell=mantissa,
+            mantissa_sell=int(Decimal(mantissa)),
             buy_token=WETH,
             coef=.99,
             prod=COW_PROD
@@ -85,7 +88,7 @@ def step1():
             continue
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=token,
-            mantissa_sell=balance,
+            mantissa_sell=int(Decimal(balance)),
             buy_token=WETH,
             coef=.99,
             prod=COW_PROD
@@ -95,14 +98,14 @@ def step1():
 
 
 def step2():
-    badger_share = int(WETH.balanceOf(SAFE) * BADGER_SHARE)
-    cvx_share = WETH.balanceOf(SAFE) - badger_share
-    assert badger_share + cvx_share == WETH.balanceOf(SAFE)
+    badger_share = int(WETH.balanceOf(PROCESSOR) * BADGER_SHARE)
+    cvx_share = WETH.balanceOf(PROCESSOR) - badger_share
+    assert badger_share + cvx_share == WETH.balanceOf(PROCESSOR)
 
     order_payload, order_uid = SAFE.cow._sell(
         asset_sell=WETH, mantissa_sell=badger_share, asset_buy=BADGER, coef=.99
     )
-    SAFE.swapWethForBadger(order_payload, order_uid)
+    PROCESSOR.swapWethForBadger(order_payload, order_uid)
 
     order_payload, order_uid = SAFE.cow._sell(
         asset_sell=WETH, mantissa_sell=cvx_share, asset_buy=CVX, coef=.99
