@@ -7,8 +7,10 @@ from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
 
-from great_ape_safe.ape_api.helpers.balancer.weighted_math \
-    import calc_bpt_out_given_exact_tokens_in, calc_tokens_out_given_exact_bpt_in
+from great_ape_safe.ape_api.helpers.balancer.weighted_math import (
+    calc_bpt_out_given_exact_tokens_in,
+    calc_tokens_out_given_exact_bpt_in
+)
 
 from great_ape_safe.ape_api.helpers.balancer.queries \
     import pool_tokens_query
@@ -107,7 +109,6 @@ class Balancer():
         for i, token in enumerate(tokens):
             token = self.safe.contract(token)
             token.approve(self.vault, mantissas[i])
-
 
         pool_reciepient = self.safe if stake else destination
         balance_before = pool.balanceOf(pool_reciepient)
