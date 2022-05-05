@@ -1,7 +1,8 @@
 from brownie import chain
 import pytest
 
-@pytest.fixture(scope="function", autouse=True)
+
+@pytest.fixture(autouse=True)
 def deposited(dev, balancer, wbtc, weth, bpt, staked_bpt):
     bal_before_staked_bpt = staked_bpt.balanceOf(dev)
     assert bal_before_staked_bpt == 0
@@ -19,13 +20,24 @@ def deposited(dev, balancer, wbtc, weth, bpt, staked_bpt):
 def test_unstake_and_withdraw_all(dev, balancer, wbtc, weth, bpt, staked_bpt):
     bal_before_weth = weth.balanceOf(dev)
     bal_before_wbtc = wbtc.balanceOf(dev)
+    bal_before_bpt = bpt.balanceOf(dev)
 
-    assert staked_bpt.balanceOf(dev) > 0
     balancer.unstake_all_and_withdraw_all(pool=bpt)
 
     assert weth.balanceOf(dev) > bal_before_weth
     assert wbtc.balanceOf(dev) > bal_before_wbtc
 
     assert staked_bpt.balanceOf(dev) == 0
-    assert bpt.balanceOf(dev) == 0
-    chain.reset()
+    assert bpt.balanceOf(dev) < bal_before_bpt
+
+
+def test_unstake_and_withdraw_all_single_asset(dev, balancer, wbtc, weth, bpt, staked_bpt):
+    bal_before_wbtc = wbtc.balanceOf(dev)
+    bal_before_bpt = bpt.balanceOf(dev)
+
+    balancer.unstake_and_withdraw_all_single_asset(wbtc, pool=bpt)
+
+    assert wbtc.balanceOf(dev) > bal_before_wbtc
+
+    assert staked_bpt.balanceOf(dev) == 0
+    assert bpt.balanceOf(dev) < bal_before_bpt
