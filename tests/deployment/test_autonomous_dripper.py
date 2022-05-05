@@ -46,10 +46,10 @@ def test_duration(dripper):
         'dripping period already expired; increase start or duration'
 
 
-def test_release_from_owner(badger, dripper):
-    owner = dripper.owner()
+def test_release_from_admin(badger, dripper):
+    admin = dripper.admin()
     bal_before = badger.balanceOf(dripper.beneficiary())
-    dripper.release(badger, {'from': owner})
+    dripper.release(badger, {'from': admin})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
@@ -83,11 +83,11 @@ def test_perform_upkeep(dripper, badger):
     assert badger.balanceOf(dripper.beneficiary()) > bal_benef_before
 
 
-def test_sweep_eth_from_owner(dripper):
-    owner = accounts.at(dripper.owner())
-    bal_before = owner.balance()
-    dripper.sweep({'from': owner})
-    assert owner.balance() > bal_before
+def test_sweep_eth_from_admin(dripper):
+    admin = accounts.at(dripper.admin())
+    bal_before = admin.balance()
+    dripper.sweep({'from': admin})
+    assert admin.balance() > bal_before
     assert dripper.balance() == 0
 
 
@@ -96,11 +96,11 @@ def test_sweep_eth_from_random(dripper):
         dripper.sweep({'from': accounts[1]})
 
 
-def test_sweep_erc_from_owner(dripper, badger):
-    owner = dripper.owner()
-    bal_before = badger.balanceOf(owner)
-    dripper.sweep(badger, {'from': owner})
-    assert badger.balanceOf(owner) > bal_before
+def test_sweep_erc_from_admin(dripper, badger):
+    admin = dripper.admin()
+    bal_before = badger.balanceOf(admin)
+    dripper.sweep(badger, {'from': admin})
+    assert badger.balanceOf(admin) > bal_before
     assert badger.balanceOf(dripper) == 0
 
 
