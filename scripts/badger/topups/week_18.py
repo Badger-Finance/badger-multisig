@@ -7,18 +7,18 @@ from helpers.addresses import registry
 
 
 def main():
-    safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
+    trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     tree = GreatApeSafe(registry.eth.badger_wallets.badgertree)
 
     badger = interface.ERC20(
-        registry.eth.treasury_tokens.BADGER, owner=safe.account
+        registry.eth.treasury_tokens.BADGER, owner=trops.account
     )
 
     digg = interface.ERC20(
-        registry.eth.treasury_tokens.DIGG, owner=safe.account
+        registry.eth.treasury_tokens.DIGG, owner=trops.account
     )
 
-    safe.take_snapshot([badger, digg])
+    trops.take_snapshot([badger, digg])
     tree.take_snapshot([badger, digg])
 
     # badger emissions
@@ -33,5 +33,5 @@ def main():
     week_18_digg_emissions_tree = Decimal(1.302461219e9)
     digg.transfer(tree, week_18_digg_emissions_tree)
 
-    safe.print_snapshot()
+    trops.print_snapshot()
     tree.print_snapshot()
