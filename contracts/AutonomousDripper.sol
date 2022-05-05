@@ -10,23 +10,22 @@ import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
  * @author gosuto.eth
  * @notice A Chainlink Keeper-compatible version of OpenZeppelin's
  * VestingWallet; removing the need to monitor the interval and/or call release
- * manually. Also adds an owner that can sweep all ether and ERC-20 tokens.
+ * manually. Also adds an admin that can sweep all ether and ERC-20 tokens.
  */
 contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
     event EtherSwept(uint256 amount);
     event ERC20Swept(address indexed token, uint256 amount);
 
-    address private _owner;
+    address private _admin;
     uint public lastTimestamp;
     uint public immutable interval;
-    // TODO: write setter methods that can add or remove entries from this list
     address[] public assetsWatchlist;
 
     constructor(
         address beneficiaryAddress,
         uint64 startTimestamp,
         uint64 durationSeconds,
-        address ownerAddress,
+        address adminAddress,
         uint intervalSeconds,
         address[] memory watchlistAddresses
     ) VestingWallet(
@@ -34,7 +33,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
         startTimestamp,
         durationSeconds
     ) {
-        _owner = ownerAddress;
+        _admin = adminAddress;
         lastTimestamp = startTimestamp;
         interval = intervalSeconds;
         assetsWatchlist = watchlistAddresses;
@@ -99,39 +98,39 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
     }
 
     /**
-     * @dev Getter for the owner address.
+     * @dev Getter for the admin address.
      */
-    function owner() public view virtual returns (address) {
-        return _owner;
+    function admin() public view virtual returns (address) {
+        return _admin;
     }
 
     /**
-     * @dev Setter for the owner address.
+     * @dev Setter for the admin address. Can only be called by the admin.
      */
-    function swapOwner(address _newOwner) public {
-        require(_msgSender() == _owner, "AutonomousDripper: onlyOwner");
-        _owner = _newOwner;
+    function swapAdmin(address _newAdmin) public {
+        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
+        _admin = _newAdmin;
     }
 
     /**
-     * @dev Sweep the full contract's ether balance to the owner. Can only be
-     * called by the owner.
+     * @dev Sweep the full contract's ether balance to the admin. Can only be
+     * called by the admin.
      */
     function sweep() public virtual {
-        require(_msgSender() == _owner, "AutonomousDripper: onlyOwner");
+        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
         uint256 balance = address(this).balance;
         emit EtherSwept(balance);
-        Address.sendValue(payable(_owner), balance);
+        Address.sendValue(payable(_admin), balance);
     }
 
     /**
-     * @dev Sweep the full contract's balance for an ERC20 token to the owner.
-     * Can only be called by the owner.
+     * @dev Sweep the full contract's balance for an ERC-20 token to the admin.
+     * Can only be called by the admin.
      */
     function sweep(address token) public virtual {
-        require(_msgSender() == _owner, "AutonomousDripper: onlyOwner");
+        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
         uint256 balance = IERC20(token).balanceOf(address(this));
         emit ERC20Swept(token, balance);
-        SafeERC20.safeTransfer(IERC20(token), _owner, balance);
+        SafeERC20.safeTransfer(IERC20(token), _admin, balance);
     }
 }
