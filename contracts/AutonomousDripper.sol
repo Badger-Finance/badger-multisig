@@ -40,6 +40,15 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
     }
 
     /**
+     * @dev Setter for the list of ERC-20 token addresses to consider for
+     * releasing. Can only be called by the admin.
+     */
+    function setAssetsWatchlist(address[] calldata newAssetsWatchlist) public virtual {
+        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
+        assetsWatchlist = newAssetsWatchlist;
+    }
+
+    /**
      * @dev Loop over the assetsWatchlist and check their local balance.
      * Returns a filtered version of the assetsWatchlist for which the local
      * balance is greater than zero.
