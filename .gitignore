@@ -12,6 +12,7 @@ reports/
 Pipfile*
 data/Convex_EPS
 data/Votium
+logs/
 
 node_modules
 
