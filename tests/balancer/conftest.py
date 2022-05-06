@@ -33,8 +33,27 @@ def threepool_staked_bpt(dev, balancer, threepool_bpt):
 
 
 @pytest.fixture
+def weighted_bpt(dev):
+    # 60 weth/40 dai
+    return dev.contract('0x0b09deA16768f0799065C475bE02919503cB2a35')
+
+
+@pytest.fixture
+def weighted_staked_bpt(dev, balancer, weighted_bpt):
+    gauge_factory = balancer.gauge_factory
+    return dev.contract(gauge_factory.getPoolGauge(weighted_bpt))
+
+
+@pytest.fixture
 def bal(dev):
-    return dev.contract(registry.eth.balancer.BAL)
+    Contract.from_explorer(registry.eth.treasury_tokens.BAL)
+    bal = MintableForkToken(
+        registry.eth.treasury_tokens.BAL, owner=dev.account
+    )
+    bal._mint_for_testing(dev, 10 * 10**bal.decimals())
+    return Contract(
+        registry.eth.treasury_tokens.BAL, owner=dev.account
+    )
 
 
 @pytest.fixture
