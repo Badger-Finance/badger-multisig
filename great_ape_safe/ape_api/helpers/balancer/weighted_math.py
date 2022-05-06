@@ -71,7 +71,6 @@ class WeightedMath:
 
     @staticmethod
     def calc_bpt_out_given_exact_tokens_in(pool, balances: list, amounts_in: list):
-
         balances = [Decimal(x) for x in balances]
         amounts_in = [Decimal(x) for x in amounts_in]
         normalized_weights = [Decimal(x / 1e18) for x in pool.getNormalizedWeights()]

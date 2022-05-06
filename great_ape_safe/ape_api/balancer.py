@@ -1,19 +1,15 @@
 from decimal import Decimal
 import requests
 import json
-from enum import Enum
 
 from brownie import ZERO_ADDRESS, Contract
-from sympy import re
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
 
 from great_ape_safe.ape_api.helpers.balancer.stable_math import StableMath
 from great_ape_safe.ape_api.helpers.balancer.weighted_math import WeightedMath
-from great_ape_safe.ape_api.helpers.balancer.queries \
-    import pool_tokens_query
-
+from great_ape_safe.ape_api.helpers.balancer.queries import pool_tokens_query
 
 
 class Balancer():
@@ -22,9 +18,8 @@ class Balancer():
         # contracts
         self.vault = safe.contract(registry.eth.balancer.vault)
         self.gauge_factory = safe.contract(registry.eth.balancer.gauge_factory)
-        self.weth = registry.eth.treasury_tokens.WETH
         # parameters
-        self.max_slippage = Decimal(0.9)
+        self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000) # USD
         self.dusty = 0.99
         # misc
@@ -57,7 +52,7 @@ class Balancer():
             tokens = [Web3.toChecksumAddress(x['address']) for x in pool['tokens']]
             if underlyings == tokens:
                 if match:
-                    raise Exception('multiple matching pools exist, provide `pool_id`')
+                    raise Exception('multiple matching pools exist, provide `pool`')
                 match = pool['id']
         if not match:
             raise Exception('no pool found for underlyings')
@@ -105,7 +100,7 @@ class Balancer():
 
         if is_eth:
             underlyings = list(underlyings)
-            weth_index = underlyings.index(self.weth)
+            weth_index = underlyings.index(registry.eth.treasury_tokens.WETH)
             underlyings[weth_index] = ZERO_ADDRESS
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#arguments-explained
@@ -148,7 +143,7 @@ class Balancer():
 
         if is_eth:
             underlyings = list(underlyings)
-            weth_index = underlyings.index(self.weth)
+            weth_index = underlyings.index(registry.eth.treasury_tokens.WETH)
             underlyings[weth_index] = ZERO_ADDRESS
 
         request = (
@@ -203,7 +198,7 @@ class Balancer():
             raise TypeError('must provide either underlyings or pool')
 
         if underlyings:
-            underlyings = sorted(underlyings)
+            underlyings = sorted([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
         else:
@@ -239,7 +234,7 @@ class Balancer():
 
         if is_eth:
             underlyings = list(underlyings)
-            weth_index = underlyings.index(self.weth)
+            weth_index = underlyings.index(registry.eth.treasury_tokens.WETH)
             underlyings[weth_index] = ZERO_ADDRESS
 
         request = (
@@ -263,7 +258,7 @@ class Balancer():
             raise TypeError('must provide either underlyings or pool')
 
         if underlyings:
-            underlyings = sorted(underlyings)
+            underlyings = sorted([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
         else:
@@ -284,15 +279,22 @@ class Balancer():
             [0, amount_in, underlying_index]
             )
 
-        underlying_out = WeightedMath.calc_token_out_given_exact_bpt_in(
-            pool, reserves[underlying_index], amount_in, underlying_index
-        )
+        is_stable = pool.symbol()[0:3] == 'sta'
+
+        if is_stable:
+            underlying_out = StableMath.calcTokenOutGivenExactBptIn(
+                pool, reserves, underlying_index, amount_in
+            )
+        else:
+            underlying_out = WeightedMath.calc_token_out_given_exact_bpt_in(
+                pool, reserves[underlying_index], amount_in, underlying_index
+            )
 
         min_out = underlying_out * (1 - self.max_slippage)
 
         if is_eth:
             underlyings = list(underlyings)
-            weth_index = underlyings.index(self.weth)
+            weth_index = underlyings.index(registry.eth.treasury_tokens.WETH)
             underlyings[weth_index] = ZERO_ADDRESS
 
         request = (
@@ -331,8 +333,13 @@ class Balancer():
         assert any([x > y for x, y in zip(balances_after, balances_before)])
 
 
-    def claim_all(self, pool):
+    def claim_all(self, underlyings=None, pool=None):
         # claim reward token from pool's gauge
+        if underlyings:
+            underlyings = sorted([x.address for x in underlyings])
+            pool_id = self.find_pool_for_underlyings(underlyings)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+
         gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
         reward_address = gauge.reward_tokens(0)
 

@@ -158,6 +158,7 @@ ADDRESSES_ETH = {
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
         "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
+        "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -433,8 +434,7 @@ ADDRESSES_ETH = {
     "balancer": {
         "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
         "gauge_factory": "0x4E7bBd911cf1EFa442BC1b2e9Ea01ffE785412EC",
-        "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
-        "B_50_BTC_50_WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5",
+        "B_50_BTC_50_WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5"
     }
 }
 

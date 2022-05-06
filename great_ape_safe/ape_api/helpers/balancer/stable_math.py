@@ -283,7 +283,11 @@ class StableMath:
     @staticmethod
 
 
-    def calcTokenOutGivenExactBptIn(amplificationParameter, balances: list, tokenIndex: int, bptAmountIn: Decimal, bptTotalSupply: Decimal, swapFeePercentage: Decimal) -> Decimal:
+    def calcTokenOutGivenExactBptIn(pool, balances: list, tokenIndex: int, bptAmountIn: Decimal) -> Decimal:
+        value, _, prec =  pool.getAmplificationParameter()
+        amplificationParameter = Decimal(value / prec)
+        bptTotalSupply = Decimal(pool.totalSupply())
+        swapFeePercentage = Decimal(pool.getSwapFeePercentage() / 1e18)
         # Get current invariant
         currentInvariant = StableMath.calculateInvariant(amplificationParameter, balances)
         # calculate the new invariant
