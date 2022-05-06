@@ -95,7 +95,7 @@ class StableMath:
         balances = [Decimal(x) for x in balances]
         amountsIn = [Decimal(x) for x in amountsIn]
         amp, _, prec = pool.getAmplificationParameter()
-        amplificationParameter = Decimal(amp / 1e6)
+        amplificationParameter = Decimal(amp / prec)
         bptTotalSupply = Decimal(pool.totalSupply())
         swapFeePercentage = Decimal(pool.getSwapFeePercentage() / 1e18)
 
