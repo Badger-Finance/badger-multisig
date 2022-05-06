@@ -166,15 +166,15 @@ class Balancer():
         destination = self.safe if not destination else destination
         pool_id = pool.getPoolId()
 
-        pool_reciepient = self.safe if stake else destination
-        balance_before = pool.balanceOf(pool_reciepient)
+        pool_recipient = self.safe if stake else destination
+        balance_before = pool.balanceOf(pool_recipient)
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins
         self.vault.joinPool(
-            pool_id, self.safe, pool_reciepient, request
+            pool_id, self.safe, pool_recipient, request
         )
 
-        balance_delta = pool.balanceOf(pool_reciepient) - balance_before
+        balance_delta = pool.balanceOf(pool_recipient) - balance_before
         assert balance_delta > 0
 
         if stake:
