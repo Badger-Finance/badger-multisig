@@ -1,10 +1,13 @@
-from brownie import Contract, web3, interface
+from decimal import Decimal
+
+from brownie import web3, interface
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-def main():
+def main(amount=1000):
+    mantissa = int(Decimal(amount) * Decimal('1e18'))
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     badger = interface.ERC20(
         registry.eth.treasury_tokens.BADGER, owner=safe.account
@@ -22,11 +25,11 @@ def main():
     # https://etherscan.io/address/0x7816b3d0935d668bcfc9a4aab5a84ebc7ff320cf#code#L935
     prop = web3.solidityKeccak(['address'], [badger.address])
 
-    badger.approve(bribe_vault, 50_000e18)
+    badger.approve(bribe_vault, mantissa)
     tokenmak_briber.depositBribeERC20(
         prop, # bytes32 proposal
         badger, # address token
-        50_000e18, # uint256 amount
+        mantissa, # uint256 amount
     )
 
     safe.print_snapshot()
