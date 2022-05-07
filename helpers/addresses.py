@@ -434,6 +434,10 @@ ADDRESSES_ETH = {
     "arbitrum": {
         "outbox": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
     },
+    "hidden_hand": {
+        "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
+        "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
+    },
 }
 
 ADDRESSES_IBBTC = {
