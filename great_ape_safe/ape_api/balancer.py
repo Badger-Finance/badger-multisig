@@ -127,7 +127,7 @@ class Balancer():
         pool_id = pool.getPoolId()
         underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
         mantissas = [mantissa if x == underlying.address else 0 for x in underlyings]
-        is_stable = pool.symbol()[0:3] == 'sta'
+        is_stable = pool.symbol()[0:3] == 'sta' or 'stable' in pool.symbol().lower()
 
         if is_stable:
             bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)

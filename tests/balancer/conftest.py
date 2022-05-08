@@ -39,9 +39,25 @@ def weighted_bpt(dev):
 
 
 @pytest.fixture
+def lido_bpt(dev):
+    return dev.contract("0x32296969Ef14EB0c6d29669C550D4a0449130230")
+
+
+@pytest.fixture
+def lido_staked_bpt(dev, balancer, lido_bpt):
+    gauge_factory = balancer.gauge_factory
+    return dev.contract(gauge_factory.getPoolGauge(lido_bpt))
+
+
+@pytest.fixture
 def weighted_staked_bpt(dev, balancer, weighted_bpt):
     gauge_factory = balancer.gauge_factory
     return dev.contract(gauge_factory.getPoolGauge(weighted_bpt))
+
+
+@pytest.fixture
+def ldo(dev):
+    return dev.contract("0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32")
 
 
 @pytest.fixture

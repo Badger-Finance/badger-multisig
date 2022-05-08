@@ -36,7 +36,6 @@ def test_deposit_and_stake_wrong_order(dev, balancer, wbtc, weth, staked_bpt):
 
 def test_deposit_and_stake_single_asset(dev, balancer, wbtc, bpt, staked_bpt):
     bal_before_staked_bpt = staked_bpt.balanceOf(dev)
-    bal_before_wbtc = wbtc.balanceOf(dev)
 
     balancer.deposit_and_stake_single_asset(
         wbtc,
@@ -44,7 +43,8 @@ def test_deposit_and_stake_single_asset(dev, balancer, wbtc, bpt, staked_bpt):
         bpt
     )
 
-    assert wbtc.balanceOf(dev) < bal_before_wbtc
+    # fails - single asset calc leaves dust
+    assert wbtc.balanceOf(dev) == 0
     assert staked_bpt.balanceOf(dev) > bal_before_staked_bpt
     chain.reset()
 
