@@ -79,11 +79,8 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
     function checkUpkeep(bytes calldata) external view override returns (
         bool upkeepNeeded, bytes memory
     ) {
-        address[] memory assetsHeld = new address[](assetsWatchlist.length);
-        uint256 count = 0;
-
         if ((block.timestamp - lastTimestamp) > interval) {
-            assetsHeld = _getAssetsHeld();
+            address[] memory assetsHeld = _getAssetsHeld();
             if (assetsHeld.length > 0) {
                 return (true, abi.encode(assetsHeld));
             }
