@@ -96,11 +96,11 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
      */
     function performUpkeep(bytes calldata performData) external override {
         if ((block.timestamp - lastTimestamp) > interval) {
-            lastTimestamp = block.timestamp;
             address[] memory assetsHeld = abi.decode(performData, (address[]));
             for (uint idx = 0; idx < assetsHeld.length; idx++) {
                 if (IERC20(assetsHeld[idx]).balanceOf(address(this)) > 0) {
                     VestingWallet.release(assetsHeld[idx]);
+                    lastTimestamp = block.timestamp;
                 }
             }
         }
