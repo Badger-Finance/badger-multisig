@@ -16,6 +16,9 @@ ADDRESSES_ETH = {
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
+    "drippers": {
+        "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
+    },
     "bribes_processor": "0xbeD8f323456578981952e33bBfbE80D23289246B",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
@@ -48,6 +51,7 @@ ADDRESSES_ETH = {
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
@@ -436,6 +440,10 @@ ADDRESSES_ETH = {
         "gauge_factory": "0x4E7bBd911cf1EFa442BC1b2e9Ea01ffE785412EC",
         "B_50_BTC_50_WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5"
     }
+    "hidden_hand": {
+        "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
+        "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
+    },
 }
 
 ADDRESSES_IBBTC = {
@@ -723,7 +731,13 @@ ADDRESSES_FANTOM = {
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
+        "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
+        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
