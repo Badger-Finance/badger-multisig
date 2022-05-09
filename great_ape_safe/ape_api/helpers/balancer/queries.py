@@ -4,6 +4,8 @@ pool_tokens_query = \
           pools(first: 1000) {
             id
             totalLiquidity
+            poolType
+            totalWeight
             tokens {
               address
             }

@@ -66,6 +66,21 @@ class Balancer():
         return zip(*sorted_tokens.items())
 
 
+    def pool_type(self, pool_id):
+        pool_data = self.get_pool_data(update_cache=True)
+        for pool in pool_data:
+            if pool['id'] == pool_id:
+                pool_type = pool['poolType']
+                weight = pool['totalWeight']
+                if pool_type == 'Weighted':
+                    return 'Weighted'
+                elif 'Stable' in pool_type:
+                    return 'Stable'
+                elif weight == '0':
+                    return 'Stable'
+                return 'Weighted'
+
+
     def deposit_and_stake(
         self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None
     ):
@@ -82,10 +97,8 @@ class Balancer():
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
 
         tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
-        # subgraph data can be reworked for a better way to get pool type
-        is_stable = pool.symbol()[0:2] == 'sta'
 
-        if is_stable:
+        if self.pool_type(pool_id) == 'Stable':
             bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
@@ -127,9 +140,8 @@ class Balancer():
         pool_id = pool.getPoolId()
         underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
         mantissas = [mantissa if x == underlying.address else 0 for x in underlyings]
-        is_stable = pool.symbol()[0:3] == 'sta' or 'stable' in pool.symbol().lower()
 
-        if is_stable:
+        if self.pool_type(pool_id) == 'Stable':
             bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
@@ -218,9 +230,8 @@ class Balancer():
             [1, amount_in]
             )
 
-        is_stable = pool.symbol()[0:3] == 'sta'
 
-        if is_stable:
+        if self.pool_type(pool_id) == 'Stable':
             underlyings_out = StableMath.calcTokensOutGivenExactBptIn(
                 pool, reserves, amount_in
             )
@@ -279,9 +290,8 @@ class Balancer():
             [0, amount_in, underlying_index]
             )
 
-        is_stable = pool.symbol()[0:3] == 'sta'
 
-        if is_stable:
+        if self.pool_type(pool_id) == 'Stable':
             underlying_out = StableMath.calcTokenOutGivenExactBptIn(
                 pool, reserves, underlying_index, amount_in
             )
