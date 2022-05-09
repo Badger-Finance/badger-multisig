@@ -52,17 +52,18 @@ ADDRESSES_ETH = {
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
-        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",#
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
         "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
-        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
-        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",#
+        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",#
         # "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
+        # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",#
         "ops_guardian": "0x29F7F8896Fb913CF7f9949C623F896a154727919",
         "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
         "OLD_root-validator": "0x626f69162ea1556a75dd4443d87d2fe38dd25901",
@@ -317,7 +318,6 @@ ADDRESSES_ETH = {
     },
     "helpers": {
         "balance_checker": "0xe92261c2D64C363109c36a754A87107142e61b72",
-        "chainlink_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
     },
     "rari": {
         "unitroller": "0xe3952d770FB26CC61877CD34Fbc3A3750881e9A1",
@@ -437,6 +437,10 @@ ADDRESSES_ETH = {
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
+    },
+    "chainlink": {
+        "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
+        "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
     },
 }
 
@@ -701,6 +705,11 @@ ADDRESSES_RINKEBY = {
     "badger_wallets": {
         "rinkeby_multisig": "0x6b11a8B734C3eeFd41Ff7b0e2D15F2b0F46D336b",
         "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
+        "gas_station": "0x56D415f1EF6D2A2005B91aE1710c914ab3799b43",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
     },
     "treasury_tokens": {
         "WBTC": "0x577D296678535e4903D59A4C929B718e1D575e0A",
@@ -713,6 +722,9 @@ ADDRESSES_RINKEBY = {
     "gnosis": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
         "settlement": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
+    },
+    "chainlink": {
+        "keeper_registry": "0x409CF388DaB66275dA3e44005D182c12EeAa12A0",
     },
 }
 
