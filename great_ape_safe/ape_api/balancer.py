@@ -356,11 +356,11 @@ class Balancer():
         assert gauge.claimable_tokens.call(self.safe) > 0
 
         balances_before = \
-            [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in reward_count]
+            [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in range(reward_count)]
 
         gauge.claim_rewards()
 
         balances_after = \
-            [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in reward_count]
+            [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in range(reward_count)]
 
         assert all([x > y for x, y in zip(balances_after, balances_before)])
