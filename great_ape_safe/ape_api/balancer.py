@@ -67,7 +67,7 @@ class Balancer():
 
 
     def pool_type(self, pool_id):
-        pool_data = self.get_pool_data(update_cache=True)
+        pool_data = self.get_pool_data()
         for pool in pool_data:
             if pool['id'] == pool_id:
                 pool_type = pool['poolType']

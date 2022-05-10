@@ -55,6 +55,7 @@ def test_unstake_and_withdraw_all_single_asset(dev, balancer, wbtc, bpt, staked_
     assert bpt.balanceOf(dev) == 0
 
 
+@pytest.mark.xfail(reason="Not implemented")
 def test_unstake_and_withdraw_all_stable(dev, balancer, dai, threepool_bpt, threepool_staked_bpt):
     bal_before_dai = dai.balanceOf(dev)
 
