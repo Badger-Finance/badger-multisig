@@ -255,8 +255,6 @@ class Balancer():
             is_eth
         )
 
-        # pool.approve(self.vault, amount_in)
-
         self._unstake_and_withdraw_all(
             pool, request, unstake, claim, destination
         )
@@ -313,8 +311,6 @@ class Balancer():
             data_encoded,
             False
         )
-
-        # pool.approve(self.vault, amount_in)
 
         self._unstake_and_withdraw_all(
             pool, request, unstake, claim, destination
