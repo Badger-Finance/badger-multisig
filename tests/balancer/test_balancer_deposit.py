@@ -80,7 +80,7 @@ def test_deposit_and_stake_weighted(dev, balancer, dai, weighted_bpt, weighted_s
         weighted_bpt
     )
 
-    assert dev.account.balance() < bal_before_dai
+    assert dai.balanceOf(dev) < bal_before_dai
     assert weighted_staked_bpt.balanceOf(dev) > bal_before_staked_bpt
     chain.reset()
 
