@@ -706,6 +706,7 @@ ADDRESSES_RINKEBY = {
         "rinkeby_multisig": "0x6b11a8B734C3eeFd41Ff7b0e2D15F2b0F46D336b",
         "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
         "gas_station": "0x56D415f1EF6D2A2005B91aE1710c914ab3799b43",
+        "gas_station_exact": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
