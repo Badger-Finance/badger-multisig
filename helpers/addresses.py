@@ -162,6 +162,7 @@ ADDRESSES_ETH = {
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
         "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
+        "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
