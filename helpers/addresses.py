@@ -434,6 +434,12 @@ ADDRESSES_ETH = {
     "arbitrum": {
         "outbox": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
     },
+    "balancer": {
+        "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+        "gauge_factory": "0x4E7bBd911cf1EFa442BC1b2e9Ea01ffE785412EC",
+        "B_50_BTC_50_WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5",
+        "B_20_BTC_80_BADGER_GAUGE": "0xAF50825B010Ae4839Ac444f6c12D44b96819739B"
+    },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
