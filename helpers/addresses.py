@@ -443,6 +443,7 @@ ADDRESSES_ETH = {
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
+        "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9"
     },
 }
 
