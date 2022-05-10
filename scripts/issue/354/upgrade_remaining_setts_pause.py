@@ -16,6 +16,7 @@ console = Console()
 safe = GreatApeSafe(ADDRESSES_ETH["badger_wallets"]["dev_multisig"])
 safe.init_badger()
 
+TECH_OPS = ADDRESSES_ETH["badger_wallets"]["techops_multisig"]
 recoveredMultisig = ADDRESSES_ETH["badger_wallets"]["recovered_multisig"]
 logic_contracts = ADDRESSES_ETH["logic"]
 vaults = ADDRESSES_ETH["sett_vaults"]
@@ -27,7 +28,10 @@ dev_proxy = safe.contract(DEV_PROXY)
 # Logic Contracts
 settV1h_logic = logic_contracts["SettV1h"]
 settV1_1h_logic = logic_contracts["SettV1_1h"]
+OLD_V4H_LOGIC = "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD"
+OLD_V1_1H_LOGIC = "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170"
 settV4h_logic = logic_contracts["SettV4h"]
+settV4h_techops_logic = logic_contracts["SettV4h"]
 
 SETTV1_KEYS = [
     "bBADGER",
@@ -63,6 +67,15 @@ SETTV4_KEYS = [
     "bcrvBadger",
 ]
 
+ACTIVE_V4_KEYS = [
+    "bveCVX",
+    "bcrvIbBTC",
+    "bcrvBadger",
+    "bbveCVX-CVX-f",
+    "bcvxCRV",
+    "bcrvTricrypto2",
+]
+
 SPECIAL_SETTS = [
     "bDIGG",
     "byvWBTC",
@@ -70,54 +83,93 @@ SPECIAL_SETTS = [
     "remDIGG",
 ]
 
+UPGRADE_SIG = "upgrade(address,address)"
+SET_STRATEGIST_SIG = "setStrategist(address)"
+
+
 def main(queue="true", simulation="false"):
     if queue == "true":
         for key, address in vaults.items():
             address = web3.toChecksumAddress(address)
             if key in SETTV1_KEYS:
                 if get_implementation(address) != settV1h_logic:
-                    console.print(f"[green]Queueing upgrade on timelock for {key} to SettV1h.sol[/green]")
+                    console.print(
+                        f"[green]Queueing upgrade on timelock for {key} to SettV1h.sol[/green]"
+                    )
                     safe.badger.queue_timelock(
                         target_addr=DEV_PROXY,
-                        signature="upgrade(address,address)",
+                        signature=UPGRADE_SIG,
                         data=encode_abi(
                             ["address", "address"],
                             [address, settV1h_logic],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=2.3,
+                        delay_in_days=4,
                     )
                 else:
                     console.print(f"[green]{key} has already been upgraded[/green]")
 
             elif key in SETTV1_1_KEYS:
-                if get_implementation(address) != settV1_1h_logic:
-                    console.print(f"[green]Queueing upgrade on timelock for {key} to SettV1_1h.sol[/green]")
+                if get_implementation(address) != OLD_V1_1H_LOGIC:
+                    console.print(
+                        f"[green]Queueing upgrade on timelock for {key} to SettV1_1h.sol[/green]"
+                    )
                     safe.badger.queue_timelock(
                         target_addr=DEV_PROXY,
-                        signature="upgrade(address,address)",
+                        signature=UPGRADE_SIG,
                         data=encode_abi(
                             ["address", "address"],
                             [address, settV1_1h_logic],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=2.3,
+                        delay_in_days=4,
+                    )
+                    console.print(
+                        f"[green]Queueing setStrategist on timelock for {key} to tech ops {TECH_OPS}[/green]"
+                    )
+                    safe.badger.queue_timelock(
+                        target_addr=DEV_PROXY,
+                        signature=SET_STRATEGIST_SIG,
+                        data=encode_abi(
+                            ["address"],
+                            [TECH_OPS],
+                        ),
+                        dump_dir="data/badger/timelock/upgrade_remaining_setts/",
+                        delay_in_days=4,
                     )
                 else:
                     console.print(f"[green]{key} has already been upgraded[/green]")
 
             elif key in SETTV4_KEYS:
-                if get_implementation(address) != settV4h_logic:
-                    console.print(f"[green]Queueing upgrade on timelock for {key} to SettV4h.sol[/green]")
+                if (
+                    get_implementation(address) != OLD_V4H_LOGIC
+                    or key in ACTIVE_V4_KEYS
+                ):
+                    console.print(
+                        f"[green]Queueing upgrade on timelock for {key} to SettV4h.sol[/green]"
+                    )
                     safe.badger.queue_timelock(
                         target_addr=DEV_PROXY,
-                        signature="upgrade(address,address)",
+                        signature=UPGRADE_SIG,
                         data=encode_abi(
                             ["address", "address"],
                             [address, settV4h_logic],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=2.3,
+                        delay_in_days=4,
+                    )
+                    console.print(
+                        f"[green]Queueing setStrategist on timelock for {key} to tech ops {TECH_OPS}[/green]"
+                    )
+                    safe.badger.queue_timelock(
+                        target_addr=DEV_PROXY,
+                        signature=SET_STRATEGIST_SIG,
+                        data=encode_abi(
+                            ["address"],
+                            [TECH_OPS],
+                        ),
+                        dump_dir="data/badger/timelock/upgrade_remaining_setts/",
+                        delay_in_days=4,
                     )
                 else:
                     console.print(f"[green]{key} has already been upgraded[/green]")
@@ -131,10 +183,10 @@ def main(queue="true", simulation="false"):
         safe.post_safe_tx()
 
     else:
-        for key in SETTV1_KEYS+SETTV1_1_KEYS+SETTV4_KEYS:
+        for key in SETTV1_KEYS + SETTV1_1_KEYS + SETTV4_KEYS:
             execute_timelock(
-                safe.badger.timelock, 
-                "data/badger/timelock/upgrade_remaining_setts/", 
+                safe.badger.timelock,
+                "data/badger/timelock/upgrade_remaining_setts/",
                 key,
                 simulation,
             )
@@ -144,7 +196,7 @@ def main(queue="true", simulation="false"):
 
 
 def execute_timelock(timelock, queueTx_dir, key, simulation):
-    if simulation == 'false':
+    if simulation == "false":
         console.print(f"Processing upgrade and patch for {key}...")
         path = os.path.dirname(queueTx_dir)
         directory = os.fsencode(path)
@@ -153,15 +205,15 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
 
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if not filename.endswith('.json'):
+            if not filename.endswith(".json"):
                 continue
             txHash = filename.replace(".json", "")
 
             with open(f"{queueTx_dir}{filename}") as f:
-                    tx = json.load(f)
+                tx = json.load(f)
 
             # Get Sett address from upgrade Tx
-            target_sett = web3.toChecksumAddress('0x' + tx['data'][24:64])
+            target_sett = web3.toChecksumAddress("0x" + tx["data"][24:64])
 
             if sett.address == target_sett:
                 if timelock.queuedTransactions(txHash) == True:
@@ -176,12 +228,12 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
                     prev_min = sett.min()
                     prev_max = sett.max()
                     prev_getPricePerFullShare = sett.getPricePerFullShare()
-                    prev_available = sett.available()
+                    prev_strategist = sett.strategist()
 
                     # Executing upgrade
                     console.print(f"[green]Executing tx with parameters:[/green] {tx}")
                     timelock.executeTransaction(
-                        tx['target'], 0, tx['signature'], tx['data'], tx['eta']
+                        tx["target"], 0, tx["signature"], tx["data"], tx["eta"]
                     )
 
                     # Checking all variables are as expected
@@ -194,7 +246,11 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
                     assert prev_min == sett.min()
                     assert prev_max == sett.max()
                     assert prev_getPricePerFullShare == sett.getPricePerFullShare()
-                    assert prev_available == sett.available()
+
+                    if tx["signature"] == UPGRADE_SIG:
+                        assert prev_strategist == sett.strategist()
+                    elif tx["signature"] == SET_STRATEGIST_SIG:
+                        assert TECH_OPS == sett.strategist()
 
                     # Verify new Addresses are setup properly
                     assert sett.MULTISIG() == recoveredMultisig
@@ -203,7 +259,6 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
                     with open(f"{queueTx_dir}{filename}") as f:
                         tx = json.load(f)
                     console.print(f"[red]Tx not yet queued:[/red] {tx}")
-
 
     # Simulate the upgrade execution (And patch balances while we are at it)
     else:
@@ -231,7 +286,7 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
         elif key in SETTV1_1_KEYS:
             dev_proxy.upgrade(sett.address, settV1_1h_logic, {"from": timelock_actor})
         elif key in SETTV4_KEYS:
-            dev_proxy.upgrade(sett.address, settV4h_logic, {"from": timelock_actor})
+            dev_proxy.upgrade(sett.address, OLD_V4H_LOGIC, {"from": timelock_actor})
 
         # Checking all variables are as expected
         assert prev_available == sett.available()
@@ -252,8 +307,9 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
 
 
 def get_implementation(proxy):
-    IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc"
+    IMPLEMENTATION_SLOT = (
+        "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc"
+    )
     return web3.toChecksumAddress(
         web3.eth.getStorageAt(proxy, IMPLEMENTATION_SLOT).hex()
     )
-        

@@ -281,8 +281,8 @@ ADDRESSES_ETH = {
         "native.vestedCVX": "0xeA563B601C2Ce9c67a1f41222856E06AAB76D1fa", # V1.5
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
-        "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
-        "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
+        "SettV1_1h": "0x724f4153b3D69f64975f1B16cE4445fd7bC5C9a2", # V1.1 -> governanceOrStrategist approve/revoke + sweep 
+        "SettV4h": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # V1.1 -> governanceOrStrategist approve/revoke + sweep 
         "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
     },
