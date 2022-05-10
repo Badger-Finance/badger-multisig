@@ -255,7 +255,7 @@ class Balancer():
             is_eth
         )
 
-        pool.approve(self.vault, amount_in)
+        # pool.approve(self.vault, amount_in)
 
         self._unstake_and_withdraw_all(
             pool, request, unstake, claim, destination
@@ -314,7 +314,7 @@ class Balancer():
             False
         )
 
-        pool.approve(self.vault, amount_in)
+        # pool.approve(self.vault, amount_in)
 
         self._unstake_and_withdraw_all(
             pool, request, unstake, claim, destination
@@ -340,27 +340,31 @@ class Balancer():
         )
 
         balances_after = [Contract(x).balanceOf(destination) for x in request[0]]
-        assert any([x > y for x, y in zip(balances_after, balances_before)])
+
+        if request[1].count(0) == 0:
+            assert all([x > y for x, y in zip(balances_after, balances_before)])
+        else:
+            assert any([x > y for x, y in zip(balances_after, balances_before)])
 
 
     def claim_all(self, underlyings=None, pool=None):
-        # claim reward token from pool's gauge
+        # claim reward token from pool's gauge given `underlyings`` or `pool``
         if underlyings:
             underlyings = sorted([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
 
         gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
-        reward_address = gauge.reward_tokens(0)
-
-        if reward_address == ZERO_ADDRESS:
-            raise Exception(f'no reward token for pool')
-
+        reward_count = gauge.reward_count()
+        assert reward_count > 0
         assert gauge.claimable_tokens.call(self.safe) > 0
 
-        reward = self.safe.contract(reward_address)
-        bal_before = reward.balanceOf(self.safe)
+        balances_before = \
+            [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in reward_count]
 
         gauge.claim_rewards()
 
-        assert reward.balanceOf(self.safe) > bal_before
+        balances_after = \
+            [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in reward_count]
+
+        assert all([x > y for x, y in zip(balances_after, balances_before)])
