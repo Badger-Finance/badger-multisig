@@ -56,7 +56,6 @@ SETTV4_KEYS = [
     "bcrvOBTC",
     "bcrvBBTC",
     "bcrvIbBTC",
-    "bcrvTricrypto",
     "bcrvTricrypto2",
     "bcvxCRV",
     "bCVX",
@@ -65,6 +64,11 @@ SETTV4_KEYS = [
     "bFpMbtcHbtc",
     "bbveCVX-CVX-f",
     "bcrvBadger",
+]
+
+ACTIVE_V1_1_KEYS = [
+    "bslpWbtcBadger",
+    "bslpWbtcDigg",
 ]
 
 ACTIVE_V4_KEYS = [
@@ -110,7 +114,10 @@ def main(queue="true", simulation="false"):
                     console.print(f"[green]{key} has already been upgraded[/green]")
 
             elif key in SETTV1_1_KEYS:
-                if get_implementation(address) != OLD_V1_1H_LOGIC:
+                if (
+                    get_implementation(address) != OLD_V1_1H_LOGIC
+                    or key in ACTIVE_V1_1_KEYS
+                ):
                     console.print(
                         f"[green]Queueing upgrade on timelock for {key} to SettV1_1h.sol[/green]"
                     )
