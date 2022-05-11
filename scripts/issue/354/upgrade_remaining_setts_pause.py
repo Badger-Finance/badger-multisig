@@ -179,7 +179,6 @@ def main(queue="true", simulation="false"):
 
 
 def execute_timelock(timelock, queueTx_dir, key, simulation):
-    dev_multi = accounts.at(DEV_MULTI, force=True)
 
     if simulation == "false":
         console.print(f"Processing upgrade and patch for {key}...")
@@ -233,7 +232,7 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
                     assert prev_getPricePerFullShare == sett.getPricePerFullShare()
 
                     if key in SETTV1_1_KEYS + SETTV4_KEYS:
-                        sett.setStrategist(TECH_OPS, {"from": dev_multi})
+                        sett.setStrategist(TECH_OPS, {"from": safe.account})
                         assert TECH_OPS == sett.strategist()
                     else:
                         assert prev_strategist == sett.strategist()
@@ -272,10 +271,10 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
             dev_proxy.upgrade(sett.address, SETT_V1H_LOGIC, {"from": timelock_actor})
         elif key in SETTV1_1_KEYS:
             dev_proxy.upgrade(sett.address, SETT_V1_1H_LOGIC, {"from": timelock_actor})
-            sett.setStrategist(TECH_OPS, {"from": dev_multi})
+            sett.setStrategist(TECH_OPS, {"from": safe.account})
         elif key in SETTV4_KEYS:
             dev_proxy.upgrade(sett.address, SETT_V4H_LOGIC, {"from": timelock_actor})
-            sett.setStrategist(TECH_OPS, {"from": dev_multi})
+            sett.setStrategist(TECH_OPS, {"from": safe.account})
 
         # Checking all variables are as expected
         assert prev_available == sett.available()
