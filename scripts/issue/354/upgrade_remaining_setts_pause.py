@@ -179,7 +179,7 @@ def main(queue="true", simulation="false"):
 
 
 def execute_timelock(timelock, queueTx_dir, key, simulation):
-    dev_multi = accounts.at(DEV_MULTI)
+    dev_multi = accounts.at(DEV_MULTI, force=True)
 
     if simulation == "false":
         console.print(f"Processing upgrade and patch for {key}...")
