@@ -1,6 +1,6 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
-
+from decimal import Decimal
 
 def main(amount_wbtc_ether=3):
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
