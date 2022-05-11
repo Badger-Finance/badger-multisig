@@ -13,7 +13,7 @@ def main(amount_wbtc_ether=3):
 
     safe.take_snapshot([badger, wbtc, bpt.address, staked_bpt.address])
 
-    wbtc_to_deposit = int(amount_wbtc_ether) * 10 ** wbtc.decimals()
+    wbtc_to_deposit = int(Decimal(amount_wbtc_ether) * Decimal(10 ** wbtc.decimals()))
     wbtc_badger_rate = safe.balancer.get_amount_out(badger, wbtc, 1e18)
     badger_to_deposit = int( (wbtc_to_deposit / wbtc_badger_rate * 1e18) * 4 )
 
