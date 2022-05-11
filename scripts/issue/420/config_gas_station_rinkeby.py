@@ -1,30 +1,24 @@
-from brownie import accounts, chain, interface, web3
-from web3.middleware import geth_poa_middleware
+from brownie import interface
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-SAFE = GreatApeSafe(registry.rinkeby.badger_wallets.solo_multisig)
-STATION = interface.IGasStation(registry.rinkeby.badger_wallets.gas_station)
-
-
-def renounce_deployer():
-    if chain.id == 4:
-        # https://web3py.readthedocs.io/en/stable/middleware.html#geth-style-proof-of-authority
-        web3.middleware_onion.inject(geth_poa_middleware, layer=0)
-    STATION.transferOwnership(SAFE, {'from': accounts.load('badger_deployer8')})
-
-
 def main():
-    SAFE.take_snapshot([])
+    safe = GreatApeSafe(registry.rinkeby.badger_wallets.solo_multisig)
+    station = interface.IGasStationExact(
+        registry.rinkeby.badger_wallets.gas_station, owner=safe.account
+    )
 
-    STATION.acceptOwnership({'from': SAFE.account})
+    safe.take_snapshot([])
+
+    # transferOwnership from deployer to safe in console first
+    station.acceptOwnership({'from': safe.account})
 
     # address[] calldata addresses
     # uint96[] calldata minBalancesWei
     # uint96[] calldata topUpAmountsWei
-    STATION.setWatchList(
+    station.setWatchList(
         [
             registry.rinkeby.badger_wallets.ops_executor1,
             registry.rinkeby.badger_wallets.ops_executor7,
@@ -32,11 +26,10 @@ def main():
             registry.rinkeby.badger_wallets.ops_executor12
         ],
         [1e18, 1e18, 1e18, 1e18],
-        [.1e18, .1e18, .1e18, .1e18],
-        {'from': SAFE.account}
+        [.1e18, .1e18, .1e18, .1e18]
     )
-    SAFE.account.transfer(STATION, 5e18)
+    safe.account.transfer(station, 5e18)
 
-    SAFE.print_snapshot()
+    safe.print_snapshot()
 
-    SAFE.post_safe_tx()
+    safe.post_safe_tx()
