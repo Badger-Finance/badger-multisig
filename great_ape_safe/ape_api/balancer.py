@@ -26,6 +26,39 @@ class Balancer():
         self.subgraph = 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
 
 
+    def get_amount_out(self, asset_in, asset_out, amount_in, pool=None):
+        # https://dev.balancer.fi/references/contracts/apis/the-vault#querybatchswap
+        underlyings = sorted([asset_in.address, asset_out.address])
+        if not pool:
+            pool_id = self.find_pool_for_underlyings(underlyings)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+        else:
+            pool_id = pool.getPoolId()
+
+        asset_in_index = underlyings.index(asset_in.address)
+        asset_out_index = underlyings.index(asset_out.address)
+        # https://github.com/balancer-labs/balancer-v2-monorepo/blob/095648c29d4ce67dd386edd8344c1eaadf812e42/pkg/vault/contracts/interfaces/IVault.sol#L498
+        calc_out_given_in = 0
+
+        swap = [(
+            pool_id,
+            asset_in_index,
+            asset_out_index,
+            amount_in,
+            b''
+        )]
+
+        funds = (
+            self.safe.address, # sender
+            False, # fromInternalBalance
+            self.safe.address, # recipient
+            False # toInternalBalance
+        )
+
+        amounts = self.vault.queryBatchSwap.call(calc_out_given_in, swap, underlyings, funds)
+        return abs(amounts[asset_out_index])
+
+
     def get_pool_data(self, update_cache=False):
         # no on-chain registry, so pool data is cached locally
         # used for pool look up based on underlyings
@@ -344,7 +377,7 @@ class Balancer():
 
 
     def claim_all(self, underlyings=None, pool=None):
-        # claim reward token from pool's gauge given `underlyings`` or `pool``
+        # claim reward token from pool's gauge given `underlyings` or `pool`
         if underlyings:
             underlyings = sorted([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
