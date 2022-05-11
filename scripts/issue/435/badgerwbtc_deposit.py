@@ -22,4 +22,4 @@ def main(amount_wbtc_ether=3):
     safe.balancer.deposit_and_stake(underlyings, amounts)
 
     safe.print_snapshot()
-    safe.post_safe_tx
+    safe.post_safe_tx()
