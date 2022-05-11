@@ -705,8 +705,10 @@ ADDRESSES_RINKEBY = {
     "badger_wallets": {
         "rinkeby_multisig": "0x6b11a8B734C3eeFd41Ff7b0e2D15F2b0F46D336b",
         "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
-        "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
+        "gas_station": "0x747a4c9073B68AE16A29e65f4b95C9bbEa1E19cD",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
         "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
