@@ -13,25 +13,27 @@ from helpers.addresses import ADDRESSES_ETH
 console = Console()
 
 # Get addresses
-safe = GreatApeSafe(ADDRESSES_ETH["badger_wallets"]["dev_multisig"])
+DEV_PROXY = ADDRESSES_ETH["badger_wallets"]["devProxyAdmin"]
+DEV_MULTI = ADDRESSES_ETH["badger_wallets"]["dev_multisig"]
+TECH_OPS = ADDRESSES_ETH["badger_wallets"]["techops_multisig"]
+
+# Set up safe
+safe = GreatApeSafe(DEV_MULTI)
 safe.init_badger()
 
-TECH_OPS = ADDRESSES_ETH["badger_wallets"]["techops_multisig"]
-recoveredMultisig = ADDRESSES_ETH["badger_wallets"]["recovered_multisig"]
+RECOVERED_MULTI = ADDRESSES_ETH["badger_wallets"]["recovered_multisig"]
 logic_contracts = ADDRESSES_ETH["logic"]
 vaults = ADDRESSES_ETH["sett_vaults"]
 vaults.update(ADDRESSES_ETH["yearn_vaults"])
-DEV_PROXY = ADDRESSES_ETH["badger_wallets"]["devProxyAdmin"]
 
 dev_proxy = safe.contract(DEV_PROXY)
 
 # Logic Contracts
-settV1h_logic = logic_contracts["SettV1h"]
-settV1_1h_logic = logic_contracts["SettV1_1h"]
+SETT_V1H_LOGIC = logic_contracts["SettV1h"]
+SETT_V1_1H_LOGIC = logic_contracts["SettV1_1h"]
 OLD_V4H_LOGIC = "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD"
 OLD_V1_1H_LOGIC = "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170"
-settV4h_logic = logic_contracts["SettV4h"]
-settV4h_techops_logic = logic_contracts["SettV4h"]
+SETT_V4H_LOGIC = logic_contracts["SettV4h"]
 
 SETTV1_KEYS = [
     "bBADGER",
@@ -96,7 +98,7 @@ def main(queue="true", simulation="false"):
         for key, address in vaults.items():
             address = web3.toChecksumAddress(address)
             if key in SETTV1_KEYS:
-                if get_implementation(address) != settV1h_logic:
+                if get_implementation(address) != SETT_V1H_LOGIC:
                     console.print(
                         f"[green]Queueing upgrade on timelock for {key} to SettV1h.sol[/green]"
                     )
@@ -105,7 +107,7 @@ def main(queue="true", simulation="false"):
                         signature=UPGRADE_SIG,
                         data=encode_abi(
                             ["address", "address"],
-                            [address, settV1h_logic],
+                            [address, SETT_V1H_LOGIC],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
                         delay_in_days=4,
@@ -126,20 +128,7 @@ def main(queue="true", simulation="false"):
                         signature=UPGRADE_SIG,
                         data=encode_abi(
                             ["address", "address"],
-                            [address, settV1_1h_logic],
-                        ),
-                        dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=4,
-                    )
-                    console.print(
-                        f"[green]Queueing setStrategist on timelock for {key} to tech ops {TECH_OPS}[/green]"
-                    )
-                    safe.badger.queue_timelock(
-                        target_addr=DEV_PROXY,
-                        signature=SET_STRATEGIST_SIG,
-                        data=encode_abi(
-                            ["address"],
-                            [TECH_OPS],
+                            [address, SETT_V1_1H_LOGIC],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
                         delay_in_days=4,
@@ -160,20 +149,7 @@ def main(queue="true", simulation="false"):
                         signature=UPGRADE_SIG,
                         data=encode_abi(
                             ["address", "address"],
-                            [address, settV4h_logic],
-                        ),
-                        dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=4,
-                    )
-                    console.print(
-                        f"[green]Queueing setStrategist on timelock for {key} to tech ops {TECH_OPS}[/green]"
-                    )
-                    safe.badger.queue_timelock(
-                        target_addr=DEV_PROXY,
-                        signature=SET_STRATEGIST_SIG,
-                        data=encode_abi(
-                            ["address"],
-                            [TECH_OPS],
+                            [address, SETT_V4H_LOGIC],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
                         delay_in_days=4,
@@ -203,6 +179,8 @@ def main(queue="true", simulation="false"):
 
 
 def execute_timelock(timelock, queueTx_dir, key, simulation):
+    dev_multi = accounts.at(DEV_MULTI)
+
     if simulation == "false":
         console.print(f"Processing upgrade and patch for {key}...")
         path = os.path.dirname(queueTx_dir)
@@ -254,13 +232,14 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
                     assert prev_max == sett.max()
                     assert prev_getPricePerFullShare == sett.getPricePerFullShare()
 
-                    if tx["signature"] == UPGRADE_SIG:
-                        assert prev_strategist == sett.strategist()
-                    elif tx["signature"] == SET_STRATEGIST_SIG:
+                    if key in SETTV1_1_KEYS + SETTV4_KEYS:
+                        sett.setStrategist(TECH_OPS, {"from": dev_multi})
                         assert TECH_OPS == sett.strategist()
+                    else:
+                        assert prev_strategist == sett.strategist()
 
                     # Verify new Addresses are setup properly
-                    assert sett.MULTISIG() == recoveredMultisig
+                    assert sett.MULTISIG() == RECOVERED_MULTI
 
                 else:
                     with open(f"{queueTx_dir}{filename}") as f:
@@ -286,14 +265,17 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
         prev_max = sett.max()
         prev_getPricePerFullShare = sett.getPricePerFullShare()
         prev_available = sett.available()
+        prev_strategist = sett.strategist()
 
         # Execute upgrade
         if key in SETTV1_KEYS:
-            dev_proxy.upgrade(sett.address, settV1h_logic, {"from": timelock_actor})
+            dev_proxy.upgrade(sett.address, SETT_V1H_LOGIC, {"from": timelock_actor})
         elif key in SETTV1_1_KEYS:
-            dev_proxy.upgrade(sett.address, settV1_1h_logic, {"from": timelock_actor})
+            dev_proxy.upgrade(sett.address, SETT_V1_1H_LOGIC, {"from": timelock_actor})
+            sett.setStrategist(TECH_OPS, {"from": dev_multi})
         elif key in SETTV4_KEYS:
-            dev_proxy.upgrade(sett.address, OLD_V4H_LOGIC, {"from": timelock_actor})
+            dev_proxy.upgrade(sett.address, SETT_V4H_LOGIC, {"from": timelock_actor})
+            sett.setStrategist(TECH_OPS, {"from": dev_multi})
 
         # Checking all variables are as expected
         assert prev_available == sett.available()
@@ -307,8 +289,16 @@ def execute_timelock(timelock, queueTx_dir, key, simulation):
         assert prev_getPricePerFullShare == sett.getPricePerFullShare()
         assert prev_available == sett.available()
 
+        if key in SETTV1_1_KEYS + SETTV4_KEYS:
+            assert TECH_OPS == sett.strategist()
+            # test can call approve and revoke from tech ops
+            sett.approveContractAccess(accounts[0], {"from": TECH_OPS})
+            sett.revokeContractAccess(accounts[0], {"from": TECH_OPS})
+        else:
+            assert prev_strategist == sett.strategist()
+
         # Verify new Addresses are setup properly
-        assert sett.MULTISIG() == recoveredMultisig
+        assert sett.MULTISIG() == RECOVERED_MULTI
 
         console.print(f"[green]Simulation successful for {key}[/green]")
 
