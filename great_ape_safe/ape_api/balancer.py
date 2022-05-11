@@ -37,6 +37,7 @@ class Balancer():
 
         asset_in_index = underlyings.index(asset_in.address)
         asset_out_index = underlyings.index(asset_out.address)
+        # https://github.com/balancer-labs/balancer-v2-monorepo/blob/095648c29d4ce67dd386edd8344c1eaadf812e42/pkg/vault/contracts/interfaces/IVault.sol#L498
         calc_out_given_in = 0
 
         swap = [(
