@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "@openzeppelin/contracts/finance/VestingWallet.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 /**
  * @title The AutonomousDripper Contract
@@ -13,7 +14,7 @@ import "@openzeppelin/contracts/finance/VestingWallet.sol";
  * manually. Also adds a (transferable) owner that can sweep all ether and
  * ERC-20 tokens.
  */
-contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, ConfirmedOwner {
+contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, ConfirmedOwner, Pausable {
     event EtherSwept(uint256 amount);
     event ERC20Swept(address indexed token, uint256 amount);
     event KeeperRegistryAddressUpdated(address oldAddress, address newAddress);
@@ -81,7 +82,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
      * @dev Runs off-chain at every block to determine if the `performUpkeep`
      * function should be called on-chain.
      */
-    function checkUpkeep(bytes calldata) external view override returns (
+    function checkUpkeep(bytes calldata) external view override whenNotPaused returns (
         bool upkeepNeeded, bytes memory
     ) {
         if ((block.timestamp - lastTimestamp) > interval) {
@@ -96,7 +97,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
      * @dev Contains the logic that should be executed on-chain when
      * `checkUpkeep` returns true.
      */
-    function performUpkeep(bytes calldata performData) external override onlyKeeperRegistry {
+    function performUpkeep(bytes calldata performData) external override onlyKeeperRegistry whenNotPaused {
         if ((block.timestamp - lastTimestamp) > interval) {
             address[] memory assetsHeld = abi.decode(performData, (address[]));
             for (uint idx = 0; idx < assetsHeld.length; idx++) {
@@ -142,6 +143,20 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
         require(keeperRegistryAddress != address(0));
         emit KeeperRegistryAddressUpdated(_keeperRegistryAddress, keeperRegistryAddress);
         _keeperRegistryAddress = keeperRegistryAddress;
+    }
+
+    /**
+    * @dev Pauses the contract, which prevents executing performUpkeep.
+    */
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    /**
+    * @dev Unpauses the contract.
+    */
+    function unpause() external onlyOwner {
+        _unpause();
     }
 
     modifier onlyKeeperRegistry() {
