@@ -42,7 +42,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
     ) {
         lastTimestamp = startTimestamp;
         interval = intervalSeconds;
-        setAssetsWatchlist(watchlistAddresses);
+        assetsWatchlist = watchlistAddresses;
         setKeeperRegistryAddress(keeperRegistryAddress);
     }
 
