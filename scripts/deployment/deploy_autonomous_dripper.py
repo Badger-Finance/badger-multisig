@@ -18,6 +18,7 @@ def main(deployer_label=None):
                 '0x3472A5A71965499acd81997a54BBA8D852C6E53d', # BADGER
                 '0x798D1bE841a82a273720CE31c822C61a67a601C3' # DIGG
             ],
+            registry.eth.chainlink.keeper_registry,
             {'from': deployer},
             # TODO: programmatically set to True when on a non-forked, live network
             publish_source=False#True
@@ -32,6 +33,7 @@ def main(deployer_label=None):
                 '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735', # rinkeby DAI
                 '0x577D296678535e4903D59A4C929B718e1D575e0A' # rinkeby WBTC
             ],
+            registry.rinkeby.chainlink.keeper_registry,
             {'from': deployer},
             # TODO: programmatically set to True when on a non-forked, live network
             publish_source=True

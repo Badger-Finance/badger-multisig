@@ -16,17 +16,22 @@ import "@openzeppelin/contracts/finance/VestingWallet.sol";
 contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, ConfirmedOwner {
     event EtherSwept(uint256 amount);
     event ERC20Swept(address indexed token, uint256 amount);
+    event KeeperRegistryAddressUpdated(address oldAddress, address newAddress);
+
+    error OnlyKeeperRegistry();
 
     uint public lastTimestamp;
     uint public immutable interval;
     address[] public assetsWatchlist;
+    address private _keeperRegistryAddress;
 
     constructor(
         address beneficiaryAddress,
         uint64 startTimestamp,
         uint64 durationSeconds,
         uint intervalSeconds,
-        address[] memory watchlistAddresses
+        address[] memory watchlistAddresses,
+        address keeperRegistryAddress
     ) VestingWallet(
         beneficiaryAddress,
         startTimestamp,
@@ -37,6 +42,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
         lastTimestamp = startTimestamp;
         interval = intervalSeconds;
         assetsWatchlist = watchlistAddresses;
+        setKeeperRegistryAddress(keeperRegistryAddress);
     }
 
     /**
@@ -90,7 +96,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
      * @dev Contains the logic that should be executed on-chain when
      * `checkUpkeep` returns true.
      */
-    function performUpkeep(bytes calldata performData) external override {
+    function performUpkeep(bytes calldata performData) external override onlyKeeperRegistry {
         if ((block.timestamp - lastTimestamp) > interval) {
             address[] memory assetsHeld = abi.decode(performData, (address[]));
             for (uint idx = 0; idx < assetsHeld.length; idx++) {
@@ -120,5 +126,28 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
         uint256 balance = IERC20(token).balanceOf(address(this));
         emit ERC20Swept(token, balance);
         SafeERC20.safeTransfer(IERC20(token), super.owner(), balance);
+    }
+
+    /**
+    * @dev Getter for the keeper registry address.
+    */
+    function getKeeperRegistryAddress() external view returns (address keeperRegistryAddress) {
+        return _keeperRegistryAddress;
+    }
+
+    /**
+    * @dev Setter for the keeper registry address.
+    */
+    function setKeeperRegistryAddress(address keeperRegistryAddress) public onlyOwner {
+        require(keeperRegistryAddress != address(0));
+        emit KeeperRegistryAddressUpdated(_keeperRegistryAddress, keeperRegistryAddress);
+        _keeperRegistryAddress = keeperRegistryAddress;
+    }
+
+    modifier onlyKeeperRegistry() {
+        if (msg.sender != _keeperRegistryAddress) {
+            revert OnlyKeeperRegistry();
+        }
+        _;
     }
 }
