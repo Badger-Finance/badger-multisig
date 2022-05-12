@@ -11,8 +11,10 @@ import "@openzeppelin/contracts/security/Pausable.sol";
  * @author gosuto.eth
  * @notice A Chainlink Keeper-compatible version of OpenZeppelin's
  * VestingWallet; removing the need to monitor the interval and/or call release
- * manually. Also adds a (transferable) owner that can sweep all ether and
- * ERC-20 tokens.
+ * manually. Also adds a (transferable) owner that can set the address of the
+ * keeper's registry, pause/unpause the contract and sweep all ether/ERC-20
+ * tokens.
+ * Takes strong inspiration from https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/upkeeps/EthBalanceMonitor.sol
  */
 contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, ConfirmedOwner, Pausable {
     event EtherSwept(uint256 amount);
@@ -58,7 +60,6 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
      * @dev Loop over the assetsWatchlist and check their local balance.
      * Returns a filtered version of the assetsWatchlist for which the local
      * balance is greater than zero.
-     * Strongly inspired by https://github.com/smartcontractkit/chainlink/blob/0adf6c0fb256d09e4fed2f2f86a2c027ae82535d/contracts/src/v0.8/upkeeps/EthBalanceMonitor.sol#L87-L116
      */
     function _getAssetsHeld() internal view returns (address[] memory) {
         address[] memory _assetsHeld = new address[](assetsWatchlist.length);
