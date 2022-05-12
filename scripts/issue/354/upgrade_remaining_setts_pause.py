@@ -30,17 +30,18 @@ dev_proxy = safe.contract(DEV_PROXY)
 
 # Logic Contracts
 SETT_V1H_LOGIC = logic_contracts["SettV1h"]
-SETT_V1_1H_LOGIC = logic_contracts["SettV1_1h"]
-OLD_V4H_LOGIC = "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD"
-OLD_V1_1H_LOGIC = "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170"
-SETT_V4H_LOGIC = logic_contracts["SettV4h"]
+
+OLD_V1_1H_LOGIC = logic_contracts["SettV1_1h_V1"]
+SETT_V1_1H_LOGIC = logic_contracts["SettV1_1h_V2"]
+
+OLD_V4H_LOGIC = logic_contracts["SettV4h_V1"]
+SETT_V4H_LOGIC = logic_contracts["SettV4h_V2"]
 
 SETTV1_KEYS = [
     "bBADGER",
     "bcrvRenBTC",
     "bcrvSBTC",
     "bcrvTBTC",
-    "bharvestcrvRenBTC",
     "buniWbtcBadger",
 ]
 
