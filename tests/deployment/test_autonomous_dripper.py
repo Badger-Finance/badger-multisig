@@ -24,6 +24,11 @@ def keeper(dripper):
     return interface.IKeeperRegistry(dripper.getKeeperRegistryAddress())
 
 
+@pytest.fixture(scope='module')
+def owner(dripper):
+    return accounts.at(dripper.owner())
+
+
 @pytest.fixture(scope="module")
 def badger():
     return MintableForkToken(registry.eth.treasury_tokens.BADGER)
@@ -51,8 +56,7 @@ def test_duration(dripper):
         'dripping period already expired; increase start or duration'
 
 
-def test_release_from_owner(badger, dripper):
-    owner = dripper.owner()
+def test_release_from_owner(badger, dripper, owner):
     bal_before = badger.balanceOf(dripper.beneficiary())
     dripper.release(badger, {'from': owner})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
@@ -66,8 +70,10 @@ def test_release_from_random(badger, dripper):
     # add some time to build up releasable funds again
     chain.sleep(60)
     bal_before = badger.balanceOf(dripper.beneficiary())
-    dripper.release(badger, {'from': accounts[1]})
-    assert badger.balanceOf(dripper.beneficiary()) > bal_before
+    # release should not be permissionless anymore!
+    with brownie.reverts('Only callable by owner'):
+        dripper.release(badger, {'from': accounts[1]})
+    assert badger.balanceOf(dripper.beneficiary()) == bal_before
 
 
 def test_upkeep_needed(dripper, badger, keeper):
@@ -76,6 +82,26 @@ def test_upkeep_needed(dripper, badger, keeper):
     upkeep_needed, assets_encoded = dripper.checkUpkeep(b'', {'from': keeper})
     assert upkeep_needed
     return upkeep_needed, assets_encoded
+
+
+def test_perform_upkeep_while_paused(dripper, badger, keeper, owner):
+    upkeep_needed, assets_encoded = test_upkeep_needed(dripper, badger, keeper)
+    assert upkeep_needed
+    dripper.pause({'from': owner})
+    with brownie.reverts('Pausable: paused'):
+        dripper.performUpkeep(assets_encoded, {'from': keeper})
+    dripper.unpause({'from': owner})
+
+
+def test_perform_upkeep_from_random(dripper, badger, keeper):
+    upkeep_needed, assets_encoded = test_upkeep_needed(dripper, badger, keeper)
+    bal_dripper_before = badger.balanceOf(dripper)
+    bal_benef_before = badger.balanceOf(dripper.beneficiary())
+    assert upkeep_needed
+    with brownie.reverts('typed error: 0xd3a68034'): # OnlyKeeperRegistry()
+        dripper.performUpkeep(assets_encoded, {'from': accounts[1]})
+    assert bal_dripper_before == badger.balanceOf(dripper)
+    assert bal_benef_before == badger.balanceOf(dripper.beneficiary())
 
 
 def test_perform_upkeep(dripper, badger, keeper):
@@ -88,8 +114,7 @@ def test_perform_upkeep(dripper, badger, keeper):
     assert badger.balanceOf(dripper.beneficiary()) > bal_benef_before
 
 
-def test_sweep_eth_from_owner(dripper):
-    owner = accounts.at(dripper.owner())
+def test_sweep_eth_from_owner(dripper, owner):
     bal_before = owner.balance()
     dripper.sweep({'from': owner})
     assert owner.balance() > bal_before
@@ -101,8 +126,7 @@ def test_sweep_eth_from_random(dripper):
         dripper.sweep({'from': accounts[1]})
 
 
-def test_sweep_erc_from_owner(dripper, badger):
-    owner = dripper.owner()
+def test_sweep_erc_from_owner(dripper, badger, owner):
     bal_before = badger.balanceOf(owner)
     dripper.sweep(badger, {'from': owner})
     assert badger.balanceOf(owner) > bal_before
