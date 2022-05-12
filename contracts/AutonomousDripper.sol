@@ -159,6 +159,24 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
         _unpause();
     }
 
+    /**
+     * @dev Release the native token (ether) that have already vested.
+     *
+     * Emits a {TokensReleased} event.
+     */
+    function release() public override onlyOwner {
+        VestingWallet.release();
+    }
+
+    /**
+     * @dev Release the tokens that have already vested.
+     *
+     * Emits a {TokensReleased} event.
+     */
+    function release(address token) public override onlyOwner {
+        VestingWallet.release(token);
+    }
+
     modifier onlyKeeperRegistry() {
         if (msg.sender != _keeperRegistryAddress) {
             revert OnlyKeeperRegistry();
