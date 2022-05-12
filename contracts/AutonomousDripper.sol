@@ -1,22 +1,22 @@
-// contracts/EmissionsDripper.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/finance/VestingWallet.sol";
+import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
+import "@openzeppelin/contracts/finance/VestingWallet.sol";
 
 /**
  * @title The AutonomousDripper Contract
  * @author gosuto.eth
  * @notice A Chainlink Keeper-compatible version of OpenZeppelin's
  * VestingWallet; removing the need to monitor the interval and/or call release
- * manually. Also adds an admin that can sweep all ether and ERC-20 tokens.
+ * manually. Also adds a (transferable) owner that can sweep all ether and
+ * ERC-20 tokens.
  */
-contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
+contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, ConfirmedOwner {
     event EtherSwept(uint256 amount);
     event ERC20Swept(address indexed token, uint256 amount);
 
-    address private _admin;
     uint public lastTimestamp;
     uint public immutable interval;
     address[] public assetsWatchlist;
@@ -25,15 +25,15 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
         address beneficiaryAddress,
         uint64 startTimestamp,
         uint64 durationSeconds,
-        address adminAddress,
         uint intervalSeconds,
         address[] memory watchlistAddresses
     ) VestingWallet(
         beneficiaryAddress,
         startTimestamp,
         durationSeconds
+    ) ConfirmedOwner(
+        msg.sender
     ) {
-        _admin = adminAddress;
         lastTimestamp = startTimestamp;
         interval = intervalSeconds;
         assetsWatchlist = watchlistAddresses;
@@ -41,10 +41,9 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
 
     /**
      * @dev Setter for the list of ERC-20 token addresses to consider for
-     * releasing. Can only be called by the admin.
+     * releasing. Can only be called by the current owner.
      */
-    function setAssetsWatchlist(address[] calldata newAssetsWatchlist) public virtual {
-        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
+    function setAssetsWatchlist(address[] calldata newAssetsWatchlist) public virtual onlyOwner {
         assetsWatchlist = newAssetsWatchlist;
     }
 
@@ -104,39 +103,22 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface {
     }
 
     /**
-     * @dev Getter for the admin address.
+     * @dev Sweep the full contract's ether balance to the current owner. Can
+     * only be called by the current owner.
      */
-    function admin() public view virtual returns (address) {
-        return _admin;
-    }
-
-    /**
-     * @dev Setter for the admin address. Can only be called by the admin.
-     */
-    function swapAdmin(address _newAdmin) public {
-        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
-        _admin = _newAdmin;
-    }
-
-    /**
-     * @dev Sweep the full contract's ether balance to the admin. Can only be
-     * called by the admin.
-     */
-    function sweep() public virtual {
-        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
+    function sweep() public virtual onlyOwner {
         uint256 balance = address(this).balance;
         emit EtherSwept(balance);
-        Address.sendValue(payable(_admin), balance);
+        Address.sendValue(payable(super.owner()), balance);
     }
 
     /**
-     * @dev Sweep the full contract's balance for an ERC-20 token to the admin.
-     * Can only be called by the admin.
+     * @dev Sweep the full contract's balance for an ERC-20 token to the
+     * current owner. Can only be called by the current owner.
      */
-    function sweep(address token) public virtual {
-        require(_msgSender() == _admin, "AutonomousDripper: onlyAdmin");
+    function sweep(address token) public virtual onlyOwner {
         uint256 balance = IERC20(token).balanceOf(address(this));
         emit ERC20Swept(token, balance);
-        SafeERC20.safeTransfer(IERC20(token), _admin, balance);
+        SafeERC20.safeTransfer(IERC20(token), super.owner(), balance);
     }
 }

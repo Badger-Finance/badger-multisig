@@ -13,7 +13,6 @@ def main(deployer_label=None):
             registry.eth.badger_wallets.badgertree,
             timegm(date(2022, 4, 20).timetuple()),
             int(timedelta(weeks=9).total_seconds()),
-            deployer,
             60*60*24*7,
             [
                 '0x3472A5A71965499acd81997a54BBA8D852C6E53d', # BADGER
@@ -28,7 +27,6 @@ def main(deployer_label=None):
             registry.rinkeby.badger_wallets.solo_multisig,
             timegm(date.today().timetuple()),
             int(timedelta(weeks=1).total_seconds()),
-            deployer,
             60*60, # interval of one hour
             [
                 '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735', # rinkeby DAI
