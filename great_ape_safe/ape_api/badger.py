@@ -33,8 +33,7 @@ class Badger():
 
         # contracts
         self.tree = interface.IBadgerTreeV2(
-            registry.eth.badger_wallets.badgertree,
-            owner=self.safe.account
+            registry.eth.badger_wallets.badgertree, owner=self.safe.account
         )
         self.strat_bvecvx = interface.IVestedCvx(
             registry.eth.strategies['native.vestedCVX'],
@@ -43,10 +42,11 @@ class Badger():
         self.timelock = safe.contract(
             registry.eth.governance_timelock
         )
-
         self.registry = interface.IBadgerRegistry(
-            registry.eth.registry,
-            owner=self.safe.account
+            registry.eth.registry, owner=self.safe.account
+        )
+        self.bribes_processor = interface.IBribesProcessor(
+            registry.eth.bribes_processor, owner=self.safe.account
         )
 
         # misc
@@ -139,6 +139,7 @@ class Badger():
                 aggregate['amounts'],
                 aggregate['proofs'],
             )
+        return dict(zip(aggregate['tokens'], aggregate['amounts']))
 
 
     def claim_bribes_convex(self, eligible_claims):
@@ -264,7 +265,7 @@ class Badger():
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
 
-        
+
     def set_key_on_registry(self, key, target_addr):
         # Ensures key doesn't currently exist
         assert self.registry.get(key) == ZERO_ADDRESS
@@ -273,8 +274,8 @@ class Badger():
 
         assert self.registry.get(key) == target_addr
         C.print(f'{key} was added to the registry at {target_addr}')
-        
-        
+
+
     def from_gdigg_to_digg(self, gdigg):
         digg = interface.IUFragments(
             registry.eth.treasury_tokens.DIGG, owner=self.safe.account
@@ -282,3 +283,38 @@ class Badger():
         return Decimal(
             gdigg * digg._initialSharesPerFragment() / digg._sharesPerFragment()
         )
+
+
+    def get_order_for_processor(
+        self,
+        sell_token,
+        mantissa_sell,
+        buy_token,
+        mantissa_buy=None,
+        deadline=60*60,
+        coef=1,
+        prod=False
+    ):
+        if not hasattr(self.safe, 'cow'):
+            self.safe.init_cow(prod=prod)
+        order_payload, order_uid = self.safe.cow._sell(
+            sell_token,
+            mantissa_sell,
+            buy_token,
+            mantissa_buy,
+            deadline,
+            coef,
+            destination=self.bribes_processor.address,
+            origin=self.bribes_processor.address
+        )
+        order_payload['kind'] = str(self.bribes_processor.KIND_SELL())
+        order_payload['sellTokenBalance'] = str(self.bribes_processor.BALANCE_ERC20())
+        order_payload['buyTokenBalance'] = str(self.bribes_processor.BALANCE_ERC20())
+        order_payload.pop('signingScheme')
+        order_payload.pop('signature')
+        order_payload.pop('from')
+        order_payload = tuple(order_payload.values())
+
+        assert self.bribes_processor.getOrderID(order_payload) == order_uid
+
+        return order_payload, order_uid
