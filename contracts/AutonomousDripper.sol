@@ -83,7 +83,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
      * function should be called on-chain.
      */
     function checkUpkeep(bytes calldata) external view override whenNotPaused returns (
-        bool upkeepNeeded, bytes memory
+        bool upkeepNeeded, bytes memory checkData
     ) {
         if ((block.timestamp - lastTimestamp) > interval) {
             address[] memory assetsHeld = _getAssetsHeld();
