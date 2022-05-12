@@ -2,7 +2,7 @@ from datetime import datetime
 
 import brownie
 import pytest
-from brownie import accounts, chain
+from brownie import accounts, chain, interface
 from brownie_tokens import MintableForkToken
 
 from helpers.addresses import registry
@@ -17,6 +17,11 @@ def deployer():
 def dripper():
     from scripts.deployment.deploy_autonomous_dripper import main
     return main()
+
+
+@pytest.fixture(scope='module')
+def keeper(dripper):
+    return interface.IKeeperRegistry(dripper.getKeeperRegistryAddress())
 
 
 @pytest.fixture(scope="module")
@@ -46,10 +51,10 @@ def test_duration(dripper):
         'dripping period already expired; increase start or duration'
 
 
-def test_release_from_admin(badger, dripper):
-    admin = dripper.admin()
+def test_release_from_owner(badger, dripper):
+    owner = dripper.owner()
     bal_before = badger.balanceOf(dripper.beneficiary())
-    dripper.release(badger, {'from': admin})
+    dripper.release(badger, {'from': owner})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
@@ -65,29 +70,29 @@ def test_release_from_random(badger, dripper):
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
-def test_upkeep_needed(dripper, badger):
+def test_upkeep_needed(dripper, badger, keeper):
     assert chain.time() - dripper.start() > dripper.interval()
     assert badger.balanceOf(dripper) > 0
-    upkeep_needed, assets_encoded = dripper.checkUpkeep(b'')
+    upkeep_needed, assets_encoded = dripper.checkUpkeep(b'', {'from': keeper})
     assert upkeep_needed
     return upkeep_needed, assets_encoded
 
 
-def test_perform_upkeep(dripper, badger):
+def test_perform_upkeep(dripper, badger, keeper):
     bal_dripper_before = badger.balanceOf(dripper.beneficiary())
     bal_benef_before = badger.balanceOf(dripper)
-    upkeep_needed, assets_encoded = test_upkeep_needed(dripper, badger)
+    upkeep_needed, assets_encoded = test_upkeep_needed(dripper, badger, keeper)
     assert upkeep_needed
-    dripper.performUpkeep(assets_encoded)
+    dripper.performUpkeep(assets_encoded, {'from': keeper})
     assert bal_dripper_before > badger.balanceOf(dripper)
     assert badger.balanceOf(dripper.beneficiary()) > bal_benef_before
 
 
-def test_sweep_eth_from_admin(dripper):
-    admin = accounts.at(dripper.admin())
-    bal_before = admin.balance()
-    dripper.sweep({'from': admin})
-    assert admin.balance() > bal_before
+def test_sweep_eth_from_owner(dripper):
+    owner = accounts.at(dripper.owner())
+    bal_before = owner.balance()
+    dripper.sweep({'from': owner})
+    assert owner.balance() > bal_before
     assert dripper.balance() == 0
 
 
@@ -96,11 +101,11 @@ def test_sweep_eth_from_random(dripper):
         dripper.sweep({'from': accounts[1]})
 
 
-def test_sweep_erc_from_admin(dripper, badger):
-    admin = dripper.admin()
-    bal_before = badger.balanceOf(admin)
-    dripper.sweep(badger, {'from': admin})
-    assert badger.balanceOf(admin) > bal_before
+def test_sweep_erc_from_owner(dripper, badger):
+    owner = dripper.owner()
+    bal_before = badger.balanceOf(owner)
+    dripper.sweep(badger, {'from': owner})
+    assert badger.balanceOf(owner) > bal_before
     assert badger.balanceOf(dripper) == 0
 
 
@@ -109,8 +114,8 @@ def test_sweep_erc_from_random(dripper, badger):
         dripper.sweep(badger, {'from': accounts[1]})
 
 
-def test_upkeep_not_needed(dripper, badger):
+def test_upkeep_not_needed(dripper, badger, keeper):
     assert chain.time() - dripper.start() > dripper.interval()
     assert badger.balanceOf(dripper) == 0
-    upkeep_needed, _ = dripper.checkUpkeep(b'')
+    upkeep_needed, _ = dripper.checkUpkeep(b'', {'from': keeper})
     assert not upkeep_needed
