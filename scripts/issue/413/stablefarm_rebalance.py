@@ -11,17 +11,15 @@ def main():
     vault.init_compound()
     vault.init_balancer()
 
-    crv3pool = trops.contract(registry.eth.treasury_tokens.crv3pool)
-    crv3eur = vault.contract(registry.eth.treasury_tokens.crv3eur)
-    crvfrax = vault.contract(registry.eth.treasury_tokens.crvFRAX)
-
     usdt = vault.contract(registry.eth.treasury_tokens.USDT)
     usdc = vault.contract(registry.eth.treasury_tokens.USDC)
     dai = vault.contract(registry.eth.treasury_tokens.DAI)
     fei = vault.contract(registry.eth.treasury_tokens.FEI)
-    ust = vault.contract(registry.eth.bribe_tokens_claimable.UST)
-    frax = vault.contract(registry.eth.treasury_tokens.FRAX)
     eurs = vault.contract(registry.eth.treasury_tokens.EURS)
+
+    crv3pool = trops.contract(registry.eth.treasury_tokens.crv3pool)
+    crv3eur = vault.contract(registry.eth.treasury_tokens.crv3eur)
+    crvfrax = vault.contract(registry.eth.treasury_tokens.crvFRAX)
 
     ausdc = vault.contract(registry.eth.treasury_tokens.aUSDC)
     ausdt = vault.contract(registry.eth.treasury_tokens.aUSDT)
