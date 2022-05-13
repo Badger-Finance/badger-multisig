@@ -56,6 +56,17 @@ def weighted_staked_bpt(dev, balancer, weighted_bpt):
 
 
 @pytest.fixture
+def badger_bpt(dev):
+    return dev.contract(registry.eth.balancer.B_20_BTC_80_BADGER)
+
+
+@pytest.fixture
+def badger_staked_bpt(dev, balancer, badger_bpt):
+    gauge_factory = balancer.gauge_factory
+    return dev.contract(gauge_factory.getPoolGauge(badger_bpt))
+
+
+@pytest.fixture
 def ldo(dev):
     return dev.contract("0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32")
 
@@ -104,4 +115,16 @@ def dai(dev):
     dai._mint_for_testing(dev, 10_000 * 10**dai.decimals())
     return Contract(
         registry.eth.treasury_tokens.DAI, owner=dev.account
+    )
+
+
+@pytest.fixture
+def badger(dev):
+    Contract.from_explorer(registry.eth.treasury_tokens.BADGER)
+    badger = MintableForkToken(
+        registry.eth.treasury_tokens.BADGER
+    )
+    badger._mint_for_testing(dev, 100_000 * 10**badger.decimals())
+    return Contract(
+        registry.eth.treasury_tokens.BADGER, owner=dev.account
     )

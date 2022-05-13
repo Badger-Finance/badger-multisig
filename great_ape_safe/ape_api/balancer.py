@@ -21,7 +21,7 @@ class Balancer():
         # parameters
         self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000) # USD
-        self.dusty = 0.99
+        self.dusty = 0.995
         # misc
         self.subgraph = 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
 
@@ -132,7 +132,9 @@ class Balancer():
         tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
 
         if self.pool_type(pool_id) == 'Stable':
-            bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
+            # wip
+            # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
+            bpt_out = 1
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
 
@@ -175,7 +177,9 @@ class Balancer():
         mantissas = [mantissa if x == underlying.address else 0 for x in underlyings]
 
         if self.pool_type(pool_id) == 'Stable':
-            bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
+            # wip
+            # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
+            bpt_out = 1
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
 
