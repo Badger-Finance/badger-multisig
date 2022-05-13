@@ -76,15 +76,13 @@ def main():
 
     vault.curve.withdraw_to_one_coin(crv3eur, crv3eur.balanceOf(vault), eurs)
     vault.curve.withdraw_to_one_coin(crvfrax, crvfrax.balanceOf(vault), crv3pool)
+    vault.curve.withdraw_to_one_coin(crv3pool, (614_746e18 + 307_373e18), dai)
 
-
-    vault.curve.withdraw_to_one_coin(crv3pool, 614_746e18, usdt)
-
-    vault.curve.withdraw_to_one_coin(crv3pool, (614_746e18 + 307_373e18) * DUSTY, dai)
     vault.curve.swap(dai, fei, 307_373e18 * 1.005, i=1, j=0)
-
     vault.curve.swap(eurs, usdc, eurs.balanceOf(vault))
+
     vault.curve.withdraw_to_one_coin(crv3pool, (614_746e6 - usdc.balanceOf(vault) * DUSTY) * 1e12, usdc)
+    vault.curve.withdraw_to_one_coin(crv3pool, 614_746e18, usdt)
 
     # deposits
     vault.aave.deposit(usdc, 614_746e6)
