@@ -72,6 +72,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
             }
         }
         if (count != assetsWatchlist.length) {
+            // truncate length of _assetsHeld array by altering first slot
             assembly {
                 mstore(_assetsHeld, count)
             }
@@ -101,11 +102,15 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
     function performUpkeep(bytes calldata performData) external override onlyKeeperRegistry whenNotPaused {
         if ((block.timestamp - lastTimestamp) > interval) {
             address[] memory assetsHeld = abi.decode(performData, (address[]));
+            bool dripped = false;
             for (uint idx = 0; idx < assetsHeld.length; idx++) {
                 if (IERC20(assetsHeld[idx]).balanceOf(address(this)) > 0) {
                     VestingWallet.release(assetsHeld[idx]);
-                    lastTimestamp = block.timestamp;
+                    dripped = true;
                 }
+            }
+            if (dripped) {
+                lastTimestamp = block.timestamp;
             }
         }
     }
