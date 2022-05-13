@@ -251,7 +251,7 @@ ADDRESSES_ETH = {
         "bbveCVX-CVX-f": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
         "remBADGER": "0x6aF7377b5009d7d154F36FE9e235aE1DA27Aea22",
         "remDIGG": "0x99F39D495C6A5237f43602f3Ab5F49786E46c9B0",
-        "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613"
+        "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613",
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -281,7 +281,7 @@ ADDRESSES_ETH = {
         "native.bbveCVX-CVX-f": "0x98Ca7AFa876f0e15494E76E92C5b3658cdE1Ffe1",
         "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
-        "native.badgerCrv": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1"
+        "native.badgerCrv": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
     },
     "logic": {
         "StrategyConvexStakingOptimizer": "0x0bB87f40D4eb6066a2311B7BE3B45A3D15771557", # V1.1
@@ -337,7 +337,7 @@ ADDRESSES_ETH = {
         "fIBBTC-22": "0x6856f0e1BD23c9a1b92f87581Dd2f28E7C84EbcD",
         "fFRAX-22": "0x60fb6aecf861e3f16f7a4dcaddf8d8820244a1cd",
         "fDOLA-22": "0x5117D9453cC9Be8c3fBFbA4aE3B858D18fe45903",
-        "fbveCVX-22": "0x26F6F27fDBc3B9cDe4b1943b1c07606CAF2c4C6C"
+        "fbveCVX-22": "0x26F6F27fDBc3B9cDe4b1943b1c07606CAF2c4C6C",
     },
     "routers": {
         "sushi_router_v2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
@@ -445,12 +445,12 @@ ADDRESSES_ETH = {
         "B_50_BTC_50_WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5",
         "B_20_BTC_80_BADGER_GAUGE": "0xAF50825B010Ae4839Ac444f6c12D44b96819739B",
         "B_20_BTC_80_BADGER": "0xb460DAa847c45f1C4a41cb05BFB3b51c92e41B36",
-        "B_3POOL": "0x06Df3b2bbB68adc8B0e302443692037ED9f91b42"
+        "B_3POOL": "0x06Df3b2bbB68adc8B0e302443692037ED9f91b42",
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
-        "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9"
+        "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
     },
 }
 

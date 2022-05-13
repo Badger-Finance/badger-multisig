@@ -13,6 +13,8 @@ Pipfile*
 data/Convex_EPS
 data/Votium
 logs/
+yarn.lock
+package.json
 
 node_modules
 

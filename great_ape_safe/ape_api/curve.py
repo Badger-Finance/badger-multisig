@@ -207,22 +207,26 @@ class Curve:
         raise
 
 
-    def swap(self, asset_in, asset_out, mantissa, i=None, j=None):
+    def swap(self, asset_in, asset_out, mantissa):
         # swap `asset_in` (amount: `mantissa`) for `asset_out`
         # https://curve.readthedocs.io/factory-pools.html?highlight=exchange#StableSwap.exchange
         # https://curve.readthedocs.io/registry-exchanges.html?highlight=get_best_rate#finding-pools-and-swap-rates
-        pool_addr = self.exchanger.get_best_rate(asset_in, asset_out, mantissa)[0]
+        try:
+            pool_addr = self.exchanger.get_best_rate(asset_in, asset_out, mantissa)[0]
+        except VirtualMachineError:
+            raise Exception('no direct swap path known')
+        if pool_addr == ZERO_ADDRESS:
+            raise Exception('no direct swap path known')
         # TODO: sort interfaces
         pool = Contract(pool_addr, owner=self.safe.account)
-        self._swap(pool, asset_in, asset_out, mantissa, i, j)
+        self._swap(pool, asset_in, asset_out, mantissa)
 
 
-    def _swap(self, pool, asset_in, asset_out, mantissa, i, j):
+    def _swap(self, pool, asset_in, asset_out, mantissa):
         # helper for common functionalities despite of the registry/pool route
         initial_asset_out_balance = asset_out.balanceOf(self.safe)
         asset_in.approve(pool, mantissa)
-        if not i and not j:
-            i, j = self._get_coin_indices(pool, asset_in, asset_out)
+        i, j = self._get_coin_indices(pool, asset_in, asset_out)
         # L139 docs ref
         if self._pool_has_wrapped_coins(pool):
             expected = pool.get_dy_underlying(i, j, mantissa) * (1 - self.max_slippage_and_fees)
