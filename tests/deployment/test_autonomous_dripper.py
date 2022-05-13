@@ -34,6 +34,11 @@ def badger():
     return MintableForkToken(registry.eth.treasury_tokens.BADGER)
 
 
+@pytest.fixture(scope="module")
+def digg():
+    return MintableForkToken(registry.eth.treasury_tokens.DIGG)
+
+
 @pytest.fixture(scope='module', autouse=True)
 def topup_and_fast_forward(dripper, badger):
     accounts[1].transfer(dripper, 1e18)
@@ -68,7 +73,8 @@ def test_accounting_released(dripper, badger):
 
 def test_release_from_random(badger, dripper):
     # add some time to build up releasable funds again
-    chain.sleep(60)
+    chain.sleep(dripper.interval())
+    chain.mine()
     bal_before = badger.balanceOf(dripper.beneficiary())
     # release should not be permissionless anymore!
     with brownie.reverts('Only callable by owner'):
@@ -105,13 +111,33 @@ def test_perform_upkeep_from_random(dripper, badger, keeper):
 
 
 def test_perform_upkeep(dripper, badger, keeper):
-    bal_dripper_before = badger.balanceOf(dripper.beneficiary())
-    bal_benef_before = badger.balanceOf(dripper)
+    bal_dripper_before = badger.balanceOf(dripper)
+    bal_benef_before = badger.balanceOf(dripper.beneficiary())
     upkeep_needed, assets_encoded = test_upkeep_needed(dripper, badger, keeper)
     assert upkeep_needed
     dripper.performUpkeep(assets_encoded, {'from': keeper})
     assert bal_dripper_before > badger.balanceOf(dripper)
     assert badger.balanceOf(dripper.beneficiary()) > bal_benef_before
+
+
+def test_perform_upkeep_multiple_tokens(dripper, badger, digg, keeper):
+    badger._mint_for_testing(dripper, 100_000 * 10**badger.decimals())
+    digg._mint_for_testing(dripper, 10 * 10**digg.decimals())
+    chain.sleep(dripper.interval())
+    chain.mine()
+
+    bal_dripper_before_badger = badger.balanceOf(dripper)
+    bal_benef_before_badger = badger.balanceOf(dripper.beneficiary())
+    bal_dripper_before_digg = digg.balanceOf(dripper)
+    bal_benef_before_digg = digg.balanceOf(dripper.beneficiary())
+
+    upkeep_needed, assets_encoded = test_upkeep_needed(dripper, badger, keeper)
+    assert upkeep_needed
+    dripper.performUpkeep(assets_encoded, {'from': keeper})
+    assert bal_dripper_before_badger > badger.balanceOf(dripper)
+    assert badger.balanceOf(dripper.beneficiary()) > bal_benef_before_badger
+    assert bal_dripper_before_digg > digg.balanceOf(dripper)
+    assert digg.balanceOf(dripper.beneficiary()) > bal_benef_before_digg
 
 
 def test_sweep_eth_from_owner(dripper, owner):
@@ -127,6 +153,7 @@ def test_sweep_eth_from_random(dripper):
 
 
 def test_sweep_erc_from_owner(dripper, badger, owner):
+    badger._mint_for_testing(dripper, 100_000 * 10**badger.decimals())
     bal_before = badger.balanceOf(owner)
     dripper.sweep(badger, {'from': owner})
     assert badger.balanceOf(owner) > bal_before
