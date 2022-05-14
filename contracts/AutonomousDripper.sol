@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
@@ -146,7 +146,6 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
     * @dev Setter for the keeper registry address.
     */
     function setKeeperRegistryAddress(address keeperRegistryAddress) public onlyOwner {
-        require(keeperRegistryAddress != address(0));
         emit KeeperRegistryAddressUpdated(_keeperRegistryAddress, keeperRegistryAddress);
         _keeperRegistryAddress = keeperRegistryAddress;
     }
