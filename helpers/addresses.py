@@ -454,6 +454,9 @@ ADDRESSES_ETH = {
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
         "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
     },
+    "across_bridge": {
+        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
+    },
 }
 
 ADDRESSES_IBBTC = {
