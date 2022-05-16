@@ -1,31 +1,27 @@
-from rich.console import Console
-from brownie import interface, accounts
+from brownie import interface
 from helpers.addresses import registry
-
-CONSOLE = Console()
+from great_ape_safe import GreatApeSafe
 
 # curve lp targets
-curve_target_wd = ["crvRenBTC", "crvTricrypto"]
+curve_target_wd = [
+    "crvRenBTC",
+    "crvTricrypto"
+    ]
 
 SLIPPAGE_THRESHOLD = 0.1
 
-ACCOUNT_TO_LOAD = ""
 
-
-def main(broadcast="true"):
-    dev = accounts.load(ACCOUNT_TO_LOAD)
-
-    safe = interface.IMultisigWalletWithDailyLimit(
-        registry.arbitrum.badger_wallets.dev_multisig_deprecated
-    )
+def main():
+    safe = GreatApeSafe(registry.arbitrum.badger_wallets.dev_multisig)
+    safe.take_snapshot([registry.arbitrum.treasury_tokens.WBTC])
 
     for key in curve_target_wd:
-        lp_token = interface.IERC20(registry.arbitrum.treasury_tokens[key])
+        lp_token = interface.IERC20(registry.arbitrum.treasury_tokens[key], owner=safe)
 
         pool = (
-            interface.ICurvePoolV2(registry.arbitrum.crv_3_pools[key])
+            interface.ICurvePoolV2(registry.arbitrum.crv_3_pools[key], owner=safe.address)
             if "Tricrypto" in key
-            else interface.ICurvePool(registry.arbitrum.crv_pools[key])
+            else interface.ICurvePool(registry.arbitrum.crv_pools[key], owner=safe.address)
         )
 
         lp_token_balance = lp_token.balanceOf(safe)
@@ -34,13 +30,9 @@ def main(broadcast="true"):
 
         min_withdraw_wbtc = pool.calc_withdraw_one_coin(lp_token_balance, coin_index)
 
-        calldata = pool.remove_liquidity_one_coin.encode_input(
+        pool.remove_liquidity_one_coin(
             lp_token_balance, coin_index, min_withdraw_wbtc * (1 - SLIPPAGE_THRESHOLD)
         )
 
-        CONSOLE.print(
-            f" === Calldata to wd [green]{key}[/green] into WBTC, calldata=[blue]{calldata}[/blue]. Target:[blue]{pool.address}[/blue]"
-        )
-
-        if broadcast == "true":
-            safe.submitTransaction(pool.address, 0, calldata, {"from": dev})
+        safe.print_snapshot()
+        safe.post_safe_tx()
