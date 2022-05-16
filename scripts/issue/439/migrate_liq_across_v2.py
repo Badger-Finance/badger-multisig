@@ -18,11 +18,17 @@ def main(sim=False):
     exchange_rate = a_badger_lp.exchangeRateCurrent().return_value / 1e18
     liquid_reserves = a_badger_lp.liquidReserves()
     pending_reserves = a_badger_lp.pendingReserves()
+    a_badger_lp_balance = a_badger_lp.balanceOf(safe)
 
     # https://etherscan.io/address/0x43298f9f91a4545df64748e78a2c777c580573d6#code#F1#L228
     lp_withdraw_mantisa = (
         liquid_reserves - pending_reserves
     ) / exchange_rate - SAFE_WD_AMOUNT_TILL_SIGN
+    lp_withdraw_mantisa = (
+        lp_withdraw_mantisa
+        if a_badger_lp_balance > lp_withdraw_mantisa
+        else a_badger_lp_balance
+    )
     a_badger_lp.removeLiquidity(lp_withdraw_mantisa, False)
 
     badger.approve(hub_pool, exchange_rate * lp_withdraw_mantisa)
