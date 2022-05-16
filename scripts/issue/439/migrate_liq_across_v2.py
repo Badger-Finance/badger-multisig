@@ -24,11 +24,7 @@ def main(sim=False):
     lp_withdraw_mantisa = (
         liquid_reserves - pending_reserves
     ) / exchange_rate - SAFE_WD_AMOUNT_TILL_SIGN
-    lp_withdraw_mantisa = (
-        lp_withdraw_mantisa
-        if a_badger_lp_balance > lp_withdraw_mantisa
-        else a_badger_lp_balance
-    )
+    lp_withdraw_mantisa = min(lp_withdraw_mantisa, a_badger_lp_balance)
     a_badger_lp.removeLiquidity(lp_withdraw_mantisa, False)
 
     badger.approve(hub_pool, exchange_rate * lp_withdraw_mantisa)
