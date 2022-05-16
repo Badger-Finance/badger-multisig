@@ -181,7 +181,6 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
    * @param payee The address to pay
    */
   function withdraw(uint256 amount, address payable payee) external onlyOwner {
-    require(payee != address(0));
     emit FundsWithdrawn(amount, payee);
     payee.transfer(amount);
   }
@@ -192,7 +191,6 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
    * @param payee The address to pay
    */
   function sweep(address token, address payee) external onlyOwner {
-    require(payee != address(0));
     uint256 balance = IERC20(token).balanceOf(address(this));
     emit ERC20Swept(token, payee, balance);
     SafeERC20.safeTransfer(IERC20(token), payee, balance);
@@ -209,7 +207,6 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
    * @notice Sets the keeper registry address
    */
   function setKeeperRegistryAddress(address keeperRegistryAddress) public onlyOwner {
-    require(keeperRegistryAddress != address(0));
     emit KeeperRegistryAddressUpdated(s_keeperRegistryAddress, keeperRegistryAddress);
     s_keeperRegistryAddress = keeperRegistryAddress;
   }
