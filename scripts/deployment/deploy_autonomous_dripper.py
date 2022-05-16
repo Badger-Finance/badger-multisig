@@ -10,6 +10,7 @@ def main(deployer_label=None):
     deployer = accounts[0] if not deployer_label else accounts.load(deployer_label)
     if chain.id == 1:
         return AutonomousDripper.deploy(
+            registry.eth.badger_wallets.techops_multisig,
             registry.eth.badger_wallets.badgertree,
             timegm(date(2022, 4, 20).timetuple()),
             int(timedelta(weeks=9).total_seconds()),
@@ -25,6 +26,7 @@ def main(deployer_label=None):
         )
     elif chain.id == 4:
         return AutonomousDripper.deploy(
+            deployer,
             registry.rinkeby.badger_wallets.solo_multisig,
             timegm(date.today().timetuple()),
             int(timedelta(weeks=1).total_seconds()),

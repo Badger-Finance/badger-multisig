@@ -65,12 +65,16 @@ def test_accounting_released(dripper, badger):
 
 
 def test_release_from_techops(badger, dripper, techops):
+    # just released from keeper, create a pause to build up a release again
+    chain.sleep(60 * 60)
     bal_before = badger.balanceOf(dripper.beneficiary())
     dripper.release(badger, {'from': techops.account})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
 def test_release_from_dev(badger, dripper, dev):
+    # just released from techops, create a pause to build up a release again
+    chain.sleep(60 * 60)
     bal_before = badger.balanceOf(dripper.beneficiary())
     dripper.release(badger, {'from': dev.account})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before

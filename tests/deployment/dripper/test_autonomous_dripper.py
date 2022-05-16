@@ -26,7 +26,7 @@ def keeper(dripper):
 
 @pytest.fixture(scope='module')
 def owner(dripper):
-    return accounts.at(dripper.owner())
+    return accounts.at(dripper.owner(), force=True)
 
 
 @pytest.fixture(scope="module")

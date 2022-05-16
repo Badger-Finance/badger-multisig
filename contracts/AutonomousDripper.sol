@@ -29,6 +29,7 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
     address private _keeperRegistryAddress;
 
     constructor(
+        address initialOwner,
         address beneficiaryAddress,
         uint64 startTimestamp,
         uint64 durationSeconds,
@@ -40,12 +41,12 @@ contract AutonomousDripper is VestingWallet, KeeperCompatibleInterface, Confirme
         startTimestamp,
         durationSeconds
     ) ConfirmedOwner(
-        msg.sender
+        initialOwner
     ) {
         lastTimestamp = startTimestamp;
         interval = intervalSeconds;
         assetsWatchlist = watchlistAddresses;
-        setKeeperRegistryAddress(keeperRegistryAddress);
+        _keeperRegistryAddress = keeperRegistryAddress;
     }
 
     /**
