@@ -9,6 +9,12 @@ from helpers.addresses import registry
 # only set to true when actually ready to post and exec on mainnet
 COW_PROD = False
 
+# artificially create slippage on the quoted price from cowswap
+COEF = .9825
+
+# time after which cowswap order expires
+DEADLINE = 60*60*4
+
 SAFE = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 SAFE.init_badger()
 SAFE.init_cow(prod=COW_PROD)
@@ -44,7 +50,8 @@ def step0_1(sim=False):
             sell_token=SAFE.contract(addr),
             mantissa_sell=int(Decimal(mantissa)),
             buy_token=WETH,
-            coef=.99,
+            deadline=DEADLINE,
+            coef=COEF,
             prod=COW_PROD
         )
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
@@ -83,14 +90,15 @@ def step1():
     want_to_sell.pop('NSBT') # dust
     for _, addr in want_to_sell.items():
         token = SAFE.contract(addr)
-        balance = int(token.balanceOf(SAFE.badger.strat_bvecvx))
+        balance = int(token.balanceOf(SAFE.badger.bribes_processor))
         if balance == 0:
             continue
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=token,
             mantissa_sell=int(Decimal(balance)),
             buy_token=WETH,
-            coef=.99,
+            deadline=DEADLINE,
+            coef=COEF,
             prod=COW_PROD
         )
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
