@@ -52,7 +52,7 @@ def step0_1(sim=False):
 
     bribes_dest.print_snapshot()
 
-    SAFE.post_safe_tx(call_trace=True)
+    SAFE.post_safe_tx()
 
 
 def step0(sim=False):

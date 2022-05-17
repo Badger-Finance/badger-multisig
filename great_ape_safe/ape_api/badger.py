@@ -109,27 +109,14 @@ class Badger():
                 except KeyError:
                     # no claimables for the strat for this particular token
                     continue
-                try:
-                    self.strat_bvecvx.claimBribeFromVotium.call(
-                        registry.eth.votium.multiMerkleStash,
-                        token_addr,
-                        leaf['index'],
-                        self.strat_bvecvx.address,
-                        leaf['amount'],
-                        leaf['proof']
-                    )
-                except VirtualMachineError as e:
-                    if str(e) == 'revert: Drop already claimed.':
-                        continue
-                    if str(e) == 'revert: SafeERC20: low-level call failed':
-                        # $ldo claim throws this on .call, dont know why
-                        pass
-                    else:
-                        raise
-                aggregate['tokens'].append(token_addr)
-                aggregate['indexes'].append(leaf['index'])
-                aggregate['amounts'].append(leaf['amount'])
-                aggregate['proofs'].append(leaf['proof'])
+                merkle_stash = interface.IMultiMerkleStash(
+                    registry.eth.votium.multiMerkleStash, owner=self.safe.account
+                )
+                if not merkle_stash.isClaimed(token_addr, leaf['index']):
+                    aggregate['tokens'].append(token_addr)
+                    aggregate['indexes'].append(leaf['index'])
+                    aggregate['amounts'].append(int(leaf['amount'], 0))
+                    aggregate['proofs'].append(leaf['proof'])
         if len(aggregate['tokens']) > 0:
             self.strat_bvecvx.claimBribesFromVotium(
                 registry.eth.votium.multiMerkleStash,

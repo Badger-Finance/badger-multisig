@@ -293,8 +293,8 @@ ADDRESSES_ETH = {
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h_V1": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h_V1": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
-        "SettV1_1h_V2": "0x724f4153b3D69f64975f1B16cE4445fd7bC5C9a2", # V2 -> governanceOrStrategist approve/revoke + sweep 
-        "SettV4h_V2": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # V2 -> governanceOrStrategist approve/revoke + sweep 
+        "SettV1_1h_V2": "0x724f4153b3D69f64975f1B16cE4445fd7bC5C9a2", # V2 -> governanceOrStrategist approve/revoke + sweep
+        "SettV4h_V2": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # V2 -> governanceOrStrategist approve/revoke + sweep
         "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
     },
@@ -411,6 +411,7 @@ ADDRESSES_ETH = {
         "LFT": "0xB620Be8a1949AA9532e6a3510132864EF9Bc3F82",
         "FLX": "0x6243d8CEA23066d098a15582d81a598b4e8391F4",
         "GRO": "0x3Ec8798B81485A254928B70CDA1cf0A2BB0B74D7",
+        "STG": "0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
