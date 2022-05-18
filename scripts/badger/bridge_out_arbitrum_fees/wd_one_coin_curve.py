@@ -34,5 +34,5 @@ def main():
             lp_token_balance, coin_index, min_withdraw_wbtc * (1 - SLIPPAGE_THRESHOLD)
         )
 
-        safe.print_snapshot()
-        safe.post_safe_tx()
+    safe.print_snapshot()
+    safe.post_safe_tx()

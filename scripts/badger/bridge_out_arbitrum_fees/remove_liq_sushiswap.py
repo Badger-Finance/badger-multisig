@@ -10,6 +10,12 @@ slp_tokens =[
     registry.arbitrum.treasury_tokens.slpCrvWeth
     ]
 
+all_tokens = [[interface.IUniswapV2Pair(slp).token0(),
+              interface.IUniswapV2Pair(slp).token1(), slp] for slp in
+              slp_tokens]
+# flatten
+all_tokens = [item for sublist in all_tokens for item in sublist]
+
 
 DEADLINE = 60 * 60 * 12
 MAX_SLIPPAGE = 0.02
@@ -19,12 +25,13 @@ def main():
     safe = GreatApeSafe(registry.arbitrum.badger_wallets.dev_multisig)
     router = safe.contract(registry.arbitrum.sushi.router)
 
-    safe.take_snapshot(tokens=slp_tokens)
+    safe.take_snapshot(tokens=all_tokens)
 
     for address in slp_tokens:
         slp = interface.IUniswapV2Pair(address, owner=safe.address)
 
         slp_balance = slp.balanceOf(safe)
+        assert slp_balance > 0
         # 1. approve slp
         slp.approve(router.address, slp_balance)
 
