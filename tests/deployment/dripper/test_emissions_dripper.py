@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import brownie
 import pytest
 from brownie import accounts, chain
 from brownie_tokens import MintableForkToken
@@ -64,22 +65,26 @@ def test_accounting_released(dripper, badger):
 
 
 def test_release_from_techops(badger, dripper, techops):
+    # just released from keeper, create a pause to build up a release again
+    chain.sleep(60 * 60)
     bal_before = badger.balanceOf(dripper.beneficiary())
     dripper.release(badger, {'from': techops.account})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
 def test_release_from_dev(badger, dripper, dev):
+    # just released from techops, create a pause to build up a release again
+    chain.sleep(60 * 60)
     bal_before = badger.balanceOf(dripper.beneficiary())
     dripper.release(badger, {'from': dev.account})
     assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
-@pytest.mark.xfail
 def test_release_from_random(badger, dripper):
-    bal_before = badger.balanceOf(dripper.beneficiary())
-    dripper.release(badger, {'from': accounts[1]})
-    assert badger.balanceOf(dripper.beneficiary()) > bal_before
+    with brownie.reverts():
+        bal_before = badger.balanceOf(dripper.beneficiary())
+        dripper.release(badger, {'from': accounts[1]})
+        assert badger.balanceOf(dripper.beneficiary()) > bal_before
 
 
 def test_set_keeper_from_dev(dripper, dev):
@@ -90,9 +95,9 @@ def test_set_keeper_from_techops(dripper, techops):
     dripper.setKeeper(accounts[1], {'from': techops.account})
 
 
-@pytest.mark.xfail
 def test_set_keeper_from_random(dripper):
-    dripper.setKeeper(accounts[1], {'from': accounts[1]})
+    with brownie.reverts():
+        dripper.setKeeper(accounts[1], {'from': accounts[1]})
 
 
 def test_sweep_eth_from_dev(dripper, dev):
@@ -102,9 +107,9 @@ def test_sweep_eth_from_dev(dripper, dev):
     assert dripper.balance() == 0
 
 
-@pytest.mark.xfail
 def test_sweep_eth_from_random(dripper):
-    dripper.sweep({'from': accounts[1]})
+    with brownie.reverts():
+        dripper.sweep({'from': accounts[1]})
 
 
 def test_sweep_erc_from_dev(dripper, badger, dev):
@@ -114,6 +119,6 @@ def test_sweep_erc_from_dev(dripper, badger, dev):
     assert badger.balanceOf(dripper) == 0
 
 
-@pytest.mark.xfail
 def test_sweep_erc_from_random(dripper, badger):
-    dripper.sweep(badger, {'from': accounts[1]})
+    with brownie.reverts():
+        dripper.sweep(badger, {'from': accounts[1]})
