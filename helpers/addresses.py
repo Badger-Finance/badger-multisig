@@ -18,6 +18,7 @@ ADDRESSES_ETH = {
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
+        "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
     },
     "bribes_processor": "0xbeD8f323456578981952e33bBfbE80D23289246B",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
@@ -167,6 +168,7 @@ ADDRESSES_ETH = {
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
         "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
         "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
+        "LINK": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -293,8 +295,8 @@ ADDRESSES_ETH = {
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h_V1": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
         "SettV4h_V1": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
-        "SettV1_1h_V2": "0x724f4153b3D69f64975f1B16cE4445fd7bC5C9a2", # V2 -> governanceOrStrategist approve/revoke + sweep 
-        "SettV4h_V2": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # V2 -> governanceOrStrategist approve/revoke + sweep 
+        "SettV1_1h_V2": "0x724f4153b3D69f64975f1B16cE4445fd7bC5C9a2", # V2 -> governanceOrStrategist approve/revoke + sweep
+        "SettV4h_V2": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # V2 -> governanceOrStrategist approve/revoke + sweep
         "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
     },
@@ -456,6 +458,7 @@ ADDRESSES_ETH = {
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
         "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
+        "upkeep_registration_requests": "0x09B1de9Ecf6600FD44e1cB1b46DF6B520f33ec6d",
     },
 }
 
