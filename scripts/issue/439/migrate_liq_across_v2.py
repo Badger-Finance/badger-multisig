@@ -7,7 +7,7 @@ from brownie import accounts, Contract
 SAFE_WD_AMOUNT_TILL_SIGN = 10e18
 
 
-def main(sim="True"):
+def main(sim="False"):
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     a_badger_lp = safe.contract(registry.eth.treasury_tokens.aBADGER)
     badger = safe.contract(registry.eth.treasury_tokens.BADGER)
