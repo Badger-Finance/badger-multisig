@@ -457,6 +457,9 @@ ADDRESSES_ETH = {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
         "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
     },
+    "gnosis": {
+        "sign_message_lib": "0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2"
+    }
 }
 
 ADDRESSES_IBBTC = {
