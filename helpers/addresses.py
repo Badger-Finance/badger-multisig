@@ -324,7 +324,6 @@ ADDRESSES_ETH = {
     },
     "helpers": {
         "balance_checker": "0xe92261c2D64C363109c36a754A87107142e61b72",
-        "chainlink_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
     },
     "rari": {
         "unitroller": "0xe3952d770FB26CC61877CD34Fbc3A3750881e9A1",
@@ -454,9 +453,13 @@ ADDRESSES_ETH = {
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
         "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
     },
-    "across_bridge": {
-        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
+    "chainlink": {
+        "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
+        "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
     },
+  "across_bridge": {
+        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
+    }
 }
 
 ADDRESSES_IBBTC = {
@@ -732,6 +735,9 @@ ADDRESSES_RINKEBY = {
     "gnosis": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
         "settlement": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
+    },
+    "chainlink": {
+        "keeper_registry": "0x409CF388DaB66275dA3e44005D182c12EeAa12A0",
     },
 }
 
