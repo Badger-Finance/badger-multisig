@@ -111,7 +111,7 @@ def main(queue="true", simulation="false"):
                             [address, SETT_V1H_LOGIC],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=4,
+                        delay_in_days=6,
                     )
                 else:
                     console.print(f"[green]{key} has already been upgraded[/green]")
@@ -132,7 +132,7 @@ def main(queue="true", simulation="false"):
                             [address, SETT_V1_1H_LOGIC],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=4,
+                        delay_in_days=6,
                     )
                 else:
                     console.print(f"[green]{key} has already been upgraded[/green]")
@@ -153,7 +153,7 @@ def main(queue="true", simulation="false"):
                             [address, SETT_V4H_LOGIC],
                         ),
                         dump_dir="data/badger/timelock/upgrade_remaining_setts/",
-                        delay_in_days=4,
+                        delay_in_days=6,
                     )
                 else:
                     console.print(f"[green]{key} has already been upgraded[/green]")
