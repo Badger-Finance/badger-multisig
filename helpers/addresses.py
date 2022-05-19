@@ -682,10 +682,10 @@ ADDRESSES_ARBITRUM = {
         "bDXSWbtcWeth": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
     },
     "swapr_staking_contracts": {
-        "native.DXSSwaprWeth": "0xd090a6b7651d9E51FE4D25c6756623613FdB7950",
-        "native.DXSWbtcWeth": "0xbe7Dbb01E87f4faD154B8AB36125181f32A96B2c",
-        "native.DXSBadgerWeth": "0x0E84da346a2c439970857981f580D664265eBCf0",
-        "native.DXSIbbtcWeth": "0xd1D9210C74deF67eD6D9652552dE77B12C62c00b",
+        "native.DXSSwaprWeth": "0x0934e27Eea82f720166eC37214C07e6777511D27",
+        "native.DXSWbtcWeth": "0x7d5Fb4C81df4115B2e4bB84e36cda8bE7aDF9B4F",
+        "native.DXSBadgerWeth": "0x42EcF352216b4Be82331123dbCee60447c91b70F",
+        "native.DXSIbbtcWeth": "0x13a22d37Dee5D6C99D4a36F50C2fD274F73Df21c",
     },
     "sushi": {
         "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
