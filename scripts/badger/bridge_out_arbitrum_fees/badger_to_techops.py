@@ -2,8 +2,8 @@ from helpers.addresses import registry
 from great_ape_safe import GreatApeSafe
 
 
-# will transfer WETH & BADGER to techops for ops & future emissions
-def main(token="WETH"):
+# will sweep BADGER from dev to techops for future emissions
+def main(token="BADGER"):
     safe = GreatApeSafe(registry.arbitrum.badger_wallets.dev_multisig)
 
     token_contract = safe.contract(registry.arbitrum.treasury_tokens[token])
