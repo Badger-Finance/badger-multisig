@@ -24,11 +24,15 @@ slp_tokens =[
     registry.arbitrum.treasury_tokens.slpWbtcEth,
     registry.arbitrum.treasury_tokens.slpSushiWeth,
     registry.arbitrum.treasury_tokens.slpCrvWeth
-    ]
+]
 
-all_tokens_sushi = [[interface.IUniswapV2Pair(slp).token0(),
-              interface.IUniswapV2Pair(slp).token1(), slp] for slp in
-              slp_tokens]
+all_tokens_sushi = [
+    [
+        interface.IUniswapV2Pair(slp).token0(),
+        interface.IUniswapV2Pair(slp).token1(),
+        slp
+    ] for slp in slp_tokens
+]
 
 all_tokens_sushi = [item for sublist in all_tokens_sushi for item in sublist]
 
@@ -42,11 +46,15 @@ dxs_tokens = [
     registry.arbitrum.treasury_tokens.dxsBadgerWeth,
     registry.arbitrum.treasury_tokens.dxsSwaprWeth,
     registry.arbitrum.treasury_tokens.dxsIbbtcWeth
-    ]
+]
 
-all_tokens_swapr = [[interface.IUniswapV2Pair(slp).token0(),
-              interface.IUniswapV2Pair(slp).token1(), slp] for slp in
-              dxs_tokens]
+all_tokens_swapr = [
+    [
+        interface.IUniswapV2Pair(slp).token0(),
+        interface.IUniswapV2Pair(slp).token1(),
+        slp
+    ] for slp in dxs_tokens
+]
 
 all_tokens_swapr = [item for sublist in all_tokens_swapr for item in sublist]
 
@@ -70,14 +78,16 @@ def main():
     bDXS = safe.contract(registry.arbitrum.sett_vaults.bdxsSwaprWeth)
     wbtc = registry.arbitrum.treasury_tokens.WBTC
     swpr = interface.ERC20(registry.arbitrum.treasury_tokens.SWPR, owner=safe.address)
-    weth = interface.ERC20(registry.arbitrum.treasury_tokens.WETH)
+    weth = registry.arbitrum.treasury_tokens.WETH
 
-    tokens = list(set(all_tokens_sushi + all_tokens_swapr + [bDXS, wbtc, swpr, weth]))
+    tokens = list(set(all_tokens_sushi + all_tokens_swapr + [
+        bDXS.address, wbtc, swpr.address, weth
+    ]))
     safe.take_snapshot(tokens=tokens)
 
 
-    # withdarw bDXS
-    bDXS.withdrawAll()
+    # withdraw bDXS
+    # bDXS.withdrawAll() # TODO: getting blockLocked here!
 
 
     # withdraw curve lp to wbtc
@@ -106,7 +116,8 @@ def main():
         slp = interface.IUniswapV2Pair(address, owner=safe.address)
 
         slp_balance = slp.balanceOf(safe)
-        assert slp_balance > 0
+        if slp_balance <= 0:
+            continue
         # 1. approve slp
         slp.approve(router_sushi.address, slp_balance)
 
@@ -154,7 +165,7 @@ def main():
 
 
     # swap swapr for eth
-    path = [swpr.address, weth.address]
+    path = [swpr.address, weth]
     amountIn = swpr.balanceOf(safe)
     deadline = chain.time() + DEADLINE_SWAPR
     amountOut = router_swapr.getAmountsOut(amountIn, path)[-1]
@@ -164,12 +175,11 @@ def main():
     # makes sense to send as destination to techops i guess directly
     router_swapr.swapExactTokensForETH(
         amountIn,
-        amountOut * (1 - DEADLINE_SWAPR),
+        amountOut * (1 - MAX_SLIPPAGE_SWAPR),
         path,
         registry.arbitrum.badger_wallets.techops_multisig,
         deadline,
     )
-
 
     safe.print_snapshot()
     safe.post_safe_tx(skip_preview=True)
