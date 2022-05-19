@@ -148,6 +148,6 @@ def step3_a():
 def step3_b():
     '''can be skipped if step3 was successful'''
 
-    if BADGER.balanceOf(SAFE) > 0:
+    if BADGER.balanceOf(PROCESSOR) > 0:
         PROCESSOR.emitBadger()
     SAFE.post_safe_tx(call_trace=True)
