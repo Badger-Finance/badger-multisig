@@ -56,8 +56,9 @@ tokens_out = [
     registry.arbitrum.treasury_tokens.CRV,
     registry.arbitrum.treasury_tokens.USDT,
     registry.arbitrum.treasury_tokens.SUSHI,
-    registry.arbitrum.treasury_tokens.WBTC
-    ]
+    registry.arbitrum.treasury_tokens.WBTC,
+    registry.arbitrum.treasury_tokens.WETH,
+]
 
 
 def main():
