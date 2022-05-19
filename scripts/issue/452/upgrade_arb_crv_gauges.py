@@ -11,12 +11,11 @@ console = Console()
 
 DEV_MULTI = registry.arbitrum.badger_wallets.dev_multisig
 PROXY_ADMIN = registry.arbitrum.proxyAdminDev
-CRV = registry.arbitrum.treasury_tokens.CRV
 TRICRYPTO_STRATEGY = ADDRESSES_ARBITRUM["strategies"]["native.tricrypto"]
 RENCRV_STRATEGY = ADDRESSES_ARBITRUM["strategies"]["native.renCrv"]
 
-RENCRV_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.renCrv_v2"]
-TRICRYPTO_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.tricrypto_v2"]
+RENCRV_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.renCrv"]["v2"]
+TRICRYPTO_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.tricrypto"]["v2"]
 
 GAUGE_FACTORY = "0xabC000d88f23Bb45525E447528DBF656A9D55bf5"
 TRICRYPTO_GAUGE = "0x555766f3da968ecBefa690Ffd49A2Ac02f47aa5f"
