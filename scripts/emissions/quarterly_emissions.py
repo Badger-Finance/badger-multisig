@@ -33,6 +33,7 @@ def main(target_file="generated_emissions_info_BIP_88_Emissions"):
     duration = end_quarter_timestamp - time_range["starttime"]
 
     weeks_no = duration / WEEK_DURATION
+    assert weeks_no == duration // WEEK_DURATION
 
     # not emitting bcvxCRV since new emissions of Q2-2022!
     totals = {"badger": 0, "digg": 0}
