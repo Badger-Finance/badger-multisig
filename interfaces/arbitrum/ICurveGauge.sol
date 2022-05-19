@@ -3,6 +3,8 @@
 pragma solidity >=0.5.0 <0.8.0;
 
 interface ICurveGauge {
+    function factory() external view returns (address);
+
     function deposit(uint256 _value) external;
 
     function deposit(uint256 _value, address addr) external;
@@ -17,7 +19,7 @@ interface ICurveGauge {
 
     function claim_rewards(address addr) external;
 
-    function claimable_tokens(address addr) external returns (uint256);
+    function claimable_tokens(address addr) external view returns (uint256);
 
     function claimable_reward(address addr) external view returns (uint256);
 

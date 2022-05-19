@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from brownie import web3, interface, chain
+from brownie import accounts, web3, interface, chain
 from rich.console import Console
 
 from great_ape_safe import GreatApeSafe
@@ -10,9 +10,15 @@ from helpers.addresses import registry
 console = Console()
 
 DEV_MULTI = registry.arbitrum.badger_wallets.dev_multisig
+PROXY_ADMIN = registry.arbitrum.proxyAdminDev
+CRV = registry.arbitrum.treasury_tokens.CRV
 TRICRYPTO_STRATEGY = ADDRESSES_ARBITRUM["strategies"]["native.tricrypto"]
 RENCRV_STRATEGY = ADDRESSES_ARBITRUM["strategies"]["native.renCrv"]
 
+RENCRV_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.renCrv_v2"]
+TRICRYPTO_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.tricrypto_v2"]
+
+GAUGE_FACTORY = "0xabC000d88f23Bb45525E447528DBF656A9D55bf5"
 TRICRYPTO_GAUGE = "0x555766f3da968ecBefa690Ffd49A2Ac02f47aa5f"
 RENCRV_GAUGE = "0xDB3fd1bfC67b5D4325cb31C04E0Cae52f1787FD6"
 
@@ -21,47 +27,78 @@ def main(simulation=True):
     safe = GreatApeSafe(DEV_MULTI)
 
     console.print(
-        f"[green]Setting Tricrypto strategy ({TRICRYPTO_STRATEGY}) gauge to {TRICRYPTO_GAUGE}[/green]"
+        f"[green]Updating Tricrypto strategy logic to {TRICRYPTO_LOGIC}[/green]"
     )
-    set_gauge_and_check_strat(
-        TRICRYPTO_STRATEGY, TRICRYPTO_GAUGE, safe, simulation=simulation
+    upgrade_strategy_logic(
+        TRICRYPTO_STRATEGY,
+        TRICRYPTO_LOGIC,
+        TRICRYPTO_GAUGE,
+        GAUGE_FACTORY,
+        safe,
+        simulation,
     )
 
-    console.print(
-        f"[green]Setting Rencrv strategy ({RENCRV_STRATEGY}) gauge to {RENCRV_GAUGE}[/green]"
-    )
-    set_gauge_and_check_strat(
-        RENCRV_STRATEGY, RENCRV_GAUGE, safe, simulation=simulation
+    console.print(f"[green]Updating Rencrv strategy logic to {RENCRV_LOGIC}[/green]")
+    upgrade_strategy_logic(
+        RENCRV_STRATEGY, RENCRV_LOGIC, RENCRV_GAUGE, GAUGE_FACTORY, safe, simulation
     )
 
     safe.post_safe_tx(call_trace=True)
 
 
-def set_gauge_and_check_strat(
-    strategy_address: str,
+def upgrade_strategy_logic(
+    proxy_address: str,
+    logic_address: str,
     gauge_address: str,
+    gauge_factory_address: str,
     safe: GreatApeSafe,
     simulation: bool = True,
 ):
-    strategy = interface.ICrvStrategy(strategy_address, owner=safe.account)
+    proxy_admin = interface.IProxyAdmin(PROXY_ADMIN, owner=safe.account)
+    strat_proxy = interface.ICrvStrategy(proxy_address, owner=safe.account)
 
-    prev_gauge = strategy.gauge()
-    prev_balance = strategy.balanceOfPool()
+    prev_strategist = strat_proxy.strategist()
+    prev_controller = strat_proxy.controller()
+    prev_gov = strat_proxy.governance()
+    prev_guardian = strat_proxy.guardian()
+    prev_keeper = strat_proxy.keeper()
+    prev_perFeeG = strat_proxy.performanceFeeGovernance()
+    prev_perFeeS = strat_proxy.performanceFeeStrategist()
+    prev_reward = strat_proxy.reward()
+    prev_unit = strat_proxy.uniswap()
+    prev_gauge = strat_proxy.gauge()
+    prev_swapr_router = strat_proxy.SWAPR_ROUTER()
 
-    prev_gauge_contract = interface.ICurveGauge(prev_gauge)
-    new_gauge_contract = interface.ICurveGauge(gauge_address)
+    proxy_admin.upgrade(proxy_address, logic_address)
 
-    strategy.setGauge(gauge_address)
+    strat_proxy.setGauge(gauge_address)
+    strat_proxy.setGaugeFactory(gauge_factory_address)
 
-    assert prev_gauge != strategy.gauge()
-    assert gauge_address == strategy.gauge()
-    assert prev_balance == strategy.balanceOfPool()
-    assert prev_balance == new_gauge_contract.balanceOf(strategy_address)
-    assert 0 == prev_gauge_contract.balanceOf(strategy_address)
+    assert prev_strategist == strat_proxy.strategist()
+    assert prev_controller == strat_proxy.controller()
+    assert prev_gov == strat_proxy.governance()
+    assert prev_guardian == strat_proxy.guardian()
+    assert prev_keeper == strat_proxy.keeper()
+    assert prev_perFeeG == strat_proxy.performanceFeeGovernance()
+    assert prev_perFeeS == strat_proxy.performanceFeeStrategist()
+    assert prev_reward == strat_proxy.reward()
+    assert prev_unit == strat_proxy.uniswap()
+    assert prev_swapr_router == strat_proxy.SWAPR_ROUTER()
+    assert gauge_address == strat_proxy.gauge()
+    assert gauge_factory_address == strat_proxy.gaugeFactory()
 
     if simulation:
-        chain.mine(72)
-        strategy.harvest()
-        bal_after_harvest = strategy.balanceOfPool()
-        # Appears the gauges aren't distributing rewards yet so this will fail
-        # assert bal_after_harvest > prev_balance
+        gauge = interface.ICurveGauge(gauge_address)
+
+        # sleep one day to accrue more crv
+        chain.sleep(86400)
+        chain.mine()
+
+        balance_before = gauge.balanceOf(proxy_address)
+
+        # harvest
+        strat_proxy.harvest()
+
+        balance_after = gauge.balanceOf(proxy_address)
+
+        assert balance_after > balance_before

@@ -4,11 +4,29 @@ pragma solidity >=0.5.0 <0.8.0;
 interface ICrvStrategy {
     function want() external view returns (address);
 
+    function SWAPR_ROUTER() external view returns (address);
+
     function gauge() external view returns (address);
+
+    function strategist() external view returns (address);
+
+    function controller() external view returns (address);
+
+    function guardian() external view returns (address);
+
+    function keeper() external view returns (address);
+
+    function reward() external view returns (address);
+
+    function uniswap() external view returns (address);
+
+    function gaugeFactory() external view returns (address);
 
     function balanceOfPool() external view returns (uint256);
 
     function setGauge(address newGauge) external;
+
+    function setGaugeFactory(address newGaugeFactory) external;
 
     function deposit() external;
 

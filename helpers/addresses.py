@@ -627,7 +627,9 @@ ADDRESSES_ARBITRUM = {
     },
     "logic": {
         "native.renCrv": "0x2eE1E845b601371608b6bA4a4665180dE3b14C85",
+        "native.renCrv_v2": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
         "native.tricrypto": "0xd64E77C7C6A1dcC7e302F8fe31A22745e223c39c",
+        "native.tricrypto_v2": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf"
     },
     "treasury_tokens": {
         "BADGER" : "0xbfa641051ba0a0ad1b0acf549a89536a0d76472e",
