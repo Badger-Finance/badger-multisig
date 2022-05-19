@@ -1,6 +1,6 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
-from brownie import accounts, Contract
+from brownie import accounts, interface
 
 # not sure how big this figure should be based on the time from posting to signing
 # amount available to wd may vary from others lps migrating
@@ -9,7 +9,9 @@ SAFE_WD_AMOUNT_TILL_SIGN = 10e18
 
 def main(sim="False"):
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
-    a_badger_lp = safe.contract(registry.eth.treasury_tokens.aBADGER)
+    a_badger_lp = interface.IAcrossLP_v1(
+        registry.eth.treasury_tokens.aBADGER, owner=safe.account
+    )
     badger = safe.contract(registry.eth.treasury_tokens.BADGER)
     hub_pool = safe.contract(registry.eth.across_bridge.hub_pool)
 
