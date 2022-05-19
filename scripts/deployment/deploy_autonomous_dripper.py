@@ -31,8 +31,8 @@ def main(deployer_label=None):
             int(timedelta(weeks=1).total_seconds()),
             60*60, # interval of one hour
             [
-                registry.eth.treasury_tokens.DAI,
-                registry.eth.treasury_tokens.WBTC,
+                registry.rinkeby.treasury_tokens.DAI,
+                registry.rinkeby.treasury_tokens.WBTC,
             ],
             registry.rinkeby.chainlink.keeper_registry,
             {'from': deployer},
