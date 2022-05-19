@@ -35,3 +35,4 @@ def main():
 
     trops.print_snapshot()
     tree.print_snapshot()
+    trops.post_safe_tx()
