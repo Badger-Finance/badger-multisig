@@ -140,7 +140,7 @@ def step3():
 def step3_a():
     '''can be skipped if step3 was successful'''
 
-    if CVX.balanceOf(SAFE) > 0:
+    if CVX.balanceOf(PROCESSOR) > 0:
         PROCESSOR.swapCVXTobveCVXAndEmit()
     SAFE.post_safe_tx(call_trace=True)
 
