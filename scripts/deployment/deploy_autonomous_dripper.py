@@ -36,6 +36,5 @@ def main(deployer_label=None):
             ],
             registry.rinkeby.chainlink.keeper_registry,
             {'from': deployer},
-            # TODO: programmatically set to True when on a non-forked, live network
             publish_source=(not '-fork' in network.show_active())
         )
