@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from brownie import interface
 
 from great_ape_safe import GreatApeSafe
@@ -48,7 +46,7 @@ def step0_1(sim=False):
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=SAFE.contract(addr),
-            mantissa_sell=int(Decimal(mantissa)),
+            mantissa_sell=mantissa,
             buy_token=WETH,
             deadline=DEADLINE,
             coef=COEF,
@@ -86,16 +84,14 @@ def step1():
 
     want_to_sell = registry.eth.bribe_tokens_claimable.copy()
     want_to_sell.pop('CVX') # SameBuyAndSellToken
-    want_to_sell.pop('MTA') # dust
-    want_to_sell.pop('NSBT') # dust
     for _, addr in want_to_sell.items():
         token = SAFE.contract(addr)
-        balance = int(token.balanceOf(SAFE.badger.bribes_processor))
+        balance = token.balanceOf(SAFE.badger.bribes_processor)
         if balance == 0:
             continue
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=token,
-            mantissa_sell=int(Decimal(balance)),
+            mantissa_sell=balance,
             buy_token=WETH,
             deadline=DEADLINE,
             coef=COEF,
@@ -107,22 +103,51 @@ def step1():
 
 def step2():
     badger_share = int(WETH.balanceOf(PROCESSOR) * BADGER_SHARE)
-    cvx_share = WETH.balanceOf(PROCESSOR) - badger_share
+    cvx_share = int(WETH.balanceOf(PROCESSOR) - badger_share)
     assert badger_share + cvx_share == WETH.balanceOf(PROCESSOR)
 
-    order_payload, order_uid = SAFE.cow._sell(
-        asset_sell=WETH, mantissa_sell=badger_share, asset_buy=BADGER, coef=.99
+    order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        sell_token=WETH,
+        mantissa_sell=badger_share,
+        buy_token=BADGER,
+        deadline=DEADLINE,
+        coef=COEF,
+        prod=COW_PROD
     )
     PROCESSOR.swapWethForBadger(order_payload, order_uid)
 
-    order_payload, order_uid = SAFE.cow._sell(
-        asset_sell=WETH, mantissa_sell=cvx_share, asset_buy=CVX, coef=.99
+    order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        sell_token=WETH,
+        mantissa_sell=cvx_share,
+        buy_token=CVX,
+        deadline=DEADLINE,
+        coef=COEF,
+        prod=COW_PROD
     )
     PROCESSOR.swapWethForCVX(order_payload, order_uid)
+
     SAFE.post_safe_tx(call_trace=True)
 
 
 def step3():
-    PROCESSOR.swapCVXTobveCVXAndEmit()
-    PROCESSOR.emitBadger()
+    if CVX.balanceOf(PROCESSOR) > 0:
+        PROCESSOR.swapCVXTobveCVXAndEmit()
+    if BADGER.balanceOf(PROCESSOR) > 0:
+        PROCESSOR.emitBadger()
+    SAFE.post_safe_tx(call_trace=True)
+
+
+def step3_a():
+    '''can be skipped if step3 was successful'''
+
+    if CVX.balanceOf(SAFE) > 0:
+        PROCESSOR.swapCVXTobveCVXAndEmit()
+    SAFE.post_safe_tx(call_trace=True)
+
+
+def step3_b():
+    '''can be skipped if step3 was successful'''
+
+    if BADGER.balanceOf(SAFE) > 0:
+        PROCESSOR.emitBadger()
     SAFE.post_safe_tx(call_trace=True)
