@@ -59,16 +59,6 @@ all_tokens_swapr = [
 all_tokens_swapr = [item for sublist in all_tokens_swapr for item in sublist]
 
 
-# arbitrum bridge params
-tokens_out = [
-    registry.arbitrum.treasury_tokens.CRV,
-    registry.arbitrum.treasury_tokens.USDT,
-    registry.arbitrum.treasury_tokens.SUSHI,
-    registry.arbitrum.treasury_tokens.WBTC,
-    registry.arbitrum.treasury_tokens.WETH,
-]
-
-
 def main():
     safe = GreatApeSafe(registry.arbitrum.badger_wallets.dev_multisig)
 
