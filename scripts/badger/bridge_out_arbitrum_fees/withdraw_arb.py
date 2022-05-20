@@ -77,7 +77,8 @@ def main():
 
 
     # withdraw bDXS
-    # bDXS.withdrawAll() # TODO: getting blockLocked here!
+    # reverts on fork: https://github.com/eth-brownie/brownie/issues/1537
+    bDXS.withdrawAll()
 
 
     # withdraw curve lp to wbtc
