@@ -18,6 +18,8 @@ class Balancer():
         # contracts
         self.vault = safe.contract(registry.eth.balancer.vault)
         self.gauge_factory = safe.contract(registry.eth.balancer.gauge_factory)
+        self.vebal = safe.contract(registry.eth.balancer.veBAL)
+        self.wallet_checker = safe.contract(self.vebal.smart_wallet_checker())
         # parameters
         self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000) # USD
@@ -92,6 +94,17 @@ class Balancer():
         return match
 
 
+    def find_best_pool_for_swap(self, asset_in, asset_out):
+        # find pools that contain swap assets and return the one with most liq
+        pool_data = self.get_pool_data()
+        valid_pools = {}
+        for pool in pool_data:
+            tokens = [Web3.toChecksumAddress(x['address']) for x in pool['tokens']]
+            if asset_in in tokens and asset_out in tokens:
+                valid_pools[pool['id']] = pool['totalLiquidity']
+        return max(valid_pools, key=valid_pools.get)
+
+
     def order_tokens(self, underlyings, mantissas):
         # helper function to order tokens/amounts numerically
         tokens = dict(zip(underlyings, mantissas))
@@ -112,6 +125,7 @@ class Balancer():
                 elif weight == '0':
                     return 'Stable'
                 return 'Weighted'
+        raise Exception('pool not found')
 
 
     def deposit_and_stake(
@@ -120,8 +134,9 @@ class Balancer():
         # given underlyings and their amounts, deposit and stake `underlyings`
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#token-ordering
-        underlyings, mantissas = \
-            self.order_tokens([x.address for x in underlyings], mantissas)
+
+        # underlyings, mantissas = \
+        #     self.order_tokens([x.address for x in underlyings], mantissas)
 
         if pool:
             pool_id = pool.getPoolId()
@@ -380,6 +395,45 @@ class Balancer():
             assert any([x > y for x, y in zip(balances_after, balances_before)])
 
 
+    def swap(self, asset_in, asset_out, mantissa_in, pool=None):
+        if pool:
+            pool_id = pool.getPoolId()
+        else:
+            # doesnt work if pool has more than 2 assets
+            pool_id = self.find_best_pool_for_swap(asset_in.address, asset_out.address)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+
+        deadline = 999999999999999999
+        swap_kind = 0 # 0 = GIVEN_IN, 1 = GIVEN_OUT
+        user_data_encoded = eth_abi.encode_abi(['uint256'], [0])
+
+        swap_settings = (
+            pool_id,
+            swap_kind,
+            asset_in.address,
+            asset_out.address,
+            mantissa_in,
+            user_data_encoded
+        )
+
+        fund_settings = (
+            self.safe.address, # sender
+            False, # fromInternalBalance
+            self.safe.address, # recipient
+            False, # toInternalBalance
+        )
+
+        asset_in.approve(self.vault, mantissa_in)
+
+        self.vault.swap(
+            swap_settings,
+            fund_settings,
+            1,
+            deadline
+        )
+
+
+
     def claim_all(self, underlyings=None, pool=None):
         # claim reward token from pool's gauge given `underlyings` or `pool`
         if underlyings:
@@ -401,3 +455,20 @@ class Balancer():
             [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in range(reward_count)]
 
         assert all([x > y for x, y in zip(balances_after, balances_before)])
+
+
+    def swap_and_lock_bal(self, mantissa_bal):
+        # check that safe is whitelisted
+        assert self.wallet_checker.check(self.safe)
+        vebal_bpt = self.safe.contract(self.vebal.token())
+
+        weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
+        bal = self.safe.contract(registry.eth.treasury_tokens.BAL)
+
+        swap_mantissa = int(mantissa_bal / 5)
+        self.swap(bal, weth, swap_mantissa)
+        self.deposit_and_stake([bal, weth], [bal.balanceOf(self.safe), weth.balanceOf(self.safe)], pool=vebal_bpt, stake=False)
+        amount = vebal_bpt.balanceOf(self.safe)
+        vebal_bpt.approve(self.vebal, amount)
+        assert amount > 0
+        self.vebal.create_lock(amount, 1684368000)
