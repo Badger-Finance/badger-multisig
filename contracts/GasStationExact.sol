@@ -34,7 +34,7 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
   struct Target {
     bool isActive;
     uint96 minBalanceWei;
-    uint96 topUpAmountWei;
+    uint96 minTopUpAmountWei;
     uint56 lastTopUpTimestamp; // enough space for 2 trillion years
   }
 
@@ -83,7 +83,7 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
       s_targets[addresses[idx]] = Target({
         isActive: true,
         minBalanceWei: minBalancesWei[idx],
-        topUpAmountWei: topUpAmountsWei[idx],
+        minTopUpAmountWei: topUpAmountsWei[idx],
         lastTopUpTimestamp: 0
       });
     }
@@ -105,12 +105,12 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
       target = s_targets[watchList[idx]];
       if (
         target.lastTopUpTimestamp + minWaitPeriod <= block.timestamp &&
-        balance >= target.topUpAmountWei &&
-        watchList[idx].balance <= target.minBalanceWei - target.topUpAmountWei
+        balance >= target.minTopUpAmountWei &&
+        watchList[idx].balance <= target.minBalanceWei - target.minTopUpAmountWei
       ) {
         needsFunding[count] = watchList[idx];
         count++;
-        balance -= target.topUpAmountWei;
+        balance -= target.minTopUpAmountWei;
       }
     }
     if (count != watchList.length) {
@@ -134,7 +134,7 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
       if (
         target.isActive &&
         target.lastTopUpTimestamp + minWaitPeriodSeconds <= block.timestamp &&
-        delta >= target.topUpAmountWei
+        delta >= target.minTopUpAmountWei
       ) {
         bool success = payable(needsFunding[idx]).send(delta);
         if (success) {
@@ -253,12 +253,12 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
     returns (
       bool isActive,
       uint96 minBalanceWei,
-      uint96 topUpAmountWei,
+      uint96 minTopUpAmountWei,
       uint56 lastTopUpTimestamp
     )
   {
     Target memory target = s_targets[targetAddress];
-    return (target.isActive, target.minBalanceWei, target.topUpAmountWei, target.lastTopUpTimestamp);
+    return (target.isActive, target.minBalanceWei, target.minTopUpAmountWei, target.lastTopUpTimestamp);
   }
 
   /**
