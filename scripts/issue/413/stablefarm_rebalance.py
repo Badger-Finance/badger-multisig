@@ -103,11 +103,6 @@ def main():
     vault.aave.deposit(fei, 307_373e18)
     vault.compound.deposit(dai, 614_746e18)
 
-    # balancer deposit
-    underlyings = [usdt, usdc, dai]
-    amounts = [int(102_457e6), int(102_457e6), int(102_457e18)]
-    vault.balancer.deposit_and_stake(underlyings, amounts)
-
     for token, amount in min_amounts.items():
             balance_checker.verifyBalance(token, vault, amount)
 
@@ -118,9 +113,25 @@ def main():
     vault.post_safe_tx(skip_preview=True)
 
 
+def deposit_bal3pool():
+    vault.take_snapshot(tokens)
+
+    # balancer deposit
+    underlyings = [usdt, usdc, dai]
+    amounts = [int(102_457e6), int(102_457e6), int(102_457e18)]
+    vault.balancer.deposit_and_stake(underlyings, amounts)
+    balance_checker.verifyBalance(bpt3pool_gauge_addr, vault, 300_000e18)
+
+    vault.print_snapshot()
+    vault.post_safe_tx()
+
+
 def sweep_to_trops():
     trops.take_snapshot(tokens)
     vault.take_snapshot(tokens)
+
+    # stake last 1% of bal3pool
+    vault.balancer.stake_all(bpt3pool)
 
     for addr in [
         ausdc.address,

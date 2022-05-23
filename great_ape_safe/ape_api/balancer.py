@@ -227,17 +227,31 @@ class Balancer():
         assert balance_delta > 0
 
         if stake:
-            gauge_address = self.gauge_factory.getPoolGauge(pool)
+            self.stake_all(pool, balance_delta, destination, dusty=True)
 
-            if gauge_address == ZERO_ADDRESS:
-                raise Exception(f'no gauge for {pool_id}')
 
-            gauge = self.safe.contract(gauge_address)
-            balance_before = gauge.balanceOf(self.safe)
-            pool.approve(gauge, balance_delta)
-            gauge.deposit(balance_delta * self.dusty, destination)
+    def stake(self, pool, mantissa, destination=None, dusty=False):
+        pool_id = pool.getPoolId()
+        destination = self.safe if not destination else destination
+        gauge_address = self.gauge_factory.getPoolGauge(pool)
 
-            assert gauge.balanceOf(destination) > balance_before
+        if gauge_address == ZERO_ADDRESS:
+            raise Exception(f'no gauge for {pool_id}')
+
+        gauge = self.safe.contract(gauge_address)
+        gauge_balance_before = gauge.balanceOf(destination)
+        pool.approve(gauge, mantissa)
+        if dusty:
+            gauge.deposit(mantissa * self.dusty, destination)
+        else:
+            gauge.deposit(mantissa, destination)
+        assert gauge.balanceOf(destination) > gauge_balance_before
+
+
+    def stake_all(self, pool, destination=None, dusty=False):
+        destination = self.safe if not destination else destination
+        mantissa = pool.balanceOf(destination)
+        self.stake(pool, mantissa, destination, dusty)
 
 
     def unstake_all_and_withdraw_all(
