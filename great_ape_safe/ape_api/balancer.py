@@ -227,7 +227,7 @@ class Balancer():
         assert balance_delta > 0
 
         if stake:
-            self.stake_all(pool, balance_delta, destination, dusty=True)
+            self.stake_all(pool, destination, dusty=True)
 
 
     def stake(self, pool, mantissa, destination=None, dusty=False):
