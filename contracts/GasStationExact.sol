@@ -103,14 +103,17 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
     Target memory target;
     for (uint256 idx = 0; idx < watchList.length; idx++) {
       target = s_targets[watchList[idx]];
-      if (
-        target.lastTopUpTimestamp + minWaitPeriod <= block.timestamp &&
-        balance >= target.minTopUpAmountWei &&
-        watchList[idx].balance <= target.minBalanceWei - target.minTopUpAmountWei
-      ) {
-        needsFunding[count] = watchList[idx];
-        count++;
-        balance -= target.minTopUpAmountWei;
+      if (watchList[idx].balance < target.minBalanceWei) {
+        uint256 delta = target.minBalanceWei - watchList[idx].balance;
+        if (
+          target.lastTopUpTimestamp + minWaitPeriod <= block.timestamp &&
+          balance >= delta &&
+          watchList[idx].balance <= target.minBalanceWei - target.minTopUpAmountWei
+        ) {
+          needsFunding[count] = watchList[idx];
+          count++;
+          balance -= delta;
+        }
       }
     }
     if (count != watchList.length) {
