@@ -29,6 +29,7 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
   error InvalidWatchList();
   error OnlyKeeperRegistry();
   error DuplicateAddress(address duplicate);
+  error ZeroAddress();
 
   struct Target {
     bool isActive;
@@ -181,6 +182,9 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
    * @param payee The address to pay
    */
   function withdraw(uint256 amount, address payable payee) external onlyOwner {
+    if (payee == address(0)) {
+      revert ZeroAddress();
+    }
     emit FundsWithdrawn(amount, payee);
     payee.transfer(amount);
   }

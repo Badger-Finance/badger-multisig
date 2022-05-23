@@ -36,7 +36,7 @@ def test_empty_gas_station(gas_station, random, keeper):
     # empty the station first
     gas_station.withdraw(
         gas_station.balance(),
-        brownie.ZERO_ADDRESS,
+        gas_station.owner(),
         {'from': gas_station.owner()}
     )
     assert gas_station.balance() == 0
