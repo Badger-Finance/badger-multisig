@@ -71,8 +71,7 @@ def main():
         ausdc: 600_000e6,
         ausdt: 600_000e6,
         cdai: 27_000_000e8,
-        afei: 300_000e18,
-        bpt3pool_gauge_addr: 300_000e18
+        afei: 300_000e18
     }
 
     # withdrawals
