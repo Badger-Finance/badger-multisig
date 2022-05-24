@@ -2,7 +2,7 @@ from decimal import Decimal
 import requests
 import json
 
-from brownie import ZERO_ADDRESS, Contract
+from brownie import ZERO_ADDRESS, Contract, chain, web3
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
@@ -473,15 +473,18 @@ class Balancer():
             swap_settings,
             fund_settings,
             min_out,
-            self.deadline
+            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline
         )
 
         assert asset_out.balanceOf(destination) >= before_balance_out + min_out
 
 
     def swap_and_lock_bal(self, mantissa_bal, lock_days=365):
-        # check that safe is whitelisted
-        assert self.wallet_checker.check(self.safe)
+        if not self.wallet_checker.check(self.safe):
+            raise Exception('Safe is not whitelisted')
+
+        if lock_days < 7:
+            raise Exception('min lock_days is 7')
 
         bpt = self.safe.contract(self.vebal.token())
         weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
@@ -494,19 +497,23 @@ class Balancer():
         swap_mantissa = int(mantissa_bal / 5)
         self.swap(bal, weth, swap_mantissa)
 
-        after_bal = bal.balanceOf(self.safe) - before_bal
+        after_bal = before_bal - swap_mantissa
         after_weth = weth.balanceOf(self.safe) - before_weth
 
         # get bpt to lock
         before_bpt = bpt.balanceOf(self.safe)
 
         underlyings = [bal, weth]
-        amounts = [after_bal * self.dusty, after_weth * self.dusty]
+        amounts = [int(after_bal * self.dusty), int(after_weth * self.dusty)]
         self.deposit_and_stake(underlyings, amounts, pool=bpt, stake=False)
 
-        after_bpt = bpt.balanceOf(self.safe) - before_bpt
+        day = 86400
+        week = day * 7
+        unlock_time = ((chain.time() + day * lock_days) // week) * week
 
-        bpt.approve(self.vebal, after_bpt * self.dusty)
+        after_bpt = (bpt.balanceOf(self.safe) - before_bpt) * self.dusty
+        bpt.approve(self.vebal, after_bpt)
 
-        # TODO: convert days to balancer ephochs
-        self.vebal.create_lock(after_bpt * self.dusty, 1684368000)
+        self.vebal.create_lock(after_bpt, unlock_time)
+
+        assert bpt.balanceOf(self.safe) < after_bpt

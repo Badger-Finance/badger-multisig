@@ -69,9 +69,10 @@ def transfer_and_lock_bal(simulation="True"):
         bal = trops.contract(registry.eth.treasury_tokens.BAL)
 
     vebal = vault.contract(registry.eth.balancer.veBAL)
+    weth = vault.contract(registry.eth.treasury_tokens.WETH)
 
     trops.take_snapshot(tokens=[bal])
-    vault.take_snapshot(tokens=[vebal])
+    vault.take_snapshot(tokens=[vebal, weth, bal.address])
 
     bal.transfer(vault, bal.balanceOf(trops))
 
