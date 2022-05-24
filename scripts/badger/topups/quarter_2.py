@@ -35,9 +35,10 @@ def main():
     # bdigg rewards
     trops.init_badger()
     weekly_digg_rewards = Decimal(trops.badger.from_gdigg_to_digg(2.5)) * 10**digg.decimals()
-    # 11 weeks since last topup was 5 weeks ago;
+    # bdigg rewards will stop as per this week
+    # catch up for last 5 weeks since last topup was 5 weeks ago;
     # 0xfa74dd997c4300f724f1f44414308f572588af16095a4c377cd700f592700316
-    quarter_2_digg_emissions = weekly_digg_rewards * 11
+    quarter_2_digg_emissions = weekly_digg_rewards * 5
     digg.transfer(geyser, quarter_2_digg_emissions)
 
     trops.print_snapshot()
