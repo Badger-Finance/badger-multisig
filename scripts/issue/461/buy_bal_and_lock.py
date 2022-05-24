@@ -45,7 +45,6 @@ def post_cvx_orders():
 
     trops.cow.allow_relayer(cvx, cvx.balanceOf(trops))
     half = int(cvx.balanceOf(trops) / 2)
-    # floor?
     a_tenth = int(half / 5)
     trops.cow.market_sell(cvx, bal, half, deadline=60*60*24)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.03)
@@ -56,30 +55,29 @@ def post_cvx_orders():
     trops.post_safe_tx()
 
 
-def transfer_and_lock_bal():
+def transfer_and_lock_bal(simulation="True"):
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     vault = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     vault.init_balancer()
 
-    bal = trops.contract(registry.eth.treasury_tokens.BAL)
-    weth = vault.contract(registry.eth.treasury_tokens.WETH)
-    bpt = vault.contract(registry.eth.balancer.B_80_BAL_20_WETH)
+    if simulation == "True":
+        bal = MintableForkToken(
+            registry.eth.treasury_tokens.BAL, owner=trops.account
+        )
+        bal._mint_for_testing(trops, 1000 * 10**bal.decimals())
+    else:
+        bal = trops.contract(registry.eth.treasury_tokens.BAL)
 
+    vebal = vault.contract(registry.eth.balancer.veBAL)
 
     trops.take_snapshot(tokens=[bal])
-    vault.take_snapshot(tokens=[bal, weth])
+    vault.take_snapshot(tokens=[vebal])
 
     bal.transfer(vault, bal.balanceOf(trops))
-
-    # trops.print_snapshot()
-    # vault.print_snapshot()
 
     bal = vault.contract(registry.eth.treasury_tokens.BAL)
     vault.balancer.swap_and_lock_bal(bal.balanceOf(vault))
 
+    trops.print_snapshot()
     vault.print_snapshot()
 
-
-def main():
-    transfer_bvecvx()
-    swap_bvecvx()
