@@ -19,7 +19,7 @@ ADDRESSES_ETH = {
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
     },
-    "bribes_processor": "0xbeD8f323456578981952e33bBfbE80D23289246B",
+    "bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",

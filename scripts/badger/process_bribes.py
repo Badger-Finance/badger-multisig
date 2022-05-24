@@ -102,9 +102,10 @@ def step1():
 
 
 def step2():
+    weth_total = WETH.balanceOf(PROCESSOR)
     badger_share = int(WETH.balanceOf(PROCESSOR) * BADGER_SHARE)
     cvx_share = int(WETH.balanceOf(PROCESSOR) - badger_share)
-    assert badger_share + cvx_share == WETH.balanceOf(PROCESSOR)
+    assert badger_share + cvx_share == weth_total
 
     order_payload, order_uid = SAFE.badger.get_order_for_processor(
         sell_token=WETH,
@@ -125,6 +126,10 @@ def step2():
         prod=COW_PROD
     )
     PROCESSOR.swapWethForCVX(order_payload, order_uid)
+
+    # since the swapWeth methods each set their own approval, multicalling them
+    # will make them replace each other. this performs one more final overwrite
+    PROCESSOR.setCustomAllowance(WETH, weth_total)
 
     SAFE.post_safe_tx(call_trace=True)
 
