@@ -26,3 +26,5 @@ def main():
 
     vault.print_snapshot()
     trops.print_snapshot()
+
+    vault.post_safe_tx()
