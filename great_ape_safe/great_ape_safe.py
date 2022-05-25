@@ -51,7 +51,6 @@ class GreatApeSafe(ApeSafe):
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
 
-
     def init_all(self):
         for method in self.__dir__():
             if method.startswith('init_') and method != 'init_all':
