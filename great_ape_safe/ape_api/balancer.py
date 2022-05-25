@@ -526,7 +526,3 @@ class Balancer():
         self.vebal.create_lock(after_bpt, unlock_time)
 
         assert bpt.balanceOf(self.safe) < after_bpt
-
-
-    def withdraw_vebal(self):
-        pass
