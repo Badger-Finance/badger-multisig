@@ -37,13 +37,21 @@ TOKEN_MAPPING = {
 }
 
 
-def main(simulation="false"):
+def main():
 
     safe = GreatApeSafe(DEV_MULTI)
+    safe.take_snapshot(TOKENS)
 
     for strategy in STRATEGIES:
         console.print(f"[green]Sweeping {STRATEGY_MAPPING[strategy]}[/green]")
-        sweep_strategy(strategy, safe, simulation)
+        sweep_strategy(strategy, safe)
+    
+    final_bor_bal = interface.ERC20(BOR).balanceOf(safe.address)
+    final_boring_bal = interface.ERC20(BORING).balanceOf(safe.address)
+    final_pnt_bal = interface.ERC20(PNT).balanceOf(safe.address)
+    console.print(f"BOR swept: {final_bor_bal / 10 ** 18}")
+    console.print(f"BORING swept: {final_boring_bal / 10 ** 18}")
+    console.print(f"PNT swept: {final_pnt_bal / 10 ** 18}")
 
     safe.post_safe_tx(call_trace=True)
 
@@ -51,7 +59,6 @@ def main(simulation="false"):
 def sweep_strategy(
     strategy_address: str,
     safe: GreatApeSafe,
-    simulation: bool = True,
 ):
     strategy = interface.IStrategy(strategy_address, owner=safe.account)
 
@@ -68,8 +75,9 @@ def sweep_strategy(
         assert 0 == controller_balance
 
         if strategy_balance > 0:
+            readable_amount = strategy_balance / 10 ** token.decimals()
             console.print(
-                f"[green]Sweeping {strategy_balance} {TOKEN_MAPPING[token_address]} from strategy[/green]"
+                f"[green]Sweeping {readable_amount} {TOKEN_MAPPING[token_address]} from strategy[/green]"
             )
             controller.inCaseStrategyTokenGetStuck(strategy_address, token_address)
             controller_balance += token.balanceOf(controller_address)
