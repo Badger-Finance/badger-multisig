@@ -45,12 +45,15 @@ class Badger():
         self.registry = interface.IBadgerRegistry(
             registry.eth.registry, owner=self.safe.account
         )
+        self.registryV2 = interface.IBadgerRegistryV2(
+            registry.eth.registry, owner=self.safe.account
+        )
         self.bribes_processor = interface.IBribesProcessor(
             registry.eth.bribes_processor, owner=self.safe.account
         )
 
         # misc
-        self.api_url = 'https://api.badger.finance/v2/'
+        self.api_url = 'https://api.badger.com/v2/'
 
 
     def claim_all(self, json_file_path=None):
@@ -265,16 +268,31 @@ class Badger():
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
 
+    def promote_vault(self, vault_addr, vault_version, vault_metadata, vault_status):
+        self.registryV2.promote(vault_addr, vault_version, vault_metadata, vault_status)
+        C.print(f'Promote: {vault_addr} ({vault_version}) to {vault_status}')
+
+    def demote_vault(self, vault_addr, vault_status):
+        self.registryV2.demote(vault_addr, vault_status)
+        C.print(f'Demote: {vault_addr} to {vault_status}')
+
+    def update_metadata(self, vault_addr, vault_metadata):
+        self.registryV2.updateMetadata(vault_addr, vault_metadata)
+        C.print(f'Update Metadata: {vault_addr} to {vault_metadata}')
 
     def set_key_on_registry(self, key, target_addr):
         # Ensures key doesn't currently exist
-        assert self.registry.get(key) == ZERO_ADDRESS
+        assert self.registryV2.get(key) == ZERO_ADDRESS
 
-        self.registry.set(key, target_addr)
+        self.registryV2.set(key, target_addr)
 
-        assert self.registry.get(key) == target_addr
+        assert self.registryV2.get(key) == target_addr
         C.print(f'{key} was added to the registry at {target_addr}')
 
+    def migrate_key_on_registry(self, key):
+        value = self.registry.get(key)
+        assert value != ZERO_ADDRESS
+        self.set_key_on_registry(key, value)
 
     def from_gdigg_to_digg(self, gdigg):
         digg = interface.IUFragments(

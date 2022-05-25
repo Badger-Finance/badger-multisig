@@ -17,3 +17,20 @@ def set_key(key, target_addr):
 
     SAFE.badger.set_key_on_registry(key, target_addr)
     SAFE.post_safe_tx()
+
+def migrate_registry_keys():
+    """
+    Migrate badger registry v1 keys on a given chain to badger registry v2
+    """
+    key_index = 0
+    while True:
+        try:
+            key = SAFE.badger.registry.keys(key_index)
+            SAFE.badger.migrate_key_on_registry(key)
+            key_index += 1
+        except:
+            break
+
+    # try to simulate tx and see dafuq
+    SAFE.post_safe_tx(False, True, True, True, False, False, None, None, None, 1.5)
+
