@@ -12,15 +12,21 @@ console = Console()
 DEV_MULTI = registry.eth.badger_wallets.dev_multisig
 TECH_OPS = registry.eth.badger_wallets.techops_multisig
 
+HARVEST_FORWARDER = registry.eth.harvest_forwarder
+
 PBTC_STRATEGY_DEP = ADDRESSES_ETH["strategies"]["_deprecated"]["native.pbtcCrv"]["v1"]
 PBTC_STRATEGY = ADDRESSES_ETH["strategies"]["native.pbtcCrv"]
 
 OBTC_STRATEGY_DEP = ADDRESSES_ETH["strategies"]["_deprecated"]["native.obtcCrv"]["v1"]
 OBTC_STRATEGY = ADDRESSES_ETH["strategies"]["native.obtcCrv"]
 
-PNT = ADDRESSES_ETH["treasury_tokens"]["PNT"]
-BOR = ADDRESSES_ETH["treasury_tokens"]["BOR"]
-BORING = ADDRESSES_ETH["treasury_tokens"]["BORING"]
+OBTC_VAULT = ADDRESSES_ETH["sett_vaults"]["bcrvOBTC"]
+PBTC_VAULT = ADDRESSES_ETH["sett_vaults"]["bcrvPBTC"]
+
+PNT = registry.eth.treasury_tokens.PNT
+BOR = registry.eth.treasury_tokens.BOR
+BORING = registry.eth.treasury_tokens.BORING
+BADGER = registry.eth.treasury_tokens.BADGER
 
 STRATEGIES = [PBTC_STRATEGY_DEP, PBTC_STRATEGY, OBTC_STRATEGY_DEP, OBTC_STRATEGY]
 STRATEGY_MAPPING = {
@@ -37,9 +43,10 @@ TOKEN_MAPPING = {
     BORING: "BORING",
 }
 
+FEE = 0.2  # 20% to DAO
 
-def main():
 
+def sweep_to_techops():
     safe = GreatApeSafe(DEV_MULTI)
     safe.take_snapshot(TOKENS)
 
@@ -66,10 +73,34 @@ def main():
     assert final_bor_bal == bor_contract.balanceOf(TECH_OPS)
     assert final_boring_bal == boring_contract.balanceOf(TECH_OPS)
     assert final_pnt_bal == pnt_contract.balanceOf(TECH_OPS)
-    
+
     console.print(f"BOR swept: {final_bor_bal / 10 ** 18}")
     console.print(f"BORING swept: {final_boring_bal / 10 ** 18}")
     console.print(f"PNT swept: {final_pnt_bal / 10 ** 18}")
+
+    safe.post_safe_tx(call_trace=True)
+
+
+def sell_for_badger():
+    safe = GreatApeSafe(TECH_OPS)
+    safe.init_cow()
+
+    sell_all_of_token(BOR, safe)
+    sell_all_of_token(BORING, safe)
+    sell_all_of_token(PNT, safe)
+
+    safe.post_safe_tx(call_trace=True)
+
+
+def distribute_to_users():
+    safe = GreatApeSafe(TECH_OPS)
+    forwarder = interface.IHarvestForwarder(HARVEST_FORWARDER, owner=safe.account)
+
+    obtc_amount = int(0 * (1 - FEE))  # replace 0 with amount after cowswaps
+    forwarder.distribute(BADGER, obtc_amount, OBTC_VAULT)
+
+    pbtc_amount = int(0 * (1 - FEE))  # replace 0 with amount after cowswaps
+    forwarder.distribute(BADGER, pbtc_amount, PBTC_VAULT)
 
     safe.post_safe_tx(call_trace=True)
 
@@ -105,3 +136,22 @@ def sweep_strategy(
 
         assert 0 == token.balanceOf(strategy_address)
         assert 0 == token.balanceOf(controller_address)
+
+
+def sell_all_of_token(token_address: str, safe: GreatApeSafe):
+    token = safe.contract(token_address)
+    badger = safe.contract(BADGER)
+
+    balance = token.balanceOf(safe.address)
+    deadline = 60 * 60 * 24 * 3  # 3 days
+
+    safe.cow.market_sell(token, badger, balance, deadline)
+
+
+"""
+
+BOR swept: 51.7945033649936
+BORING swept: 2106372.727420128
+PNT swept: 118657.99481440612
+
+"""
