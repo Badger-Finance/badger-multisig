@@ -41,10 +41,11 @@ def post_cvx_orders():
     cvx = trops.contract(registry.eth.treasury_tokens.CVX)
     bal = trops.contract(registry.eth.treasury_tokens.BAL)
 
+    amount = 25_000e18
     trops.cow.allow_relayer(cvx, cvx.balanceOf(trops))
-    half = int(cvx.balanceOf(trops) / 2)
-    a_tenth = int(cvx.balanceOf(trops) / 10)
-    rest = cvx.balanceOf(trops) - half - 4 * a_tenth
+    half = int(amount / 2)
+    a_tenth = int(amount / 10)
+    rest = amount - half - 4 * a_tenth
     trops.cow.market_sell(cvx, bal, half, deadline=60*60*24)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.03)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.06)
