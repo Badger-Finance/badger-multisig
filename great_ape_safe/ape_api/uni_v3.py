@@ -7,11 +7,11 @@ from brownie import interface, chain, multicall
 from helpers.addresses import registry
 
 # general helpers and sdk
-from great_ape_safe.ape_api.helpers.uni_v3 import (
+from great_ape_safe.ape_api.helpers.uni_v3.uni_v3 import (
     print_position,
     calc_all_accum_fees,
 )
-from great_ape_safe.ape_api.helpers.uni_v3_sdk import (
+from great_ape_safe.ape_api.helpers.uni_v3.uni_v3_sdk import (
     getAmountsForLiquidity,
     getSqrtRatioAtTick,
     getAmount1Delta,
@@ -128,21 +128,7 @@ class UniV3:
                 ]
 
             for token_id in token_ids:
-                position = self.nonfungible_position_manager.positions(token_id)
-                # in case token_ids are from diff pools, check bal on each iteration
-                pool = self._get_pool(position)
-
-                token0 = self.safe.contract(pool.token0())
-                token1 = self.safe.contract(pool.token1())
-
-                token0_bal_init = token0.balanceOf(self.safe.address)
-                token1_bal_init = token1.balanceOf(self.safe.address)
-
                 self.collect_fee(token_id)
-
-                # check that increase the balance off-chain
-                assert token0.balanceOf(self.safe.address) > token0_bal_init
-                assert token1.balanceOf(self.safe.address) > token1_bal_init
         else:
             print(f" === Safe ({self.safe.address}) does not own any NFT === ")
 

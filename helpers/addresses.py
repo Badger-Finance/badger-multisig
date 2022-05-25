@@ -18,6 +18,7 @@ ADDRESSES_ETH = {
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
+        "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
     },
     "bribes_processor": "0xbeD8f323456578981952e33bBfbE80D23289246B",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
@@ -102,13 +103,17 @@ ADDRESSES_ETH = {
         "USDT": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         "USDC": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         "aUSDC": "0xBcca60bB61934080951369a648Fb03DF4F96263C",
+        "aUSDT": "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811",
+        "aFEI": "0x683923dB55Fead99A79Fa01A27EeC3cB19679cC3",
         "cUSDC": "0x39aa39c021dfbae8fac545936693ac917d5e7563",
+        "cDAI": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
         "cETH": "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5",
         "DUSD": "0x5BC25f649fc4e26069dDF4cF4010F9f706c23831",
         "alUSD": "0xBC6DA0FE9aD5f3b0d58160288917AA56653660E9",
         "DAI": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
         "MIM": "0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3",
         "FRAX": "0x853d955aCEf822Db058eb8505911ED77F175b99e",
+        "FEI": "0x956F47F50A910163D8BF957Cf5846D573E7f87CA",
         "DFD": "0x20c36f062a31865bED8a5B1e512D9a1A20AA333A",
         "CRV": "0xD533a949740bb3306d119CC777fa900bA034cd52",
         "WBTC": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
@@ -163,6 +168,7 @@ ADDRESSES_ETH = {
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
         "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
+        "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -247,7 +253,7 @@ ADDRESSES_ETH = {
         "bbveCVX-CVX-f": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
         "remBADGER": "0x6aF7377b5009d7d154F36FE9e235aE1DA27Aea22",
         "remDIGG": "0x99F39D495C6A5237f43602f3Ab5F49786E46c9B0",
-        "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613"
+        "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613",
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -277,7 +283,7 @@ ADDRESSES_ETH = {
         "native.bbveCVX-CVX-f": "0x98Ca7AFa876f0e15494E76E92C5b3658cdE1Ffe1",
         "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
-        "native.badgerCrv": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1"
+        "native.badgerCrv": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
     },
     "logic": {
         "StrategyConvexStakingOptimizer": "0x0bB87f40D4eb6066a2311B7BE3B45A3D15771557", # V1.1
@@ -287,8 +293,10 @@ ADDRESSES_ETH = {
         "native.vestedCVX": "0x57961a757bA249E616c1940548401b7CdF83a849", # V1.7
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
-        "SettV1_1h": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
-        "SettV4h": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
+        "SettV1_1h_V1": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
+        "SettV4h_V1": "0x0B7Cb84bc7ad4aF3E1C5312987B6E9A4612068AD",
+        "SettV1_1h_V2": "0x724f4153b3D69f64975f1B16cE4445fd7bC5C9a2", # V2 -> governanceOrStrategist approve/revoke + sweep
+        "SettV4h_V2": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # V2 -> governanceOrStrategist approve/revoke + sweep
         "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
     },
@@ -332,7 +340,7 @@ ADDRESSES_ETH = {
         "fIBBTC-22": "0x6856f0e1BD23c9a1b92f87581Dd2f28E7C84EbcD",
         "fFRAX-22": "0x60fb6aecf861e3f16f7a4dcaddf8d8820244a1cd",
         "fDOLA-22": "0x5117D9453cC9Be8c3fBFbA4aE3B858D18fe45903",
-        "fbveCVX-22": "0x26F6F27fDBc3B9cDe4b1943b1c07606CAF2c4C6C"
+        "fbveCVX-22": "0x26F6F27fDBc3B9cDe4b1943b1c07606CAF2c4C6C",
     },
     "routers": {
         "sushi_router_v2": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
@@ -434,13 +442,25 @@ ADDRESSES_ETH = {
     "arbitrum": {
         "outbox": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
     },
+    "balancer": {
+        "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+        "gauge_factory": "0x4E7bBd911cf1EFa442BC1b2e9Ea01ffE785412EC",
+        "B_50_BTC_50_WETH": "0xA6F548DF93de924d73be7D25dC02554c6bD66dB5",
+        "B_20_BTC_80_BADGER_GAUGE": "0xAF50825B010Ae4839Ac444f6c12D44b96819739B",
+        "B_20_BTC_80_BADGER": "0xb460DAa847c45f1C4a41cb05BFB3b51c92e41B36",
+        "B_3POOL": "0x06Df3b2bbB68adc8B0e302443692037ED9f91b42",
+    },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
+        "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
     },
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
         "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
+    },
+  "across_bridge": {
+        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
     },
 }
 
@@ -614,8 +634,16 @@ ADDRESSES_ARBITRUM = {
         "native.DXSIbbtcWeth": "0x4AeC063BB5322c9d4c1f46572f432aaE3b78b87c",
     },
     "logic": {
-        "native.renCrv": "0x2eE1E845b601371608b6bA4a4665180dE3b14C85",
-        "native.tricrypto": "0xd64E77C7C6A1dcC7e302F8fe31A22745e223c39c",
+        "native.renCrv": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C", # v1.1
+        "native.tricrypto": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # v1.1
+        "_deprecated": {
+            "native.renCrv": {
+                "v1": "0x2eE1E845b601371608b6bA4a4665180dE3b14C85",
+            },
+            "native.tricrypto": {
+                "v1": "0xd64E77C7C6A1dcC7e302F8fe31A22745e223c39c",
+            },
+        }
     },
     "treasury_tokens": {
         "BADGER" : "0xbfa641051ba0a0ad1b0acf549a89536a0d76472e",
@@ -667,10 +695,10 @@ ADDRESSES_ARBITRUM = {
         "bDXSWbtcWeth": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
     },
     "swapr_staking_contracts": {
-        "native.DXSSwaprWeth": "0xd090a6b7651d9E51FE4D25c6756623613FdB7950",
-        "native.DXSWbtcWeth": "0xbe7Dbb01E87f4faD154B8AB36125181f32A96B2c",
-        "native.DXSBadgerWeth": "0x0E84da346a2c439970857981f580D664265eBCf0",
-        "native.DXSIbbtcWeth": "0xd1D9210C74deF67eD6D9652552dE77B12C62c00b",
+        "native.DXSSwaprWeth": "0x0934e27Eea82f720166eC37214C07e6777511D27",
+        "native.DXSWbtcWeth": "0x7d5Fb4C81df4115B2e4bB84e36cda8bE7aDF9B4F",
+        "native.DXSBadgerWeth": "0x42EcF352216b4Be82331123dbCee60447c91b70F",
+        "native.DXSIbbtcWeth": "0x13a22d37Dee5D6C99D4a36F50C2fD274F73Df21c",
     },
     "sushi": {
         "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
