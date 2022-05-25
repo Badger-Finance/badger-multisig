@@ -753,6 +753,7 @@ ADDRESSES_RINKEBY = {
 
 ADDRESSES_FANTOM = {
     "badger_wallets": {
+        "badgertree": "0x89122c767a5f543e663db536b603123225bc3823",
         "dev_multisig": "0x4c56ee3295042f8A5dfC83e770a21c707CB46f5b",
         "techops_multisig": "0x781E82D5D49042baB750efac91858cB65C6b0582",
         "treasury_ops_multisig": "0xf109c50684EFa12d4dfBF501eD4858F25A4300B3",
@@ -775,6 +776,7 @@ ADDRESSES_FANTOM = {
         "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
         "USDC": "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
         "OXD": "0xc5A9848b9d145965d821AaeC8fA32aaEE026492d",
+        "BADGER": "0x753fbc5800a8c8e3fb6dc6415810d627a387dfc9",
     },
     "lp_tokens": {
         "bveOXD-OXD": "0x6519546433dCB0a34A0De908e1032c46906EF664"
@@ -825,6 +827,18 @@ registry = DotMap({
     "rinkeby": checksum_address_dict(ADDRESSES_RINKEBY),
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
 })
+
+def get_registry(chain_id):
+    if chain_id == 1:
+        return registry.eth
+    elif chain_id == 137:
+        return registry.poly
+    elif chain_id == 56:
+        return registry.bsc
+    elif chain_id == 42161:
+        return registry.arbitrum
+    elif chain_id == 250:
+        return registry.ftm 
 
 # flatten nested dicts and invert the resulting key <-> value
 # this allows for reversed lookup of an address

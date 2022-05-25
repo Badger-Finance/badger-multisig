@@ -8,7 +8,7 @@ from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
 # from helpers.constants import AddressZero
 
-from helpers.addresses import registry
+from helpers.addresses import get_registry
 from rich.console import Console
 
 
@@ -25,33 +25,37 @@ class Badger():
     def __init__(self, safe):
         self.safe = safe
 
+        contract_registry = get_registry(chain.id)
+
         # tokens
         self.badger = interface.IBadger(
-            registry.eth.treasury_tokens.BADGER,
+            contract_registry.treasury_tokens.BADGER,
             owner=self.safe.account
         )
 
         # contracts
         self.tree = interface.IBadgerTreeV2(
-            registry.eth.badger_wallets.badgertree, owner=self.safe.account
-        )
-        self.strat_bvecvx = interface.IVestedCvx(
-            registry.eth.strategies['native.vestedCVX'],
-            owner=self.safe.account
-        )
-        self.timelock = safe.contract(
-            registry.eth.governance_timelock
-        )
-        self.registry = interface.IBadgerRegistry(
-            registry.eth.registry, owner=self.safe.account
-        )
-        self.registryV2 = interface.IBadgerRegistryV2(
-            registry.eth.registry, owner=self.safe.account
-        )
-        self.bribes_processor = interface.IBribesProcessor(
-            registry.eth.bribes_processor, owner=self.safe.account
+            contract_registry.badger_wallets.badgertree, owner=self.safe.account
         )
 
+        if chain.id == 1:
+            self.strat_bvecvx = interface.IVestedCvx(
+                contract_registry.strategies['native.vestedCVX'],
+                owner=self.safe.account
+            )
+            self.timelock = safe.contract(
+                contract_registry.governance_timelock
+            )
+            self.bribes_processor = interface.IBribesProcessor(
+                contract_registry.bribes_processor, owner=self.safe.account
+            )
+
+        self.registry = interface.IBadgerRegistry(
+            contract_registry.registry, owner=self.safe.account
+        )
+        self.registryV2 = interface.IBadgerRegistryV2(
+            contract_registry.registryV2, owner=self.safe.account
+        )
         # misc
         self.api_url = 'https://api.badger.com/v2/'
 
