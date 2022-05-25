@@ -103,7 +103,9 @@ class Balancer():
             tokens = [Web3.toChecksumAddress(x['address']) for x in pool['tokens']]
             if asset_in in tokens and asset_out in tokens:
                 valid_pools[pool['id']] = pool['totalLiquidity']
-        return max(valid_pools, key=valid_pools.get)
+        if len(valid_pools) > 0:
+            return max(valid_pools, key=valid_pools.get)
+        raise Exception('no pool found for swap')
 
 
     def order_tokens(self, underlyings, mantissas=None):
