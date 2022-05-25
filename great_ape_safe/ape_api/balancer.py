@@ -479,7 +479,12 @@ class Balancer():
         assert asset_out.balanceOf(destination) >= before_balance_out + min_out
 
 
-    def swap_and_lock_bal(self, mantissa_bal, lock_days=365):
+    def lock_bal(self, mantissa_bal=None, mantissa_weth=None, mantisssa_bpt=None, lock_days=365):
+        '''
+        if given `mantisssa_bpt` just lock bpt
+        if given only `mantissa_bal` swap 20% for weth, deposit and lock
+        if given only `mantissa_bal` and `mantissa_weth`, deposit and lock
+        '''
         if not self.wallet_checker.check(self.safe):
             raise Exception('Safe is not whitelisted')
 
@@ -490,30 +495,38 @@ class Balancer():
         weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
         bal = self.safe.contract(registry.eth.treasury_tokens.BAL)
 
-        # get 80 bal - 20 weth
+        swapping = not mantisssa_bpt and not mantissa_weth
         before_bal = bal.balanceOf(self.safe)
-        before_weth = weth.balanceOf(self.safe)
+        before_weth = weth.balanceOf(self.safe) if swapping else 0
 
-        swap_mantissa = int(mantissa_bal / 5)
-        self.swap(bal, weth, swap_mantissa)
+        if swapping:
+            swap_mantissa = int(mantissa_bal / 5)
+            self.swap(bal, weth, swap_mantissa)
 
-        after_bal = before_bal - swap_mantissa
+        after_bal = before_bal - swap_mantissa if swapping else before_bal
         after_weth = weth.balanceOf(self.safe) - before_weth
 
-        # get bpt to lock
+        depositing = not mantisssa_bpt
         before_bpt = bpt.balanceOf(self.safe)
 
-        underlyings = [bal, weth]
-        amounts = [int(after_bal * self.dusty), int(after_weth * self.dusty)]
-        self.deposit_and_stake(underlyings, amounts, pool=bpt, stake=False)
+        if depositing:
+            underlyings = [bal, weth]
+            amounts = [int(after_bal * self.dusty), int(after_weth * self.dusty)]
+            self.deposit_and_stake(underlyings, amounts, pool=bpt, stake=False)
 
         day = 86400
         week = day * 7
         unlock_time = ((chain.time() + day * lock_days) // week) * week
 
-        after_bpt = (bpt.balanceOf(self.safe) - before_bpt) * self.dusty
+        after_bpt = ((bpt.balanceOf(self.safe) - before_bpt) * self.dusty
+                        if depositing else mantisssa_bpt)
+
         bpt.approve(self.vebal, after_bpt)
 
         self.vebal.create_lock(after_bpt, unlock_time)
 
         assert bpt.balanceOf(self.safe) < after_bpt
+
+
+    def withdraw_vebal(self):
+        pass

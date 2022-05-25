@@ -1,5 +1,3 @@
-from numpy import transpose
-from regex import W
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from brownie_tokens import MintableForkToken
@@ -18,7 +16,7 @@ def transfer_bvecvx():
 
     voter.print_snapshot()
     trops.print_snapshot()
-    # voter.post_safe_tx()
+    voter.post_safe_tx()
 
 
 def swap_bvecvx():
@@ -33,7 +31,7 @@ def swap_bvecvx():
     trops.curve.swap(bvecvx, cvx, 25_000e18)
 
     trops.print_snapshot()
-    # trops.post_safe_tx()
+    trops.post_safe_tx()
 
 
 def post_cvx_orders():
@@ -45,17 +43,18 @@ def post_cvx_orders():
 
     trops.cow.allow_relayer(cvx, cvx.balanceOf(trops))
     half = int(cvx.balanceOf(trops) / 2)
-    a_tenth = int(half / 5)
+    a_tenth = int(cvx.balanceOf(trops) / 10)
+    rest = cvx.balanceOf(trops) - half - 4 * a_tenth
     trops.cow.market_sell(cvx, bal, half, deadline=60*60*24)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.03)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.06)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.09)
     trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.12)
-    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.15)
+    trops.cow.market_sell(cvx, bal, rest, deadline=60*60*24*10, coef=1.15)
     trops.post_safe_tx()
 
 
-def transfer_and_lock_bal(simulation="True"):
+def transfer_and_lock_bal(simulation="False"):
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     vault = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     vault.init_balancer()
@@ -77,7 +76,8 @@ def transfer_and_lock_bal(simulation="True"):
     bal.transfer(vault, bal.balanceOf(trops))
 
     bal = vault.contract(registry.eth.treasury_tokens.BAL)
-    vault.balancer.swap_and_lock_bal(bal.balanceOf(vault))
+
+    vault.balancer.lock_bal(mantissa_bal=bal.balanceOf(vault))
 
     trops.print_snapshot()
     vault.print_snapshot()
