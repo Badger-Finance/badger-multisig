@@ -42,7 +42,7 @@ def post_cvx_orders():
     bal = trops.contract(registry.eth.treasury_tokens.BAL)
 
     amount = 25_000e18
-    trops.cow.allow_relayer(cvx, cvx.balanceOf(trops))
+    trops.cow.allow_relayer(cvx, amount)
     half = int(amount / 2)
     a_tenth = int(amount / 10)
     rest = amount - half - 4 * a_tenth
