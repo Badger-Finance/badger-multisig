@@ -108,7 +108,7 @@ contract GasStationExact is ConfirmedOwner, Pausable, KeeperCompatibleInterface 
         if (
           target.lastTopUpTimestamp + minWaitPeriod <= block.timestamp &&
           balance >= delta &&
-          watchList[idx].balance <= target.minBalanceWei - target.minTopUpAmountWei
+          delta >= target.minTopUpAmountWei
         ) {
           needsFunding[count] = watchList[idx];
           count++;
