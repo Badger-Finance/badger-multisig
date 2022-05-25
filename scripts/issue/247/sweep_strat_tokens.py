@@ -146,12 +146,3 @@ def sell_all_of_token(token_address: str, safe: GreatApeSafe):
     deadline = 60 * 60 * 24 * 3  # 3 days
 
     safe.cow.market_sell(token, badger, balance, deadline)
-
-
-"""
-
-BOR swept: 51.7945033649936
-BORING swept: 2106372.727420128
-PNT swept: 118657.99481440612
-
-"""
