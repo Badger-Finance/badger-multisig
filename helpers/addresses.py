@@ -64,6 +64,7 @@ ADDRESSES_ETH = {
         # "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
+        # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
         "ops_guardian": "0x29F7F8896Fb913CF7f9949C623F896a154727919",
         "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
         "OLD_root-validator": "0x626f69162ea1556a75dd4443d87d2fe38dd25901",
@@ -462,7 +463,7 @@ ADDRESSES_ETH = {
     },
   "across_bridge": {
         "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
-    }
+    },
 }
 
 ADDRESSES_IBBTC = {
@@ -734,6 +735,13 @@ ADDRESSES_RINKEBY = {
     "badger_wallets": {
         "rinkeby_multisig": "0x6b11a8B734C3eeFd41Ff7b0e2D15F2b0F46D336b",
         "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
+        "gas_station": "0x747a4c9073B68AE16A29e65f4b95C9bbEa1E19cD",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
+        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
     },
     "treasury_tokens": {
         "WBTC": "0x577D296678535e4903D59A4C929B718e1D575e0A",
