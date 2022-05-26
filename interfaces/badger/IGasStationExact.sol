@@ -6,6 +6,7 @@ interface IGasStationExact {
     error DuplicateAddress(address duplicate);
     error InvalidWatchList();
     error OnlyKeeperRegistry();
+    error ZeroAddress();
     event ERC20Swept(address indexed token, address payee, uint256 amount);
     event FundsAdded(uint256 amountAdded, uint256 newBalance, address sender);
     event FundsWithdrawn(uint256 amountWithdrawn, address payee);
@@ -34,7 +35,7 @@ interface IGasStationExact {
         returns (
             bool isActive,
             uint96 minBalanceWei,
-            uint96 topUpAmountWei,
+            uint96 minTopUpAmountWei,
             uint56 lastTopUpTimestamp
         );
 

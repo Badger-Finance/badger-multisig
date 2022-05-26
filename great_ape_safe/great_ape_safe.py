@@ -17,6 +17,7 @@ from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.anyswap import Anyswap
 from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.balancer import Balancer
+from great_ape_safe.ape_api.chainlink import Chainlink
 from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.cow import Cow
@@ -76,6 +77,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_balancer(self):
         self.balancer = Balancer(self)
+
+
+    def init_chainlink(self):
+        self.chainlink = Chainlink(self)
 
 
     def init_compound(self):
