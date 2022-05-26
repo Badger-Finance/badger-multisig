@@ -55,31 +55,40 @@ def post_cvx_orders():
     trops.post_safe_tx()
 
 
-def transfer_and_lock_bal(simulation="False"):
+def transfer_bal():
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
+    vault = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
+    bal = trops.contract(registry.eth.treasury_tokens.BAL)
+
+    trops.take_snapshot(tokens=[bal])
+    vault.take_snapshot(tokens=[bal])
+
+    bal.transfer(vault, bal.balanceOf(trops))
+
+    trops.print_snapshot()
+    vault.print_snapshot()
+    trops.post_safe_tx()
+
+
+def transfer_and_lock_bal(simulation="True"):
     vault = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     vault.init_balancer()
 
     if simulation == "True":
         bal = MintableForkToken(
-            registry.eth.treasury_tokens.BAL, owner=trops.account
+            registry.eth.treasury_tokens.BAL, owner=vault.account
         )
-        bal._mint_for_testing(trops, 1000 * 10**bal.decimals())
+        bal._mint_for_testing(vault, 1000 * 10**bal.decimals())
     else:
-        bal = trops.contract(registry.eth.treasury_tokens.BAL)
+        bal = vault.contract(registry.eth.treasury_tokens.BAL)
 
     vebal = vault.contract(registry.eth.balancer.veBAL)
     weth = vault.contract(registry.eth.treasury_tokens.WETH)
 
-    trops.take_snapshot(tokens=[bal])
     vault.take_snapshot(tokens=[vebal, weth, bal.address])
-
-    bal.transfer(vault, bal.balanceOf(trops))
-
-    bal = vault.contract(registry.eth.treasury_tokens.BAL)
 
     vault.balancer.lock_bal(mantissa_bal=bal.balanceOf(vault))
 
-    trops.print_snapshot()
     vault.print_snapshot()
+    vault.post_safe_tx()
 
