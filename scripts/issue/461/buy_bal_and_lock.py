@@ -70,7 +70,7 @@ def transfer_bal():
     trops.post_safe_tx()
 
 
-def transfer_and_lock_bal(simulation="True"):
+def lock_bal(simulation="False"):
     vault = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     vault.init_balancer()
 
