@@ -10,10 +10,6 @@ def main():
         registry.eth.badger_wallets.gas_station, owner=safe.account
     )
 
-    overwrite = {
-        'ops_botsquad': 10e18,
-        'ops_deployer': 5e18,
-    }
     labels, addrs, min_bals, min_top_ups = [], [], [], []
     for label, addr in registry.eth.badger_wallets.items():
         min_bal = 2e18
@@ -22,8 +18,13 @@ def main():
             continue
         if 'executor' in label:
             min_bal = 1e18
-        if label in overwrite:
-            min_bal = overwrite[label]
+        if label == 'ops_botsquad':
+            min_bal = 5e18
+        if label == 'ops_botsquad_cycle0':
+            min_top_up = .5e18
+        if label == 'ops_deployer':
+            min_bal = 5e18
+            min_top_up = .5e18
         labels.append(label)
         addrs.append(addr)
         min_bals.append(min_bal)
