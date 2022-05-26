@@ -460,9 +460,9 @@ ADDRESSES_ETH = {
         "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
         "upkeep_registration_requests": "0x09B1de9Ecf6600FD44e1cB1b46DF6B520f33ec6d",
     },
-  "across_bridge": {
-        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
-    }
+    "across_bridge": {
+        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534",
+    },
 }
 
 ADDRESSES_IBBTC = {
