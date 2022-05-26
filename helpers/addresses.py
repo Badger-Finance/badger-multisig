@@ -86,6 +86,7 @@ ADDRESSES_ETH = {
         "opsProxyAdmin_old": "0x4599F2913a3db4E73aA77A304cCC21516dd7270D",
         "badgerHunt": "0x394DCfbCf25C5400fcC147EbD9970eD34A474543",
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
+        "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
         "_deprecated": {
             "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
         },
