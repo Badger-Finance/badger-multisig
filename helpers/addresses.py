@@ -1,5 +1,6 @@
 import pandas as pd
 
+from brownie import chain
 from dotmap import DotMap
 from web3 import Web3
 import json
@@ -11,7 +12,6 @@ ADDRESSES_ETH = {
     "rewardsLogger" : "0x0A4F4e92C3334821EbB523324D09E321a6B0d8ec",
     "EmissionControl": "0x31825c0A6278b89338970e3eB979b05B27FAa263",
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
-    "registryV2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
     "keeperAccessControl": "0x711A339c002386f9db409cA55b6A35a604aB6cF6",
     "guardian": "0x6615e67b8B6b6375D38A0A3f937cd8c1a1e96386",
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
@@ -828,16 +828,16 @@ registry = DotMap({
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
 })
 
-def get_registry(chain_id):
-    if chain_id == 1:
+def get_registry():
+    if chain.id == 1:
         return registry.eth
-    elif chain_id == 137:
+    elif chain.id == 137:
         return registry.poly
-    elif chain_id == 56:
+    elif chain.id == 56:
         return registry.bsc
-    elif chain_id == 42161:
+    elif chain.id == 42161:
         return registry.arbitrum
-    elif chain_id == 250:
+    elif chain.id == 250:
         return registry.ftm 
 
 # flatten nested dicts and invert the resulting key <-> value

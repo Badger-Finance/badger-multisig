@@ -1,13 +1,11 @@
-from brownie import web3
 from rich.console import Console
 from great_ape_safe import GreatApeSafe
-from helpers.addresses import registry, get_registry
-from brownie import chain
+from helpers.addresses import get_registry as registry
 
 console = Console()
 
 # assuming techOps
-contract_registry = get_registry(chain.id)
+contract_registry = registry()
 chain_safe = GreatApeSafe(contract_registry.badger_wallets.techops_multisig)
 chain_safe.init_badger()
 
