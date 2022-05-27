@@ -40,25 +40,25 @@ FANTOM_VAULTS = [
   [
     '0x4145a9B8B7bdC76F14e65c26f9c71e23B9069b25',
     'v1',
-    'name=WFTM/CRV,protocol=Solidex,behavior=DCA',
+    'name=WFTM/CRV,protocol=Solidex,behavior=Bitcoin Rewards',
     2
   ],
   [
     '0x1AaF7f8154704D80E2380B3DbC967FD0486016e0',
     'v1',
-    'name=USDC/MIM,protocol=Solidex,behavior=DCA',
+    'name=USDC/MIM,protocol=Solidex,behavior=Bitcoin Rewards',
     2
   ],
   [
     '0x9a28eeFB2c5F8311f37c39314D78Be85C54B5da6',
     'v1',
-    'name=WFTM/renBTC,protocol=Solidex,behavior=DCA',
+    'name=WFTM/renBTC,protocol=Solidex,behavior=Bitcoin Rewards',
     2
   ],
   [
     '0x02330E37fcc7C27eB4632b3E31b951fDE5126c48',
     'v1',
-    'name=GEIST/g3CRV,protocol=Solidex,behavior=DCA',
+    'name=GEIST/g3CRV,protocol=Solidex,behavior=Bitcoin Rewards',
     0
   ],
   [
