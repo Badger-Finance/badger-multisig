@@ -8,7 +8,7 @@ from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
 # from helpers.constants import AddressZero
 
-from helpers.addresses import get_registry
+from helpers.addresses import get_registry as registry
 from rich.console import Console
 
 
@@ -25,7 +25,7 @@ class Badger():
     def __init__(self, safe):
         self.safe = safe
 
-        contract_registry = get_registry(chain.id)
+        contract_registry = registry()
 
         # tokens
         self.badger = interface.IBadger(
