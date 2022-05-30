@@ -24,6 +24,16 @@ def dev():
 
 
 @pytest.fixture
+def techops():
+    return GreatApeSafe(registry_addr.eth.badger_wallets.techops_multisig)
+
+
+@pytest.fixture
+def vault():
+    return GreatApeSafe(registry_addr.eth.badger_wallets.treasury_vault_multisig)
+
+
+@pytest.fixture
 def ibbtc_msig():
     return GreatApeSafe(registry_addr.eth.badger_wallets.ibbtc_multisig)
 

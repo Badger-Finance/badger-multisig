@@ -74,12 +74,19 @@ def bridge_usdc_to_ftm(mantissa):
 def swap_usdc_for_oxd(amount_mantissa=None):
     # swap for oxd
     TROPS_FTM.init_solidly()
+    TROPS_FTM.init_spookyswap()
     TROPS_FTM.take_snapshot([USDC_FTM, OXD])
 
-    TROPS_FTM.solidly.swap_tokens_for_tokens(
+    TROPS_FTM.spookyswap.swap_tokens_for_tokens(
         USDC_FTM,
-        USDC_FTM.balanceOf(TROPS_FTM) if not amount_mantissa else amount_mantissa,
-        [USDC_FTM, WFTM, OXD]
+        USDC_FTM.balanceOf(TROPS_FTM) if amount_mantissa is None else amount_mantissa,
+        [USDC_FTM, WFTM]
+        )
+
+    TROPS_FTM.solidly.swap_tokens_for_tokens(
+        WFTM,
+        WFTM.balanceOf(TROPS_FTM) * 0.98,
+        [WFTM, OXD]
         )
 
     TROPS_FTM.print_snapshot()

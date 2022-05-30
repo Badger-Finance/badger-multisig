@@ -1,4 +1,4 @@
-from brownie import accounts, interface, web3
+from brownie import accounts, interface, web3, network
 from helpers.addresses import registry
 from sympy import Symbol
 from sympy.solvers import solve
@@ -6,16 +6,15 @@ from sympy.solvers import solve
 class UniV2:
     def __init__(self, safe):
         self.safe = safe
+        self.router = self.safe.contract(registry.eth.uniswap.routerV2)
+        self.factory = self.safe.contract(registry.eth.uniswap.factoryV2)
 
-        self.router = safe.contract(registry.eth.uniswap.routerV2)
-        self.factory = safe.contract(registry.eth.uniswap.factoryV2)
+    max_slippage = 0.02
+    max_weth_unwrap = 0.01
+    deadline = 60 * 60 * 12
+    router_symbol = 'ETH'
 
-        self.max_slippage = 0.02
-        self.max_weth_unwrap = 0.01
-        self.deadline = 60 * 60 * 12
-        self.native_symbol = 'ETH'
 
-        
     def get_lp_to_withdraw_given_token(self, lp_token, underlying_token, mantissa_underlying):
         # calc amount of `lp_token` to withdraw from pool to get `mantissa_underlying` of `underlying_token`
         # credit: https://github.com/Badger-Finance/badger-multisig/blob/a0eab1de153d99fd00bb696ba93ba1fab60a1266/scripts/issue/159/withdraw_9_digg_from_tcl.py
@@ -27,7 +26,7 @@ class UniV2:
 
 
     def build_path(self, amountIn, path):
-        pair_info = self.router.getAmountOut(amountIn, path[0], path[-1])
+        pair_info = self.router.getAmountOut(amountIn, path[0].address, path[-1].address)
 
         # if return type is subclass of tuple then its a solidly style router
         if isinstance(pair_info, tuple):
@@ -41,44 +40,60 @@ class UniV2:
         return path
 
 
-    def add_liquidity(self, tokenA, tokenB, mantissaA=None, mantissaB=None, destination=None):
+    def add_liquidity(self, tokenA, tokenB, mantissaA, mantissaB, destination=None):
         # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
         destination = self.safe.address if not destination else destination
 
-        pair_address = self.factory.getPair(tokenA, tokenB)
-        pair = self.safe.contract(pair_address)
+        path = self.build_path(mantissaA if mantissaA else mantissaB, [tokenA, tokenB])
+        is_solidly = isinstance(path[0], tuple)
 
-        slp_balance = pair.balanceOf(self.safe)
-
-        reserve0, reserve1, _ = pair.getReserves()
-
-        path = [tokenA, tokenB]
-
-        if mantissaA != None:
-            path = [tokenA, tokenB]
-            mantissaB = self.router.getAmountsOut(mantissaA, path)[1]
+        if is_solidly:
+            is_stable = path[0][-1]
+            pair_address = self.factory.getPair(tokenA, tokenB, is_stable)
 
         else:
-            path = [tokenB, tokenA]
-            mantissaA = self.router.getAmountsOut(mantissaB, path)[1]
+            pair_address = self.factory.getPair(tokenA, tokenB)
 
-        # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/library#quote
-        quote_token0_min = self.router.quote(mantissaA, reserve0, reserve1)
-        quote_token1_min = self.router.quote(mantissaB, reserve1, reserve0)
+        pair = interface.IUniswapV2Pair(pair_address)
+        slp_balance = pair.balanceOf(self.safe)
+
+        if is_solidly:
+            quote_token0, quote_token1, liq \
+            = self.router.quoteAddLiquidity(tokenA, tokenB, is_stable, mantissaA, mantissaB)
+
+        else:
+            # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/library#quote
+            reserve0, reserve1, _ = pair.getReserves()
+            quote_token0 = self.router.quote(mantissaA, reserve0, reserve1)
+            quote_token1 = self.router.quote(mantissaB, reserve1, reserve0)
 
         tokenA.approve(self.router, mantissaA)
         tokenB.approve(self.router, mantissaB)
 
-        amountA, amountB, liquidity = self.router.addLiquidity(
-            tokenA,
-            tokenB,
-            mantissaA,
-            mantissaB,
-            quote_token1_min * (1 - self.max_slippage),
-            quote_token0_min * (1 - self.max_slippage),
-            destination,
-            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
-        ).return_value
+        if is_solidly:
+            amountA, amountB, liquidity = self.router.addLiquidity(
+                tokenA,
+                tokenB,
+                is_stable,
+                quote_token0,
+                quote_token1,
+                quote_token0 * (1 - self.max_slippage),
+                quote_token1 * (1 - self.max_slippage),
+                destination,
+                web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
+            ).return_value
+
+        else:
+            amountA, amountB, liquidity = self.router.addLiquidity(
+                tokenA,
+                tokenB,
+                quote_token0,
+                quote_token1,
+                quote_token0 * (1 - self.max_slippage),
+                quote_token1 * (1 - self.max_slippage),
+                destination,
+                web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
+            ).return_value
 
         assert (
             pair.balanceOf(destination)
@@ -175,7 +190,7 @@ class UniV2:
         address to,
         uint256 deadline
         """
-        signature = getattr(self.router, f'swapExact{self.native_symbol}ForTokens')
+        signature = getattr(self.router, f'swapExact{self.router_symbol}ForTokens')
         signature(
             amountOut * (1 - self.max_slippage),
             path,
@@ -201,7 +216,7 @@ class UniV2:
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
-        signature = getattr(self.router, f'swapExactTokensFor{self.native_symbol}')
+        signature = getattr(self.router, f'swapExactTokensFor{self.router_symbol}')
         signature(
             amountIn,
             amountOut * (1 - self.max_slippage),
