@@ -1,5 +1,6 @@
 import pandas as pd
 
+from brownie import chain
 from dotmap import DotMap
 from web3 import Web3
 import json
@@ -764,6 +765,7 @@ ADDRESSES_RINKEBY = {
 
 ADDRESSES_FANTOM = {
     "badger_wallets": {
+        "badgertree": "0x89122c767a5f543e663db536b603123225bc3823",
         "dev_multisig": "0x4c56ee3295042f8A5dfC83e770a21c707CB46f5b",
         "techops_multisig": "0x781E82D5D49042baB750efac91858cB65C6b0582",
         "treasury_ops_multisig": "0xf109c50684EFa12d4dfBF501eD4858F25A4300B3",
@@ -786,6 +788,7 @@ ADDRESSES_FANTOM = {
         "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
         "USDC": "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
         "OXD": "0xc5A9848b9d145965d821AaeC8fA32aaEE026492d",
+        "BADGER": "0x753fbc5800a8c8e3fb6dc6415810d627a387dfc9",
     },
     "lp_tokens": {
         "bveOXD-OXD": "0x6519546433dCB0a34A0De908e1032c46906EF664"
@@ -801,7 +804,9 @@ ADDRESSES_FANTOM = {
     "spookyswap": {
         "router": "0xF491e7B69E4244ad4002BC14e878a34207E38c29",
         "factory": "0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3"
-    }
+    },
+    "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registryV2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 
@@ -834,6 +839,18 @@ registry = DotMap({
     "rinkeby": checksum_address_dict(ADDRESSES_RINKEBY),
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
 })
+
+def get_registry():
+    if chain.id == 1:
+        return registry.eth
+    elif chain.id == 137:
+        return registry.poly
+    elif chain.id == 56:
+        return registry.bsc
+    elif chain.id == 42161:
+        return registry.arbitrum
+    elif chain.id == 250:
+        return registry.ftm 
 
 # flatten nested dicts and invert the resulting key <-> value
 # this allows for reversed lookup of an address
