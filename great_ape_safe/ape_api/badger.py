@@ -53,9 +53,11 @@ class Badger():
         self.registry = interface.IBadgerRegistry(
             contract_registry.registry, owner=self.safe.account
         )
-        self.registryV2 = interface.IBadgerRegistryV2(
-            contract_registry.registryV2, owner=self.safe.account
-        )
+
+        if chain.id == 250:
+            self.registryV2 = interface.IBadgerRegistryV2(
+                contract_registry.registryV2, owner=self.safe.account
+            )
         # misc
         self.api_url = 'https://api.badger.com/v2/'
 
