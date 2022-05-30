@@ -806,7 +806,7 @@ ADDRESSES_FANTOM = {
         "factory": "0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3"
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
-    "registryV2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 
@@ -840,6 +840,7 @@ registry = DotMap({
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
 })
 
+
 def get_registry():
     if chain.id == 1:
         return registry.eth
@@ -850,7 +851,10 @@ def get_registry():
     elif chain.id == 42161:
         return registry.arbitrum
     elif chain.id == 250:
-        return registry.ftm 
+        return registry.ftm
+
+
+r = get_registry()
 
 # flatten nested dicts and invert the resulting key <-> value
 # this allows for reversed lookup of an address
