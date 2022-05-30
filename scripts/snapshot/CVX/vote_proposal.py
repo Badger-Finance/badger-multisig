@@ -13,10 +13,11 @@ SNAPSHOT_VOTE_RELAYER = "https://snapshot-relayer.herokuapp.com/api/message"
 SNAPSHOT_DEFAULT_HEADERS = {
     "Accept": "application/json",
     "Content-Type": "application/json",
+    "Referer": "https://snapshot.org/",
 }
 
 
-def main(proposal="QmWuQY5XTyWmHLQrnxves9CEQePKUTrx52WVMC3ayrPz1m", choice=2):
+def main(proposal="QmSwrVFfQkgmvRiL2qUssk6XfGjoQs4tTRQPsrJyqCbtbR", choice=2):
     test_msig = GreatApeSafe(registry.eth.badger_wallets.test_multisig_v1_3)
 
     sign_message_lib = interface.ISignMessageLib(
@@ -30,7 +31,7 @@ def main(proposal="QmWuQY5XTyWmHLQrnxves9CEQePKUTrx52WVMC3ayrPz1m", choice=2):
         "type": "vote",
         "payload": {
             "proposal": proposal,
-            "choice": choice,  ##json.dumps(choice_json, separators=(",", ":")),
+            "choice": choice,  # json.dumps(choice_json, separators=(",", ":")),
             "metadata": json.dumps({}),
         },
     }
@@ -45,7 +46,7 @@ def main(proposal="QmWuQY5XTyWmHLQrnxves9CEQePKUTrx52WVMC3ayrPz1m", choice=2):
         to=registry.eth.gnosis.sign_message_lib, value=0, data=tx_data, operation=1
     )
 
-    # notify relayer to watch for this tx to be mined so it is included in the snapshot proposal
+    # notify relayer to watch for this tx to be mined so it is included in the snapshot proposal
     # https://github.com/snapshot-labs/snapshot-relayer/blob/7b656d204ad78fc9c06cedafcb4288aa47775adc/src/api.ts#L36
     response = requests.post(
         SNAPSHOT_VOTE_RELAYER,
@@ -53,16 +54,17 @@ def main(proposal="QmWuQY5XTyWmHLQrnxves9CEQePKUTrx52WVMC3ayrPz1m", choice=2):
         data=json.dumps(
             {
                 "address": test_msig.address,
-                "msg": payload,
+                "msg": json.dumps(payload, separators=(",", ":")),
                 "sig": "0x",
-            }
+            },
+            separators=(",", ":"),
         ),
     )
-
     if not response.ok:
         print(f"Error notifying relayer: {response.text}")
     else:
-        print("Response ID: ", response.id)
-        assert response.id == hash
+        response_id = response.text
+        print(f"Response ID: {response_id}")
+        assert hash.hex() in response_id
 
     test_msig.post_safe_tx(safe_tx_arg=safe_tx, skip_preview=True)
