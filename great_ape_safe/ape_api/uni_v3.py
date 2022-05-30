@@ -111,7 +111,11 @@ class UniV3:
         # https://docs.uniswap.org/protocol/reference/periphery/interfaces/INonfungiblePositionManager#collectparams
         params = (token_id, self.safe.address, self.Q128 - 1, self.Q128 - 1)
 
-        self.nonfungible_position_manager.collect(params)
+        # https://etherscan.io/address/0xC36442b4a4522E871399CD717aBDD847Ab11FE88#code#F1#L314
+        amount0, amount1 = self.nonfungible_position_manager.collect.call(params)
+        
+        if amount0 > 0 or amount1 > 0:
+            self.nonfungible_position_manager.collect(params)
 
     def collect_fees(self):
         """
