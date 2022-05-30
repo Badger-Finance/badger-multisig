@@ -1,3 +1,4 @@
+import requests
 import json
 import time
 
@@ -7,12 +8,17 @@ from brownie import interface
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
-# since i delegated after proposal creation, i think we do not have vp yet showing up in this msig
-def main(proposal="QmXa7do3QR6eC3v4uHzxXMS8ZwNFu9Sztf5KMPBmRpJNhe", choice=2):
-    # delegated CVX vp: https://etherscan.io/tx/0xfb6e0e0564c8c40489bb2c3312e8de9169ecd791e2ffabe6fcf842d48d0b833c
+SNAPSHOT_VOTE_RELAYER = "https://snapshot-relayer.herokuapp.com/api/message"
+
+SNAPSHOT_DEFAULT_HEADERS = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+
+def main(proposal="QmWuQY5XTyWmHLQrnxves9CEQePKUTrx52WVMC3ayrPz1m", choice=2):
     test_msig = GreatApeSafe(registry.eth.badger_wallets.test_multisig_v1_3)
 
-    # sign_message_lib = test_msig.contract(registry.eth.gnosis.sign_message_lib)
     sign_message_lib = interface.ISignMessageLib(
         registry.eth.gnosis.sign_message_lib, owner=test_msig.address
     )
@@ -24,7 +30,7 @@ def main(proposal="QmXa7do3QR6eC3v4uHzxXMS8ZwNFu9Sztf5KMPBmRpJNhe", choice=2):
         "type": "vote",
         "payload": {
             "proposal": proposal,
-            "choice": choice,
+            "choice": choice,  ##json.dumps(choice_json, separators=(",", ":")),
             "metadata": json.dumps({}),
         },
     }
@@ -33,9 +39,30 @@ def main(proposal="QmXa7do3QR6eC3v4uHzxXMS8ZwNFu9Sztf5KMPBmRpJNhe", choice=2):
 
     hash = messages.defunct_hash_message(text=payload_stringify)
 
-    # seems like the STATICCALL calls the SignMessageLib itself, while
-    # 'to' should be imo test_msig.address
-    # debug internally thru `history[-1].subcalls`
-    sign_message_lib.signMessage(hash)
+    tx_data = sign_message_lib.signMessage.encode_input(hash)
 
-    test_msig.post_safe_tx(skip_preview=True)
+    safe_tx = test_msig.build_multisig_tx(
+        to=registry.eth.gnosis.sign_message_lib, value=0, data=tx_data, operation=1
+    )
+
+    # notify relayer to watch for this tx to be mined so it is included in the snapshot proposal
+    # https://github.com/snapshot-labs/snapshot-relayer/blob/7b656d204ad78fc9c06cedafcb4288aa47775adc/src/api.ts#L36
+    response = requests.post(
+        SNAPSHOT_VOTE_RELAYER,
+        headers=SNAPSHOT_DEFAULT_HEADERS,
+        data=json.dumps(
+            {
+                "address": test_msig.address,
+                "msg": payload,
+                "sig": "0x",
+            }
+        ),
+    )
+
+    if not response.ok:
+        print(f"Error notifying relayer: {response.text}")
+    else:
+        print("Response ID: ", response.id)
+        assert response.id == hash
+
+    test_msig.post_safe_tx(safe_tx_arg=safe_tx, skip_preview=True)
