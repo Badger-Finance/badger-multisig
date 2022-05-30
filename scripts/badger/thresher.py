@@ -104,10 +104,10 @@ def unwind_lps():
             continue
         if label.startswith('crv'):
             try:
-                SAFE.curve.withdraw_to_one_coin(lp, bal_start, SBTC_LP)
+                SAFE.curve.withdraw_to_one_coin(lp, bal_start, WBTC)
             except:
                 try:
-                    SAFE.curve.withdraw_to_one_coin(lp, bal_start, WBTC)
+                    SAFE.curve.withdraw_to_one_coin(lp, bal_start, SBTC_LP)
                 except:
                     try:
                         SAFE.curve.withdraw_to_one_coin(lp, bal_start, THREEPOOL)
@@ -184,9 +184,15 @@ def main():
     dogfood_curve_convex()
 
     # 3: unwind every possible lp (uni, sushi, crv)
+    BIBBTC.withdrawAll()
     unwind_lps()
 
-    # 4: dusty dogfooding of btc variants
-    dogfood_btc()
+    # 4: consolidate btc positions to $wbtc
+    SAFE.curve.withdraw_to_one_coin(
+        SBTC_LP, SBTC_LP.balanceOf(SAFE) * DUSTY, WBTC
+    )
+
+    # 5: unwind xsushi
+    SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
 
     SAFE.post_safe_tx(skip_preview=True)
