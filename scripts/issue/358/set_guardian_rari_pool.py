@@ -7,7 +7,7 @@ def main():
 
     dev_msig.init_rari()
 
-    dev_msig.rari.set_borrow_guardian(registry.eth.guardian)
+    # only set pause guardian
     dev_msig.rari.set_pause_guardian(registry.eth.guardian)
 
     dev_msig.post_safe_tx()
