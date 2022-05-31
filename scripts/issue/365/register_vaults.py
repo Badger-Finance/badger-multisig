@@ -117,9 +117,62 @@ FANTOM_VAULTS = [
   ]
 ]
 
+ARBITRUM_VAULTS = [
+  [
+    '0xe774D1FB3133b037AA17D39165b8F45f444f632d',
+    'v1',
+    'name=wETH/Sushi,protocol=Sushiswap,behavior=None',
+    3
+  ],
+  [
+    '0xFc13209cAfE8fb3bb5fbD929eC9F11a39e8Ac041',
+    'v1',
+    'name=wBTC/wETH,protocol=Sushiswap,behavior=None',
+    3
+  ],
+  [
+    '0xBA418CDdd91111F5c1D1Ac2777Fa8CEa28D71843',
+    'v1',
+    'name=renBTC/wBTC,protocol=Curve,behavior=None',
+    3
+  ],
+  [
+    '0x4591890225394BF66044347653e112621AF7DDeb',
+    'v1',
+    'name=Tricrypto,protocol=Curve,behavior=None',
+    3
+  ],
+  [
+    '0x0c2153e8aE4DB8233c61717cDC4c75630E952561',
+    'v1',
+    'name=Swapr/wETH,protocol=Swapr,behavior=None',
+    3
+  ],
+  [
+    '0xaf9aB64F568149361ab670372b16661f4380e80B',
+    'v1',
+    'name=wBTC/wETH,protocol=Swapr,behavior=None',
+    3
+  ],
+  [
+    '0xE9C12F06F8AFFD8719263FE4a81671453220389c',
+    'v1',
+    'name=Badger/wETH,protocol=Swapr,behavior=None',
+    3
+  ],
+  [
+    '0x60129B2b762952Dfe8b21f40ee8aa3B2A4623546',
+    'v1',
+    'name=ibBTC/wETH,protocol=Swapr,behavior=None',
+    3
+  ]
+]
+
 def get_chain_vaults():
   if chain.id == 250:
     return FANTOM_VAULTS
+  elif chain.id == 42161:
+    return ARBITRUM_VAULTS
 
 def register_vaults():
   for vault in get_chain_vaults():
