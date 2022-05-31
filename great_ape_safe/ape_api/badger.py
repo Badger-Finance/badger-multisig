@@ -6,9 +6,8 @@ from decimal import Decimal
 from brownie import chain, interface, ZERO_ADDRESS
 from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
-# from helpers.constants import AddressZero
 
-from helpers.addresses import get_registry as registry
+from helpers.addresses import r
 from rich.console import Console
 
 
@@ -25,39 +24,29 @@ class Badger():
     def __init__(self, safe):
         self.safe = safe
 
-        contract_registry = registry()
-
         # tokens
-        self.badger = interface.IBadger(
-            contract_registry.treasury_tokens.BADGER,
-            owner=self.safe.account
+        self.badger = self.safe.contract(
+            r.treasury_tokens.BADGER, interface.IBadger
         )
 
         # contracts
-        self.tree = interface.IBadgerTreeV2(
-            contract_registry.badger_wallets.badgertree, owner=self.safe.account
+        self.tree = self.safe.contract(
+            r.badger_wallets.badgertree, interface.IBadgerTreeV2
+        )
+        self.strat_bvecvx = self.safe.contract(
+            r.strategies['native.vestedCVX'], interface.IVestedCvx
+        )
+        self.timelock = self.safe.contract(r.governance_timelock)
+        self.bribes_processor = self.safe.contract(
+            r.bribes_processor, interface.IBribesProcessor
+        )
+        self.registry = self.safe.contract(
+            r.registry, interface.IBadgerRegistry
+        )
+        self.registry_v2 = self.safe.contract(
+            r.registry_v2, interface.IBadgerRegistryV2
         )
 
-        if chain.id == 1:
-            self.strat_bvecvx = interface.IVestedCvx(
-                contract_registry.strategies['native.vestedCVX'],
-                owner=self.safe.account
-            )
-            self.timelock = safe.contract(
-                contract_registry.governance_timelock
-            )
-            self.bribes_processor = interface.IBribesProcessor(
-                contract_registry.bribes_processor, owner=self.safe.account
-            )
-
-        self.registry = interface.IBadgerRegistry(
-            contract_registry.registry, owner=self.safe.account
-        )
-
-        if chain.id == 250:
-            self.registryV2 = interface.IBadgerRegistryV2(
-                contract_registry.registryV2, owner=self.safe.account
-            )
         # misc
         self.api_url = 'https://api.badger.com/v2/'
 
@@ -120,7 +109,7 @@ class Badger():
                     continue
                 try:
                     self.strat_bvecvx.claimBribeFromVotium.call(
-                        registry.eth.votium.multiMerkleStash,
+                        r.votium.multiMerkleStash,
                         token_addr,
                         leaf['index'],
                         self.strat_bvecvx.address,
@@ -141,7 +130,7 @@ class Badger():
                 aggregate['proofs'].append(leaf['proof'])
         if len(aggregate['tokens']) > 0:
             self.strat_bvecvx.claimBribesFromVotium(
-                registry.eth.votium.multiMerkleStash,
+                r.votium.multiMerkleStash,
                 self.strat_bvecvx.address,
                 aggregate['tokens'],
                 aggregate['indexes'],
@@ -275,24 +264,24 @@ class Badger():
         assert controller.strategies(want) == strat_addr
 
     def promote_vault(self, vault_addr, vault_version, vault_metadata, vault_status):
-        self.registryV2.promote(vault_addr, vault_version, vault_metadata, vault_status)
+        self.registry_v2.promote(vault_addr, vault_version, vault_metadata, vault_status)
         C.print(f'Promote: {vault_addr} ({vault_version}) to {vault_status}')
 
     def demote_vault(self, vault_addr, vault_status):
-        self.registryV2.demote(vault_addr, vault_status)
+        self.registry_v2.demote(vault_addr, vault_status)
         C.print(f'Demote: {vault_addr} to {vault_status}')
 
     def update_metadata(self, vault_addr, vault_metadata):
-        self.registryV2.updateMetadata(vault_addr, vault_metadata)
+        self.registry_v2.updateMetadata(vault_addr, vault_metadata)
         C.print(f'Update Metadata: {vault_addr} to {vault_metadata}')
 
     def set_key_on_registry(self, key, target_addr):
         # Ensures key doesn't currently exist
-        assert self.registryV2.get(key) == ZERO_ADDRESS
+        assert self.registry_v2.get(key) == ZERO_ADDRESS
 
-        self.registryV2.set(key, target_addr)
+        self.registry_v2.set(key, target_addr)
 
-        assert self.registryV2.get(key) == target_addr
+        assert self.registry_v2.get(key) == target_addr
         C.print(f'{key} was added to the registry at {target_addr}')
 
     def migrate_key_on_registry(self, key):
@@ -302,7 +291,7 @@ class Badger():
 
     def from_gdigg_to_digg(self, gdigg):
         digg = interface.IUFragments(
-            registry.eth.treasury_tokens.DIGG, owner=self.safe.account
+            r.treasury_tokens.DIGG, owner=self.safe.account
         )
         return Decimal(
             gdigg * digg._initialSharesPerFragment() / digg._sharesPerFragment()
