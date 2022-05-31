@@ -807,6 +807,12 @@ ADDRESSES_FANTOM = {
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "rewardsLogger": "0xaB2F5E2709286aCe1863DF8ee55475482781F68C",
+    "governanceTimelock": "0x5ddE67e4f0abD7a94E99C037A04A1946f9DbaA36",
+    "timelock": "0x5ddE67e4f0abD7a94E99C037A04A1946f9DbaA36",
+    "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
+    "proxyAdminTimelock": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
+    "keeper": "0x0680b32b52C5ca8C731490c0C576337058f39337",
 }
 
 
