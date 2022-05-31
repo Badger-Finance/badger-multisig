@@ -54,7 +54,7 @@ def main(proposal="QmSwrVFfQkgmvRiL2qUssk6XfGjoQs4tTRQPsrJyqCbtbR", choice=2):
         data=json.dumps(
             {
                 "address": test_msig.address,
-                "msg": json.dumps(payload, separators=(",", ":")),
+                "msg": payload_stringify,
                 "sig": "0x",
             },
             separators=(",", ":"),
@@ -67,4 +67,4 @@ def main(proposal="QmSwrVFfQkgmvRiL2qUssk6XfGjoQs4tTRQPsrJyqCbtbR", choice=2):
         print(f"Response ID: {response_id}")
         assert hash.hex() in response_id
 
-    test_msig.post_safe_tx(safe_tx_arg=safe_tx, skip_preview=True)
+    test_msig.post_safe_tx(safe_tx=safe_tx, skip_preview=True)
