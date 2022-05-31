@@ -26,6 +26,10 @@ def migrate_registry_keys():
     while True:
         try:
             key = chain_safe.badger.registry.keys(key_index)
+
+            # smol patchwerk, if we ever need more make a real function
+            if key == 'devGovernance':
+                key = 'techOps'
         except:
             break
         chain_safe.badger.migrate_key_on_registry(key)
