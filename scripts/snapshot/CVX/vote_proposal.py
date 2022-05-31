@@ -54,7 +54,7 @@ def main(proposal="QmSwrVFfQkgmvRiL2qUssk6XfGjoQs4tTRQPsrJyqCbtbR", choice=2):
         data=json.dumps(
             {
                 "address": test_msig.address,
-                "msg": json.dumps(payload, separators=(",", ":")),
+                "msg": payload_stringify,
                 "sig": "0x",
             },
             separators=(",", ":"),
