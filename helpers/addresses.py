@@ -719,6 +719,7 @@ ADDRESSES_ARBITRUM = {
     "proxyAdminTimelock": "0xBA77f65a97433d4362Db5c798987d6f0bD28faA3",
     "KeeperAccessControl": "0x265820F3779f652f2a9857133fDEAf115b87db4B",
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registryV2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 ADDRESSES_BRIDGE = {
