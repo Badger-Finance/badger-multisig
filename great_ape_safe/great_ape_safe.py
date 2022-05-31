@@ -232,7 +232,7 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5, safe_tx_arg=None):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5, safe_tx=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
