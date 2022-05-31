@@ -27,13 +27,16 @@ def migrate_registry_keys():
         try:
             key = chain_safe.badger.registry.keys(key_index)
 
-            # smol patchwerk, if we ever need more make a real function
+            # smol patchwerk, if we ever need more make a real function (manual migration on new key)
             if key == 'devGovernance':
+                value = chain_safe.badger.registry.get(key)
                 key = 'techOps'
+                chain_safe.badger.set_key_on_registry(key, value)
+            else:
+                chain_safe.badger.migrate_key_on_registry(key)
+            key_index += 1
         except:
             break
-        chain_safe.badger.migrate_key_on_registry(key)
-        key_index += 1
 
     # try to simulate tx and see dafuq
     chain_safe.post_safe_tx()
