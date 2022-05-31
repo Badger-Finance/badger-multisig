@@ -168,10 +168,33 @@ ARBITRUM_VAULTS = [
   ]
 ]
 
+POLYGON_VAULTS = [
+  [
+    '0xEa8567d84E3e54B32176418B4e0C736b56378961',
+    'v1',
+    'name=wBTC/ibBTC,protocol=Sushiswap,behavior=None',
+    3
+  ],
+  [
+    '0x6B2d4c4bb50274c5D4986Ff678cC971c0260E967',
+    'v1',
+    'name=wBTC/USDC,protocol=Quickswap,behavior=None',
+    3
+  ],
+  [
+    '0x7B6bfB88904e4B3A6d239d5Ed8adF557B22C10FC',
+    'v1',
+    'name=amWBTC/renBTC,protocol=Curve,behavior=None',
+    3
+  ]
+]
+
 def get_chain_vaults():
   if chain.id == 250:
     return FANTOM_VAULTS
   elif chain.id == 42161:
+    return ARBITRUM_VAULTS
+  elif chain.id == 137:
     return ARBITRUM_VAULTS
 
 def register_vaults():
