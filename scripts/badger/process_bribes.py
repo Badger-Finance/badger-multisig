@@ -11,7 +11,7 @@ COW_PROD = False
 COEF = .9825
 
 # time after which cowswap order expires
-DEADLINE = 60*60*4
+DEADLINE = 60*60*3
 
 SAFE = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 SAFE.init_badger()
