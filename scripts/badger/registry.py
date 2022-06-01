@@ -27,6 +27,11 @@ def migrate_registry_keys():
         'timelock': 'governanceTimelock',
     }
 
+    key_lookups = {
+        'techOps': contract_registry.badger_wallets.techops_multisig,
+        'governanceTimelock': contract_registry.governance_timelock,
+    }
+
     key_set = set()
 
     key_index = 0
@@ -37,8 +42,9 @@ def migrate_registry_keys():
 
             # ignore duplicated sanitized keys, only operate on unique values
             if key not in key_set:
-                # smol patchwerk, if we ever need more make a real function (manual migration on new key)
-                if key in key_replacements:
+                should_replace = key in key_replacements
+                print(f"Migrating new unique key: {key} {'with' if should_replace else 'without'} replacement")
+                if should_replace:
                     value = chain_safe.badger.registry.get(key)
                     key = key_replacements[key]
                     chain_safe.badger.set_key_on_registry(key, value)
@@ -48,7 +54,8 @@ def migrate_registry_keys():
                 key_set.add(key)
 
             key_index += 1
-        except:
+        except Exception as e:
+            print(e)
             break
 
     # try to simulate tx and see dafuq
