@@ -10,7 +10,7 @@ FANTOM_VAULTS = [
   [
     '0xFce6e3115D84c94df98BD286C1C67279dc021361',
     'v1',
-    'name=%F0%9F%91%BBBOO/xBOO,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BB%20BOO/xBOO,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
@@ -64,31 +64,31 @@ FANTOM_VAULTS = [
   [
     '0x60c5A975Bd0511e45D4C9Ae5592c8CA412BE2310',
     'v1',
-    'name=%F0%9F%91%BBWFTM/CRV,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BB%20WFTM/CRV,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x561f4dBaFA71ad05694C7ea1b894b9D99f684281',
     'v1',
-    'name=%F0%9F%91%BBUSDC/MIM,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BB%20USDC/MIM,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x77e803F7d0B6d85731F68CfE1f1CA4c48de105F4',
     'v1',
-    'name=%F0%9F%91%BBWFTM/SCREAM,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BB%20WFTM/SCREAM,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x609A51e13fd0896c0c02f0B642756533b29f36Ab',
     'v1',
-    'name=%F0%9F%91%BBWFTM/renBTC,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BB%20WFTM/renBTC,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x3f96f8cA67AcDE9041AD62125C5a4D062b07872c',
     'v1',
-    'name=%F0%9F%91%BBWFTM/TOMB,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BB%20WFTM/TOMB,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
