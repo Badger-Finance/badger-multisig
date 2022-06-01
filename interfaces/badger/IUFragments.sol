@@ -87,6 +87,12 @@ interface IUFragments {
         view
         returns (uint256);
 
+    function oneTimeMint() external;
+
+    function sweep(address _token) external;
+
+    function toggleRebase() external;
+
     event LogRebase(uint256 indexed epoch, uint256 totalSupply);
     event LogMonetaryPolicyUpdated(address monetaryPolicy);
     event OwnershipRenounced(address indexed previousOwner);
