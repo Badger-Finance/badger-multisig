@@ -11,6 +11,8 @@ DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 TROPS_MSIG = registry.eth.badger_wallets.treasury_ops_multisig
 DIGG_ADDRESS = registry.eth.treasury_tokens["DIGG"]
 
+MINT_AMOUNT = 52942035500
+
 TEST_ADDRESSES = [
     "0xfed1CAe770ca1cD19D7bcC7Fa61d3325A9d5D164",
     "0x03387d5015f88Aea995e790F18eF7FF9dfa0943C",
@@ -91,11 +93,11 @@ def main(queue="true", simulation="false"):
             for address in TEST_ADDRESSES:
                 assert prev_balances[address] == digg.balanceOf(address)
 
-            assert digg.totalSupply() == prev_total_supply + 52942035500
+            assert digg.totalSupply() == prev_total_supply + MINT_AMOUNT
 
             # Trops balance increase
             new_trops_msig_balance = digg.balanceOf(TROPS_MSIG)
-            assert prev_trops_msig_balance + 52942035500 == new_trops_msig_balance
+            assert prev_trops_msig_balance + MINT_AMOUNT == new_trops_msig_balance
 
             # test sweep
             # Note: this test assumes there's a balance of link in the digg contract
@@ -113,12 +115,12 @@ def main(queue="true", simulation="false"):
             # Call oneTimeMint atomically with upgrade execution
             digg.oneTimeMint({"from": safe.account})
             new_trops_msig_balance = digg.balanceOf(TROPS_MSIG)
-            assert prev_trops_msig_balance + 52942035500 == new_trops_msig_balance
+            assert prev_trops_msig_balance + MINT_AMOUNT == new_trops_msig_balance
             # Verify on-chain
             balance_checker.verifyBalance(
                 digg.address, 
                 TROPS_MSIG,
-                prev_trops_msig_balance + 52942035500
+                prev_trops_msig_balance + MINT_AMOUNT
             )
 
 
