@@ -22,6 +22,11 @@ def migrate_registry_keys():
     Migrate badger registry v1 keys on a given chain to badger registry v2
     """
 
+    key_replacements = {
+        'devGovernance': 'techOps',
+        'timelock': 'governanceTimelock',
+    }
+
     key_set = set()
 
     key_index = 0
@@ -33,12 +38,9 @@ def migrate_registry_keys():
             # ignore duplicated sanitized keys, only operate on unique values
             if key not in key_set:
                 # smol patchwerk, if we ever need more make a real function (manual migration on new key)
-                if key == 'devGovernance':
+                if key in key_replacements:
                     value = chain_safe.badger.registry.get(key)
-                    expected_value = contract_registry.badger_wallets.techops_multisig
-                    if value != expected_value:
-                        raise Exception(f"Invalid key value found on {key}: found {value}, expected: {expected_value}")
-                    key = 'techOps'
+                    key = key_replacements[key]
                     chain_safe.badger.set_key_on_registry(key, value)
                 else:
                     chain_safe.badger.migrate_key_on_registry(key)
