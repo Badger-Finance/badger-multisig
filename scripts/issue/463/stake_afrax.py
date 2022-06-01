@@ -5,12 +5,8 @@ FRAX_AMT = 307_373e18
 DAY = 86400
 
 vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
+trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
 
-# tokens involved
-usdc = vault.contract(r.treasury_tokens.USDC)
-usdt = vault.contract(r.treasury_tokens.USDT)
-dai = vault.contract(r.treasury_tokens.DAI)
-frax = vault.contract(r.treasury_tokens.FRAX)
 afrax = vault.contract(r.treasury_tokens.aFRAX)
 
 
@@ -21,18 +17,29 @@ def create_vault():
     vault.post_safe_tx()
 
 
-def stake_in_vault():
-    vault.take_snapshot(tokens=[usdc, usdt, dai, frax, afrax])
+def afrax_sourcing():
+    crv3pool = trops.contract(r.treasury_tokens.crv3pool)
+    frax = trops.contract(r.treasury_tokens.FRAX)
+    dai = trops.contract(r.treasury_tokens.DAI)
 
-    # swap usdc, usdt and dai to get enought FRAX
-    vault.init_curve_v2()
-    vault.curve_v2.swap(usdc, frax, usdc.balanceOf(vault))
-    vault.curve_v2.swap(usdt, frax, usdc.balanceOf(vault))
-    vault.curve_v2.swap(dai, frax, 42_200e18)
+    trops.take_snapshot(tokens=[dai, crv3pool])
+    vault.take_snapshot(tokens=[afrax])
+
+    # swap 3crv -> frax
+    trops.init_curve()
+    trops.curve.withdraw_to_one_coin(crv3pool, FRAX_AMT, dai)
+    trops.curve.swap(crv3pool, frax, FRAX_AMT)
 
     # deposit in aave
-    vault.init_aave()
-    vault.aave.deposit(frax, FRAX_AMT)
+    trops.init_aave()
+    trops.aave.deposit(frax, FRAX_AMT, vault.address)
+
+    vault.print_snapshot()
+    trops.post_safe_tx()
+
+
+def stake_in_vault():
+    vault.take_snapshot(tokens=[afrax])
 
     # deposit in our vault
     vault.init_convex()
