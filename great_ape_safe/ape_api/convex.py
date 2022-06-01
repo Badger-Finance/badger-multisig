@@ -23,6 +23,10 @@ class Convex():
         self.cvx_extra_rewards = interface.ICvxExtraRewards(
             registry.eth.convex.vlCvxExtraRewardDistribution,
             owner=self.safe.account)
+        
+        # frax contract section
+        self.frax_booster = safe.contract(registry.eth.convex.frax.booster)
+        self.frax_pool_registry = safe.contract(registry.eth.convex.frax.pool_registry)
 
 
     def get_pool_info(self, underlying):
@@ -167,3 +171,37 @@ class Convex():
         bal_before = underlying.balanceOf(self.safe)
         self.safe.contract(rewards).withdrawAllAndUnwrap(claim)
         assert underlying.balanceOf(self.safe) > bal_before
+
+
+    def get_pool_pid(self, _staking_token):
+        len = self.frax_pool_registry.poolLength()
+
+        for i in range(len):
+            _, _, staking_token, _, _ = self.frax_pool_registry.poolInfo(i)
+            if _staking_token == staking_token:
+                return i
+
+
+    def get_vault(self, staking_token, owner=None):
+        owner = self.safe.address if not owner else owner
+        pid = self.get_pool_pid(staking_token)
+
+        return self.frax_pool_registry.vaultMap(pid, owner)
+
+
+    def create_vault(self, staking_token):
+        pid = self.get_pool_pid(staking_token)
+        # internally happens the approval of the staking_token for the staking_address
+        # ref: https://github.com/convex-eth/frax-cvx-platform/blob/main/contracts/contracts/StakingProxyERC20.sol#L34
+        self.frax_booster.createVault(pid)
+
+
+    def stake_lock(self, staking_proxy, mantissa, seconds):
+        staking_contract = self.safe.contract(staking_proxy.stakingAddress())
+
+        lock_time_min = staking_contract.lock_time_min()
+        lock_time_for_max_multiplier = staking_contract.lock_time_for_max_multiplier()
+
+        assert seconds >= lock_time_min and seconds <= lock_time_for_max_multiplier
+
+        staking_proxy.stakeLocked(mantissa, seconds)
