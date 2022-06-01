@@ -195,7 +195,7 @@ def get_chain_vaults():
   elif chain.id == 42161:
     return ARBITRUM_VAULTS
   elif chain.id == 137:
-    return ARBITRUM_VAULTS
+    return POLYGON_VAULTS
 
 def register_vaults():
   for vault in get_chain_vaults():
