@@ -12,6 +12,7 @@ ADDRESSES_ETH = {
     "rewardsLogger" : "0x0A4F4e92C3334821EbB523324D09E321a6B0d8ec",
     "EmissionControl": "0x31825c0A6278b89338970e3eB979b05B27FAa263",
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
     "keeperAccessControl": "0x711A339c002386f9db409cA55b6A35a604aB6cF6",
     "guardian": "0x6615e67b8B6b6375D38A0A3f937cd8c1a1e96386",
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
@@ -564,7 +565,7 @@ ADDRESSES_POLYGON = {
     "badger_wallets": {
         "badgertree": "0x2C798FaFd37C7DCdcAc2498e19432898Bc51376b",
         "rewardLogger": "0xd0EE2A5108b8800D688AbC834445fd03b3b2738e",
-        "ops_multisig": "0xeb7341c89ba46CC7945f75Bd5dD7a04f8FA16327",
+        "techops_multisig": "0xeb7341c89ba46CC7945f75Bd5dD7a04f8FA16327",
         "dev_multisig": "0x4977110Ed3CD5eC5598e88c8965951a47dd4e738",
     },
     "treasury_tokens": {
