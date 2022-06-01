@@ -47,6 +47,8 @@ def migrate_registry_keys():
                 if should_replace:
                     value = chain_safe.badger.registry.get(key)
                     key = key_replacements[key]
+                    if key in key_lookups:
+                        value = key_lookups[key]
                     chain_safe.badger.set_key_on_registry(key, value)
                 else:
                     chain_safe.badger.migrate_key_on_registry(key)
