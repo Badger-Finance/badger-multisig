@@ -563,7 +563,7 @@ ADDRESSES_POLYGON = {
     "badger_wallets": {
         "badgertree": "0x2C798FaFd37C7DCdcAc2498e19432898Bc51376b",
         "rewardLogger": "0xd0EE2A5108b8800D688AbC834445fd03b3b2738e",
-        "ops_multisig": "0xeb7341c89ba46CC7945f75Bd5dD7a04f8FA16327",
+        "techops_multisig": "0xeb7341c89ba46CC7945f75Bd5dD7a04f8FA16327",
         "dev_multisig": "0x4977110Ed3CD5eC5598e88c8965951a47dd4e738",
     },
     "treasury_tokens": {
