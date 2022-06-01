@@ -1,5 +1,6 @@
 import pandas as pd
 
+from brownie import chain
 from dotmap import DotMap
 from web3 import Web3
 import json
@@ -18,6 +19,7 @@ ADDRESSES_ETH = {
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
+        "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
     },
     "bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
@@ -63,6 +65,7 @@ ADDRESSES_ETH = {
         # "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
+        # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
         "ops_guardian": "0x29F7F8896Fb913CF7f9949C623F896a154727919",
         "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
         "OLD_root-validator": "0x626f69162ea1556a75dd4443d87d2fe38dd25901",
@@ -167,6 +170,7 @@ ADDRESSES_ETH = {
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
         "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
         "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
+        "LINK": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -288,7 +292,7 @@ ADDRESSES_ETH = {
         "StrategyCvxHelper": "0x9A12A9141363A5B343B781c4951d42E327B89397", # V1.1
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
-        "native.vestedCVX": "0x57961a757bA249E616c1940548401b7CdF83a849", # V1.7
+        "native.vestedCVX": "0x86ca553D5Ae7cD0005552D6E275786D5043800Bd", # V1.7.1 - Change bribes processor address
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h_V1": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
@@ -324,7 +328,6 @@ ADDRESSES_ETH = {
     },
     "helpers": {
         "balance_checker": "0xe92261c2D64C363109c36a754A87107142e61b72",
-        "chainlink_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
     },
     "rari": {
         "unitroller": "0xe3952d770FB26CC61877CD34Fbc3A3750881e9A1",
@@ -451,11 +454,21 @@ ADDRESSES_ETH = {
         "B_20_BTC_80_BADGER_GAUGE": "0xAF50825B010Ae4839Ac444f6c12D44b96819739B",
         "B_20_BTC_80_BADGER": "0xb460DAa847c45f1C4a41cb05BFB3b51c92e41B36",
         "B_3POOL": "0x06Df3b2bbB68adc8B0e302443692037ED9f91b42",
+        "B_80_BAL_20_WETH": "0x5c6ee304399dbdb9c8ef030ab642b10820db8f56",
+        "veBAL": "0xC128a9954e6c874eA3d62ce62B468bA073093F25"
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
         "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
+    },
+    "chainlink": {
+        "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
+        "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
+        "upkeep_registration_requests": "0x09B1de9Ecf6600FD44e1cB1b46DF6B520f33ec6d",
+    },
+    "across_bridge": {
+        "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534",
     },
 }
 
@@ -584,6 +597,7 @@ ADDRESSES_POLYGON = {
         "whitelist": "0x44a0487656420FDc15f9CA76dd95F3b8a2ef0Baa",
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 ADDRESSES_ARBITRUM = {
@@ -629,8 +643,16 @@ ADDRESSES_ARBITRUM = {
         "native.DXSIbbtcWeth": "0x4AeC063BB5322c9d4c1f46572f432aaE3b78b87c",
     },
     "logic": {
-        "native.renCrv": "0x2eE1E845b601371608b6bA4a4665180dE3b14C85",
-        "native.tricrypto": "0xd64E77C7C6A1dcC7e302F8fe31A22745e223c39c",
+        "native.renCrv": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C", # v1.1
+        "native.tricrypto": "0x4Da27cD2AE34a9E1776Ed01747A071C17Fa0b2Cf", # v1.1
+        "_deprecated": {
+            "native.renCrv": {
+                "v1": "0x2eE1E845b601371608b6bA4a4665180dE3b14C85",
+            },
+            "native.tricrypto": {
+                "v1": "0xd64E77C7C6A1dcC7e302F8fe31A22745e223c39c",
+            },
+        }
     },
     "treasury_tokens": {
         "BADGER" : "0xbfa641051ba0a0ad1b0acf549a89536a0d76472e",
@@ -682,10 +704,10 @@ ADDRESSES_ARBITRUM = {
         "bDXSWbtcWeth": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
     },
     "swapr_staking_contracts": {
-        "native.DXSSwaprWeth": "0xd090a6b7651d9E51FE4D25c6756623613FdB7950",
-        "native.DXSWbtcWeth": "0xbe7Dbb01E87f4faD154B8AB36125181f32A96B2c",
-        "native.DXSBadgerWeth": "0x0E84da346a2c439970857981f580D664265eBCf0",
-        "native.DXSIbbtcWeth": "0xd1D9210C74deF67eD6D9652552dE77B12C62c00b",
+        "native.DXSSwaprWeth": "0x0934e27Eea82f720166eC37214C07e6777511D27",
+        "native.DXSWbtcWeth": "0x7d5Fb4C81df4115B2e4bB84e36cda8bE7aDF9B4F",
+        "native.DXSBadgerWeth": "0x42EcF352216b4Be82331123dbCee60447c91b70F",
+        "native.DXSIbbtcWeth": "0x13a22d37Dee5D6C99D4a36F50C2fD274F73Df21c",
     },
     "sushi": {
         "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
@@ -701,6 +723,7 @@ ADDRESSES_ARBITRUM = {
     "proxyAdminTimelock": "0xBA77f65a97433d4362Db5c798987d6f0bD28faA3",
     "KeeperAccessControl": "0x265820F3779f652f2a9857133fDEAf115b87db4B",
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 ADDRESSES_BRIDGE = {
@@ -720,6 +743,13 @@ ADDRESSES_RINKEBY = {
     "badger_wallets": {
         "rinkeby_multisig": "0x6b11a8B734C3eeFd41Ff7b0e2D15F2b0F46D336b",
         "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
+        "gas_station": "0x747a4c9073B68AE16A29e65f4b95C9bbEa1E19cD",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
+        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
+        "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
     },
     "treasury_tokens": {
         "WBTC": "0x577D296678535e4903D59A4C929B718e1D575e0A",
@@ -733,10 +763,14 @@ ADDRESSES_RINKEBY = {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
         "settlement": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
     },
+    "chainlink": {
+        "keeper_registry": "0x409CF388DaB66275dA3e44005D182c12EeAa12A0",
+    },
 }
 
 ADDRESSES_FANTOM = {
     "badger_wallets": {
+        "badgertree": "0x89122c767a5f543e663db536b603123225bc3823",
         "dev_multisig": "0x4c56ee3295042f8A5dfC83e770a21c707CB46f5b",
         "techops_multisig": "0x781E82D5D49042baB750efac91858cB65C6b0582",
         "treasury_ops_multisig": "0xf109c50684EFa12d4dfBF501eD4858F25A4300B3",
@@ -759,6 +793,7 @@ ADDRESSES_FANTOM = {
         "WETH": "0x74b23882a30290451A17c44f4F05243b6b58C76d",
         "USDC": "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
         "OXD": "0xc5A9848b9d145965d821AaeC8fA32aaEE026492d",
+        "BADGER": "0x753fbc5800a8c8e3fb6dc6415810d627a387dfc9",
     },
     "lp_tokens": {
         "bveOXD-OXD": "0x6519546433dCB0a34A0De908e1032c46906EF664"
@@ -774,7 +809,14 @@ ADDRESSES_FANTOM = {
     "spookyswap": {
         "router": "0xF491e7B69E4244ad4002BC14e878a34207E38c29",
         "factory": "0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3"
-    }
+    },
+    "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "rewardsLogger": "0xaB2F5E2709286aCe1863DF8ee55475482781F68C",
+    "governance_timelock": "0x5ddE67e4f0abD7a94E99C037A04A1946f9DbaA36",
+    "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
+    "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
+    "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
 }
 
 
@@ -807,6 +849,22 @@ registry = DotMap({
     "rinkeby": checksum_address_dict(ADDRESSES_RINKEBY),
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
 })
+
+
+def get_registry():
+    if chain.id == 1:
+        return registry.eth
+    elif chain.id == 137:
+        return registry.poly
+    elif chain.id == 56:
+        return registry.bsc
+    elif chain.id == 42161:
+        return registry.arbitrum
+    elif chain.id == 250:
+        return registry.ftm
+
+
+r = get_registry()
 
 # flatten nested dicts and invert the resulting key <-> value
 # this allows for reversed lookup of an address

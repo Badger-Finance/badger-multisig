@@ -7,11 +7,12 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions
+from brownie import Contract, network, ETH_ADDRESS, exceptions, web3
+from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
-from helpers.chaindata import labels
+from web3.exceptions import BadFunctionCallOutput
 
 from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.anyswap import Anyswap
@@ -30,6 +31,7 @@ from great_ape_safe.ape_api.spookyswap import SpookySwap
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from great_ape_safe.ape_api.uni_v3 import UniV3
+from helpers.chaindata import labels
 
 
 C = Console()
@@ -50,7 +52,6 @@ class GreatApeSafe(ApeSafe):
 
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
-
 
     def init_all(self):
         for method in self.__dir__():
@@ -280,3 +281,24 @@ class GreatApeSafe(ApeSafe):
             safe_tx = self.pending_transactions[0]
         pprint(safe_tx.__dict__)
         self.execute_transaction_with_frame(safe_tx)
+
+
+    def contract(self, address, Interface=None, from_explorer=False):
+        # instantiate a brownie contract, either from an interface, the
+        # explorer or locally saved contract object. if address is somehow
+        # invalid, return None.
+        if is_address(address):
+            address = to_checksum_address(address)
+        else:
+            try:
+                address = web3.ens.resolve(address)
+            except BadFunctionCallOutput:
+                return None
+        if not is_address(address):
+            return None
+        if Interface:
+            return Interface(address, owner=self.account)
+        elif from_explorer:
+            return Contract.from_explorer(address, owner=self.account)
+        else:
+            return Contract(address, owner=self.account)

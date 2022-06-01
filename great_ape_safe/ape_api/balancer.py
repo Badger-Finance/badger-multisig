@@ -2,7 +2,7 @@ from decimal import Decimal
 import requests
 import json
 
-from brownie import ZERO_ADDRESS, Contract
+from brownie import ZERO_ADDRESS, Contract, chain, web3
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
@@ -18,17 +18,20 @@ class Balancer():
         # contracts
         self.vault = safe.contract(registry.eth.balancer.vault)
         self.gauge_factory = safe.contract(registry.eth.balancer.gauge_factory)
+        self.vebal = safe.contract(registry.eth.balancer.veBAL)
+        self.wallet_checker = safe.contract(self.vebal.smart_wallet_checker())
         # parameters
         self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000) # USD
         self.dusty = 0.995
+        self.deadline = 60 * 60 * 12
         # misc
         self.subgraph = 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
 
 
     def get_amount_out(self, asset_in, asset_out, amount_in, pool=None):
         # https://dev.balancer.fi/references/contracts/apis/the-vault#querybatchswap
-        underlyings = sorted([asset_in.address, asset_out.address])
+        underlyings = self.order_tokens([asset_in.address, asset_out.address])
         if not pool:
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
@@ -92,11 +95,30 @@ class Balancer():
         return match
 
 
-    def order_tokens(self, underlyings, mantissas):
+    def find_best_pool_for_swap(self, asset_in, asset_out):
+        # find pools that contain swap assets and return the one with most liq
+        pool_data = self.get_pool_data()
+        valid_pools = {}
+        for pool in pool_data:
+            tokens = [Web3.toChecksumAddress(x['address']) for x in pool['tokens']]
+            if asset_in in tokens and asset_out in tokens:
+                valid_pools[pool['id']] = pool['totalLiquidity']
+        if len(valid_pools) > 0:
+            return max(valid_pools, key=valid_pools.get)
+        raise Exception('no pool found for swap')
+
+
+    def order_tokens(self, underlyings, mantissas=None):
         # helper function to order tokens/amounts numerically
-        tokens = dict(zip(underlyings, mantissas))
-        sorted_tokens = dict(sorted(tokens.items()))
-        return zip(*sorted_tokens.items())
+        if mantissas:
+            tokens = dict(zip([x.lower() for x in underlyings], mantissas))
+            sorted_tokens = dict(sorted(tokens.items()))
+            sorted_underlyings, sorted_mantissas = zip(*sorted_tokens.items())
+            underlyings_checksummed = [Web3.toChecksumAddress(x) for x in sorted_underlyings]
+            return underlyings_checksummed, sorted_mantissas
+        else:
+            sorted_tokens = sorted([x.lower() for x in underlyings])
+            return [Web3.toChecksumAddress(x) for x in sorted_tokens]
 
 
     def pool_type(self, pool_id):
@@ -112,6 +134,7 @@ class Balancer():
                 elif weight == '0':
                     return 'Stable'
                 return 'Weighted'
+        raise Exception('pool not found')
 
 
     def deposit_and_stake(
@@ -121,7 +144,7 @@ class Balancer():
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#token-ordering
         underlyings, mantissas = \
-            self.order_tokens([x.address for x in underlyings], mantissas)
+            self.order_tokens([x.address for x in underlyings], mantissas=mantissas)
 
         if pool:
             pool_id = pool.getPoolId()
@@ -227,17 +250,31 @@ class Balancer():
         assert balance_delta > 0
 
         if stake:
-            gauge_address = self.gauge_factory.getPoolGauge(pool)
+            self.stake_all(pool, destination, dusty=True)
 
-            if gauge_address == ZERO_ADDRESS:
-                raise Exception(f'no gauge for {pool_id}')
 
-            gauge = self.safe.contract(gauge_address)
-            balance_before = gauge.balanceOf(self.safe)
-            pool.approve(gauge, balance_delta)
-            gauge.deposit(balance_delta * self.dusty, destination)
+    def stake(self, pool, mantissa, destination=None, dusty=False):
+        pool_id = pool.getPoolId()
+        destination = self.safe if not destination else destination
+        gauge_address = self.gauge_factory.getPoolGauge(pool)
 
-            assert gauge.balanceOf(destination) > balance_before
+        if gauge_address == ZERO_ADDRESS:
+            raise Exception(f'no gauge for {pool_id}')
+
+        gauge = self.safe.contract(gauge_address)
+        gauge_balance_before = gauge.balanceOf(destination)
+        pool.approve(gauge, mantissa)
+        if dusty:
+            gauge.deposit(mantissa * self.dusty, destination)
+        else:
+            gauge.deposit(mantissa, destination)
+        assert gauge.balanceOf(destination) > gauge_balance_before
+
+
+    def stake_all(self, pool, destination=None, dusty=False):
+        destination = self.safe if not destination else destination
+        mantissa = pool.balanceOf(destination)
+        self.stake(pool, mantissa, destination, dusty)
 
 
     def unstake_all_and_withdraw_all(
@@ -247,7 +284,7 @@ class Balancer():
             raise TypeError('must provide either underlyings or pool')
 
         if underlyings:
-            underlyings = sorted([x.address for x in underlyings])
+            underlyings = self.order_tokens([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
         else:
@@ -304,7 +341,7 @@ class Balancer():
             raise TypeError('must provide either underlyings or pool')
 
         if underlyings:
-            underlyings = sorted([x.address for x in underlyings])
+            underlyings = self.order_tokens([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
         else:
@@ -383,7 +420,7 @@ class Balancer():
     def claim_all(self, underlyings=None, pool=None):
         # claim reward token from pool's gauge given `underlyings` or `pool`
         if underlyings:
-            underlyings = sorted([x.address for x in underlyings])
+            underlyings = self.order_tokens([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
 
@@ -401,3 +438,93 @@ class Balancer():
             [Contract(gauge.reward_tokens(x)).balanceOf(self.safe) for x in range(reward_count)]
 
         assert all([x > y for x, y in zip(balances_after, balances_before)])
+
+
+    def swap(self, asset_in, asset_out, mantissa_in, pool=None, destination=None):
+        destination = self.safe if not destination else destination
+        if pool:
+            pool_id = pool.getPoolId()
+        else:
+            pool_id = self.find_best_pool_for_swap(asset_in.address, asset_out.address)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+
+        swap_kind = 0 # 0 = GIVEN_IN, 1 = GIVEN_OUT
+        user_data_encoded = eth_abi.encode_abi(['uint256'], [0])
+        min_out = self.get_amount_out(asset_in, asset_out, mantissa_in, pool=pool) * (1 - self.max_slippage)
+
+        swap_settings = (
+            pool_id,
+            swap_kind,
+            asset_in.address,
+            asset_out.address,
+            mantissa_in,
+            user_data_encoded
+        )
+
+        fund_settings = (
+            self.safe.address, # sender
+            False, # fromInternalBalance
+            destination.address, # recipient
+            False, # toInternalBalance
+        )
+
+        asset_in.approve(self.vault, mantissa_in)
+        before_balance_out = asset_out.balanceOf(destination)
+
+        self.vault.swap(
+            swap_settings,
+            fund_settings,
+            min_out,
+            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline
+        )
+
+        assert asset_out.balanceOf(destination) >= before_balance_out + min_out
+
+
+    def lock_bal(self, mantissa_bal=None, mantissa_weth=None, mantisssa_bpt=None, lock_days=365):
+        '''
+        if given `mantisssa_bpt` just lock bpt
+        if given only `mantissa_bal` swap 20% for weth, deposit and lock
+        if given only `mantissa_bal` and `mantissa_weth`, deposit and lock
+        '''
+        if not self.wallet_checker.check(self.safe):
+            raise Exception('Safe is not whitelisted')
+
+        if lock_days < 7:
+            raise Exception('min lock_days is 7')
+
+        bpt = self.safe.contract(self.vebal.token())
+        weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
+        bal = self.safe.contract(registry.eth.treasury_tokens.BAL)
+
+        swapping = not mantisssa_bpt and not mantissa_weth
+        before_bal = bal.balanceOf(self.safe)
+        before_weth = weth.balanceOf(self.safe) if swapping else 0
+
+        if swapping:
+            swap_mantissa = int(mantissa_bal / 5)
+            self.swap(bal, weth, swap_mantissa)
+
+        after_bal = before_bal - swap_mantissa if swapping else before_bal
+        after_weth = weth.balanceOf(self.safe) - before_weth
+
+        depositing = not mantisssa_bpt
+        before_bpt = bpt.balanceOf(self.safe)
+
+        if depositing:
+            underlyings = [bal, weth]
+            amounts = [int(after_bal * self.dusty), int(after_weth * self.dusty)]
+            self.deposit_and_stake(underlyings, amounts, pool=bpt, stake=False)
+
+        day = 86400
+        week = day * 7
+        unlock_time = ((chain.time() + day * lock_days) // week) * week
+
+        after_bpt = ((bpt.balanceOf(self.safe) - before_bpt) * self.dusty
+                        if depositing else mantisssa_bpt)
+
+        bpt.approve(self.vebal, after_bpt)
+
+        self.vebal.create_lock(after_bpt, unlock_time)
+
+        assert bpt.balanceOf(self.safe) < after_bpt
