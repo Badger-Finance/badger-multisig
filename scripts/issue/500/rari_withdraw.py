@@ -6,7 +6,7 @@ from brownie import interface
 safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 
 
-def withdraw_udsc():
+def withdraw_usdc():
     fusdc = interface.IFToken(registry.eth.rari['fUSDC-22'], owner=safe.account)
 
     amount_fusdc = int(fusdc.balanceOf(safe) * 0.75)
