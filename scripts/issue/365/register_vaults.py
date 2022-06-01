@@ -10,7 +10,7 @@ FANTOM_VAULTS = [
   [
     '0xFce6e3115D84c94df98BD286C1C67279dc021361',
     'v1',
-    'name=%F0%9F%91%BB%20BOO/xBOO,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BBBOO/xBOO,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
@@ -64,31 +64,31 @@ FANTOM_VAULTS = [
   [
     '0x60c5A975Bd0511e45D4C9Ae5592c8CA412BE2310',
     'v1',
-    'name=%F0%9F%91%BB%20WFTM/CRV,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BBWFTM/CRV,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x561f4dBaFA71ad05694C7ea1b894b9D99f684281',
     'v1',
-    'name=%F0%9F%91%BB%20USDC/MIM,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BBUSDC/MIM,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x77e803F7d0B6d85731F68CfE1f1CA4c48de105F4',
     'v1',
-    'name=%F0%9F%91%BB%20WFTM/SCREAM,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BBWFTM/SCREAM,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x609A51e13fd0896c0c02f0B642756533b29f36Ab',
     'v1',
-    'name=%F0%9F%91%BB%20WFTM/renBTC,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BBWFTM/renBTC,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
     '0x3f96f8cA67AcDE9041AD62125C5a4D062b07872c',
     'v1',
-    'name=%F0%9F%91%BB%20WFTM/TOMB,protocol=Solidex,behavior=Ecosystem',
+    'name=%F0%9F%91%BBWFTM/TOMB,protocol=Solidex,behavior=Ecosystem',
     0
   ],
   [
@@ -301,7 +301,7 @@ ETHEREUM_VAULTS = [
   [
     '0x2B5455aac8d64C14786c3a29858E43b5945819C0',
     'v1',
-    'name=cvxCRV,protocol=Convex,behavior=None',
+    'name=cvxCRV,protocol=Convex,behavior=Ecosystem Helper',
     3
   ],
   [
@@ -337,25 +337,25 @@ ETHEREUM_VAULTS = [
   [
     '0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551',
     'v1',
-    'name=CVX%20/%20bveCVX,protocol=Curve,behavior=None',
+    'name=CVX/bveCVX,protocol=Curve,behavior=None',
     3
   ],
   [
     '0xaE96fF08771a109dc6650a1BdCa62F2d558E40af',
     'v1',
-    'name=ibBTC%20/%20crvsBTC,protocol=Convex,behavior=None',
+    'name=ibBTC/crvsBTC,protocol=Convex,behavior=None',
     3
   ],
   [
     '0x19E4d89e0cB807ea21B8CEF02df5eAA99A110dA5',
     'v1',
-    'name=MIM%20/%203CRV,protocol=Convex,behavior=None',
+    'name=MIM/3CRV,protocol=Convex,behavior=None',
     0
   ],
   [
     '0x15cBC4ac1e81c97667780fE6DAdeDd04a6EEB47B',
     'v1',
-    'name=FRAX%20/%203CRV,protocol=Convex,behavior=None',
+    'name=FRAX/3CRV,protocol=Convex,behavior=None',
     0
   ],
   [
@@ -367,7 +367,7 @@ ETHEREUM_VAULTS = [
   [
     '0xeC1c717A3b02582A4Aa2275260C583095536b613',
     'v1',
-    'name=BADGER%20/%20WBTC,protocol=Convex,behavior=None',
+    'name=BADGER/WBTC,protocol=Convex,behavior=None',
     0
   ]
 ]
