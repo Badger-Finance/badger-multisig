@@ -31,4 +31,6 @@ def withdraw_wbtc():
         to=registry.fwbtc.address, value=0, data=tx_data, operation=1
     )
 
+    from rich.pretty import pprint
+    pprint(safe_tx.__dict__)
     safe.post_transaction(safe_tx)
