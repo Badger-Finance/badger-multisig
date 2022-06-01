@@ -594,6 +594,7 @@ ADDRESSES_POLYGON = {
         "whitelist": "0x44a0487656420FDc15f9CA76dd95F3b8a2ef0Baa",
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 ADDRESSES_ARBITRUM = {
@@ -719,6 +720,7 @@ ADDRESSES_ARBITRUM = {
     "proxyAdminTimelock": "0xBA77f65a97433d4362Db5c798987d6f0bD28faA3",
     "KeeperAccessControl": "0x265820F3779f652f2a9857133fDEAf115b87db4B",
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
 }
 
 ADDRESSES_BRIDGE = {
@@ -807,6 +809,11 @@ ADDRESSES_FANTOM = {
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "rewardsLogger": "0xaB2F5E2709286aCe1863DF8ee55475482781F68C",
+    "governance_timelock": "0x5ddE67e4f0abD7a94E99C037A04A1946f9DbaA36",
+    "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
+    "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
+    "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
 }
 
 
