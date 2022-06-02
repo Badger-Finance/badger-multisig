@@ -3,7 +3,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from brownie import accounts, interface
 from rich.console import Console
-import brownie
+from brownie.test.managers.runner import RevertContextManager as reverts
 
 C = Console()
 
@@ -104,11 +104,8 @@ def main(queue="true", simulation="false"):
             # Toggle Rebase
             monetary_policy = accounts.at(MONETARY_POLICY, force=True)
             digg.toggleRebase()
-            # Can't check for reverts outside of brownie testing env
-            try:
+            with reverts('Rebase paused'):
                 digg.rebase(100, 50, {"from": monetary_policy})
-            except:
-                C.print("Rebase paused!")
 
 
             # test sweep
