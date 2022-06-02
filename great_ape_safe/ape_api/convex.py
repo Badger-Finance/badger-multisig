@@ -3,7 +3,7 @@ from brownie import interface
 from helpers.addresses import registry
 
 
-class VaulTypes:
+class VaultTypes:
     VAFRAX = 0
     UNIV2_TEMPLE = 1
     AFRAX = 2
@@ -206,7 +206,7 @@ class Convex():
     def stake_lock(self, staking_token, mantissa, seconds):
         pid = self.get_pool_pid(staking_token)
 
-        if pid == VaulTypes.AFRAX:
+        if pid == VaultTypes.AFRAX:
             staking_proxy = self.safe.contract(self.get_vault(staking_token))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
 
@@ -229,7 +229,7 @@ class Convex():
     def withdraw_locked(self, staking_token, kek_id):
         pid = self.get_pool_pid(staking_token)
 
-        if pid == VaulTypes.AFRAX:
+        if pid == VaultTypes.AFRAX:
             staking_proxy = self.safe.contract(self.get_vault(staking_token))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
 
