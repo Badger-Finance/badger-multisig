@@ -3,6 +3,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from brownie import accounts, interface
 from rich.console import Console
+import brownie
 
 C = Console()
 
@@ -10,6 +11,7 @@ NEW_LOGIC = registry.eth.logic["uFragments"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 TROPS_MSIG = registry.eth.badger_wallets.treasury_ops_multisig
 DIGG_ADDRESS = registry.eth.treasury_tokens["DIGG"]
+MONETARY_POLICY = registry.eth.digg_monetary_policy
 
 MINT_AMOUNT = 52942035500
 
@@ -99,13 +101,23 @@ def main(queue="true", simulation="false"):
             new_trops_msig_balance = digg.balanceOf(TROPS_MSIG)
             assert prev_trops_msig_balance + MINT_AMOUNT == new_trops_msig_balance
 
+            # Toggle Rebase
+            monetary_policy = accounts.at(MONETARY_POLICY, force=True)
+            digg.toggleRebase()
+            # Can't check for reverts outside of brownie testing env
+            try:
+                digg.rebase(100, 50, {"from": monetary_policy})
+            except:
+                C.print("Rebase paused!")
+
+
             # test sweep
             # Note: this test assumes there's a balance of link in the digg contract
             link = interface.IERC20(registry.eth.treasury_tokens["LINK"])
             prev_balance = link.balanceOf(digg)
             dev_prev_balance = link.balanceOf(safe.account)
             assert prev_balance > 0
-            digg.sweep(link.address, {"from": safe.account})
+            digg.sweep(link.address)
             assert link.balanceOf(digg) == 0
             assert link.balanceOf(safe.account) == dev_prev_balance + prev_balance
 
@@ -113,7 +125,7 @@ def main(queue="true", simulation="false"):
 
         else:
             # Call oneTimeMint atomically with upgrade execution
-            digg.oneTimeMint({"from": safe.account})
+            digg.oneTimeMint()
             new_trops_msig_balance = digg.balanceOf(TROPS_MSIG)
             assert prev_trops_msig_balance + MINT_AMOUNT == new_trops_msig_balance
             # Verify on-chain
@@ -123,5 +135,7 @@ def main(queue="true", simulation="false"):
                 prev_trops_msig_balance + MINT_AMOUNT
             )
 
+            # Call toggleRebase atomically with upgrade execution
+            digg.toggleRebase()
 
     safe.post_safe_tx(post=(simulation!="true"))

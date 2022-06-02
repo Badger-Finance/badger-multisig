@@ -22,6 +22,7 @@ ADDRESSES_ETH = {
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
     },
     "bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
+    "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
