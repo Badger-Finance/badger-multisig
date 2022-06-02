@@ -28,7 +28,7 @@ def afrax_sourcing():
     # swap 3crv -> frax
     trops.init_curve()
     trops.curve.withdraw_to_one_coin(crv3pool, FRAX_AMT, dai)
-    trops.curve.swap(crv3pool, frax, FRAX_AMT)
+    trops.curve.swap(dai, frax, FRAX_AMT)
 
     # deposit in aave
     trops.init_aave()
