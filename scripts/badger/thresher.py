@@ -16,6 +16,9 @@ BIBBTC = interface.ISettV4h(
 )
 IBBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvIbBTC)
 IBBTC = interface.ERC20(registry.eth.treasury_tokens.ibBTC, owner=SAFE.account)
+WIBBTC = interface.IWrappedIbbtcEth(
+    registry.eth.treasury_tokens.wibBTC, owner=SAFE.account
+)
 SBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvSBTC)
 YVWBTC = SAFE.contract(registry.eth.treasury_tokens.yvWBTC)
 BYVWBTC = SAFE.contract(registry.eth.yearn_vaults.byvWBTC)
@@ -121,11 +124,14 @@ def unwind_lps():
         YVWBTC.withdraw()
 
 
-def dogfood_btc():
-    # zap ibbtc, renbtc, wbtc and sbtc into the ibbtc_lp
+def consolidate_to_wbtc():
+    # unwrap wibbtc
+    WIBBTC.burn(WIBBTC.balanceToShares(WIBBTC.balanceOf(SAFE)))
+
+    # zap ibbtc, renbtc and sbtc into the ibbtc_lp
     dep_ibbtc = IBBTC.balanceOf(SAFE) * DUSTY
     dep_renbtc = RENBTC.balanceOf(SAFE) * DUSTY
-    dep_wbtc = WBTC.balanceOf(SAFE) * DUSTY
+    dep_wbtc = 0
     dep_sbtc = SBTC.balanceOf(SAFE) * DUSTY
     expected = ZAP.calc_token_amount(
         IBBTC_LP,
@@ -146,15 +152,13 @@ def dogfood_btc():
         expected * SLIPPAGE
     )
 
-    # deposit sbtc_lp directly into ibbtc_lp
-    if SBTC_LP.balanceOf(SAFE) > 0:
-        SAFE.curve.deposit(IBBTC_LP, [0, SBTC_LP.balanceOf(SAFE) * DUSTY])
-
-    # finally dogfood all into our own ibbtc sett
-    if IBBTC_LP.balanceOf(SAFE) > 0:
-        IBBTC_LP.approve(BIBBTC, 2**256-1)
-        BIBBTC.depositAll()
-        IBBTC_LP.approve(BIBBTC, 0)
+    # withdraw the ibbtc_lp to sbtc_lp and withdraw the sbtc_lp to wbtc
+    SAFE.curve.withdraw_to_one_coin(
+        IBBTC_LP, IBBTC_LP.balanceOf(SAFE) * DUSTY, SBTC_LP
+    )
+    SAFE.curve.withdraw_to_one_coin(
+        SBTC_LP, SBTC_LP.balanceOf(SAFE) * DUSTY, WBTC
+    )
 
 
 def main():
@@ -162,7 +166,7 @@ def main():
     drive around the farm with the thresher and turn all yield and fees into
     an asset worthy of the treasury vault:
     - badger, digg
-    - bibbtc
+    - wbtc
     - weth
     - 3pool
     - bvecvx, bcvxcrv
@@ -188,9 +192,7 @@ def main():
     unwind_lps()
 
     # 4: consolidate btc positions to $wbtc
-    SAFE.curve.withdraw_to_one_coin(
-        SBTC_LP, SBTC_LP.balanceOf(SAFE) * DUSTY, WBTC
-    )
+    consolidate_to_wbtc()
 
     # 5: unwind xsushi
     SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
