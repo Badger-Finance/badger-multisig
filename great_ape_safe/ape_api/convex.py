@@ -196,7 +196,8 @@ class Convex():
         self.frax_booster.createVault(pid)
 
 
-    def stake_lock(self, staking_proxy, mantissa, seconds):
+    def stake_lock(self, staking_token, mantissa, seconds):
+        staking_proxy = self.safe.contract(self.get_vault(staking_token))
         staking_contract = self.safe.contract(staking_proxy.stakingAddress())
 
         lock_time_min = staking_contract.lock_time_min()
@@ -204,4 +205,33 @@ class Convex():
 
         assert seconds >= lock_time_min and seconds <= lock_time_for_max_multiplier
 
+        initial_locked_liq = staking_contract.lockedLiquidityOf(self.safe)
+
+        # kek_id is returned: https://etherscan.io/address/0x02577b426f223a6b4f2351315a19ecd6f357d65c#code#L2466
+        # but depends on block.timestamp, so not much value tracking it on the return
         staking_proxy.stakeLocked(mantissa, seconds)
+
+        assert staking_contract.lockedLiquidityOf(self.safe) > initial_locked_liq
+
+
+    def withdraw_locked(self, staking_token, kek_id):
+        staking_proxy = self.safe.contract(self.get_vault(staking_token))
+        staking_contract = self.safe.contract(staking_proxy.stakingAddress())
+
+        rewards = staking_contract.getAllRewardTokens()
+
+        balances_rewards_before = [
+            self.safe.contract(reward).balanceOf(self.safe) for reward in rewards
+        ]
+
+        balance_staking_token_before = staking_token.balanceOf(self.safe)
+
+        staking_proxy.withdrawLocked(kek_id)
+
+        assert staking_token.balanceOf(self.safe) > balance_staking_token_before
+
+        for idx, reward in enumerate(rewards):
+            assert (
+                self.safe.contract(reward).balanceOf(self.safe)
+                > balances_rewards_before[idx]
+            )

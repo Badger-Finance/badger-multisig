@@ -43,7 +43,6 @@ def stake_in_vault():
 
     # deposit in our vault
     vault.init_convex()
-    convex_vault = vault.contract(vault.convex.get_vault(afrax))
-    vault.convex.stake_lock(convex_vault, afrax.balanceOf(vault), DAY)
+    vault.convex.stake_lock(afrax, afrax.balanceOf(vault), DAY)
 
     vault.post_safe_tx()
