@@ -209,6 +209,7 @@ class Convex():
         if pid == VaultTypes.AFRAX:
             staking_proxy = self.safe.contract(self.get_vault(staking_token))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
+            staking_token.approve(staking_proxy, mantissa)
 
             lock_time_min = staking_contract.lock_time_min()
             lock_time_for_max_multiplier = (
@@ -217,13 +218,13 @@ class Convex():
 
             assert seconds >= lock_time_min and seconds <= lock_time_for_max_multiplier
 
-            initial_locked_liq = staking_contract.lockedLiquidityOf(self.safe)
+            initial_locked_liq = staking_contract.lockedLiquidityOf(staking_proxy)
 
             # kek_id is returned: https://etherscan.io/address/0x02577b426f223a6b4f2351315a19ecd6f357d65c#code#L2466
             # but depends on block.timestamp, so not much value tracking it on the return
             staking_proxy.stakeLocked(mantissa, seconds)
 
-            assert staking_contract.lockedLiquidityOf(self.safe) > initial_locked_liq
+            assert staking_contract.lockedLiquidityOf(staking_proxy) > initial_locked_liq
 
 
     def withdraw_locked(self, staking_token, kek_id):
