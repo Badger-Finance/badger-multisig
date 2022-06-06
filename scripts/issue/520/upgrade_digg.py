@@ -47,7 +47,7 @@ def main(queue="true", simulation="false"):
                 [digg.address, NEW_LOGIC],
             ),
             dump_dir="data/badger/timelock/upgrade_digg/",
-            delay_in_days=4,
+            delay_in_days=2.88,
         )
     else:   
         # record current digg information
@@ -135,4 +135,4 @@ def main(queue="true", simulation="false"):
             # Call toggleRebase atomically with upgrade execution
             digg.toggleRebase()
 
-    safe.post_safe_tx(post=(simulation!="true"))
+    safe.post_safe_tx(post=(simulation!="true"), replace_nonce=1046)
