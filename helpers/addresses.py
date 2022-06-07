@@ -172,6 +172,7 @@ ADDRESSES_ETH = {
         "BOR": "0x3c9d6c1C73b31c837832c72E04D3152f051fc1A9",
         "BORING": "0xBC19712FEB3a26080eBf6f2F7849b417FdD792CA",
         "PNT": "0x89Ab32156e46F46D02ade3FEcbe5Fc4243B9AAeD",
+        "LINK": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -467,6 +468,7 @@ ADDRESSES_ETH = {
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
         "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
+        "upkeep_registration_requests": "0x09B1de9Ecf6600FD44e1cB1b46DF6B520f33ec6d",
     },
   "across_bridge": {
         "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534"
