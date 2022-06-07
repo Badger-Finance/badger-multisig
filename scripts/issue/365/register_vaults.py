@@ -368,7 +368,7 @@ ETHEREUM_VAULTS = [
     '0xeC1c717A3b02582A4Aa2275260C583095536b613',
     'v1',
     'name=BADGER/WBTC,protocol=Convex,behavior=None',
-    0
+    3
   ]
 ]
 
