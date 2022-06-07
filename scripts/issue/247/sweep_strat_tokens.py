@@ -11,6 +11,7 @@ console = Console()
 
 DEV_MULTI = registry.eth.badger_wallets.dev_multisig
 TECH_OPS = registry.eth.badger_wallets.techops_multisig
+TREASURY = registry.eth.badger_wallets.treasury_vault_multisig
 
 HARVEST_FORWARDER = registry.eth.harvest_forwarder
 
@@ -92,15 +93,22 @@ def sell_for_badger():
     safe.post_safe_tx(call_trace=True)
 
 
-def distribute_to_users():
+def distribute_to_users(obtc_badger_amt: str, pbtc_badger_amt: str):
+    obtc_amount_minus_fee = int(int(obtc_badger_amt) * (1 - FEE))
+    pbtc_amount_minus_fee = int(int(pbtc_badger_amt) * (1 - FEE))
+    obtc_leftover = int(obtc_badger_amt) - obtc_amount_minus_fee
+    pbtc_leftover = int(pbtc_badger_amt) - pbtc_amount_minus_fee
+
     safe = GreatApeSafe(TECH_OPS)
+    badger = interface.ERC20(BADGER, owner=safe.account)
     forwarder = interface.IHarvestForwarder(HARVEST_FORWARDER, owner=safe.account)
 
-    obtc_amount = int(0 * (1 - FEE))  # replace 0 with amount after cowswaps
-    forwarder.distribute(BADGER, obtc_amount, OBTC_VAULT)
+    badger.approve(HARVEST_FORWARDER, obtc_amount_minus_fee + pbtc_amount_minus_fee)
 
-    pbtc_amount = int(0 * (1 - FEE))  # replace 0 with amount after cowswaps
-    forwarder.distribute(BADGER, pbtc_amount, PBTC_VAULT)
+    forwarder.distribute(BADGER, obtc_amount_minus_fee, OBTC_VAULT)
+    forwarder.distribute(BADGER, pbtc_amount_minus_fee, PBTC_VAULT)
+
+    badger.transfer(TREASURY, obtc_leftover + pbtc_leftover)
 
     safe.post_safe_tx(call_trace=True)
 
