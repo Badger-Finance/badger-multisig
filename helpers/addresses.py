@@ -17,6 +17,7 @@ ADDRESSES_ETH = {
     "guardian": "0x6615e67b8B6b6375D38A0A3f937cd8c1a1e96386",
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
+    "harvest_forwarder": "0xA84B663837D94ec41B0f99903f37e1d69af9Ed3E",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
@@ -173,6 +174,9 @@ ADDRESSES_ETH = {
         "crv3eur": "0xb9446c4Ef5EBE66268dA6700D26f96273DE3d571",
         "FTM": "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
         "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
+        "BOR": "0x3c9d6c1C73b31c837832c72E04D3152f051fc1A9",
+        "BORING": "0xBC19712FEB3a26080eBf6f2F7849b417FdD792CA",
+        "PNT": "0x89Ab32156e46F46D02ade3FEcbe5Fc4243B9AAeD",
         "LINK": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
     },
     # every slp token listed in treasury tokens above must also be listed here.
@@ -289,6 +293,16 @@ ADDRESSES_ETH = {
         "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
         "native.badgerCrv": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
+        "_deprecated": {
+            "native.pbtcCrv": {
+                "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
+                "v1.1": "0x3f98F3a21B125414e4740316bd6Ef14718764a22",
+            },
+            "native.obtcCrv":{
+                "v1": "0x2bb864cdb4856ab2d148c5ca52dd7ccec126d138",
+                "v1.1":  "0x50Dd8A61Bdd11Cf5539DAA83Bc8E0F581eD8110a",
+            }
+        }
     },
     "logic": {
         "StrategyConvexStakingOptimizer": "0x0bB87f40D4eb6066a2311B7BE3B45A3D15771557", # V1.1
@@ -360,16 +374,12 @@ ADDRESSES_ETH = {
         "native.sbtcCrv": "0xf1ded284e891943b3e9c657d7fc376b86164ffc2",
         "native.tbtcCrv": "0x522bb024c339a12be1a47229546f288c40b62d29",
         "native.hbtcCrv": "0xff26f400e57bf726822eacbb64fa1c52f1f27988",
-        "native.pbtcCrv": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
-        "native.obtcCrv": "0x2bb864cdb4856ab2d148c5ca52dd7ccec126d138",
         "native.bbtcCrv": "0x4f3e7a4566320b2709fd1986f2e9f84053d3e2a0",
         "native.tricrypto2": "0x2eB6479c2f033360C0F4575A88e3b8909Cbc6a03",
         "native.renCrvV1.1": "0xe66dB6Eb807e6DAE8BD48793E9ad0140a2DEE22A",
         "native.sbtcCrvV1.1": "0x2f278515425c8eE754300e158116930B8EcCBBE1",
         "native.tbtcCrvV1.1": "0x9e0742EE7BECde52A5494310f09aad639AA4790B",
         "native.hbtcCrvV1.1": "0x7354D5119bD42a77E7162c8Afa8A1D18d5Da9cF8",
-        "native.pbtcCrvV1.1": "0x3f98F3a21B125414e4740316bd6Ef14718764a22",
-        "native.obtcCrvV1.1": "0x50Dd8A61Bdd11Cf5539DAA83Bc8E0F581eD8110a",
         "native.bbtcCrvV1.1": "0xf92660E0fdAfE945aa13616428c9fB4BE19f4d34",
         "native.tricrypto2V1.1": "0xf3202Aa2783F3DEE24a35853C6471db065B05D37",
     },
