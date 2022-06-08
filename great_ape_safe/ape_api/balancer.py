@@ -2,7 +2,7 @@ from decimal import Decimal
 import requests
 import json
 
-from brownie import ZERO_ADDRESS, Contract, chain, interface,web3
+from brownie import ZERO_ADDRESS, Contract, chain, interface, web3
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
