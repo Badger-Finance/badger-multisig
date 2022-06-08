@@ -2,7 +2,7 @@ from decimal import Decimal
 import requests
 import json
 
-from brownie import ZERO_ADDRESS, Contract, chain, web3
+from brownie import ZERO_ADDRESS, Contract, chain, interface,web3
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
@@ -20,6 +20,9 @@ class Balancer():
         self.gauge_factory = safe.contract(registry.eth.balancer.gauge_factory)
         self.vebal = safe.contract(registry.eth.balancer.veBAL)
         self.wallet_checker = safe.contract(self.vebal.smart_wallet_checker())
+        self.minter = safe.contract(
+            registry.eth.balancer.minter, interface.IBalancerMinter
+        )
         # parameters
         self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000) # USD
@@ -415,6 +418,16 @@ class Balancer():
             assert all([x > y for x, y in zip(balances_after, balances_before)])
         else:
             assert any([x > y for x, y in zip(balances_after, balances_before)])
+
+
+    def claim(self, underlyings=None, pool=None):
+        # claim reward token from pool's gauge given `underlyings` or `pool`
+        if underlyings:
+            underlyings = self.order_tokens([x.address for x in underlyings])
+            pool_id = self.find_pool_for_underlyings(underlyings)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        self.minter.mint(gauge)
 
 
     def claim_all(self, underlyings=None, pool=None):
