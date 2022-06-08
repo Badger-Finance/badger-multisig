@@ -3,7 +3,7 @@ from helpers.addresses import r
 
 FRAX_AMT = 307_373e18
 # make sure we will have always enough frax for aave deposit
-EXTRA_WD = 15e18
+DUSTY= .995
 DAY = 86400
 
 vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
@@ -29,8 +29,8 @@ def afrax_sourcing():
 
     # swap 3crv -> frax
     trops.init_curve()
-    trops.curve.withdraw_to_one_coin(crv3pool, FRAX_AMT + EXTRA_WD, dai)
-    trops.curve.swap(dai, frax, FRAX_AMT + EXTRA_WD)
+    trops.curve.withdraw_to_one_coin(crv3pool, FRAX_AMT, dai)
+    trops.curve.swap(dai, frax, dai.balanceOf(trops) * DUSTY)
 
     # deposit in aave
     trops.init_aave()
