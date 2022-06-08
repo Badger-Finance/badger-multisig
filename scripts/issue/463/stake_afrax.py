@@ -24,7 +24,7 @@ def afrax_sourcing():
     frax = trops.contract(r.treasury_tokens.FRAX)
     dai = trops.contract(r.treasury_tokens.DAI)
 
-    trops.take_snapshot(tokens=[dai, crv3pool])
+    trops.take_snapshot(tokens=[dai.address, crv3pool.address, frax.address])
     vault.take_snapshot(tokens=[afrax])
 
     # swap 3crv -> frax
