@@ -13,8 +13,6 @@ interface IStrategy {
  * any asset requested.
  */
 contract DummyController {
-    mapping(address => address) private _vaults;
-
     constructor(){}
 
     function vaults(address asset) external returns (address) {
