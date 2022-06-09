@@ -804,6 +804,9 @@ ADDRESSES_FANTOM = {
         "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
+        "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
+        "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
+        "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
     },
     "treasury_tokens": {
         "WFTM": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
@@ -817,7 +820,8 @@ ADDRESSES_FANTOM = {
     },
     "sett_vaults": {
         "bveOXD": "0x96d4dBdc91Bef716eb407e415c9987a9fAfb8906",
-        "bbveOXD-OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9"
+        "bbveOXD-OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9",
+        "bwFTM-WETH-wBTC": "0x5dA75c76565B69A5cDC5F2195E31362CEA00CD14",
     },
     "solidly": {
         "router": "0xa38cd27185a464914D3046f0AB9d43356B34829D",
@@ -831,9 +835,9 @@ ADDRESSES_FANTOM = {
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
     "rewardsLogger": "0xaB2F5E2709286aCe1863DF8ee55475482781F68C",
     "governance_timelock": "0x5ddE67e4f0abD7a94E99C037A04A1946f9DbaA36",
-    "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
-    "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
-    "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
+    "logic": {
+        "theVaultWithoutTree": "0xEf919733Eeb7326c5389f4a5D7337cdF078b0db9"
+    }
 }
 
 
