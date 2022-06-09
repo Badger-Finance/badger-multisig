@@ -3,6 +3,13 @@ from brownie import interface
 from helpers.addresses import registry
 
 
+class VaultTypes:
+    VAFRAX = 0
+    UNIV2_TEMPLE = 1
+    AFRAX = 2
+    CURVE_LP = 3
+
+
 class Convex():
     def __init__(self, safe):
         self.safe = safe
@@ -23,6 +30,10 @@ class Convex():
         self.cvx_extra_rewards = interface.ICvxExtraRewards(
             registry.eth.convex.vlCvxExtraRewardDistribution,
             owner=self.safe.account)
+        
+        # frax contract section
+        self.frax_booster = safe.contract(registry.eth.convex.frax.booster)
+        self.frax_pool_registry = safe.contract(registry.eth.convex.frax.pool_registry)
 
 
     def get_pool_info(self, underlying):
@@ -167,3 +178,76 @@ class Convex():
         bal_before = underlying.balanceOf(self.safe)
         self.safe.contract(rewards).withdrawAllAndUnwrap(claim)
         assert underlying.balanceOf(self.safe) > bal_before
+
+
+    def get_pool_pid(self, _staking_token):
+        len = self.frax_pool_registry.poolLength()
+
+        for i in range(len):
+            _, _, staking_token, _, _ = self.frax_pool_registry.poolInfo(i)
+            if _staking_token == staking_token:
+                return i
+
+
+    def get_vault(self, staking_token, owner=None):
+        owner = self.safe.address if not owner else owner
+        pid = self.get_pool_pid(staking_token)
+
+        return self.frax_pool_registry.vaultMap(pid, owner)
+
+
+    def create_vault(self, staking_token):
+        pid = self.get_pool_pid(staking_token)
+        # internally happens the approval of the staking_token for the staking_address
+        # ref: https://github.com/convex-eth/frax-cvx-platform/blob/main/contracts/contracts/StakingProxyERC20.sol#L34
+        self.frax_booster.createVault(pid)
+
+
+    def stake_lock(self, staking_token, mantissa, seconds):
+        pid = self.get_pool_pid(staking_token)
+
+        if pid == VaultTypes.AFRAX:
+            staking_proxy = self.safe.contract(self.get_vault(staking_token))
+            staking_contract = self.safe.contract(staking_proxy.stakingAddress())
+            staking_token.approve(staking_proxy, mantissa)
+
+            lock_time_min = staking_contract.lock_time_min()
+            lock_time_for_max_multiplier = (
+                staking_contract.lock_time_for_max_multiplier()
+            )
+
+            assert seconds >= lock_time_min and seconds <= lock_time_for_max_multiplier
+
+            initial_locked_liq = staking_contract.lockedLiquidityOf(staking_proxy)
+
+            # kek_id is returned: https://etherscan.io/address/0x02577b426f223a6b4f2351315a19ecd6f357d65c#code#L2466
+            # but depends on block.timestamp, so not much value tracking it on the return
+            staking_proxy.stakeLocked(mantissa, seconds)
+
+            assert staking_contract.lockedLiquidityOf(staking_proxy) > initial_locked_liq
+
+
+    def withdraw_locked(self, staking_token, kek_id):
+        pid = self.get_pool_pid(staking_token)
+
+        if pid == VaultTypes.AFRAX:
+            staking_proxy = self.safe.contract(self.get_vault(staking_token))
+            staking_contract = self.safe.contract(staking_proxy.stakingAddress())
+
+            rewards = staking_contract.getAllRewardTokens()
+
+            balances_rewards_before = [
+                self.safe.contract(reward).balanceOf(self.safe) for reward in rewards
+            ]
+
+            balance_staking_token_before = staking_token.balanceOf(self.safe)
+
+            staking_proxy.withdrawLocked(kek_id)
+
+            assert staking_token.balanceOf(self.safe) > balance_staking_token_before
+
+            for idx, reward in enumerate(rewards):
+                assert (
+                    self.safe.contract(reward).balanceOf(self.safe)
+                    > balances_rewards_before[idx]
+                )
