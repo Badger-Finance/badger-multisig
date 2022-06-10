@@ -487,6 +487,9 @@ ADDRESSES_ETH = {
     "across_bridge": {
         "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534",
     },
+    "gnosis": {
+        "sign_message_lib": "0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2",
+    },
 }
 
 ADDRESSES_IBBTC = {
