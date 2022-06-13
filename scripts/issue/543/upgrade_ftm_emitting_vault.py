@@ -17,31 +17,15 @@ def main(simulation="false"):
     safe = GreatApeSafe(registry.ftm.badger_wallets.dev_multisig)
 
     vault = interface.ITheVaultWithoutTree(VAULT_ADDRESS, owner=safe.account)
- 
-    # record current vault information
-    prev_strategy = vault.strategy()
-    prev_guardian = vault.guardian()
-    prev_treasury = vault.treasury()
 
-    prev_badgerTree = vault.badgerTree()
-
-    prev_lifeTimeEarned = vault.lifeTimeEarned()
-    prev_lastHarvestedAt = vault.lastHarvestedAt()
-    prev_lastHarvestAmount = vault.lastHarvestAmount()
-    prev_assetsAtLastHarvest = vault.assetsAtLastHarvest()
-
-    prev_performanceFeeGovernance = vault.performanceFeeGovernance()
-    prev_performanceFeeStrategist = vault.performanceFeeStrategist()
-    prev_withdrawalFee = vault.withdrawalFee()
-    prev_managementFee = vault.managementFee()
-
-    prev_maxPerformanceFee = vault.maxPerformanceFee()
-    prev_maxWithdrawalFee = vault.maxWithdrawalFee()
-    prev_maxManagementFee = vault.maxManagementFee()
-
-    prev_toEarnBps = vault.toEarnBps()
-    prev_totalSupply = vault.totalSupply()
-    prev_getPricePerFullShare = vault.getPricePerFullShare()
+    # Record storage variables
+    attributes = {}
+    for attr in vault.signatures:
+        try:
+            attributes[attr] = getattr(vault, attr).call()
+        except:
+            C.print(f"[red]Error storing {attr}[/red]")
+            pass
 
     ## Check current balances
     initial_shares = vault.balanceOf(USER)
@@ -54,29 +38,12 @@ def main(simulation="false"):
     ## Confirm balances
     assert initial_shares == vault.balanceOf(USER)
 
-    assert prev_strategy == vault.strategy()
-    assert prev_guardian == vault.guardian()
-    assert prev_treasury == vault.treasury()
-
-    assert prev_badgerTree == vault.badgerTree()
-
-    assert prev_lifeTimeEarned == vault.lifeTimeEarned()
-    assert prev_lastHarvestedAt == vault.lastHarvestedAt()
-    assert prev_lastHarvestAmount == vault.lastHarvestAmount()
-    assert prev_assetsAtLastHarvest == vault.assetsAtLastHarvest()
-
-    assert prev_performanceFeeGovernance == vault.performanceFeeGovernance()
-    assert prev_performanceFeeStrategist == vault.performanceFeeStrategist()
-    assert prev_withdrawalFee == vault.withdrawalFee()
-    assert prev_managementFee == vault.managementFee()
-
-    assert prev_maxPerformanceFee == vault.maxPerformanceFee()
-    assert prev_maxWithdrawalFee == vault.maxWithdrawalFee()
-    assert prev_maxManagementFee == vault.maxManagementFee()
-
-    assert prev_toEarnBps == vault.toEarnBps()
-    assert prev_totalSupply == vault.totalSupply()
-    assert prev_getPricePerFullShare == vault.getPricePerFullShare()
+    # Confirm storage variables
+    for attr in vault.signatures:
+        try:
+            assert attributes[attr] == getattr(vault, attr).call()
+        except:
+            pass
 
     if simulation == "true":
         # Confirm that user can withdraw
