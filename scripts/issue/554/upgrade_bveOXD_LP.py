@@ -38,7 +38,9 @@ def main(simulation="false"):
     for attr in strat_contract.signatures:
         try:
             assert attributes[attr] == getattr(strat_contract, attr).call()
-        except:
+        # Should fail if assertion is wrong
+        except KeyError:
+            C.print(f"[red]Error confirming {attr}[/red]")
             pass
 
     # Test harvest
