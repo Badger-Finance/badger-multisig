@@ -4,7 +4,6 @@ import requests
 from decimal import Decimal
 
 from brownie import chain, interface, ZERO_ADDRESS
-from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
 
 from helpers.addresses import r
@@ -94,7 +93,7 @@ class Badger():
         `values` being the respective token's address.
         """
         merkle_stash = interface.IMultiMerkleStash(
-            registry.eth.votium.multiMerkleStash, owner=self.safe.account
+            r.votium.multiMerkleStash, owner=self.safe.account
         )
         aggregate = {'tokens': [], 'indexes': [], 'amounts': [], 'proofs': []}
         for symbol, token_addr in eligible_claims.items():
