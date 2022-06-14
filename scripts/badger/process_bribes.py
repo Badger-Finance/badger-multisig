@@ -131,7 +131,7 @@ def step2():
     # will make them replace each other. this performs one more final overwrite
     PROCESSOR.setCustomAllowance(WETH, weth_total)
 
-    SAFE.post_safe_tx(call_trace=True)
+    SAFE.post_safe_tx()
 
 
 def step3():
