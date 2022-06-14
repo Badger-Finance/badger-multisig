@@ -31,8 +31,8 @@ def main(simulation="false"):
             strat.harvest({"from": safe.account})
 
     # Execute upgrade
-    proxyAdmin = interface.IProxyAdmin(DEV_PROXY, owner=safe.account)
-    proxyAdmin.upgrade(strat.address, NEW_LOGIC)
+    proxy_admin = interface.IProxyAdmin(DEV_PROXY, owner=safe.account)
+    proxy_admin.upgrade(strat.address, NEW_LOGIC)
 
     # Confirm storage variables
     for attr in strat_contract.signatures:
