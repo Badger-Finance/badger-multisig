@@ -179,6 +179,7 @@ ADDRESSES_ETH = {
         "BORING": "0xBC19712FEB3a26080eBf6f2F7849b417FdD792CA",
         "PNT": "0x89Ab32156e46F46D02ade3FEcbe5Fc4243B9AAeD",
         "LINK": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
+        "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
