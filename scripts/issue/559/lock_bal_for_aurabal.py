@@ -1,3 +1,5 @@
+from brownie import Contract
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -15,7 +17,6 @@ def main():
     wrapper = voter.contract(r.aura.wrapper)
     aura = voter.contract(r.treasury_tokens.AURA)
     aurabal = voter.contract(r.treasury_tokens.AURABAL)
-    bpt_aurabal = r.balancer.bpt_aurabal  # pool_id: 0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd000200000000000000000249
 
     voter.init_balancer()
     voter.take_snapshot([bal, aura, aurabal])
@@ -27,5 +28,7 @@ def main():
         True,  # bool _lock
         r.aura.aurabal_staking  # address _stakeAddress
     )
+
+    print(Contract(r.aura.aurabal_staking).balanceOf(voter))
 
     voter.post_safe_tx()
