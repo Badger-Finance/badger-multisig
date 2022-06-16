@@ -25,7 +25,7 @@ def main():
         bal.balanceOf(voter),  # uint256 _amount
         wrapper.getMinOut(bal.balanceOf(voter), 9950),  # uint256 _minOut
         True,  # bool _lock
-        voter.balancer.gauge_factory.getPoolGauge(bpt_aurabal)  # address _stakeAddress
+        r.aura.aurabal_staking  # address _stakeAddress
     )
 
     voter.post_safe_tx()

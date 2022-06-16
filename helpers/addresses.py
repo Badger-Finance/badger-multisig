@@ -496,6 +496,7 @@ ADDRESSES_ETH = {
     "aura": {
         "wrapper": "0x68655AD9852a99C87C0934c7290BB62CFa5D4123",
         "depositor": "0xeAd792B55340Aa20181A80d6a16db6A0ECd1b827",
+        "aurabal_staking": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
     },
 }
 
