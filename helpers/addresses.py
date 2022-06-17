@@ -835,6 +835,10 @@ ADDRESSES_FANTOM = {
         "bbveOXD-OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9",
         "bwFTM-WETH-wBTC": "0x5dA75c76565B69A5cDC5F2195E31362CEA00CD14",
     },
+    "strategies": {
+        "native.vestedOXD": "0x0c7E0807011A218d0F1A156D3965875ff233933E",
+        "native.bveOXD-OXD": "0x00B154A7fBF57a09DeeC960f152205d5aE9795AE",
+    },
     "solidly": {
         "router": "0xa38cd27185a464914D3046f0AB9d43356B34829D",
         "factory": "0x3fAaB499b519fdC5819e3D7ed0C26111904cbc28",
@@ -848,7 +852,8 @@ ADDRESSES_FANTOM = {
     "rewardsLogger": "0xaB2F5E2709286aCe1863DF8ee55475482781F68C",
     "governance_timelock": "0x5ddE67e4f0abD7a94E99C037A04A1946f9DbaA36",
     "logic": {
-        "theVaultWithoutTree": "0xEf919733Eeb7326c5389f4a5D7337cdF078b0db9"
+        "theVaultWithoutTree": "0xEf919733Eeb7326c5389f4a5D7337cdF078b0db9",
+        "StrategybveOxdOxdStakingOptimizer": "0x5Eb4e278d54Ade50bDfb305c698A7640944bd7dc" # V1.1
     }
 }
 
