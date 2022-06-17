@@ -43,3 +43,15 @@ def CRV(safe):
     return Contract(
         registry_addr.eth.treasury_tokens.CRV, owner=safe.account
     )
+
+
+@pytest.fixture
+def cvxCRV(safe):
+    Contract.from_explorer(registry_addr.eth.treasury_tokens.cvxCRV)
+    cvxcrv = MintableForkToken(
+        registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
+    )
+    cvxcrv._mint_for_testing(safe, 100 * 10**cvxcrv.decimals())
+    return Contract(
+        registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
+    )

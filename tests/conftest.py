@@ -45,3 +45,15 @@ def USDC(safe):
     return Contract(
         registry.eth.treasury_tokens.USDC, owner=safe.account
     )
+
+
+@pytest.fixture
+def dai(dev):
+    Contract.from_explorer(registry.eth.treasury_tokens.DAI)
+    dai = MintableForkToken(
+        registry.eth.treasury_tokens.DAI, owner=dev.account
+    )
+    dai._mint_for_testing(dev, 10_000 * 10**dai.decimals())
+    return Contract(
+        registry.eth.treasury_tokens.DAI, owner=dev.account
+    )

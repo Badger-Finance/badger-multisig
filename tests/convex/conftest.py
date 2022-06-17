@@ -44,15 +44,3 @@ def convex_threepool_reward(safe, convex, threepool_lp):
     (_,_,_,rewards ) = convex.get_pool_info(threepool_lp)
     reward = safe.contract(rewards).rewardToken()
     return safe.contract(reward)
-
-
-@pytest.fixture
-def cvxCRV(safe):
-    Contract.from_explorer(registry_addr.eth.treasury_tokens.cvxCRV)
-    cvxcrv = MintableForkToken(
-        registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
-    )
-    cvxcrv._mint_for_testing(safe, 100 * 10**cvxcrv.decimals())
-    return Contract(
-        registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
-    )
