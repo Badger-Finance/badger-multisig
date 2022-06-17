@@ -49,6 +49,7 @@ def main(simulation="false"):
             pass
         except AssertionError:
             C.print(f"[red]Assertion error with {attr}[/red]")
+            raise
 
     # Test harvest
     if simulation == "true":
