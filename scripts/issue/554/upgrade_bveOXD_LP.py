@@ -13,7 +13,7 @@ NEW_LOGIC = registry.ftm.logic["StrategybveOxdOxdStakingOptimizer"]
 
 def main(simulation="false"):
     safe = GreatApeSafe(DEV_MULTI)
-    strat_contract = Contract(STRAT_ADDRESS)
+    strat_contract = Contract.from_explorer(STRAT_ADDRESS)
     strat = interface.IStrategy(STRAT_ADDRESS, owner=safe.account)
 
     # Record storage variables
@@ -37,11 +37,18 @@ def main(simulation="false"):
     # Confirm storage variables
     for attr in strat_contract.signatures:
         try:
-            assert attributes[attr] == getattr(strat_contract, attr).call()
-        # Should fail if assertion is wrong
+            # Balance of rewards is expected to increase as they are estimated based on time
+            if attr == "balanceOfRewards":
+                balance_of_rewards = getattr(strat_contract, attr).call()
+                assert balance_of_rewards[0][1] > attributes[attr][0][1]
+                assert balance_of_rewards[1][1] > attributes[attr][1][1]
+            else:
+                assert attributes[attr] == getattr(strat_contract, attr).call()
         except KeyError:
             C.print(f"[red]Error confirming {attr}[/red]")
             pass
+        except AssertionError:
+            C.print(f"[red]Assertion error with {attr}[/red]")
 
     # Test harvest
     if simulation == "true":
