@@ -34,8 +34,8 @@ def main():
     ])
 
     # badger for emissions, rembadger, bribes and contribs q3
-    badger.transfer(r.drippers.tree_2022_q2, 260_000e18)
-    badger.transfer(r.drippers.rembadger_2022_q2, 75_000e18)
+    badger.transfer(r.drippers.tree_2022_q3, 260_000e18)
+    badger.transfer(r.drippers.rembadger_2022_q3, 75_000e18)
     badger.transfer(trops, 104_000e18)
     badger.transfer(r.badger_wallets.payments_multisig, 500_000e18 - 110_000e18)  # prob ~110k left at end of q2
 
