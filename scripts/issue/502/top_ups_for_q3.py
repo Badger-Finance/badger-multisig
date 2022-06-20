@@ -29,7 +29,7 @@ def main():
         threepool, ibbtc_lp, slp, bpt_badgerwbtc, bpt_3pool, bvecvx
     ])
     trops.take_snapshot([
-        badger, usdc, weth, bal, usdt, dai, eurs, crv, cvx, fei, angle,
+        badger, usdc, weth, wbtc, bal, usdt, dai, eurs, crv, cvx, fei, angle,
         threepool, ibbtc_lp, slp, bpt_badgerwbtc, bpt_3pool, bvecvx
     ])
 
