@@ -50,7 +50,7 @@ class Cow():
         destination = self.safe.address if not destination else destination
 
         # make sure mantissa is an integer
-        assert type(mantissa_sell) == int
+        mantissa_sell == int(mantissa_sell)
 
         # get the fee and exact amount to buy after fee
         fee_and_quote_payload = {
@@ -72,7 +72,7 @@ class Cow():
         fee_amount = int(r.json()['fee']['amount'])
         if mantissa_buy:
             # overwrite quote in case order has a limit
-            assert type(mantissa_buy) == int
+            mantissa_buy == int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
             buy_amount_after_fee = int(int(r.json()['buyAmountAfterFee']) * coef)
