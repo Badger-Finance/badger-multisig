@@ -75,7 +75,7 @@ def lever_up(percent_bps):
   )
 
   ## NOTE: Can be done with onChain Pricer for better prices
-  to_reinvest = swap_result[-1]
+  to_reinvest = swap_result.return_value[-1]
 
   print("to_reinvest")
   print(to_reinvest)
@@ -85,4 +85,4 @@ def lever_up(percent_bps):
 
 def main():
   deposit(123)
-  lever_up(5_000)
+  lever_up(5_000) ## 50%
