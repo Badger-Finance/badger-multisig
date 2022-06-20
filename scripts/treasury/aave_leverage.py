@@ -35,6 +35,7 @@ def main():
   """
   deposit(123)
   lever_up(5_000) ## 50%
+  repay(123 + 123*.5)
 
 def deposit(amount):
   """
@@ -116,6 +117,7 @@ def delever_once():
     Note: Incomplete
   """
   ## Get all the withdrawable, minus a 5% buffer
+  ## Get deposited_eth - borrowed_eth, convert to wBTC
 
   ## Withdraw
 
