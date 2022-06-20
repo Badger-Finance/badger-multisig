@@ -56,7 +56,7 @@ def main():
     underlyings = [usdt, usdc, dai]
     amounts = [int(102_457e6), int(102_457e6), int(102_457e18)]
     safe.balancer.deposit_and_stake(underlyings, amounts)
-    safe.balancer.stake_all(bpt_3pool) * .995
+    safe.balancer.stake_all(bpt_3pool, dusty=.995)
 
     # dust to trops for processing
     for dust in [
