@@ -29,13 +29,19 @@ PRICE_ORACLE = safe.contract("0xA50ba011c48153De246E5192C8f9258A2ba79Ca9")
 UNIV2_ROUTER = safe.contract("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
 
 
+def main():
+  """
+    Example function, setup with Deposit Amount and Leverage ratio
+  """
+  deposit(123)
+  lever_up(5_000) ## 50%
 
 def deposit(amount):
   """
     Deposit into AAVE, earns basic interest, LM incentives and allows to lever
   """
-  WBTC.approve(AAVE_LENDING_POOL, amount)
-  AAVE_LENDING_POOL.deposit(WBTC, amount, safe.address, 0)
+  DEPOSIT_TOKEN.approve(AAVE_LENDING_POOL, amount)
+  AAVE_LENDING_POOL.deposit(DEPOSIT_TOKEN, amount, safe.address, 0)
 
 
 
@@ -53,23 +59,23 @@ def lever_up(percent_bps):
   print(available_borrows_eth)
 
   ## From ETH to USDC
-  usdc_to_eth = PRICE_ORACLE.getAssetPrice(USDC)
+  usdc_to_eth = PRICE_ORACLE.getAssetPrice(BORROW_TOKEN)
 
   ## Calculate USDC we can borrow
-  usdc_we_can_borrow = ((available_borrows_eth * 10**6) // usdc_to_eth) * percent_bps // 10_000
+  usdc_we_can_borrow = ((available_borrows_eth * 10**(BORROW_TOKEN.decimals())) // usdc_to_eth) * percent_bps // 10_000
 
   print("usdc_we_can_borrow")
   print(usdc_we_can_borrow)
 
   ## Borrow USDC
-  AAVE_LENDING_POOL.borrow(USDC, usdc_we_can_borrow, 2, 0, safe.address)
+  AAVE_LENDING_POOL.borrow(BORROW_TOKEN, usdc_we_can_borrow, 2, 0, safe.address)
 
   ## Sell USDC for more wBTC
-  USDC.approve(UNIV2_ROUTER, usdc_we_can_borrow)
+  BORROW_TOKEN.approve(UNIV2_ROUTER, usdc_we_can_borrow)
   swap_result = UNIV2_ROUTER.swapExactTokensForTokens(
         usdc_we_can_borrow,
         0, ## NOTE: We could use oracle here
-        [USDC, WBTC],
+        [BORROW_TOKEN, DEPOSIT_TOKEN],
         safe,
         9999999999
   )
@@ -83,6 +89,44 @@ def lever_up(percent_bps):
   ## Deposit wBTC into pool
   deposit(to_reinvest)
 
-def main():
-  deposit(123)
-  lever_up(5_000) ## 50%
+def repay(amount_to_repay):
+  BORROW_TOKEN.approve(AAVE_LENDING_POOL, amount_to_repay)
+  AAVE_LENDING_POOL.repay(BORROW_TOKEN, amount_to_repay, 2, safe.address)
+
+def delever(debt_to_repay):
+  """
+    NOTE: Incomplete
+  """
+  ## Given amount of debt_to_repay, withdraw what is possible and repay
+  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
+  collateral_in_eth = info[0]
+  debt_in_eth = info[1]
+
+  usdc_to_eth = PRICE_ORACLE.getAssetPrice(BORROW_TOKEN)
+
+  debt_in_usdc = ((debt_in_eth * 10**6) // usdc_to_eth)
+
+  ## How much wBTC do we need to withdraw, to repay this debt?
+
+
+  ## Withdraw X
+
+def delever_once():
+  """
+    Note: Incomplete
+  """
+  ## Get all the withdrawable, minus a 5% buffer
+
+  ## Withdraw
+
+  ## Swap to USC
+
+  ## Repay
+
+def withdraw(ratio_bps):
+  ## TODO:
+  ## Require no debt
+  ## Withdraw Value in BPS
+  """
+    Note: Incomplete
+  """
