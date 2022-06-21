@@ -42,7 +42,7 @@ safe.init_badger()
 TX_DIR = "data/badger/timelock/upgrade_new_sett_controllers/"
 
 
-def main(submitTx="true", queue="true", simulation="true"):
+def main(submit_tx="false", queue="true", simulation="false"):
 
     if queue == "true":
         # Queue txs on Timelock
@@ -52,7 +52,9 @@ def main(submitTx="true", queue="true", simulation="true"):
             vault_address = VAULTS[key]
             vault_contract = interface.ISettV4h(vault_address)
 
-            console.print(f"Approving strategy and setting vault for {key}")
+            console.print(
+                f"[green]Approving strategy and setting vault for {key}[/green]"
+            )
             safe.badger.queue_timelock(
                 target_addr=NATIVE_CONTROLLER,
                 signature="approveStrategy(address,address)",
@@ -75,8 +77,9 @@ def main(submitTx="true", queue="true", simulation="true"):
                 delay_in_days=6,
             )
 
-    if submitTx == "true":
-        safe.badger.execute_timelock(TX_DIR)
+    if submit_tx == "true":
+        if simulation != "true":
+            safe.badger.execute_timelock(TX_DIR)
 
         native = safe.contract(NATIVE_CONTROLLER)
         for key in KEYS:
@@ -87,7 +90,14 @@ def main(submitTx="true", queue="true", simulation="true"):
             vault_address = VAULTS[key]
             vault_contract = interface.ISettV4h(vault_address, owner=safe.account)
 
-            console.print(f"Setting strategy and controllers for {key}")
+            console.print(f"[green]Setting strategy and controllers for {key}[/green]")
+
+            if simulation == "true":
+                timelock = accounts.at(registry.eth.governance_timelock, force=True)
+                controller = interface.IController(NATIVE_CONTROLLER, owner=timelock)
+                controller.approveStrategy(strategy_contract.want(), strategy_address)
+                controller.setVault(vault_contract.token(), vault_address)
+
             native.setStrategy(strategy_contract.want(), strategy_address)
 
             strategy_contract.setController(NATIVE_CONTROLLER)
@@ -96,7 +106,7 @@ def main(submitTx="true", queue="true", simulation="true"):
             assert vault_contract.controller() == NATIVE_CONTROLLER
             assert strategy_contract.controller() == NATIVE_CONTROLLER
 
-            if simulation:
+            if simulation == "true":
                 chain.sleep(86400)
                 chain.mine()
 
@@ -106,4 +116,5 @@ def main(submitTx="true", queue="true", simulation="true"):
                 console.print("Trying to earn")
                 vault_contract.earn()
 
-    safe.post_safe_tx()
+    if simulation != "true":
+        safe.post_safe_tx()
