@@ -339,7 +339,7 @@ ADDRESSES_ETH = {
         "bbveCVX-CVX-f": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
         "ibBTCCrv": "0xe505F7C2FFcce7Ae4b076456BC02A70D8fe8d4d2",
         "restitution": "0x3F61344BA56df00dad9bBcA05d98CA2AeC43Ba0B",
-        "bcrvBadger": "0xa54d8a596B4022CC4436b692C8ea0E342405eB6e"
+        "bcrvBadger": "0xa54d8a596B4022CC4436b692C8ea0E342405eB6e",
         "dummy": "0xEC4bc89F35A7bf9ffe0375Fd67940Ded1e2253BF",
     },
     "yearn_vaults": {"byvWBTC": "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5"},
