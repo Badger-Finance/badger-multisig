@@ -40,6 +40,7 @@ safe.init_badger()
 
 # Other constants
 TX_DIR = "data/badger/timelock/upgrade_new_sett_controllers/"
+TIMELOCK_DELAY_DAYS=4
 
 
 def main(submit_tx="false", queue="true", simulation="false"):
@@ -63,7 +64,7 @@ def main(submit_tx="false", queue="true", simulation="false"):
                     [strategy_contract.want(), strategy_address],
                 ),
                 dump_dir=TX_DIR,
-                delay_in_days=6,
+                delay_in_days=TIMELOCK_DELAY_DAYS,
             )
 
             safe.badger.queue_timelock(
@@ -74,7 +75,7 @@ def main(submit_tx="false", queue="true", simulation="false"):
                     [vault_contract.token(), vault_address],
                 ),
                 dump_dir=TX_DIR,
-                delay_in_days=6,
+                delay_in_days=TIMELOCK_DELAY_DAYS,
             )
 
     if submit_tx == "true":
