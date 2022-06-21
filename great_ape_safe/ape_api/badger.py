@@ -4,7 +4,6 @@ import requests
 from decimal import Decimal
 
 from brownie import chain, interface, ZERO_ADDRESS
-from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
 
 from helpers.addresses import r
@@ -93,6 +92,9 @@ class Badger():
         the official votium repo (https://github.com/oo-00/Votium) and its
         `values` being the respective token's address.
         """
+        merkle_stash = interface.IMultiMerkleStash(
+            r.votium.multiMerkleStash, owner=self.safe.account
+        )
         aggregate = {'tokens': [], 'indexes': [], 'amounts': [], 'proofs': []}
         for symbol, token_addr in eligible_claims.items():
             directory = 'data/Votium/merkle/'
@@ -107,27 +109,11 @@ class Badger():
                 except KeyError:
                     # no claimables for the strat for this particular token
                     continue
-                try:
-                    self.strat_bvecvx.claimBribeFromVotium.call(
-                        r.votium.multiMerkleStash,
-                        token_addr,
-                        leaf['index'],
-                        self.strat_bvecvx.address,
-                        leaf['amount'],
-                        leaf['proof']
-                    )
-                except VirtualMachineError as e:
-                    if str(e) == 'revert: Drop already claimed.':
-                        continue
-                    if str(e) == 'revert: SafeERC20: low-level call failed':
-                        # $ldo claim throws this on .call, dont know why
-                        pass
-                    else:
-                        raise
-                aggregate['tokens'].append(token_addr)
-                aggregate['indexes'].append(leaf['index'])
-                aggregate['amounts'].append(leaf['amount'])
-                aggregate['proofs'].append(leaf['proof'])
+                if not merkle_stash.isClaimed(token_addr, leaf['index']):
+                    aggregate['tokens'].append(token_addr)
+                    aggregate['indexes'].append(leaf['index'])
+                    aggregate['amounts'].append(int(leaf['amount'], 0))
+                    aggregate['proofs'].append(leaf['proof'])
         if len(aggregate['tokens']) > 0:
             self.strat_bvecvx.claimBribesFromVotium(
                 r.votium.multiMerkleStash,
