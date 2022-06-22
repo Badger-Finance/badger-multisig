@@ -500,6 +500,7 @@ ADDRESSES_ETH = {
     },
     "maker": {
         "proxy_registry": "0x4678f0a6958e4D2Bc4F1BAF7Bc52E8F3564f3fE4",
+    },
     "gnosis": {
         "sign_message_lib": "0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2",
     },
