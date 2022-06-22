@@ -507,6 +507,10 @@ ADDRESSES_ETH = {
         "aurabal_staking": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
         "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC"
     },
+    "ens": {
+        "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "public_resolver": "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"
+    }
 }
 
 ADDRESSES_IBBTC = {
