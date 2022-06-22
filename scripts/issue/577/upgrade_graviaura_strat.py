@@ -46,6 +46,7 @@ def main(queue="true", simulation="false"):
             proxyAdmin = interface.IProxyAdmin(DEV_PROXY, owner=timelock)
             proxyAdmin.upgrade(strat_proxy.address, NEW_LOGIC)
         else:
+            # TODO: Add setAuraBalToBalEthBptMinOutBps(9500)
             safe.badger.execute_timelock("data/badger/timelock/upgrade_graviAURA_strategy_V1_1/")
 
         ## Checking all variables are as expected
