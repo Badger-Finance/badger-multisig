@@ -22,8 +22,8 @@ ADDRESSES_ETH = {
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
-        "rembadger_2022_q3": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",  # TODO
-        "tree_2022_q3": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",  # TODO
+        "rembadger_2022_q3": "0x697A8DebFbb6bE97c821b482AECc30477F40A102",
+        "tree_2022_q3": "0x5495BDB1f4c170e5C1A939382041Cf46d7f14EAd",
     },
     "bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
