@@ -125,6 +125,8 @@ interface ISettV4h {
 
     function symbol() external view returns (string memory);
 
+    function sweep(address _token) external;
+
     function token() external view returns (address);
 
     function totalSupply() external view returns (uint256);

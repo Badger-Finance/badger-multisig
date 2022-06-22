@@ -243,13 +243,14 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5, safe_tx=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
         # silent=True: prevent printing of safe_tx attributes at end of run
         # post=True: make the actual live posting of the tx to the gnosis api
-        safe_tx = self.multisend_from_receipts()
+        if not safe_tx:
+            safe_tx = self.multisend_from_receipts()
         if not skip_preview:
             safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name, gas_coef)
         if replace_nonce:
