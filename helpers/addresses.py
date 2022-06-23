@@ -301,6 +301,7 @@ ADDRESSES_ETH = {
         "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
+        "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
         "_deprecated": {
             "native.pbtcCrv": {
                 "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
@@ -318,6 +319,7 @@ ADDRESSES_ETH = {
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
         "native.vestedCVX": "0x86ca553D5Ae7cD0005552D6E275786D5043800Bd", # V1.7.1 - Change bribes processor address
+        "native.graviAURA": "0x0d724E8AEE6F73b35A596C8C947c92c75eAc7818", # V1.1
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h_V1": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
