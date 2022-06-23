@@ -4,7 +4,7 @@ from brownie_tokens import MintableForkToken
 
 
 def transfer_bvecvx():
-    voter = GreatApeSafe(registry.eth.badger_wallets.bvecvx_voting_multisig)
+    voter = GreatApeSafe(registry.eth.badger_wallets.treasury_voter_multisig)
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
 
     bvecvx = voter.contract(registry.eth.treasury_tokens.bveCVX)

@@ -5,7 +5,7 @@ from helpers.addresses import r
 
 
 def main():
-    voter = GreatApeSafe(r.badger_wallets.bvecvx_voting_multisig)
+    voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
 
     aurabal_staking = voter.contract(r.aura.aurabal_staking)
     aura_locker = voter.contract(r.aura.vlAURA)
