@@ -22,8 +22,8 @@ ADDRESSES_ETH = {
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
-        "rembadger_2022_q3": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",  # TODO
-        "tree_2022_q3": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",  # TODO
+        "rembadger_2022_q3": "0x697A8DebFbb6bE97c821b482AECc30477F40A102",
+        "tree_2022_q3": "0x5495BDB1f4c170e5C1A939382041Cf46d7f14EAd",
     },
     "bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
@@ -341,7 +341,7 @@ ADDRESSES_ETH = {
         "bbveCVX-CVX-f": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
         "ibBTCCrv": "0xe505F7C2FFcce7Ae4b076456BC02A70D8fe8d4d2",
         "restitution": "0x3F61344BA56df00dad9bBcA05d98CA2AeC43Ba0B",
-        "badgerCrv_temp": "0xa54d8a596B4022CC4436b692C8ea0E342405eB6e",
+        "bcrvBadger": "0xa54d8a596B4022CC4436b692C8ea0E342405eB6e",
         "dummy": "0xEC4bc89F35A7bf9ffe0375Fd67940Ded1e2253BF",
     },
     "yearn_vaults": {"byvWBTC": "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5"},
@@ -507,6 +507,7 @@ ADDRESSES_ETH = {
         "wrapper": "0x68655AD9852a99C87C0934c7290BB62CFa5D4123",
         "depositor": "0xeAd792B55340Aa20181A80d6a16db6A0ECd1b827",
         "aurabal_staking": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
+        "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC"
     },
 }
 
