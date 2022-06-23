@@ -23,6 +23,7 @@ BADGER = interface.ERC20(
     registry.eth.treasury_tokens.BADGER, owner=SAFE.account
 )
 CVX = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=SAFE.account)
+CVX_FXS = registry.eth.bribe_tokens_claimable["cvxFXS"]
 
 # percentage of the bribes that is used to buyback $badger
 BADGER_SHARE = .275
@@ -43,6 +44,16 @@ def step0_1(sim=False):
         claimed = SAFE.badger.claim_bribes_votium(
             registry.eth.bribe_tokens_claimable
         )
+        # Handling cvxFXS rewards as bribes (Ref: https://github.com/Badger-Finance/badger-strategies/issues/56)
+        cvxFXS_amount = SAFE.badger.sweep_reward_token(
+            CVX_FXS
+        )
+        if cvxFXS_amount > 0:
+            if claimed == {}:
+                claimed = {CVX_FXS: cvxFXS_amount}
+            else:
+                claimed[CVX_FXS] = cvxFXS_amount
+
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=SAFE.contract(addr),
@@ -71,6 +82,7 @@ def step0(sim=False):
         alcx = MintableForkToken(registry.eth.treasury_tokens.ALCX)
         alcx._mint_for_testing(SAFE.badger.strat_bvecvx, 500e18)
     else:
+        SAFE.badger.sweep_reward_token(CVX_FXS)
         SAFE.badger.claim_bribes_votium(registry.eth.bribe_tokens_claimable)
         SAFE.badger.claim_bribes_convex(registry.eth.bribe_tokens_claimable)
 
