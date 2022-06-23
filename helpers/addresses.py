@@ -299,7 +299,7 @@ ADDRESSES_ETH = {
         "native.bbveCVX-CVX-f": "0x98Ca7AFa876f0e15494E76E92C5b3658cdE1Ffe1",
         "native.bcrvIbBTC": "0x6D4BA00Fd7BB73b5aa5b3D6180c6f1B0c89f70D1",
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
-        "native.badgerCrv": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
+        "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
         "_deprecated": {
             "native.pbtcCrv": {
