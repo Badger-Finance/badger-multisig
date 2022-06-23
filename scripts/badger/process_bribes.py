@@ -49,10 +49,7 @@ def step0_1(sim=False):
             CVX_FXS
         )
         if cvxFXS_amount > 0:
-            if claimed == {}:
-                claimed = {CVX_FXS: cvxFXS_amount}
-            else:
-                claimed[CVX_FXS] = cvxFXS_amount
+            claimed[CVX_FXS] = cvxFXS_amount
 
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
