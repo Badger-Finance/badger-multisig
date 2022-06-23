@@ -45,7 +45,7 @@ def main():
     # claim bal and send to voter for locking to aurabal
     safe.init_balancer()
     safe.balancer.claim([wbtc, badger])
-    bal.transfer(r.badger_wallets.bvecvx_voting_multisig, bal.balanceOf(safe))
+    bal.transfer(r.badger_wallets.treasury_voter_multisig, bal.balanceOf(safe))
 
     # stake ~$7k worth of dust bpt
     safe.init_balancer()
@@ -70,7 +70,7 @@ def main():
 
     # bvecvx to treasury voter
     bvecvx.transfer(
-        r.badger_wallets.bvecvx_voting_multisig, bvecvx.balanceOf(safe)
+        r.badger_wallets.treasury_voter_multisig, bvecvx.balanceOf(safe)
     )
 
     print(
