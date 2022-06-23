@@ -33,7 +33,8 @@ def main():
         if is_valid:
             label = web3.solidityKeccak(["string"], [msig_name])
         else:
-            msig_name_unified = msig_name.replace("_", "")
+            msig_name_unified = 'treasury' if 'vault' in msig_name else msig_name.split("_")[-1]
+            assert ENS.is_valid_name(msig_name_unified)
             label = web3.solidityKeccak(["string"], [msig_name_unified])
 
         # https://etherscan.io/address/0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e#code#L115
