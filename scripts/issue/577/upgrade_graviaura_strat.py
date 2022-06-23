@@ -3,7 +3,6 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from brownie import accounts, interface
 from rich.console import Console
-from brownie.test.managers.runner import RevertContextManager as reverts
 
 C = Console()
 
