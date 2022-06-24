@@ -21,6 +21,20 @@ def main():
     safe.init_balancer()
     safe.take_snapshot(tokens)
 
+    from pycoingecko import CoinGeckoAPI
+    from decimal import Decimal
+
+    ids = ['aura-finance', 'ethereum', 'balancer', 'badger']
+    prices =  CoinGeckoAPI().get_price(ids, 'usd')
+
+    bucket = 20_000 / 3
+    usd_weth = bucket / prices['ethereum']['usd']
+    usd_aura = bucket / prices['aura-finance']['usd']
+    usd_bal = bucket / prices['balancer']['usd']
+
+    print([usd_aura, usd_weth, usd_aura])
+    print([usd_aura, usd_weth, usd_bal])
+
     safe.balancer.get_pool_data(update_cache=True)
     safe.balancer.deposit_and_stake(
         [graviaura, weth, aura], [0, 1e18, 0], pool=bpt_grav_weth_aura
