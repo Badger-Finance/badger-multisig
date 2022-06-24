@@ -501,6 +501,9 @@ ADDRESSES_ETH = {
     "across_bridge": {
         "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534",
     },
+    "maker": {
+        "proxy_registry": "0x4678f0a6958e4D2Bc4F1BAF7Bc52E8F3564f3fE4",
+    },
     "gnosis": {
         "sign_message_lib": "0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2",
     },
@@ -509,8 +512,13 @@ ADDRESSES_ETH = {
         "depositor": "0xeAd792B55340Aa20181A80d6a16db6A0ECd1b827",
         "aurabal_staking": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
         "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC",
-        "merkle_drop": "0x45EB1A004373b1D8457134A2C04a42d69D287724"
+        "merkle_drop": "0x45EB1A004373b1D8457134A2C04a42d69D287724",
+        "booster": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
     },
+    "ens": {
+        "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "public_resolver": "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"
+    }
 }
 
 ADDRESSES_IBBTC = {
