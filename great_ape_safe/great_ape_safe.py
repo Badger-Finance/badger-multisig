@@ -16,6 +16,7 @@ from web3.exceptions import BadFunctionCallOutput
 
 from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.anyswap import Anyswap
+from great_ape_safe.ape_api.aura import Aura
 from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.balancer import Balancer
 from great_ape_safe.ape_api.chainlink import Chainlink
@@ -71,7 +72,9 @@ class GreatApeSafe(ApeSafe):
 
     def init_anyswap(self):
         self.anyswap = Anyswap(self)
-
+    
+    def init_aura(self):
+        self.aura = Aura(self)
 
     def init_badger(self):
         self.badger = Badger(self)
