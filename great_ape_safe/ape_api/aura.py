@@ -7,10 +7,8 @@ class Aura(Convex):
     def __init__(self, safe):
         self.safe = safe
 
-        self.aura = interface.ERC20(r.treasury_tokens.AURA, owner=self.safe.account)
-        self.aura_bal = interface.ERC20(
-            r.treasury_tokens.AURABAL, owner=self.safe.account
-        )
+        self.aura = self.safe.contract(r.treasury_tokens.AURA)
+        self.aura_bal = self.safe.contract(r.treasury_tokens.AURABAL)
 
         # https://docs.aura.finance/developers/deployed-addresses
         self.booster = safe.contract(r.aura.booster)
