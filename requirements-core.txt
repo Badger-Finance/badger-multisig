@@ -1,8 +1,0 @@
-ape-safe
-eth-brownie==1.17.0
-pandas
-pycoingecko
-rich
-tqdm
-dotmap
-sympy
