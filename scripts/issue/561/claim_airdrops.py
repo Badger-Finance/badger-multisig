@@ -16,21 +16,30 @@ vault: 0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e
 
 def main(msig_address):
     msig = GreatApeSafe(msig_address)
+
     aura_airdrop = interface.IAuraMerkleDrop(r.aura.merkle_drop, owner=msig.account)
+    aura = msig.contract(r.treasury_tokens.AURA)
 
     # https://raw.githubusercontent.com/aurafinance/aura-token-allocation/master/artifacts/initial/allocations.csv
     with open('scripts/issue/561/airdrop_list.json', 'r') as f:
         airdrop_list = json.load(f)
 
     if not aura_airdrop.hasClaimed(msig_address):
-        msig.take_snapshot(tokens=[r.treasury_tokens.AURA])
+        msig.take_snapshot(tokens=[aura])
 
         with open(f'scripts/issue/561/proofs/{msig_address}.json', 'r') as f:
             proof = json.load(f)['account']
 
+        is_voter = True if msig_address == r.badger_wallets.treasury_voter_multisig else False
+
         amount = airdrop_list[msig.address]
-        lock = False
+        lock = is_voter
         aura_airdrop.claim(proof, amount, lock)
+
+        msig.print_snapshot()
+
+        if not is_voter:
+            aura.transfer(r.badger_wallets.treasury_voter_multisig, aura.balanceOf(msig))
 
         msig.print_snapshot()
         msig.post_safe_tx()
