@@ -30,7 +30,7 @@ def main(msig_address):
         with open(f'scripts/issue/561/proofs/{msig_address}.json', 'r') as f:
             proof = json.load(f)['account']
 
-        is_voter = True if msig_address == r.badger_wallets.treasury_voter_multisig else False
+        is_voter = msig_address == r.badger_wallets.treasury_voter_multisig
 
         amount = airdrop_list[msig.address]
         lock = is_voter
