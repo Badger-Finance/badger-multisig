@@ -17,10 +17,8 @@ def main():
 
     vault.balancer.unstake_all(bpt)
 
-    bpt_amount = bpt.balanceOf(vault)
-
     bal_before_stake = rewards.balanceOf(vault)
-    vault.aura.deposit_and_stake(bpt, bpt_amount)
+    vault.aura.deposit_all_and_stake(bpt)
     assert rewards.balanceOf(vault) > bal_before_stake
 
     vault.post_safe_tx()
