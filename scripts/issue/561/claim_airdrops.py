@@ -1,26 +1,22 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
-from brownie import interface, exceptions
-from typing import List, Dict
-from hexbytes import HexBytes
-from eth_typing import HexStr
-from web3 import Web3
+from brownie import interface
 import json
-import os
-from rich.console import Console
 
 
-recipients = [
-    r.badger_wallets.treasury_ops_multisig,    
-    r.badger_wallets.treasury_vault_multisig,
-    r.badger_wallets.treasury_voter_multisig,
-    r.badger_wallets.ibbtc_multisig,
-]
+"""
+eligble:
+treasury voter: 0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b
+ibbtc msig: 0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8
+ibbtc peak (todo: redirect): 0x41671BA1abcbA387b9b2B752c205e22e916BE6e3
+trops: 0x042B32Ac6b453485e357938bdC38e0340d4b9276
+vault: 0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e
+"""
 
 
 def main(msig_address):
     msig = GreatApeSafe(msig_address)
-    aura_airdrop = interface.AuraMerkleDrop(r.aura.merkle_drop, owner=msig.account)
+    aura_airdrop = interface.IAuraMerkleDrop(r.aura.merkle_drop, owner=msig.account)
 
     # https://raw.githubusercontent.com/aurafinance/aura-token-allocation/master/artifacts/initial/allocations.csv
     with open('scripts/issue/561/airdrop_list.json', 'r') as f:
