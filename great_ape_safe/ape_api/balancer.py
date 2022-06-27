@@ -282,6 +282,20 @@ class Balancer():
         self.stake(pool, mantissa, destination, dusty)
 
 
+    def unstake(self, pool, mantissa, claim=True):
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        bal_pool_before = pool.balanceOf(self.safe)
+        gauge.withdraw(mantissa, claim)
+        assert pool.balanceOf(self.safe) >= bal_pool_before
+
+
+    def unstake_all(self, pool, claim=True):
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        bal_pool_before = pool.balanceOf(self.safe)
+        gauge.withdraw(gauge.balanceOf(self.safe), claim)
+        assert pool.balanceOf(self.safe) >= bal_pool_before
+
+
     def unstake_all_and_withdraw_all(
         self, underlyings=None, pool=None, unstake=True, claim=True, is_eth=False, destination=None
     ):
@@ -403,10 +417,7 @@ class Balancer():
         pool_id = pool.getPoolId()
 
         if unstake:
-            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
-            balance_before_gauge = gauge.balanceOf(self.safe)
-            gauge.withdraw(gauge.balanceOf(self.safe), claim)
-            assert pool.balanceOf(self.safe) >= balance_before_gauge
+            self.unstake_all(pool)
 
         balances_before = [Contract(x).balanceOf(destination) for x in request[0]]
 
