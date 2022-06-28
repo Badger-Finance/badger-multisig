@@ -46,7 +46,7 @@ def main():
         [usd_aura, usd_weth, usd_aura],
         pool=bpt_grav_weth_aura,
         stake=False,
-        pool_type='Stable' # temp hack due to api not having pools available yet
+        pool_type='non_stable' # temp hack due to api not having pools available yet
     )
 
     # deposit bal via wrapper: bal -> 80bal20weth -> vebal -> aurabal
@@ -66,7 +66,7 @@ def main():
         [usd_aura, usd_weth, usd_aurabal],
         pool=bpt_grav_weth_aurabal,
         stake=False,
-        pool_type='Stable' # temp hack due to api not having pools available yet
+        pool_type='non_stable' # temp hack due to api not having pools available yet
     )
 
     # clean up; send remaining aura to voter as graviaura
