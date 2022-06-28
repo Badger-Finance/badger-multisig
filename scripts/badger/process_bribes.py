@@ -45,11 +45,13 @@ def step0_1(sim=False):
             registry.eth.bribe_tokens_claimable
         )
         # Handling cvxFXS rewards as bribes (Ref: https://github.com/Badger-Finance/badger-strategies/issues/56)
-        if SAFE.badger.sweep_reward_token.call(CVX_FXS) > 0:
-            cvxFXS_amount = SAFE.badger.sweep_reward_token.call(
-                CVX_FXS
-            )
+        cvxFXS_amount = SAFE.badger.sweep_reward_token(
+            CVX_FXS
+        )
+        if cvxFXS_amount > 0:
             claimed[CVX_FXS] = claimed.setdefault(CVX_FXS, 0) + cvxFXS_amount
+
+        print(claimed[CVX_FXS])
 
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
