@@ -23,7 +23,7 @@ BADGER = interface.ERC20(
     registry.eth.treasury_tokens.BADGER, owner=SAFE.account
 )
 CVX = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=SAFE.account)
-CVX_FXS = registry.eth.bribe_tokens_claimable["cvxFXS"]
+CVX_FXS = registry.eth.bribe_tokens_claimable.cvxFXS
 
 # percentage of the bribes that is used to buyback $badger
 BADGER_SHARE = .275
