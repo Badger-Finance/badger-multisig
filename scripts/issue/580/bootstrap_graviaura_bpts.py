@@ -15,11 +15,10 @@ def main():
     wrapper = safe.contract(r.aura.wrapper)
     bpt_grav_weth_aura = safe.contract(r.balancer.bpt_33_grav_33_weth_33_aura)
     bpt_grav_weth_aurabal = safe.contract(r.balancer.bpt_33_grav_33_weth_33_aurabal)
-    bpt_badger_grav = safe.contract(r.balancer.bpt_80_badger_20_grav)
 
     tokens = [
         aura, weth, graviaura, aurabal, bal, bpt_grav_weth_aura,
-        bpt_grav_weth_aurabal, bpt_badger_grav
+        bpt_grav_weth_aurabal
     ]
 
     safe.init_balancer()
@@ -70,8 +69,9 @@ def main():
         pool_type='Stable' # temp hack due to api not having pools available yet
     )
 
-    # clean up; send rest of aura to voter
-    aura.transfer(
+    # clean up; send remaining aura to voter as graviaura
+    aura.approve(graviaura, aura.balanceOf(safe))
+    graviaura.depositFor(
         r.badger_wallets.treasury_voter_multisig, aura.balanceOf(safe)
     )
 
