@@ -51,8 +51,6 @@ def step0_1(sim=False):
         if cvxFXS_amount > 0:
             claimed[CVX_FXS] = claimed.setdefault(CVX_FXS, 0) + cvxFXS_amount
 
-        print(claimed[CVX_FXS])
-
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
             sell_token=SAFE.contract(addr),
