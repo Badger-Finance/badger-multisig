@@ -141,7 +141,7 @@ class Balancer():
 
 
     def deposit_and_stake(
-        self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None
+        self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None, pool_type=None
     ):
         # given underlyings and their amounts, deposit and stake `underlyings`
 
@@ -157,7 +157,9 @@ class Balancer():
 
         tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
 
-        if self.pool_type(pool_id) == 'Stable':
+        pool_type = pool_type if pool_type else self.pool_type(pool_id)
+
+        if pool_type == 'Stable':
             # wip
             # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
             bpt_out = 1
