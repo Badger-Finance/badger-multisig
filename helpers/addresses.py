@@ -48,7 +48,7 @@ ADDRESSES_ETH = {
         "treasury_ops_multisig": "0x042B32Ac6b453485e357938bdC38e0340d4b9276",
         "treasury_vault_multisig": "0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e",
         "ibbtc_multisig": "0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8",
-        "bvecvx_voting_multisig": "0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",
+        "treasury_voter_multisig": "0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",
         "payments_multisig": "0x30a9c1D258F6c2D23005e6450E72bDD42C541105",
         "dfdBadgerShared": "0xCF7346A5E41b0821b80D5B3fdc385EEB6Dc59F44",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
@@ -67,11 +67,12 @@ ADDRESSES_ETH = {
         "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
-        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         # "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
         # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
+        "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
         "ops_root-validator-new": "0x1318d5c0C24830D86Cc27Db13Ced0CED31412438",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
@@ -447,6 +448,7 @@ ADDRESSES_ETH = {
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "USDN": "0x674C6Ad92Fd080e4004b2312b45f796a192D27a0",
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
+        "INV": "0x41D5D79431A913C4aE7d69a668ecdfE5fF9DFB68",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
@@ -488,6 +490,8 @@ ADDRESSES_ETH = {
         "veBAL": "0xC128a9954e6c874eA3d62ce62B468bA073093F25",
         "minter": "0x239e55F427D44C3cc793f49bFB507ebe76638a2b",
         "bpt_aurabal": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd",
+        "bpt_33_grav_33_weth_33_aura": "0xA3283E3470D3CD1F18C074E3f2d3965F6D62fFF2",
+        "bpt_33_grav_33_weth_33_aurabal": "0x0578292CB20a443bA1CdE459c985CE14Ca2bDEe5",
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
@@ -502,6 +506,9 @@ ADDRESSES_ETH = {
     "across_bridge": {
         "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534",
     },
+    "maker": {
+        "proxy_registry": "0x4678f0a6958e4D2Bc4F1BAF7Bc52E8F3564f3fE4",
+    },
     "gnosis": {
         "sign_message_lib": "0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2",
     },
@@ -509,8 +516,14 @@ ADDRESSES_ETH = {
         "wrapper": "0x68655AD9852a99C87C0934c7290BB62CFa5D4123",
         "depositor": "0xeAd792B55340Aa20181A80d6a16db6A0ECd1b827",
         "aurabal_staking": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
-        "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC"
+        "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC",
+        "merkle_drop": "0x45EB1A004373b1D8457134A2C04a42d69D287724",
+        "booster": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
     },
+    "ens": {
+        "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "public_resolver": "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"
+    }
 }
 
 ADDRESSES_IBBTC = {
@@ -657,7 +670,7 @@ ADDRESSES_ARBITRUM = {
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
-        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
         "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
@@ -790,7 +803,7 @@ ADDRESSES_RINKEBY = {
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
-        "ops_executor8": "0x10C7a2ca16116E5C998Bfa3BC9CEF464475B18ff",
+        "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
     },
     "treasury_tokens": {

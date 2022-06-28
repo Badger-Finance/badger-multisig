@@ -141,7 +141,7 @@ class Balancer():
 
 
     def deposit_and_stake(
-        self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None
+        self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None, pool_type=None
     ):
         # given underlyings and their amounts, deposit and stake `underlyings`
 
@@ -157,7 +157,9 @@ class Balancer():
 
         tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
 
-        if self.pool_type(pool_id) == 'Stable':
+        pool_type = pool_type if pool_type else self.pool_type(pool_id)
+
+        if pool_type == 'Stable':
             # wip
             # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
             bpt_out = 1
@@ -278,6 +280,20 @@ class Balancer():
         destination = self.safe if not destination else destination
         mantissa = pool.balanceOf(destination)
         self.stake(pool, mantissa, destination, dusty)
+
+
+    def unstake(self, pool, mantissa, claim=True):
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        bal_pool_before = pool.balanceOf(self.safe)
+        gauge.withdraw(mantissa, claim)
+        assert pool.balanceOf(self.safe) >= bal_pool_before
+
+
+    def unstake_all(self, pool, claim=True):
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        bal_pool_before = pool.balanceOf(self.safe)
+        gauge.withdraw(gauge.balanceOf(self.safe), claim)
+        assert pool.balanceOf(self.safe) >= bal_pool_before
 
 
     def unstake_all_and_withdraw_all(
@@ -401,10 +417,7 @@ class Balancer():
         pool_id = pool.getPoolId()
 
         if unstake:
-            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
-            balance_before_gauge = gauge.balanceOf(self.safe)
-            gauge.withdraw(gauge.balanceOf(self.safe), claim)
-            assert pool.balanceOf(self.safe) >= balance_before_gauge
+            self.unstake_all(pool)
 
         balances_before = [Contract(x).balanceOf(destination) for x in request[0]]
 

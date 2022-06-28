@@ -5,17 +5,17 @@ import brownie
 
 SAFE = GreatApeSafe(registry.eth.badger_wallets.dfdBadgerShared)
 
-NEW_LOGIC = registry.eth.logic["BadgerSettPeak"] 
+NEW_LOGIC = registry.eth.logic["BadgerSettPeak"]
 PEAK = interface.IPeak(registry.eth.peaks.badgerPeak, owner=SAFE.account)
 BVECVX = interface.ERC20(registry.eth.treasury_tokens.bveCVX)
-BVECVX_VOTING_MULTI = registry.eth.badger_wallets.bvecvx_voting_multisig
+BVECVX_VOTING_MULTI = registry.eth.badger_wallets.treasury_voter_multisig
 BALANCE_CHECKER = interface.IBalanceChecker(registry.eth.helpers.balance_checker, owner=SAFE.account)
 
 # Atomically upgrades the BadgerSettPeak contract and calls the sweeping function
 # to recover the bveCVX stuck into the treasury vault
 
 def main():
-  
+
     # Get all storage variables, we'll use them later
     portfolioValue = PEAK.portfolioValue()
     core = PEAK.core()
@@ -25,7 +25,7 @@ def main():
 
     # Upgrade logic
     PEAK_PROXY = interface.IUpgradableProxy(
-        registry.eth.peaks.badgerPeak, 
+        registry.eth.peaks.badgerPeak,
         owner=SAFE.account
     )
     assert PEAK_PROXY.owner() == SAFE.account
@@ -45,7 +45,7 @@ def main():
     PEAK.sweepUnprotectedToken(BVECVX.address, BVECVX_VOTING_MULTI)
 
     BALANCE_CHECKER.verifyBalance(
-        BVECVX.address, 
+        BVECVX.address,
         BVECVX_VOTING_MULTI,
         vault_balance_before + peak_balance_before
     )

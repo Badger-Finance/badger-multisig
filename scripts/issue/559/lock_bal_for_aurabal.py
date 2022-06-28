@@ -11,7 +11,7 @@ def main():
     ref: https://docs.aura.finance/developers/deployed-addresses
     kovan: https://whimsical-snowman-458.notion.site/Deployment-a5dc796b4923412c89b57d06de51141b
     '''
-    voter = GreatApeSafe(r.badger_wallets.bvecvx_voting_multisig)
+    voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
     bal = voter.contract(r.treasury_tokens.BAL)
 
     wrapper = voter.contract(r.aura.wrapper)
