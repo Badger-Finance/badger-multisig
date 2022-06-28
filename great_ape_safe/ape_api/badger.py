@@ -152,22 +152,22 @@ class Badger():
         reward = interface.ERC20(token_addr)
         prev_strategy_balance = reward.balanceOf(self.strat_bvecvx.address)
         # Ensure that there are tokens to sweep
-        if prev_strategy_balance > 0:
-            prev_bribes_processor_balance = reward.balanceOf(self.bribes_processor.address)
-
-            # Sweep the reward token
-            self.strat_bvecvx.sweepRewardToken(token_addr)
-
-            assert (
-                (reward.balanceOf(self.bribes_processor.address) - prev_bribes_processor_balance) ==
-                prev_strategy_balance
-            )
-            assert reward.balanceOf(self.strat_bvecvx.address) == 0
-
-            return prev_strategy_balance
-        else:
+        if prev_strategy_balance == 0:
             C.print(f"[red]There are no rewards to sweep for: {reward.symbol()}[/red]")
             return 0
+        prev_bribes_processor_balance = reward.balanceOf(self.bribes_processor.address)
+
+        # Sweep the reward token
+        self.strat_bvecvx.sweepRewardToken(token_addr)
+
+        assert (
+            (reward.balanceOf(self.bribes_processor.address) - prev_bribes_processor_balance) ==
+            prev_strategy_balance
+        )
+        assert reward.balanceOf(self.strat_bvecvx.address) == 0
+
+        return prev_strategy_balance
+
 
 
 
