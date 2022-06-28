@@ -33,7 +33,7 @@ def main():
     bucket = 20_000e18 / 3
     usd_weth = int(bucket / prices['ethereum']['usd'])
     usd_aura = int(bucket / prices['aura-finance']['usd'])
-    usd_aurabal = int(bucket / prices['balancer']['usd'] / 3)
+    usd_aurabal = int(bucket / (prices['balancer']['usd'] * 3))
 
     safe.balancer.swap(weth, bal, usd_weth * 1.1)
 
