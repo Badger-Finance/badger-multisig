@@ -154,9 +154,10 @@ pass {naive_quote[0]}'s quote to cowswap instead?''')
         if allowance < mantissa:
             asset.approve(self.vault_relayer, mantissa)
             assert asset.allowance(self.safe, self.vault_relayer) >= mantissa
-            print('approval needs to be executed on-chain before order can be posted to api!\n')
-            self.safe.post_safe_tx()
-            sys.exit()
+            # currently not enforced by cowswap anymore
+            # print('approval needs to be executed on-chain before order can be posted to api!\n')
+            # self.safe.post_safe_tx()
+            # sys.exit()
 
 
     def market_sell(self, asset_sell, asset_buy, mantissa_sell, deadline=60*60, chunks=1, coef=1, destination=None):
