@@ -72,12 +72,14 @@ def ldo(dev):
 
 
 @pytest.fixture
-def bal(dev):
+def bal(dev, vault):
     Contract.from_explorer(registry.eth.treasury_tokens.BAL)
     bal = MintableForkToken(
         registry.eth.treasury_tokens.BAL, owner=dev.account
     )
-    bal._mint_for_testing(dev, 10 * 10**bal.decimals())
+    bal._mint_for_testing(dev, 1000 * 10**bal.decimals())
+    bal._mint_for_testing(vault, 1000 * 10**bal.decimals())
+
     return Contract(
         registry.eth.treasury_tokens.BAL, owner=dev.account
     )
@@ -104,17 +106,6 @@ def weth(dev):
     weth._mint_for_testing(dev, 100 * 10**weth.decimals())
     return Contract(
         registry.eth.treasury_tokens.WETH, owner=dev.account
-    )
-
-@pytest.fixture
-def dai(dev):
-    Contract.from_explorer(registry.eth.treasury_tokens.DAI)
-    dai = MintableForkToken(
-        registry.eth.treasury_tokens.DAI, owner=dev.account
-    )
-    dai._mint_for_testing(dev, 10_000 * 10**dai.decimals())
-    return Contract(
-        registry.eth.treasury_tokens.DAI, owner=dev.account
     )
 
 

@@ -10,6 +10,7 @@ DEFAULT_AMOUNT = .1e18 # target balance for any ops_* badger wallet
 EXEC_AMOUNT = .05e18 # target balance for any ops_executor* badger wallet
 OVERRIDE_AMOUNT = { # override DEFAULT_AMOUNT for exceptional badger wallets
     'ops_botsquad': .5e18,
+    'ops_botsquad_cycle0': .5e18,
     'ops_deployer': .25e18,
 }
 MIN_TRANSFER = .01e18 # if difference is less than min, transfer min amount instead

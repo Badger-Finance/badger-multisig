@@ -43,4 +43,6 @@ interface IStrategy {
     function harvest() external;
 
     function governance() external view returns (address);
+
+    function controller() external view returns (address);
 }

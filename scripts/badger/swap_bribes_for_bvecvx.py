@@ -24,7 +24,7 @@ BADGER = interface.ERC20(
 TREE = GreatApeSafe(registry.eth.badger_wallets.badgertree)
 TECHOPS = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
-VOTING_SAFE = GreatApeSafe(registry.eth.badger_wallets.bvecvx_voting_multisig)
+VOTING_SAFE = GreatApeSafe(registry.eth.badger_wallets.treasury_voter_multisig)
 
 WANT_TO_SELL = registry.eth.bribe_tokens_claimable.copy()
 WANT_TO_SELL.pop('CVX') # SameBuyAndSellToken

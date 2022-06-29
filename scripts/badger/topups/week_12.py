@@ -37,7 +37,7 @@ def main():
         owner=registry.eth.badger_wallets.treasury_ops_multisig
     ).balanceOf(registry.eth.badger_wallets.treasury_ops_multisig)
     df["token_address"].append(registry.eth.treasury_tokens.bveCVX)
-    df["receiver"].append(registry.eth.badger_wallets.bvecvx_voting_multisig)
+    df["receiver"].append(registry.eth.badger_wallets.treasury_voter_multisig)
     df["value"].append(Decimal(bvecvx_bal) / Decimal('1e18'))
 
     # turn dict of lists into dataframe and add additional columns needed by

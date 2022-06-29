@@ -7,21 +7,25 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions
+from brownie import Contract, network, ETH_ADDRESS, exceptions, web3
+from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
-from helpers.chaindata import labels
+from web3.exceptions import BadFunctionCallOutput
 
 from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.anyswap import Anyswap
+from great_ape_safe.ape_api.aura import Aura
 from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.balancer import Balancer
+from great_ape_safe.ape_api.chainlink import Chainlink
 from great_ape_safe.ape_api.compound import Compound
 from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.cow import Cow
 from great_ape_safe.ape_api.curve import Curve
 from great_ape_safe.ape_api.curve_v2 import CurveV2
+from great_ape_safe.ape_api.maker import Maker
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
 from great_ape_safe.ape_api.rari import Rari
@@ -30,6 +34,7 @@ from great_ape_safe.ape_api.spookyswap import SpookySwap
 from great_ape_safe.ape_api.sushi import Sushi
 from great_ape_safe.ape_api.uni_v2 import UniV2
 from great_ape_safe.ape_api.uni_v3 import UniV3
+from helpers.chaindata import labels
 
 
 C = Console()
@@ -51,7 +56,6 @@ class GreatApeSafe(ApeSafe):
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
 
-
     def init_all(self):
         for method in self.__dir__():
             if method.startswith('init_') and method != 'init_all':
@@ -68,7 +72,9 @@ class GreatApeSafe(ApeSafe):
 
     def init_anyswap(self):
         self.anyswap = Anyswap(self)
-
+    
+    def init_aura(self):
+        self.aura = Aura(self)
 
     def init_badger(self):
         self.badger = Badger(self)
@@ -76,6 +82,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_balancer(self):
         self.balancer = Balancer(self)
+
+
+    def init_chainlink(self):
+        self.chainlink = Chainlink(self)
 
 
     def init_compound(self):
@@ -96,6 +106,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_curve_v2(self):
         self.curve_v2 = CurveV2(self)
+
+
+    def init_maker(self):
+        self.maker = Maker(self)
 
 
     def init_opolis(self):
@@ -232,13 +246,14 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5, safe_tx=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
         # silent=True: prevent printing of safe_tx attributes at end of run
         # post=True: make the actual live posting of the tx to the gnosis api
-        safe_tx = self.multisend_from_receipts()
+        if not safe_tx:
+            safe_tx = self.multisend_from_receipts()
         if not skip_preview:
             safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name, gas_coef)
         if replace_nonce:
@@ -280,3 +295,24 @@ class GreatApeSafe(ApeSafe):
             safe_tx = self.pending_transactions[0]
         pprint(safe_tx.__dict__)
         self.execute_transaction_with_frame(safe_tx)
+
+
+    def contract(self, address, Interface=None, from_explorer=False):
+        # instantiate a brownie contract, either from an interface, the
+        # explorer or locally saved contract object. if address is somehow
+        # invalid, return None.
+        if is_address(address):
+            address = to_checksum_address(address)
+        else:
+            try:
+                address = web3.ens.resolve(address)
+            except BadFunctionCallOutput:
+                return None
+        if not is_address(address):
+            return None
+        if Interface:
+            return Interface(address, owner=self.account)
+        elif from_explorer:
+            return Contract.from_explorer(address, owner=self.account)
+        else:
+            return Contract(address, owner=self.account)
