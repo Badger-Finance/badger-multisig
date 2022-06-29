@@ -375,6 +375,7 @@ ADDRESSES_ETH = {
         "incentives_controller": "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5",
         "aave_lending_pool_v2": "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
         "data_provider": "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d",
+        "price_oracle_v2": "0xA50ba011c48153De246E5192C8f9258A2ba79Ca9",
     },
     "cow": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",

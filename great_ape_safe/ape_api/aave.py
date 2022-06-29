@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from re import L
 
 from brownie import web3
 from rich.console import Console
@@ -10,14 +11,17 @@ C = Console()
 
 class Aave():
     def __init__(self, safe):
-        self.safe       = safe
+        self.safe = safe
+
         # tokens
-        self.aave       = safe.contract(registry.eth.treasury_tokens.AAVE)
-        self.stkaave    = safe.contract(registry.eth.treasury_tokens.stkAAVE)
+        self.aave = safe.contract(registry.eth.treasury_tokens.AAVE)
+        self.stkaave = safe.contract(registry.eth.treasury_tokens.stkAAVE)
+
         # contracts
         self.controller = safe.contract(registry.eth.aave.incentives_controller)
-        self.data       = safe.contract(registry.eth.aave.data_provider)
-        self.pool       = safe.contract(registry.eth.aave.aave_lending_pool_v2)
+        self.data = safe.contract(registry.eth.aave.data_provider)
+        self.pool = safe.contract(registry.eth.aave.aave_lending_pool_v2)
+        self.oracle = safe.contract(registry.eth.aave.price_oracle_v2)
 
 
     def deposit(self, underlying, mantissa, destination=None):
@@ -95,3 +99,65 @@ class Aave():
         C.print('no valid window found; calling cooldown now...')
         self.stkaave.cooldown()
         self.unstake_and_claim(destination)
+
+
+    def borrow(self, underlying, mantissa, variable_rate=True):
+        mode = 2 if variable_rate else 1
+        self.pool.borrow(underlying, mantissa, mode, 0, self.safe.address)
+
+
+    def repay(self, underlying, mantissa, variable_rate=True):
+        mode = 2 if variable_rate else 1
+        underlying.approve(self.pool, mantissa)
+        self.pool.repay(underlying, mantissa, mode, self.safe.address)
+
+
+    def repay_all(self, underlying, variable_rate=True):
+        mode = 2 if variable_rate else 1
+        underlying.approve(self.pool, 2**256-1)
+        self.pool.repay(underlying, 2**256-1, mode, self.safe.address)
+        underlying.approve(self.pool, 0)
+
+
+    def _get_debt_in_token(self, token):
+        info = self.pool.getUserAccountData(self.safe.address)
+        debt_in_eth = info[1]
+        token_to_eth_rate = self.oracle.getAssetPrice(token)
+        return (debt_in_eth * 10 ** token.decimals()) / token_to_eth_rate
+
+
+    def lever_up(self, collateral_token, borrow_token, perc):
+        '''
+        given total borrow amounts in the aave user account, we will use
+        `percent_bps` of it to borrow `borrow_token`
+        '''
+        ## get total borrowable
+        info = self.pool.getUserAccountData(self.safe.address)
+
+        # make sure we do not want to borrow more than max ltv
+        ltv = info[4] / 10_000
+        assert perc <= ltv
+
+        # calc available borrows expressed in `borrow_token`
+        available_borrows_eth = info[2]
+        borrow_to_eth_rate = self.oracle.getAssetPrice(borrow_token)
+        we_want_to_borrow = available_borrows_eth / borrow_to_eth_rate * perc / ltv
+        we_want_to_borrow *= 1.01  # correct for slippage and swap fee
+        we_want_to_borrow *= 10 ** borrow_token.decimals()
+
+        # borrow
+        self.borrow(borrow_token, we_want_to_borrow)
+
+        # swap borrowed for more `collateral_token` and deposit back into aave
+        # TODO: add swap functions to uni_v3 class and use that instead
+        self.safe.init_sushi()
+        to_reinvest = self.safe.sushi.swap_tokens_for_tokens(
+            borrow_token,
+            we_want_to_borrow,
+            [borrow_token, registry.eth.treasury_tokens.WETH, collateral_token]
+        )[-1]
+        self.deposit(collateral_token, to_reinvest)
+
+
+    def lever_down(self):
+        pass
