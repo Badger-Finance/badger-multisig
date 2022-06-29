@@ -31,4 +31,8 @@ interface IController {
     function rewards() external view returns (address);
 
     function vaults(address) external view returns (address);
+
+    function inCaseTokensGetStuck(address, uint256) external;
+
+    function inCaseStrategyTokenGetStuck(address, address) external;
 }

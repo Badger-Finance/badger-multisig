@@ -4,11 +4,9 @@ import requests
 from decimal import Decimal
 
 from brownie import chain, interface, ZERO_ADDRESS
-from brownie.exceptions import VirtualMachineError
 from eth_abi import encode_abi
-# from helpers.constants import AddressZero
 
-from helpers.addresses import registry
+from helpers.addresses import r
 from rich.console import Console
 
 
@@ -26,31 +24,30 @@ class Badger():
         self.safe = safe
 
         # tokens
-        self.badger = interface.IBadger(
-            registry.eth.treasury_tokens.BADGER,
-            owner=self.safe.account
+        self.badger = self.safe.contract(
+            r.treasury_tokens.BADGER, interface.IBadger
         )
 
         # contracts
-        self.tree = interface.IBadgerTreeV2(
-            registry.eth.badger_wallets.badgertree, owner=self.safe.account
+        self.tree = self.safe.contract(
+            r.badger_wallets.badgertree, interface.IBadgerTreeV2
         )
-        self.strat_bvecvx = interface.IVestedCvx(
-            registry.eth.strategies['native.vestedCVX'],
-            owner=self.safe.account
+        self.strat_bvecvx = self.safe.contract(
+            r.strategies['native.vestedCVX'], interface.IVestedCvx
         )
-        self.timelock = safe.contract(
-            registry.eth.governance_timelock
+        self.timelock = self.safe.contract(r.governance_timelock)
+        self.bribes_processor = self.safe.contract(
+            r.bribes_processor, interface.IBribesProcessor
         )
-        self.registry = interface.IBadgerRegistry(
-            registry.eth.registry, owner=self.safe.account
+        self.registry = self.safe.contract(
+            r.registry, interface.IBadgerRegistry
         )
-        self.bribes_processor = interface.IBribesProcessor(
-            registry.eth.bribes_processor, owner=self.safe.account
+        self.registry_v2 = self.safe.contract(
+            r.registry_v2, interface.IBadgerRegistryV2
         )
 
         # misc
-        self.api_url = 'https://api.badger.finance/v2/'
+        self.api_url = 'https://api.badger.com/v2/'
 
 
     def claim_all(self, json_file_path=None):
@@ -95,6 +92,9 @@ class Badger():
         the official votium repo (https://github.com/oo-00/Votium) and its
         `values` being the respective token's address.
         """
+        merkle_stash = interface.IMultiMerkleStash(
+            r.votium.multiMerkleStash, owner=self.safe.account
+        )
         aggregate = {'tokens': [], 'indexes': [], 'amounts': [], 'proofs': []}
         for symbol, token_addr in eligible_claims.items():
             directory = 'data/Votium/merkle/'
@@ -109,30 +109,14 @@ class Badger():
                 except KeyError:
                     # no claimables for the strat for this particular token
                     continue
-                try:
-                    self.strat_bvecvx.claimBribeFromVotium.call(
-                        registry.eth.votium.multiMerkleStash,
-                        token_addr,
-                        leaf['index'],
-                        self.strat_bvecvx.address,
-                        leaf['amount'],
-                        leaf['proof']
-                    )
-                except VirtualMachineError as e:
-                    if str(e) == 'revert: Drop already claimed.':
-                        continue
-                    if str(e) == 'revert: SafeERC20: low-level call failed':
-                        # $ldo claim throws this on .call, dont know why
-                        pass
-                    else:
-                        raise
-                aggregate['tokens'].append(token_addr)
-                aggregate['indexes'].append(leaf['index'])
-                aggregate['amounts'].append(leaf['amount'])
-                aggregate['proofs'].append(leaf['proof'])
+                if not merkle_stash.isClaimed(token_addr, leaf['index']):
+                    aggregate['tokens'].append(token_addr)
+                    aggregate['indexes'].append(leaf['index'])
+                    aggregate['amounts'].append(int(leaf['amount'], 0))
+                    aggregate['proofs'].append(leaf['proof'])
         if len(aggregate['tokens']) > 0:
             self.strat_bvecvx.claimBribesFromVotium(
-                registry.eth.votium.multiMerkleStash,
+                r.votium.multiMerkleStash,
                 self.strat_bvecvx.address,
                 aggregate['tokens'],
                 aggregate['indexes'],
@@ -265,20 +249,35 @@ class Badger():
         controller.setStrategy(want, strat_addr)
         assert controller.strategies(want) == strat_addr
 
+    def promote_vault(self, vault_addr, vault_version, vault_metadata, vault_status):
+        self.registry_v2.promote(vault_addr, vault_version, vault_metadata, vault_status)
+        C.print(f'Promote: {vault_addr} ({vault_version}) to {vault_status}')
+
+    def demote_vault(self, vault_addr, vault_status):
+        self.registry_v2.demote(vault_addr, vault_status)
+        C.print(f'Demote: {vault_addr} to {vault_status}')
+
+    def update_metadata(self, vault_addr, vault_metadata):
+        self.registry_v2.updateMetadata(vault_addr, vault_metadata)
+        C.print(f'Update Metadata: {vault_addr} to {vault_metadata}')
 
     def set_key_on_registry(self, key, target_addr):
         # Ensures key doesn't currently exist
-        assert self.registry.get(key) == ZERO_ADDRESS
+        assert self.registry_v2.get(key) == ZERO_ADDRESS
 
-        self.registry.set(key, target_addr)
+        self.registry_v2.set(key, target_addr)
 
-        assert self.registry.get(key) == target_addr
+        assert self.registry_v2.get(key) == target_addr
         C.print(f'{key} was added to the registry at {target_addr}')
 
+    def migrate_key_on_registry(self, key):
+        value = self.registry.get(key)
+        assert value != ZERO_ADDRESS
+        self.set_key_on_registry(key, value)
 
     def from_gdigg_to_digg(self, gdigg):
         digg = interface.IUFragments(
-            registry.eth.treasury_tokens.DIGG, owner=self.safe.account
+            r.treasury_tokens.DIGG, owner=self.safe.account
         )
         return Decimal(
             gdigg * digg._initialSharesPerFragment() / digg._sharesPerFragment()

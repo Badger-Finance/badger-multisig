@@ -2,7 +2,7 @@ from decimal import Decimal
 import requests
 import json
 
-from brownie import ZERO_ADDRESS, Contract, chain, web3
+from brownie import ZERO_ADDRESS, Contract, chain, interface, web3
 from helpers.addresses import registry
 from web3 import Web3
 import eth_abi
@@ -20,6 +20,9 @@ class Balancer():
         self.gauge_factory = safe.contract(registry.eth.balancer.gauge_factory)
         self.vebal = safe.contract(registry.eth.balancer.veBAL)
         self.wallet_checker = safe.contract(self.vebal.smart_wallet_checker())
+        self.minter = safe.contract(
+            registry.eth.balancer.minter, interface.IBalancerMinter
+        )
         # parameters
         self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000) # USD
@@ -138,7 +141,7 @@ class Balancer():
 
 
     def deposit_and_stake(
-        self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None
+        self, underlyings, mantissas, pool=None, stake=True, is_eth=False, destination=None, pool_type=None
     ):
         # given underlyings and their amounts, deposit and stake `underlyings`
 
@@ -154,7 +157,9 @@ class Balancer():
 
         tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
 
-        if self.pool_type(pool_id) == 'Stable':
+        pool_type = pool_type if pool_type else self.pool_type(pool_id)
+
+        if pool_type == 'Stable':
             # wip
             # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
             bpt_out = 1
@@ -275,6 +280,20 @@ class Balancer():
         destination = self.safe if not destination else destination
         mantissa = pool.balanceOf(destination)
         self.stake(pool, mantissa, destination, dusty)
+
+
+    def unstake(self, pool, mantissa, claim=True):
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        bal_pool_before = pool.balanceOf(self.safe)
+        gauge.withdraw(mantissa, claim)
+        assert pool.balanceOf(self.safe) >= bal_pool_before
+
+
+    def unstake_all(self, pool, claim=True):
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        bal_pool_before = pool.balanceOf(self.safe)
+        gauge.withdraw(gauge.balanceOf(self.safe), claim)
+        assert pool.balanceOf(self.safe) >= bal_pool_before
 
 
     def unstake_all_and_withdraw_all(
@@ -398,10 +417,7 @@ class Balancer():
         pool_id = pool.getPoolId()
 
         if unstake:
-            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
-            balance_before_gauge = gauge.balanceOf(self.safe)
-            gauge.withdraw(gauge.balanceOf(self.safe), claim)
-            assert pool.balanceOf(self.safe) >= balance_before_gauge
+            self.unstake_all(pool)
 
         balances_before = [Contract(x).balanceOf(destination) for x in request[0]]
 
@@ -415,6 +431,16 @@ class Balancer():
             assert all([x > y for x, y in zip(balances_after, balances_before)])
         else:
             assert any([x > y for x, y in zip(balances_after, balances_before)])
+
+
+    def claim(self, underlyings=None, pool=None):
+        # claim reward token from pool's gauge given `underlyings` or `pool`
+        if underlyings:
+            underlyings = self.order_tokens([x.address for x in underlyings])
+            pool_id = self.find_pool_for_underlyings(underlyings)
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        self.minter.mint(gauge)
 
 
     def claim_all(self, underlyings=None, pool=None):
