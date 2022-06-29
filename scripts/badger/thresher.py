@@ -9,16 +9,15 @@ SLIPPAGE = .99
 
 SAFE = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
 VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
+VOTER = GreatApeSafe(registry.eth.badger_wallets.treasury_voter_multisig)
 
 ZAP = SAFE.contract(registry.eth.curve.zap_ibbtc)
 BIBBTC = interface.ISettV4h(
     registry.eth.sett_vaults.bcrvIbBTC, owner=SAFE.account
 )
 IBBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvIbBTC)
-IBBTC = interface.ERC20(registry.eth.treasury_tokens.ibBTC, owner=SAFE.account)
-WIBBTC = interface.IWrappedIbbtcEth(
-    registry.eth.treasury_tokens.wibBTC, owner=SAFE.account
-)
+IBBTC = SAFE.contract(registry.eth.treasury_tokens.ibBTC)
+WIBBTC = SAFE.contract(registry.eth.treasury_tokens.wibBTC)
 SBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvSBTC)
 YVWBTC = SAFE.contract(registry.eth.treasury_tokens.yvWBTC)
 BYVWBTC = SAFE.contract(registry.eth.yearn_vaults.byvWBTC)
@@ -43,6 +42,7 @@ THREEPOOL = SAFE.contract(registry.eth.treasury_tokens.crv3pool)
 DAI = interface.ERC20(registry.eth.treasury_tokens.DAI, owner=SAFE.account)
 USDC = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=SAFE.account)
 USDT = interface.ERC20(registry.eth.treasury_tokens.USDT, owner=SAFE.account)
+AURABAL = SAFE.contract(registry.eth.treasury_tokens.AURABAL)
 
 
 def consolidate_stables():
@@ -197,4 +197,7 @@ def main():
     # 5: unwind xsushi
     SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
 
-    SAFE.post_safe_tx(skip_preview=True)
+    # 6: send all relevant influence tokens to voter
+    AURABAL.transfer(VOTER, AURABAL.balanceOf(SAFE))
+
+    SAFE.post_safe_tx()
