@@ -286,14 +286,15 @@ class Balancer():
         gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
         bal_pool_before = pool.balanceOf(self.safe)
         gauge.withdraw(mantissa, claim)
-        assert pool.balanceOf(self.safe) >= bal_pool_before
+        assert pool.balanceOf(self.safe) == bal_pool_before + mantissa
 
 
     def unstake_all(self, pool, claim=True):
         gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
         bal_pool_before = pool.balanceOf(self.safe)
-        gauge.withdraw(gauge.balanceOf(self.safe), claim)
-        assert pool.balanceOf(self.safe) >= bal_pool_before
+        gauge_bal = gauge.balanceOf(self.safe)
+        gauge.withdraw(gauge_bal, claim)
+        assert pool.balanceOf(self.safe) == bal_pool_before + gauge_bal
 
 
     def unstake_all_and_withdraw_all(
