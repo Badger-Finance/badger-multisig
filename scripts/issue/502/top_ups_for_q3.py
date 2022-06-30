@@ -34,7 +34,7 @@ def main():
     ])
 
     # badger for emissions, rembadger, bribes and contribs q3
-    badger.transfer(r.drippers.tree_2022_q3, 260_000e18)
+    badger.transfer(r.drippers.tree_2022_q3, 351_000e18)
     badger.transfer(r.drippers.rembadger_2022_q3, 75_000e18)
     badger.transfer(trops, 104_000e18)
     badger.transfer(r.badger_wallets.payments_multisig, 500_000e18 - 110_000e18)  # prob ~110k left at end of q2
@@ -47,16 +47,13 @@ def main():
     safe.balancer.claim([wbtc, badger])
     bal.transfer(r.badger_wallets.treasury_voter_multisig, bal.balanceOf(safe))
 
-    # stake ~$7k worth of dust bpt
-    safe.init_balancer()
-    safe.balancer.stake_all(bpt_badgerwbtc)
-
     # balancer 3pool deposit & stake;
     # https://github.com/Badger-Finance/badger-multisig/issues/413
     underlyings = [usdt, usdc, dai]
     amounts = [int(102_457e6), int(102_457e6), int(102_457e18)]
-    safe.balancer.deposit_and_stake(underlyings, amounts)
-    safe.balancer.stake_all(bpt_3pool, dusty=.995)
+    safe.balancer.deposit_and_stake(underlyings, amounts, stake=False)
+    safe.init_aura()
+    safe.aura.deposit_all_and_stake(bpt_3pool)
 
     # dust to trops for processing
     for dust in [
@@ -74,12 +71,12 @@ def main():
     )
 
     print(
-        'bpt_badgerwbtc in gauge:',
-        safe.contract(safe.balancer.gauge_factory.getPoolGauge(bpt_badgerwbtc)).balanceOf(safe)
+        'bpt_3pool in balancer gauge:',
+        safe.contract(safe.balancer.gauge_factory.getPoolGauge(bpt_3pool)).balanceOf(safe)
     )
     print(
-        'bpt_3pool in gauge:',
-        safe.contract(safe.balancer.gauge_factory.getPoolGauge(bpt_3pool)).balanceOf(safe)
+        'bpt_3pool in aura gauge:',
+        safe.contract('0x08b8a86B9498AC249bF4B86e14C5d4187085a239').balanceOf(safe)
     )
 
     trops.print_snapshot()
