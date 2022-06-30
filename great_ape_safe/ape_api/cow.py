@@ -50,7 +50,7 @@ class Cow():
         destination = self.safe.address if not destination else destination
 
         # make sure mantissa is an integer
-        assert type(mantissa_sell) == int
+        mantissa_sell == int(mantissa_sell)
 
         # get the fee and exact amount to buy after fee
         fee_and_quote_payload = {
@@ -72,7 +72,7 @@ class Cow():
         fee_amount = int(r.json()['fee']['amount'])
         if mantissa_buy:
             # overwrite quote in case order has a limit
-            assert type(mantissa_buy) == int
+            mantissa_buy == int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
             buy_amount_after_fee = int(int(r.json()['buyAmountAfterFee']) * coef)
@@ -154,9 +154,10 @@ pass {naive_quote[0]}'s quote to cowswap instead?''')
         if allowance < mantissa:
             asset.approve(self.vault_relayer, mantissa)
             assert asset.allowance(self.safe, self.vault_relayer) >= mantissa
-            print('approval needs to be executed on-chain before order can be posted to api!\n')
-            self.safe.post_safe_tx()
-            sys.exit()
+            # currently not enforced by cowswap anymore
+            # print('approval needs to be executed on-chain before order can be posted to api!\n')
+            # self.safe.post_safe_tx()
+            # sys.exit()
 
 
     def market_sell(self, asset_sell, asset_buy, mantissa_sell, deadline=60*60, chunks=1, coef=1, destination=None):

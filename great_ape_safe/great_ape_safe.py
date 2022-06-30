@@ -16,6 +16,7 @@ from web3.exceptions import BadFunctionCallOutput
 
 from great_ape_safe.ape_api.aave import Aave
 from great_ape_safe.ape_api.anyswap import Anyswap
+from great_ape_safe.ape_api.aura import Aura
 from great_ape_safe.ape_api.badger import Badger
 from great_ape_safe.ape_api.balancer import Balancer
 from great_ape_safe.ape_api.chainlink import Chainlink
@@ -24,6 +25,7 @@ from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.cow import Cow
 from great_ape_safe.ape_api.curve import Curve
 from great_ape_safe.ape_api.curve_v2 import CurveV2
+from great_ape_safe.ape_api.maker import Maker
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
 from great_ape_safe.ape_api.rari import Rari
@@ -70,7 +72,9 @@ class GreatApeSafe(ApeSafe):
 
     def init_anyswap(self):
         self.anyswap = Anyswap(self)
-
+    
+    def init_aura(self):
+        self.aura = Aura(self)
 
     def init_badger(self):
         self.badger = Badger(self)
@@ -102,6 +106,10 @@ class GreatApeSafe(ApeSafe):
 
     def init_curve_v2(self):
         self.curve_v2 = CurveV2(self)
+
+
+    def init_maker(self):
+        self.maker = Maker(self)
 
 
     def init_opolis(self):
@@ -238,13 +246,14 @@ class GreatApeSafe(ApeSafe):
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
 
-    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5):
+    def post_safe_tx(self, skip_preview=False, events=True, call_trace=False, reset=True, silent=False, post=True, replace_nonce=None, log_name=None, csv_destination=None, gas_coef=1.5, safe_tx=None):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
         # events, call_trace and reset are params passed to .preview
         # silent=True: prevent printing of safe_tx attributes at end of run
         # post=True: make the actual live posting of the tx to the gnosis api
-        safe_tx = self.multisend_from_receipts()
+        if not safe_tx:
+            safe_tx = self.multisend_from_receipts()
         if not skip_preview:
             safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name, gas_coef)
         if replace_nonce:
