@@ -27,6 +27,7 @@ safe.init_badger()
 
 UPGRADE_SIG = "upgrade(address,address)"
 TX_DIR = "data/badger/timelock/upgrade_byvwbtc_gac_wd/"
+WHALE = "0x6a7ed7a974d4314d2c345bd826daca5501b0aa1e"
 
 
 def main(queue="true", simulation="false"):
@@ -43,7 +44,9 @@ def main(queue="true", simulation="false"):
             delay_in_days=6,
         )
     else:
-        vault_proxy = safe.contract(YEARN_SETT)
+        vault_proxy = interface.ISimpleWrapperGatedUpgradeable(
+            YEARN_SETT, owner=DEV_MULTI
+        )
 
         prev_affiliate = vault_proxy.affiliate()
         prev_manager = vault_proxy.manager()
@@ -72,6 +75,36 @@ def main(queue="true", simulation="false"):
         assert prev_experimental_vault == vault_proxy.experimentalVault()
         assert TECH_OPS == vault_proxy.treasury()
         assert GAC == vault_proxy.GAC()
+
+        if simulation == "true":
+            # Transfer funds to user
+            user = accounts[3]
+            whale = accounts.at(WHALE, force=True)
+            whale_balance = int(vault_proxy.balanceOf(WHALE) * 0.8)
+            vault_proxy.transfer(user.address, whale_balance, {"from": whale})
+
+            underlying = interface.IERC20(vault_proxy.token())
+            affiliate = vault_proxy.affiliate()
+            treasury = vault_proxy.treasury()
+
+            # Test wd fee accrued by treasury not governance
+            prev_gov_balance = underlying.balanceOf(affiliate)
+            prev_treasury_balance = underlying.balanceOf(treasury)
+
+            vault_proxy.withdraw({"from": user})
+
+            assert underlying.balanceOf(treasury) > prev_treasury_balance
+            assert underlying.balanceOf(affiliate) == prev_gov_balance
+
+            # Assert pausing works
+            gac = interface.IGac(vault_proxy.GAC(), owner=DEV_MULTI)
+            gac_guardian = accounts.at(gac.WAR_ROOM_ACL(), force=True)
+            gac.pause({"from": gac_guardian})
+            try:
+                vault_proxy.withdraw(123, {"from": user})
+                raise Exception("should have errored")
+            except:
+                console.print("Paused!")
 
     if simulation != "true":
         safe.post_safe_tx()
