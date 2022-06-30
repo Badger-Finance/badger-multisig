@@ -1,19 +1,13 @@
-"""
-  Given Token In and OUT, Leverage functions
-"""
-import requests
-import json
 from great_ape_safe import GreatApeSafe
-from brownie import Contract
 from helpers.addresses import registry
 
-multisigAddress = registry.eth.badger_wallets.dev_multisig
-
 ## Signer
-safe = GreatApeSafe(multisigAddress)
+safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
+safe.init_aave()
+
 
 ## Mainnet
-AAVE_LENDING_POOL = safe.contract("0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9")
+AAVE_LENDING_POOL = safe.aave.pool
 
 WBTC = safe.contract("0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599")
 aWBTC = safe.contract("0x9ff58f4fFB29fA2266Ab25e75e2A8b3503311656")
@@ -28,26 +22,124 @@ A_TOKEN = aWBTC
 PRICE_ORACLE = safe.contract("0xA50ba011c48153De246E5192C8f9258A2ba79Ca9")
 
 ## UniV2 Router
-UNIV2_ROUTER = safe.contract("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D") 
-SUSHI_ROUTER = safe.contract("0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F") 
+UNIV2_ROUTER = safe.contract("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+SUSHI_ROUTER = safe.contract("0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F")
 
 BPS = 10_000
+
 
 def main():
   """
     Example function, setup with Deposit Amount and Leverage ratio
   """
-  deposit(123)
-  lever_up(5_000) ## 50%
-  repay(123 + 123*.5)
+  safe.take_snapshot([WBTC, aWBTC, USDC, WETH])
 
-def deposit(amount):
+  safe.aave.deposit(WBTC, 1e8)
+  safe.aave.lever_up(WBTC, USDC, .5)
+
+  safe.print_snapshot()
+
+  safe.aave.delever(WBTC, USDC)
+  safe.aave.withdraw_all(WBTC)
+
+  safe.post_safe_tx()
+
+
+
+def delever(debt_to_repay):
   """
-    Deposit into AAVE, earns basic interest, LM incentives and allows to lever
+    NOTE: loop until repay in full of debt_to_repay
   """
-  DEPOSIT_TOKEN.approve(AAVE_LENDING_POOL, 0)
-  DEPOSIT_TOKEN.approve(AAVE_LENDING_POOL, amount)
-  AAVE_LENDING_POOL.deposit(DEPOSIT_TOKEN, amount, safe.address, 0)
+  usdc_to_eth = PRICE_ORACLE.getAssetPrice(BORROW_TOKEN)
+  wbtc_to_eth = PRICE_ORACLE.getAssetPrice(DEPOSIT_TOKEN)
+  max_wbtc_to_withdraw = (debt_to_repay * usdc_to_eth * 10**(DEPOSIT_TOKEN.decimals())) / (wbtc_to_eth * 10**(BORROW_TOKEN.decimals()))
+
+  debt_paid = 0
+  while debt_paid < debt_to_repay:
+
+        ## Given amount of debt_to_repay, withdraw what is possible and repay
+        info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
+        collateral_in_eth = info[0]
+        debt_in_eth = info[1]
+        available_borrows_eth = info[2]
+        liq_threshold = info[3]
+
+        ## How much wBTC do we need to withdraw, to repay this debt?
+
+        ## (collateral_in_eth - available_withdraw_eth) * liq_threshold >= debt_in_eth
+        ## && collateral_in_eth * liq_threshold >= (debt_in_eth + available_borrows_eth)
+        available_withdraw_eth = available_borrows_eth * BPS / liq_threshold
+        assert 0 < available_withdraw_eth and available_withdraw_eth <= collateral_in_eth
+        available_withdraw_wbtc = available_withdraw_eth * 10**(DEPOSIT_TOKEN.decimals()) / wbtc_to_eth
+
+        ## Cap withdrawal to maximum required for debt_to_repay
+        if available_withdraw_wbtc > max_wbtc_to_withdraw:
+           available_withdraw_wbtc = max_wbtc_to_withdraw
+
+        ## This loop might withdraw a bit more than required for small residues of debt
+        ## Add some buffer (5%) for swap slippage/fee etc
+        available_withdraw_wbtc = available_withdraw_wbtc * 1.05
+
+        ## Cap withdrawal to maximum collateral deposited
+        max_deposited = (collateral_in_eth - debt_in_eth) * 10**(DEPOSIT_TOKEN.decimals()) / wbtc_to_eth
+        if available_withdraw_wbtc > max_deposited:
+           available_withdraw_wbtc = max_deposited
+
+        ## Withdraw X:
+        withdraw(available_withdraw_wbtc)
+
+        ## Swap to debt
+        DEPOSIT_TOKEN.approve(SUSHI_ROUTER, 0)
+        DEPOSIT_TOKEN.approve(SUSHI_ROUTER, available_withdraw_wbtc)
+        swap_result = SUSHI_ROUTER.swapExactTokensForTokens(available_withdraw_wbtc, 0, [DEPOSIT_TOKEN, WETH, BORROW_TOKEN], safe, 9999999999) ## oracle TODO
+
+        ## Repay
+        to_repay = swap_result.return_value[-1]
+        repay(to_repay)
+        debt_paid = debt_paid + to_repay
+
+
+def delever_once():
+  """
+    Note: deleverage to pay all debt
+  """
+  ## Get all the withdrawable, minus a 5% buffer
+  ## Get deposited_eth - borrowed_eth, convert to wBTC
+
+  ## Withdraw
+
+  ## Swap to USC
+
+  ## Repay
+  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
+  collateral_in_eth = info[0]
+  debt_in_eth = info[1]
+
+  usdc_to_eth = PRICE_ORACLE.getAssetPrice(BORROW_TOKEN)
+  debt_in_usdc = ((debt_in_eth * 10**(BORROW_TOKEN.decimals())) / usdc_to_eth)
+  delever(debt_in_usdc)
+
+  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
+  assert info[1] == 0 ## should have no debt at this moment
+
+def withdraw(ratio_bps):
+  ## Require no debt
+  ## Withdraw Value in BPS
+  """
+    Note: please ensure no debt before withdraw, otherwise delever first
+  """
+  assert ratio_bps > 0 and ratio_bps <= BPS
+  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
+  collateral_in_eth = info[0]
+
+  debt_in_eth = info[1]
+  assert debt_in_eth == 0
+
+  wbtc_to_eth = PRICE_ORACLE.getAssetPrice(DEPOSIT_TOKEN)
+  amount_to_withdraw = (ratio_bps * collateral_in_eth * 10**(DEPOSIT_TOKEN.decimals())) / (wbtc_to_eth * BPS)
+  withdraw(amount_to_withdraw)
+
+##################
 
 def lever_up(percent_bps):
   """
@@ -98,101 +190,8 @@ def repay(amount_to_repay):
   BORROW_TOKEN.approve(AAVE_LENDING_POOL, 0)
   BORROW_TOKEN.approve(AAVE_LENDING_POOL, amount_to_repay)
   AAVE_LENDING_POOL.repay(BORROW_TOKEN, amount_to_repay, 2, safe.address)
-  
-def withdraw(amount_to_withdraw):  
+
+def withdraw(amount_to_withdraw):
   A_TOKEN.approve(AAVE_LENDING_POOL, 0)
   A_TOKEN.approve(AAVE_LENDING_POOL, amount_to_withdraw)
   AAVE_LENDING_POOL.withdraw(DEPOSIT_TOKEN, amount_to_withdraw, safe.address)
-
-def delever(debt_to_repay):
-  """
-    NOTE: loop until repay in full of debt_to_repay
-  """
-  usdc_to_eth = PRICE_ORACLE.getAssetPrice(BORROW_TOKEN)
-  wbtc_to_eth = PRICE_ORACLE.getAssetPrice(DEPOSIT_TOKEN)
-  max_wbtc_to_withdraw = (debt_to_repay * usdc_to_eth * 10**(DEPOSIT_TOKEN.decimals())) / (wbtc_to_eth * 10**(BORROW_TOKEN.decimals()))
-  
-  debt_paid = 0  
-  while debt_paid < debt_to_repay:
-  
-        ## Given amount of debt_to_repay, withdraw what is possible and repay
-        info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
-        collateral_in_eth = info[0]
-        debt_in_eth = info[1]
-        available_borrows_eth = info[2]
-        liq_threshold = info[3]
-
-        ## How much wBTC do we need to withdraw, to repay this debt?
-  
-        ## (collateral_in_eth - available_withdraw_eth) * liq_threshold >= debt_in_eth 
-        ## && collateral_in_eth * liq_threshold >= (debt_in_eth + available_borrows_eth)
-        available_withdraw_eth = available_borrows_eth * BPS / liq_threshold 
-        assert 0 < available_withdraw_eth and available_withdraw_eth <= collateral_in_eth
-        available_withdraw_wbtc = available_withdraw_eth * 10**(DEPOSIT_TOKEN.decimals()) / wbtc_to_eth
-        
-        ## Cap withdrawal to maximum required for debt_to_repay
-        if available_withdraw_wbtc > max_wbtc_to_withdraw: 
-           available_withdraw_wbtc = max_wbtc_to_withdraw
-        
-        ## This loop might withdraw a bit more than required for small residues of debt
-        ## Add some buffer (5%) for swap slippage/fee etc
-        available_withdraw_wbtc = available_withdraw_wbtc * 1.05  
-
-        ## Cap withdrawal to maximum collateral deposited   
-        max_deposited = (collateral_in_eth - debt_in_eth) * 10**(DEPOSIT_TOKEN.decimals()) / wbtc_to_eth
-        if available_withdraw_wbtc > max_deposited: 
-           available_withdraw_wbtc = max_deposited
-        
-        ## Withdraw X: 
-        withdraw(available_withdraw_wbtc)
-        
-        ## Swap to debt
-        DEPOSIT_TOKEN.approve(SUSHI_ROUTER, 0)
-        DEPOSIT_TOKEN.approve(SUSHI_ROUTER, available_withdraw_wbtc)
-        swap_result = SUSHI_ROUTER.swapExactTokensForTokens(available_withdraw_wbtc, 0, [DEPOSIT_TOKEN, WETH, BORROW_TOKEN], safe, 9999999999) ## oracle TODO
-        
-        ## Repay
-        to_repay = swap_result.return_value[-1]        
-        repay(to_repay)
-        debt_paid = debt_paid + to_repay
-  
-
-def delever_once():
-  """
-    Note: deleverage to pay all debt 
-  """
-  ## Get all the withdrawable, minus a 5% buffer
-  ## Get deposited_eth - borrowed_eth, convert to wBTC
-
-  ## Withdraw
-
-  ## Swap to USC
-
-  ## Repay
-  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
-  collateral_in_eth = info[0]
-  debt_in_eth = info[1]
-  
-  usdc_to_eth = PRICE_ORACLE.getAssetPrice(BORROW_TOKEN)
-  debt_in_usdc = ((debt_in_eth * 10**(BORROW_TOKEN.decimals())) / usdc_to_eth)
-  delever(debt_in_usdc)
-  
-  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
-  assert info[1] == 0 ## should have no debt at this moment
-
-def withdraw(ratio_bps):
-  ## Require no debt
-  ## Withdraw Value in BPS
-  """
-    Note: please ensure no debt before withdraw, otherwise delever first
-  """
-  assert ratio_bps > 0 and ratio_bps <= BPS
-  info = AAVE_LENDING_POOL.getUserAccountData(safe.address)
-  collateral_in_eth = info[0]
-  
-  debt_in_eth = info[1]
-  assert debt_in_eth == 0
-  
-  wbtc_to_eth = PRICE_ORACLE.getAssetPrice(DEPOSIT_TOKEN)
-  amount_to_withdraw = (ratio_bps * collateral_in_eth * 10**(DEPOSIT_TOKEN.decimals())) / (wbtc_to_eth * BPS)
-  withdraw(amount_to_withdraw)

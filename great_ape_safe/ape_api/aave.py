@@ -159,5 +159,68 @@ class Aave():
         self.deposit(collateral_token, to_reinvest)
 
 
-    def lever_down(self):
-        pass
+    def delever(self, collateral_token, borrow_token):
+        debt_to_repay = self._get_debt_in_token(borrow_token)
+
+        debt_paid = 0
+        while debt_paid < debt_to_repay:
+            ## Given amount of debt_to_repay, withdraw what is possible and repay
+            info = self.pool.getUserAccountData(self.safe.address)
+            collateral_in_eth = info[0]
+            debt_in_eth = info[1]
+            available_borrows_eth = info[2]
+            liq_threshold = info[3]
+
+            usdc_to_eth = self.oracle.getAssetPrice(borrow_token)
+            wbtc_to_eth = self.oracle.getAssetPrice(collateral_token)
+            max_wbtc_to_withdraw = (debt_to_repay * usdc_to_eth * 10**collateral_token.decimals()) / (wbtc_to_eth * 10**borrow_token.decimals())
+
+            ## How much wBTC do we need to withdraw, to repay this debt?
+
+            ## (collateral_in_eth - available_withdraw_eth) * liq_threshold >= debt_in_eth
+            ## && collateral_in_eth * liq_threshold >= (debt_in_eth + available_borrows_eth)
+            available_withdraw_eth = available_borrows_eth * 10_000 / liq_threshold
+            assert 0 < available_withdraw_eth and available_withdraw_eth <= collateral_in_eth
+            available_withdraw_wbtc = available_withdraw_eth * 10**collateral_token.decimals() / wbtc_to_eth
+
+            ## Cap withdrawal to maximum required for debt_to_repay
+            if available_withdraw_wbtc > max_wbtc_to_withdraw:
+                available_withdraw_wbtc = max_wbtc_to_withdraw
+
+            ## This loop might withdraw a bit more than required for small residues of debt
+            ## Add some buffer (5%) for swap slippage/fee etc
+            available_withdraw_wbtc = available_withdraw_wbtc * 1.05
+
+            ## Cap withdrawal to maximum collateral deposited
+            max_deposited = (collateral_in_eth - debt_in_eth) * 10**collateral_token.decimals() / wbtc_to_eth
+            if available_withdraw_wbtc > max_deposited:
+                available_withdraw_wbtc = max_deposited
+
+            ## Withdraw X:
+            self.withdraw(collateral_token, available_withdraw_wbtc)
+
+            bal_borrow_token_before = borrow_token.balanceOf(self.safe)
+
+            ## Swap to debt
+            self.safe.init_sushi()
+            to_repay = self.safe.sushi.swap_tokens_for_tokens(
+                collateral_token,
+                available_withdraw_wbtc,
+                [collateral_token, registry.eth.treasury_tokens.WETH, borrow_token]
+            )[-1]
+
+            ## Repay
+            self.repay(borrow_token, to_repay)
+            debt_paid = debt_paid + to_repay
+
+        bal_borrow_token_after = borrow_token.balanceOf(self.safe)
+
+        ## Swap remaining margin of borrow token back into collateral token
+        self.safe.init_sushi()
+        self.safe.sushi.swap_tokens_for_tokens(
+            borrow_token,
+            bal_borrow_token_after - bal_borrow_token_before,
+            [borrow_token, registry.eth.treasury_tokens.WETH, collateral_token]
+        )
+
+        assert self._get_debt_in_token(borrow_token) == 0
