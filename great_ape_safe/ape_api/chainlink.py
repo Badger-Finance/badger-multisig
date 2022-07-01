@@ -1,5 +1,5 @@
 from brownie import interface
-from helpers.addresses import registry
+from helpers.addresses import r
 
 
 class Chainlink:
@@ -7,13 +7,14 @@ class Chainlink:
         self.safe = safe
 
         # contracts
-        self.relayer = interface.IUpkeepRegistrationRequests(
-                registry.eth.chainlink.upkeep_registration_requests,
-                owner=safe.account
-            )
-        self.link = interface.ILinkToken(
-            registry.eth.treasury_tokens.LINK, owner=safe.account
+        self.relayer = self.safe.contract(
+            r.chainlink.upkeep_registration_requests,
+            interface.IUpkeepRegistrationRequests
         )
+        self.link = self.safe.contract(
+            r.treasury_tokens.LINK, interface.ILinkToken
+        )
+        self.keeper_registry = self.safe.contract(r.chainlink.keeper_registry)
 
 
     def register_upkeep(
