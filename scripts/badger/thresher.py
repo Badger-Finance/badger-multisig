@@ -12,9 +12,8 @@ VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 VOTER = GreatApeSafe(registry.eth.badger_wallets.treasury_voter_multisig)
 
 ZAP = SAFE.contract(registry.eth.curve.zap_ibbtc)
-BIBBTC = interface.ISettV4h(
-    registry.eth.sett_vaults.bcrvIbBTC, owner=SAFE.account
-)
+BIBBTC = SAFE.contract(registry.eth.sett_vaults.bcrvIbBTC)
+BSLPIBBTC = SAFE.contract(registry.eth.sett_vaults.bslpWbtcibBTC)
 IBBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvIbBTC)
 IBBTC = SAFE.contract(registry.eth.treasury_tokens.ibBTC)
 WIBBTC = SAFE.contract(registry.eth.treasury_tokens.wibBTC)
@@ -92,6 +91,8 @@ def unwind_lps():
     setts.pop('bveCVX')
     setts.pop('bbveCVX-CVX-f')
     setts.pop('remDIGG')
+    setts.pop('bBADGER')  # dust currently
+    setts.pop('graviAURA')
     for addr in setts.values():
         sett = interface.ISettV4h(addr, owner=SAFE.account)
         if sett.balanceOf(SAFE) > 0:
@@ -189,6 +190,7 @@ def main():
 
     # 3: unwind every possible lp (uni, sushi, crv)
     BIBBTC.withdrawAll()
+    BSLPIBBTC.withdrawAll()
     unwind_lps()
 
     # 4: consolidate btc positions to $wbtc
