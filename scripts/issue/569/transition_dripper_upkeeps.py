@@ -43,33 +43,17 @@ def register_q3(sim=False):
     SAFE.chainlink.keeper_registry.withdrawFunds(UPKEEP_ID_TREE_22Q2, SAFE)
 
     # register upkeeps for new drippers
-    LINK.transferAndCall(
-        RELAYER,
-        LINK_MANTISSA,
-        RELAYER.register.encode_input(
-            'TreeDripper2022Q3', # string memory name,
-            b'', # bytes calldata encryptedEmail,
-            r.drippers.tree_2022_q3, # address upkeepContract,
-            300_000, # uint32 gasLimit,
-            SAFE.address, # address adminAddress,
-            b'', # bytes calldata checkData,
-            LINK_MANTISSA, # uint96 amount,
-            0 # uint8 source
-        )
+    SAFE.chainlink.register_upkeep(
+        'TreeDripper2022Q3',
+        r.drippers.tree_2022_q3,
+        300_000,
+        LINK_MANTISSA
     )
-    LINK.transferAndCall(
-        RELAYER,
-        LINK_MANTISSA,
-        RELAYER.register.encode_input(
-            'RemBadgerDripper2022Q3', # string memory name,
-            b'', # bytes calldata encryptedEmail,
-            r.drippers.rembadger_2022_q3, # address upkeepContract,
-            300_000, # uint32 gasLimit,
-            SAFE.address, # address adminAddress,
-            b'', # bytes calldata checkData,
-            LINK_MANTISSA, # uint96 amount,
-            0 # uint8 source
-        )
+    SAFE.chainlink.register_upkeep(
+        'RemBadgerDripper2022Q3',
+        r.drippers.rembadger_2022_q3,
+        300_000,
+        LINK_MANTISSA
     )
 
     # maintenance on the gas station; top up with ether and update watchlist
