@@ -13,13 +13,14 @@ from helpers.addresses import ADDRESSES_ETH, registry
 console = Console()
 
 # Get addresses
-DEV_PROXY = ADDRESSES_ETH["badger_wallets"]["devProxyAdmin"]
-DEV_MULTI = ADDRESSES_ETH["badger_wallets"]["dev_multisig"]
-TECH_OPS = ADDRESSES_ETH["badger_wallets"]["techops_multisig"]
-GAC = "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a"
-YEARN_SETT = ADDRESSES_ETH["yearn_vaults"]["byvWBTC"]
-YEARN_NEW_LOGIC = ADDRESSES_ETH["logic"]["SimpleWrapperGatedUpgradeable"]
-TIMELOCK = ADDRESSES_ETH["governance_timelock"]
+DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
+DEV_MULTI = registry.eth.badger_wallets.dev_multisig
+TREASURY_OPS = registry.eth.badger_wallets.treasury_ops_multisig
+
+GAC = registry.eth.GlobalAccessControl
+YEARN_SETT = registry.eth.yearn_vaults.byvWBTC
+YEARN_NEW_LOGIC = registry.eth.logic.SimpleWrapperGatedUpgradeable
+TIMELOCK = registry.eth.governance_timelock
 
 # Set up safe
 safe = GreatApeSafe(DEV_MULTI)
@@ -41,7 +42,7 @@ def main(queue="true", simulation="false"):
                 [YEARN_SETT, YEARN_NEW_LOGIC],
             ),
             dump_dir=TX_DIR,
-            delay_in_days=6,
+            delay_in_days=4,
         )
     else:
         vault_proxy = interface.ISimpleWrapperGatedUpgradeable(
@@ -64,7 +65,7 @@ def main(queue="true", simulation="false"):
         else:
             safe.badger.execute_timelock(TX_DIR)
 
-        vault_proxy.setTreasury(TECH_OPS)
+        vault_proxy.setTreasury(TREASURY_OPS)
 
         assert prev_affiliate == vault_proxy.affiliate()
         assert prev_manager == vault_proxy.manager()
@@ -73,7 +74,7 @@ def main(queue="true", simulation="false"):
         assert prev_wd_threshold == vault_proxy.withdrawalMaxDeviationThreshold()
         assert prev_experimental_mode == vault_proxy.experimentalMode()
         assert prev_experimental_vault == vault_proxy.experimentalVault()
-        assert TECH_OPS == vault_proxy.treasury()
+        assert TREASURY_OPS == vault_proxy.treasury()
         assert GAC == vault_proxy.GAC()
 
         if simulation == "true":
