@@ -42,6 +42,8 @@ DAI = interface.ERC20(registry.eth.treasury_tokens.DAI, owner=SAFE.account)
 USDC = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=SAFE.account)
 USDT = interface.ERC20(registry.eth.treasury_tokens.USDT, owner=SAFE.account)
 AURABAL = SAFE.contract(registry.eth.treasury_tokens.AURABAL)
+WETH = SAFE.contract(registry.eth.treasury_tokens.WETH)
+DIGG = SAFE.contract(registry.eth.treasury_tokens.DIGG)
 
 
 def consolidate_stables():
@@ -202,4 +204,13 @@ def main():
     # 6: send all relevant influence tokens to voter
     AURABAL.transfer(VOTER, AURABAL.balanceOf(SAFE))
 
+    # 7: send weth to vault
+    WETH.transfer(VAULT, WETH.balanceOf(SAFE) * DUSTY)
+
+    # 8: send all digg to vault
+    DIGG.transfer(VAULT, DIGG.balanceOf(SAFE))
+
     SAFE.post_safe_tx()
+
+    # TODO
+    # fPmBTCHBTC and imBTC to wbtc
