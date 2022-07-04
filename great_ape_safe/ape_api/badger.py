@@ -3,6 +3,7 @@ import os
 import requests
 from decimal import Decimal
 
+import pandas as pd
 from brownie import chain, interface, ZERO_ADDRESS
 from eth_abi import encode_abi
 
@@ -45,6 +46,7 @@ class Badger():
         self.registry_v2 = self.safe.contract(
             r.registry_v2, interface.IBadgerRegistryV2
         )
+        self.station = self.safe.contract(r.badger_wallets.gas_station)
 
         # misc
         self.api_url = 'https://api.badger.com/v2/'
@@ -344,3 +346,26 @@ class Badger():
         assert self.bribes_processor.getOrderID(order_payload) == order_uid
 
         return order_payload, order_uid
+
+
+    def set_gas_station_watchlist(self):
+        labels, addrs, min_bals, min_top_ups = [], [], [], []
+        for label, addr in r.badger_wallets.items():
+            min_bal = 2e18
+            min_top_up = .5e18
+            if not label.startswith('ops_') or 'multisig' in label:
+                continue
+            if 'executor' in label:
+                min_bal = 1e18
+            if label == 'ops_botsquad':
+                min_bal = 5e18
+            if label == 'ops_deployer':
+                min_bal = 5e18
+            labels.append(label)
+            addrs.append(addr)
+            min_bals.append(min_bal)
+            min_top_ups.append(min_top_up)
+        print(pd.DataFrame(
+            {'addrs': addrs, 'min_bals': min_bals, 'min_top_ups': min_top_ups}, index=labels
+        ))
+        self.station.setWatchList(addrs, min_bals, min_top_ups)
