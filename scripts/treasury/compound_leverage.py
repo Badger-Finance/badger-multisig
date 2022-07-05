@@ -27,7 +27,8 @@ C_TOKEN = cWBTC
 C_TOKEN_BORROW = cUSDC
 
 ## Returns price in USD: TWAP guarded chainlink price feed
-## The price of the asset in USD as an unsigned integer scaled up by 10 ^ (36 - underlying asset decimals). E.g. WBTC has 8 decimal places, so the return value is scaled up by 1e28.
+## The price of the asset in USD as an unsigned integer scaled up by 10 ^ (36 - underlying asset decimals). 
+## E.g. WBTC has 8 decimal places, so the return value is scaled up by 1e28.
 ## https://compound.finance/docs/prices
 PRICE_ORACLE = safe.contract("0x65c816077C29b557BEE980ae3cC2dCE80204A0C5")
 
