@@ -3,7 +3,10 @@ import os
 from datetime import datetime
 import math
 from pathlib import Path
-from brownie import interface, chain, multicall
+import eth_abi
+
+from brownie import interface, chain, multicall, web3, ZERO_ADDRESS
+
 from helpers.addresses import registry
 
 # general helpers and sdk
@@ -32,6 +35,12 @@ class UniV3:
         self.factory = interface.IUniswapV3Factory(
             registry.eth.uniswap.factoryV3, owner=self.safe.account
         )
+        self.router = interface.ISwapRouter(
+            registry.eth.uniswap.routerV3, owner=self.safe.account
+        )
+        self.quoter = interface.IQuoter(
+            registry.eth.uniswap.quoter, owner=self.safe.account
+        )
         self.v3pool_wbtc_badger = interface.IUniswapV3Pool(
             registry.eth.uniswap.v3pool_wbtc_badger, owner=self.safe.account
         )
@@ -48,6 +57,25 @@ class UniV3:
             ),
             owner=self.safe.account,
         )
+    
+    def _construct_multihop_path(self, path):
+        # given a token path, construct a multihop swap path by adding token pair pools with highest liquidity
+        # https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps#input-parameters
+        fee_path = [path[0].address]
+        for i in range(len(path) - 1):
+            fee_tiers = {100: 0, 3000: 0, 10000: 0}
+            for tier in fee_tiers.keys():
+                pool_addr = self.factory.getPool(path[i], path[i+1], tier)
+                if pool_addr == ZERO_ADDRESS:
+                    continue
+                pool = interface.IUniswapV3Pool(pool_addr)
+                fee_tiers[tier] = pool.liquidity()
+
+            best_tier = max(fee_tiers, key=fee_tiers.get)
+            fee_path.append(best_tier)
+            fee_path.append(path[i+1].address)
+
+        return fee_path
 
     def burn_token_id(self, token_id, burn_nft=False):
         """
@@ -399,3 +427,36 @@ class UniV3:
 
         # assert new owner
         assert self.nonfungible_position_manager.ownerOf(token_id) == new_owner
+
+    def swap(self, path, mantissa, destination=None):
+        destination = self.safe.address if not destination else destination
+    
+        token_in, token_out = path[0], path[-1]
+
+        balance_token_out = token_out.balanceOf(self.safe)
+    
+        multihop_path = self._construct_multihop_path(path)
+
+        path_encoded = eth_abi.encode_abi(
+            ['address' if i % 2 == 0 else 'uint24' for i in range(len(multihop_path))],
+            multihop_path
+            )
+
+        min_out = self.quoter.quoteExactInput(
+            path_encoded,
+            mantissa,
+        ).return_value * (1 - self.max_slippage)
+
+        params = (
+            path_encoded,
+            destination,
+            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
+            mantissa,
+            min_out,
+        )
+
+        token_in.approve(self.router, mantissa)
+
+        self.router.exactInput(params)
+
+        assert token_out.balanceOf(destination) >= balance_token_out + min_out
