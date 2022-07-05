@@ -19,8 +19,8 @@ def main(simulation="false"):
     auraBal_strat_current = interface.IAuraBalStaker(AURABAL_STRAT_CURRENT, owner=safe.account)
     auraBal_strat_new = interface.IAuraBalStaker(AURABAL_STRAT_NEW, owner=safe.account)
     auraBal_vault = interface.ITheVault(BAURA_BAL, owner=safe.account)
-    want = interface.ERC20(auraBal_vault.token())
-    bb_a_usd = interface.ERC20(auraBal_strat_new.BB_A_USD())
+    want = interface.IERC20(auraBal_vault.token())
+    bb_a_usd = interface.IERC20(auraBal_strat_new.BB_A_USD())
 
     ## Check integrity
     assert auraBal_vault.strategy() == auraBal_strat_current.address
