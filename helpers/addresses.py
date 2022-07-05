@@ -127,6 +127,7 @@ ADDRESSES_ETH = {
         "DFD": "0x20c36f062a31865bED8a5B1e512D9a1A20AA333A",
         "CRV": "0xD533a949740bb3306d119CC777fa900bA034cd52",
         "WBTC": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "aWBTC": "0x9ff58f4fFB29fA2266Ab25e75e2A8b3503311656",
         "renBTC": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
         "sBTC": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
         "WETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -403,6 +404,7 @@ ADDRESSES_ETH = {
         "incentives_controller": "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5",
         "aave_lending_pool_v2": "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
         "data_provider": "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d",
+        "price_oracle_v2": "0xA50ba011c48153De246E5192C8f9258A2ba79Ca9",
     },
     "cow": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
