@@ -36,7 +36,9 @@ class Badger():
         self.strat_bvecvx = self.safe.contract(
             r.strategies['native.vestedCVX'], interface.IVestedCvx
         )
-        self.timelock = self.safe.contract(r.governance_timelock)
+        self.timelock = self.safe.contract(
+            r.governance_timelock, interface.IGovernanceTimelock
+        )
         self.bribes_processor = self.safe.contract(
             r.bribes_processor, interface.IBribesProcessor
         )
