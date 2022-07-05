@@ -3,6 +3,7 @@ import os
 import web3
 
 from brownie import accounts, chain, Contract, interface, web3
+from brownie.test.managers.runner import RevertContextManager as reverts
 from eth_abi import encode_abi
 from rich.console import Console
 
@@ -52,7 +53,7 @@ def main(queue="true", simulation="false"):
         prev_affiliate = vault_proxy.affiliate()
         prev_manager = vault_proxy.manager()
         prev_guardian = vault_proxy.guardian()
-        prev_wd_fee = vault_proxy.withdrawalFee
+        prev_wd_fee = vault_proxy.withdrawalFee()
         prev_wd_threshold = vault_proxy.withdrawalMaxDeviationThreshold()
         prev_experimental_mode = vault_proxy.experimentalMode()
         prev_experimental_vault = vault_proxy.experimentalVault()
@@ -70,7 +71,7 @@ def main(queue="true", simulation="false"):
         assert prev_affiliate == vault_proxy.affiliate()
         assert prev_manager == vault_proxy.manager()
         assert prev_guardian == vault_proxy.guardian()
-        assert prev_wd_fee == vault_proxy.withdrawalFee
+        assert prev_wd_fee == vault_proxy.withdrawalFee()
         assert prev_wd_threshold == vault_proxy.withdrawalMaxDeviationThreshold()
         assert prev_experimental_mode == vault_proxy.experimentalMode()
         assert prev_experimental_vault == vault_proxy.experimentalVault()
@@ -101,11 +102,8 @@ def main(queue="true", simulation="false"):
             gac = interface.IGac(vault_proxy.GAC(), owner=DEV_MULTI)
             gac_guardian = accounts.at(gac.WAR_ROOM_ACL(), force=True)
             gac.pause({"from": gac_guardian})
-            try:
+            with reverts('Pausable: GAC Paused'):
                 vault_proxy.withdraw(123, {"from": user})
-                raise Exception("should have errored")
-            except:
-                console.print("Paused!")
 
     if simulation != "true":
         safe.post_safe_tx()
