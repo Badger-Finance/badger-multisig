@@ -44,6 +44,8 @@ USDT = interface.ERC20(registry.eth.treasury_tokens.USDT, owner=SAFE.account)
 AURABAL = SAFE.contract(registry.eth.treasury_tokens.AURABAL)
 WETH = SAFE.contract(registry.eth.treasury_tokens.WETH)
 DIGG = SAFE.contract(registry.eth.treasury_tokens.DIGG)
+BADGER = SAFE.contract(registry.eth.treasury_tokens.BADGER)
+BAL = SAFE.contract(registry.eth.treasury_tokens.BAL)
 
 
 def consolidate_stables():
@@ -183,6 +185,7 @@ def main():
     SAFE.init_uni_v2()
     SAFE.init_sushi()
     SAFE.init_curve()
+    SAFE.init_balancer()
 
     # 1: deposit usdc, usdt and dai into 3pool
     consolidate_stables()
@@ -202,7 +205,10 @@ def main():
     SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
 
     # 6: send all relevant influence tokens to voter
+    SAFE.balancer.claim([BADGER, WBTC])
+    BAL.transfer(VOTER, BAL.balanceOf(SAFE))
     AURABAL.transfer(VOTER, AURABAL.balanceOf(SAFE))
+    BVECVX.transfer(VOTER, BVECVX.balanceOf(SAFE))
 
     # 7: send weth to vault
     WETH.transfer(VAULT, WETH.balanceOf(SAFE) * DUSTY)
