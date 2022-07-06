@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 import math
 from pathlib import Path
-import eth_abi
 
 from brownie import interface, chain, multicall, web3, ZERO_ADDRESS
 
@@ -451,10 +450,10 @@ class UniV3:
             else:
                 path_encoded += int.to_bytes(item, 3, byteorder="big")
 
-        min_out = self.quoter.quoteExactInput(
+        min_out = self.quoter.quoteExactInput.call(
             path_encoded,
             mantissa,
-        ).return_value * (1 - self.slippage)
+        ) * (1 - self.slippage)
 
         params = (
             path_encoded,
