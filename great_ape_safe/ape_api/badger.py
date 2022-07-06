@@ -3,6 +3,7 @@ import os
 import requests
 from decimal import Decimal
 
+import pandas as pd
 from brownie import chain, interface, ZERO_ADDRESS
 from eth_abi import encode_abi
 
@@ -35,7 +36,9 @@ class Badger():
         self.strat_bvecvx = self.safe.contract(
             r.strategies['native.vestedCVX'], interface.IVestedCvx
         )
-        self.timelock = self.safe.contract(r.governance_timelock)
+        self.timelock = self.safe.contract(
+            r.governance_timelock, interface.IGovernanceTimelock
+        )
         self.bribes_processor = self.safe.contract(
             r.bribes_processor, interface.IBribesProcessor
         )
@@ -45,6 +48,7 @@ class Badger():
         self.registry_v2 = self.safe.contract(
             r.registry_v2, interface.IBadgerRegistryV2
         )
+        self.station = self.safe.contract(r.badger_wallets.gas_station)
 
         # misc
         self.api_url = 'https://api.badger.com/v2/'
@@ -142,6 +146,33 @@ class Badger():
                 claimables.append(token_addr)
         if len(claimables) > 0:
             self.strat_bvecvx.claimBribesFromConvex(claimables)
+
+
+    def sweep_reward_token(self, token_addr):
+        """
+        Sweeps reward token from the vestedCVX strategy into
+        the BribesProcessor.
+        """
+        reward = interface.ERC20(token_addr)
+        prev_strategy_balance = reward.balanceOf(self.strat_bvecvx.address)
+        # Ensure that there are tokens to sweep
+        if prev_strategy_balance == 0:
+            C.print(f"[red]There are no rewards to sweep for: {reward.symbol()}[/red]")
+            return 0
+        prev_bribes_processor_balance = reward.balanceOf(self.bribes_processor.address)
+
+        # Sweep the reward token
+        self.strat_bvecvx.sweepRewardToken(token_addr)
+
+        assert (
+            (reward.balanceOf(self.bribes_processor.address) - prev_bribes_processor_balance) ==
+            prev_strategy_balance
+        )
+        assert reward.balanceOf(self.strat_bvecvx.address) == 0
+
+        return prev_strategy_balance
+
+
 
 
     def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
@@ -317,3 +348,26 @@ class Badger():
         assert self.bribes_processor.getOrderID(order_payload) == order_uid
 
         return order_payload, order_uid
+
+
+    def set_gas_station_watchlist(self):
+        labels, addrs, min_bals, min_top_ups = [], [], [], []
+        for label, addr in r.badger_wallets.items():
+            min_bal = 2e18
+            min_top_up = .5e18
+            if not label.startswith('ops_') or 'multisig' in label:
+                continue
+            if 'executor' in label:
+                min_bal = 1e18
+            if label == 'ops_botsquad':
+                min_bal = 5e18
+            if label == 'ops_deployer':
+                min_bal = 5e18
+            labels.append(label)
+            addrs.append(addr)
+            min_bals.append(min_bal)
+            min_top_ups.append(min_top_up)
+        print(pd.DataFrame(
+            {'addrs': addrs, 'min_bals': min_bals, 'min_top_ups': min_top_ups}, index=labels
+        ))
+        self.station.setWatchList(addrs, min_bals, min_top_ups)

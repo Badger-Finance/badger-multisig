@@ -127,6 +127,7 @@ ADDRESSES_ETH = {
         "DFD": "0x20c36f062a31865bED8a5B1e512D9a1A20AA333A",
         "CRV": "0xD533a949740bb3306d119CC777fa900bA034cd52",
         "WBTC": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "aWBTC": "0x9ff58f4fFB29fA2266Ab25e75e2A8b3503311656",
         "renBTC": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
         "sBTC": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
         "WETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -271,7 +272,8 @@ ADDRESSES_ETH = {
         "remBADGER": "0x6aF7377b5009d7d154F36FE9e235aE1DA27Aea22",
         "remDIGG": "0x99F39D495C6A5237f43602f3Ab5F49786E46c9B0",
         "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613",
-        "graviAURA": "0xBA485b556399123261a5F9c95d413B4f93107407"
+        "graviAURA": "0xBA485b556399123261a5F9c95d413B4f93107407",
+        "bauraBal": "0x37d9D2C6035b744849C15F1BFEE8F268a20fCBd8"
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -303,7 +305,9 @@ ADDRESSES_ETH = {
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
+        "native.bauraBal": "0xED6d51A82065725e283fC035f488213e869FD976",
         "_deprecated": {
+            "native.bauraBal": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
             "native.pbtcCrv": {
                 "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
                 "v1.1": "0x3f98F3a21B125414e4740316bd6Ef14718764a22",
@@ -330,6 +334,7 @@ ADDRESSES_ETH = {
         "SimpleTimelockWithVoting": "0xb7AcD34643181C879437c2967538D5c0eA42b5D9", # V1.1 -> Beneficiary: devMulti
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
         "uFragments": "0x020eb84309243Ed4B8E6C197AF145125dDE4AFDa", # V1.1
+        "SimpleWrapperGatedUpgradeable": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
@@ -402,6 +407,7 @@ ADDRESSES_ETH = {
         "incentives_controller": "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5",
         "aave_lending_pool_v2": "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
         "data_provider": "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d",
+        "price_oracle_v2": "0xA50ba011c48153De246E5192C8f9258A2ba79Ca9",
     },
     "cow": {
         "vault_relayer": "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
@@ -447,6 +453,7 @@ ADDRESSES_ETH = {
         "STG": "0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6",
         "EURS": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
         "USDN": "0x674C6Ad92Fd080e4004b2312b45f796a192D27a0",
+        "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
         "INV": "0x41D5D79431A913C4aE7d69a668ecdfE5fF9DFB68",
     },
     "uniswap": {

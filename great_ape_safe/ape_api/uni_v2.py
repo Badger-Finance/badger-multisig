@@ -160,7 +160,7 @@ class UniV2:
         amountOut = self.router.getAmountsOut(amountIn, path)[-1]
         tokenIn.approve(self.router, amountIn)
 
-        self.router.swapExactTokensForTokens(
+        tx = self.router.swapExactTokensForTokens(
             amountIn,
             amountOut * (1 - self.max_slippage),
             path,
@@ -172,6 +172,8 @@ class UniV2:
             tokenOut.balanceOf(destination)
             >= balance_tokenOut + amountOut * (1 - self.max_slippage)
         )
+
+        return tx.return_value
 
 
     def swap_exact_eth_for_tokens(self, amountIn, path, destination=None):
@@ -191,7 +193,7 @@ class UniV2:
         uint256 deadline
         """
         signature = getattr(self.router, f'swapExact{self.router_symbol}ForTokens')
-        signature(
+        tx = signature(
             amountOut * (1 - self.max_slippage),
             path,
             destination,
@@ -203,6 +205,8 @@ class UniV2:
             tokenOut.balanceOf(destination)
             >= balance_tokenOut + amountOut * (1 - self.max_slippage)
         )
+
+        return tx.return_value
 
 
     def swap_exact_tokens_for_eth(self, tokenIn, amountIn, path, destination=None):
@@ -217,7 +221,7 @@ class UniV2:
         tokenIn.approve(self.router, amountIn)
 
         signature = getattr(self.router, f'swapExactTokensFor{self.router_symbol}')
-        signature(
+        tx = signature(
             amountIn,
             amountOut * (1 - self.max_slippage),
             path,
@@ -229,3 +233,5 @@ class UniV2:
             accounts.at(destination, force=True).balance()
             >= eth_initial_balance + amountOut * (1 - self.max_slippage)
         )
+
+        return tx.return_value
