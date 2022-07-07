@@ -25,7 +25,7 @@ def main(
         safe.aura.claim_all()
 
     # sends only delta
-    if redirect_rewards:
+    if redirect_rewards == "True":
         if bal.balanceOf(safe) > 0:
             bal.transfer(
                 destination,
