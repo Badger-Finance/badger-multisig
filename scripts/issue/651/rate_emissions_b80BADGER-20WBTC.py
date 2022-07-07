@@ -7,6 +7,6 @@ def main():
 
     emission_control = techops.contract(registry.eth.EmissionControl)
 
-    emission_control.setBoostedEmission(registry.eth.sett_vaults["b80BADGER-20WBTC"], 8000)
+    emission_control.setTokenWeight(registry.eth.sett_vaults["b80BADGER-20WBTC"], 8000)
 
     techops.post_safe_tx()
