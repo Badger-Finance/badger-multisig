@@ -528,6 +528,8 @@ ADDRESSES_ETH = {
         "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC",
         "merkle_drop": "0x45EB1A004373b1D8457134A2C04a42d69D287724",
         "booster": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
+        "claim_zap": "0x623B83755a39B12161A63748f3f595A530917Ab2",
+        "extra_rewards_distributor": "0xa3739b206097317c72ef416f0e75bb8f58fbd308",
     },
     "ens": {
         "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
