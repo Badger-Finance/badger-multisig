@@ -274,7 +274,8 @@ ADDRESSES_ETH = {
         "remDIGG": "0x99F39D495C6A5237f43602f3Ab5F49786E46c9B0",
         "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613",
         "graviAURA": "0xBA485b556399123261a5F9c95d413B4f93107407",
-        "bauraBal": "0x37d9D2C6035b744849C15F1BFEE8F268a20fCBd8"
+        "bauraBal": "0x37d9D2C6035b744849C15F1BFEE8F268a20fCBd8",
+        "b80BADGER-20WBTC": "0x63ad745506BD6a3E57F764409A47ed004BEc40b1",
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -307,6 +308,7 @@ ADDRESSES_ETH = {
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
         "native.bauraBal": "0xED6d51A82065725e283fC035f488213e869FD976",
+        "native.b80BADGER-20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
         "_deprecated": {
             "native.bauraBal": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
             "native.pbtcCrv": {
