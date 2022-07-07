@@ -10,6 +10,7 @@ def main():
     bpt_aurabal = safe.contract(r.balancer.bpt_33_grav_33_weth_33_aurabal)
 
     safe.init_balancer()
+    safe.init_aura()
     tokens = [
         bpt_aura,
         bpt_aurabal,
@@ -17,8 +18,7 @@ def main():
         r.treasury_tokens.AURABAL,
         r.treasury_tokens.WETH,
         r.sett_vaults.graviAURA,
-        safe.balancer.gauge_factory.getPoolGauge(bpt_aura),
-        safe.balancer.gauge_factory.getPoolGauge(bpt_aurabal)
+        safe.aura.booster.poolInfo(safe.aura.get_pool_info(bpt_aurabal)[0])[3]
     ]
     safe.take_snapshot(tokens)
     voter.take_snapshot(tokens)
@@ -28,7 +28,7 @@ def main():
         pool_type='non_stable',
         destination=r.badger_wallets.treasury_voter_multisig
     )
-    safe.balancer.stake_all(bpt_aurabal)
+    safe.aura.deposit_all_and_stake(bpt_aurabal)
 
     voter.print_snapshot()
     safe.post_safe_tx()
