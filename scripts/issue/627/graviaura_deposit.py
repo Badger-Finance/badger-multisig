@@ -10,9 +10,6 @@ def main():
         tokens=[aura, graviaura]
     )
 
-    extra_rewards = safe.contract(r.aura.extra_rewards_distributor)
-    extra_rewards.getReward["address,address"](safe.address, r.treasury_tokens.AURA)
-    # deposit in graviAURA
     aura.approve(graviaura, aura.balanceOf(safe))
     graviaura.depositAll()
 
