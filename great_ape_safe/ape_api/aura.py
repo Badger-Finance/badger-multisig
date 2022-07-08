@@ -1,12 +1,8 @@
 from brownie import interface
 from brownie.exceptions import VirtualMachineError
+
 from great_ape_safe.ape_api.convex import Convex
 from helpers.addresses import r
-
-# options: https://etherscan.io/address/0x623b83755a39b12161a63748f3f595a530917ab2#code#F1#L42
-class OptionsTypes:
-    CLAIM_REWARDS_FROM_BOOSTED_POSITIONS = 1
-    CLAIM_REWARDS_FROM_LOCK = 2
 
 
 class Aura(Convex):
@@ -27,13 +23,23 @@ class Aura(Convex):
     def _alert_not_relevant():
         print(" ==== NOT RELEVANT METHOD IN AURA CLASS ==== \n")
 
+
+    def claim_all_from_booster(self):
+        self.claim_all(1)
+
+
+    def claim_all_from_locker(self):
+        self.claim_all(2)
+
+
     def claim_all(self, option=1):
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool
         # https://github.com/convex-eth/platform/blob/main/contracts/contracts/ClaimZap.sol#L103-L133
+        # options param: https://etherscan.io/address/0x623b83755a39b12161a63748f3f595a530917ab2#code#F1#L42
         pending_rewards = []
         n_pools = self.booster.poolLength()
 
-        if option == OptionsTypes.CLAIM_REWARDS_FROM_BOOSTED_POSITIONS:
+        if option == 1:
             for n in range(n_pools):
                 _, _, _, rewards, _, _ = self.booster.poolInfo(n)
                 if self.safe.contract(rewards).earned(self.safe) > 0:
@@ -48,7 +54,7 @@ class Aura(Convex):
                 # we cannot know for which reward tokens contracts to check in the
                 # beginning
                 assert self.safe.contract(reward_token).balanceOf(self.safe) > 0
-        elif option == OptionsTypes.CLAIM_REWARDS_FROM_LOCK:
+        elif option == 2:
             self.zap.claimRewards([], [], [], [], 0, 0, 0, option)
 
             # checkin five tokens, doubt will distribute ever more than that
