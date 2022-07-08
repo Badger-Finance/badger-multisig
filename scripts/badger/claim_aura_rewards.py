@@ -3,7 +3,7 @@ from helpers.addresses import r
 
 
 def main(
-    msig_name="treasury_voter_multisig",
+    msig_name="treasury_vault_multisig",
     redirect_rewards=False,
     destination="0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",  # defaults to voter_msig
 ):
@@ -19,10 +19,7 @@ def main(
         tokens=[bal, aura, r.treasury_tokens.AURABAL, r.sett_vaults.graviAURA]
     )
 
-    if safe.address == r.badger_wallets.treasury_voter_multisig:
-        safe.aura.claim_all(option=2)
-    else:
-        safe.aura.claim_all()
+    safe.aura.claim_all_from_booster()
 
     # sends only delta
     if redirect_rewards == "True":
