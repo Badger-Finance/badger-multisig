@@ -503,6 +503,7 @@ ADDRESSES_ETH = {
         "bpt_aurabal": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd",
         "bpt_33_grav_33_weth_33_aura": "0xA3283E3470D3CD1F18C074E3f2d3965F6D62fFF2",
         "bpt_33_grav_33_weth_33_aurabal": "0x0578292CB20a443bA1CdE459c985CE14Ca2bDEe5",
+        "bpt_40wbtc_40digg_20graviaura": "0x8eB6c82C3081bBBd45DcAC5afA631aaC53478b7C",
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
