@@ -50,7 +50,7 @@ def main():
     target_amount = balanceOfWant // 2
 
     ## in BPS
-    as_bps = (target_amount + balanceInLock) * 10_000 // totalCVXBalance 
+    as_bps = (target_amount + balanceInLock) * MAX_BPS // totalCVXBalance 
 
     print("as_bps")
     print(as_bps)
