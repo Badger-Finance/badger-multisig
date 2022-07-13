@@ -208,6 +208,6 @@ class Aave():
         self.safe.uni_v3.swap(
             [borrow_token, weth, collateral_token],
             bal_borrow_token_after - bal_borrow_token_before,
-            )
+        )
 
         assert self._get_debt_in_token(borrow_token) == 0
