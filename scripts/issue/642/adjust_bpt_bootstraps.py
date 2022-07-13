@@ -4,7 +4,7 @@ from helpers.addresses import r
 
 def main():
     safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
-    voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
+    vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
 
     bpt_aura = safe.contract(r.balancer.bpt_33_grav_33_weth_33_aura)
     bpt_aurabal = safe.contract(r.balancer.bpt_33_grav_33_weth_33_aurabal)
@@ -21,14 +21,18 @@ def main():
         safe.aura.booster.poolInfo(safe.aura.get_pool_info(bpt_aurabal)[0])[3]
     ]
     safe.take_snapshot(tokens)
-    voter.take_snapshot(tokens)
+    vault.take_snapshot(tokens)
 
     safe.balancer.unstake_all_and_withdraw_all(
         pool=bpt_aura,
         pool_type='non_stable',
-        destination=r.badger_wallets.treasury_voter_multisig
+        destination=r.badger_wallets.treasury_vault_multisig
     )
-    safe.aura.deposit_all_and_stake(bpt_aurabal)
+    safe.balancer.unstake_all_and_withdraw_all(
+        pool=bpt_aurabal,
+        pool_type='non_stable',
+        destination=r.badger_wallets.treasury_vault_multisig
+    )
 
-    voter.print_snapshot()
+    vault.print_snapshot()
     safe.post_safe_tx()
