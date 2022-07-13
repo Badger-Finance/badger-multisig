@@ -30,3 +30,5 @@ def main():
 
     assert aura_bribes_processor.bribesProcessor() == aura_bribes_processor
 
+    safe.post_safe_tx()
+
