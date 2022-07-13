@@ -2,36 +2,35 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from brownie import interface
 from rich.pretty import pprint
+from dotmap import DotMap
 
 
-safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
+def main():
+    safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 
-
-def withdraw_usdc():
     fusdc = interface.IFToken(registry.eth.rari['fUSDC-22'], owner=safe.account)
-
-    amount_fusdc = fusdc.balanceOf(safe)
-    pprint(f'withdrawing {amount_fusdc / 1e6} f-usdc')
-    tx_data = fusdc.redeem.encode_input(amount_fusdc)
-
-    safe_tx = safe.build_multisig_tx(
-        to=registry.fusdc.address, value=0, data=tx_data, operation=1
-    )
-
-    pprint(safe_tx.__dict__)
-    safe.post_transaction(safe_tx)
-
-
-def withdraw_wbtc():
     fwbtc = interface.IFToken(registry.eth.rari['fWBTC-22'], owner=safe.account)
 
-    amount_fwbtc = fwbtc.balanceOf(safe)
-    pprint(f'withdrawing {amount_fwbtc / 1e8} f-wbtc')
-    tx_data = fwbtc.redeem.encode_input(amount_fwbtc)
+    usdc_withdrawbale = fusdc.getCash()
+    wbtc_withdrawbale = fwbtc.getCash()
 
-    safe_tx = safe.build_multisig_tx(
-        to=registry.fwbtc.address, value=0, data=tx_data, operation=1
-    )
+    pprint(f'withdrawing {usdc_withdrawbale / 1e6} usdc')
+    pprint(f'withdrawing {wbtc_withdrawbale / 1e8} wbtc')
 
+    receipts = [
+        DotMap({
+            'receiver': fusdc.address,
+            'value': 0,
+            'input': fusdc.redeemUnderlying.encode_input(usdc_withdrawbale),
+        }),
+        DotMap({
+            'receiver': fwbtc.address,
+            'value': 0,
+            'input': fwbtc.redeemUnderlying.encode_input(wbtc_withdrawbale)
+        })
+    ]
+
+    safe_tx = safe.multisend_from_receipts(receipts=receipts)
     pprint(safe_tx.__dict__)
+
     safe.post_transaction(safe_tx)
