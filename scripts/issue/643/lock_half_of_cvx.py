@@ -71,7 +71,6 @@ def main():
     ## Before Balances
     before_balance_in_vault = safe.convex.cvx.balanceOf(registry.eth.sett_vaults.bveCVX)
     before_balance_of_locker = safe.convex.cvx.balanceOf(safe.badger.strat_bvecvx.LOCKER())
-
     
     ## Lock
     safe.badger.strat_bvecvx.manualRebalance(as_bps)
