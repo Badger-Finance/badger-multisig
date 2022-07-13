@@ -11,22 +11,22 @@ def main():
     fusdc = interface.IFToken(registry.eth.rari['fUSDC-22'], owner=safe.account)
     fwbtc = interface.IFToken(registry.eth.rari['fWBTC-22'], owner=safe.account)
 
-    usdc_withdrawbale = fusdc.getCash()
-    wbtc_withdrawbale = fwbtc.getCash()
+    usdc_withdrawable = fusdc.getCash()
+    wbtc_withdrawable = fwbtc.getCash()
 
-    pprint(f'withdrawing {usdc_withdrawbale / 1e6} usdc')
-    pprint(f'withdrawing {wbtc_withdrawbale / 1e8} wbtc')
+    pprint(f'withdrawing {usdc_withdrawable / 1e6} usdc')
+    pprint(f'withdrawing {wbtc_withdrawable / 1e8} wbtc')
 
     receipts = [
         DotMap({
             'receiver': fusdc.address,
             'value': 0,
-            'input': fusdc.redeemUnderlying.encode_input(usdc_withdrawbale),
+            'input': fusdc.redeemUnderlying.encode_input(usdc_withdrawable),
         }),
         DotMap({
             'receiver': fwbtc.address,
             'value': 0,
-            'input': fwbtc.redeemUnderlying.encode_input(wbtc_withdrawbale)
+            'input': fwbtc.redeemUnderlying.encode_input(wbtc_withdrawable)
         })
     ]
 
