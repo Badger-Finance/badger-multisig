@@ -465,6 +465,8 @@ class UniV3:
 
         token_in.approve(self.router, mantissa)
 
-        self.router.exactInput(params)
+        tx = self.router.exactInput(params)
 
         assert token_out.balanceOf(destination) >= balance_token_out + min_out
+
+        return tx.return_value
