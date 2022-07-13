@@ -36,6 +36,9 @@ class Badger():
         self.strat_bvecvx = self.safe.contract(
             r.strategies['native.vestedCVX'], interface.IVestedCvx
         )
+        self.strat_bve_aura = self.safe.contract(
+            r.strategies['native.graviAURA'], interface.IVestedAura
+        )
         self.timelock = self.safe.contract(
             r.governance_timelock, interface.IGovernanceTimelock
         )
