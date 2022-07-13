@@ -36,8 +36,9 @@ def migrate():
     vault.aura.claim_all_from_booster()
 
     # deposit in graviaura and sent BAL claim to voter
-    aura.approve(graviaura, aura.balanceOf(vault))
-    graviaura.deposit(aura.balanceOf(vault))
+    aura.approve(graviaura, 2**256-1)
+    graviaura.depositAll()
+    aura.approve(graviaura, 0)
     bal.transfer(r.badger_wallets.treasury_voter_multisig, bal.balanceOf(vault))
 
     # deposit in balancer 40wbtc-40digg-20graviaura pool
@@ -87,9 +88,13 @@ def migrate():
 def graviaura_transfer():
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
     graviaura = voter.contract(r.sett_vaults.graviAURA)
+    aura = voter.contract(r.treasury_tokens.AURA)
 
     graviaura.transfer(
         r.badger_wallets.treasury_vault_multisig, graviaura.balanceOf(voter)
+    )
+    aura.transfer(
+        r.badger_wallets.treasury_vault_multisig, aura.balanceOf(voter)
     )
 
     voter.post_safe_tx()
