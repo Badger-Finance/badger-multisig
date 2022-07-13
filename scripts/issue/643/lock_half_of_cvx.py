@@ -43,9 +43,6 @@ def main():
     
 
     ## We want to lock half of what's in the Strategy
-    
-
-
     ## Our Target is 50% of the CVX in the strat
     target_amount = balanceOfWant // 2
 
@@ -73,9 +70,7 @@ def main():
     ## Goes to Vault
     expected_in_vault = balanceOfWant - cvxToLock
 
-    # before_lock_balance = TODO
-
-
+    ## Before Balances
     before_balance_in_vault = safe.convex.cvx.balanceOf(registry.eth.sett_vaults.bveCVX)
     before_balance_of_locker = safe.convex.cvx.balanceOf(safe.badger.strat_bvecvx.LOCKER())
 
