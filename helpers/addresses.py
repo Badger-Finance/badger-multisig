@@ -489,6 +489,8 @@ ADDRESSES_ETH = {
     },
     "arbitrum": {
         "outbox": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
+        "l1_gateway": "0x72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef",
+        "l1_erc20_gateway": "0xa3A7B6F88361F48403514059F1F16C8E78d60EeC",
     },
     "balancer": {
         "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
