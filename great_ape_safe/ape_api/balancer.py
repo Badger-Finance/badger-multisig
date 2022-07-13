@@ -298,7 +298,7 @@ class Balancer():
 
 
     def unstake_all_and_withdraw_all(
-        self, underlyings=None, pool=None, unstake=True, claim=True, is_eth=False, destination=None
+        self, underlyings=None, pool=None, unstake=True, claim=True, is_eth=False, destination=None, pool_type=None
     ):
         if not underlyings and not pool:
             raise TypeError('must provide either underlyings or pool')
@@ -324,8 +324,8 @@ class Balancer():
             [1, amount_in]
             )
 
-
-        if self.pool_type(pool_id) == 'Stable':
+        pool_type = pool_type if pool_type else self.pool_type(pool_id)
+        if pool_type == 'Stable':
             underlyings_out = StableMath.calcTokensOutGivenExactBptIn(
                 pool, reserves, amount_in
             )
