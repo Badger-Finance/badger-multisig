@@ -65,8 +65,7 @@ def main():
 
     assert approx(cvxToLock, target_amount, 1)
 
-    ## Calculate what half of the strategy is as %, then lock that
-    ## Goes to Vault
+    ## Calculate what half of the strategy is as %, then lock that goes to Vault
     expected_in_vault = balanceOfWant - cvxToLock
 
     ## Before Balances
