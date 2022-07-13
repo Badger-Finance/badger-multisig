@@ -88,3 +88,5 @@ def main():
 
     assert approx(after_balance_in_vault - before_balance_in_vault, expected_in_vault, 1)
     assert approx(after_balance_of_locker - before_balance_of_locker, cvxToLock, 1)
+    
+    safe.post_safe_tx()
