@@ -6,7 +6,7 @@ from rich.console import Console
 
 C = Console()
 
-NEW_LOGIC = registry.eth.logic["native.vestedCVX"] 
+NEW_LOGIC = registry.eth.logic["native.vestedCVX"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 
 
@@ -15,7 +15,7 @@ def main(queue="true", simulation="false"):
     safe.init_badger()
 
     strat_proxy = safe.badger.strat_bvecvx
-    bribes_processor = interface.IBribesProcessor(registry.eth.bribes_processor)
+    cvx_bribes_processor = interface.IBribesProcessor(registry.eth.cvx_bribes_processor)
 
     if queue == "true":
         safe.badger.queue_timelock(
@@ -28,7 +28,7 @@ def main(queue="true", simulation="false"):
             dump_dir="data/badger/timelock/upgrade_veCVX_strategy_V1_7_1/",
             delay_in_days=4,
         )
-    else:   
+    else:
         # Setting all variables, we'll use them later
         prev_strategist = strat_proxy.strategist()
         prev_gov = strat_proxy.governance()
@@ -89,10 +89,10 @@ def main(queue="true", simulation="false"):
         assert prev_CVX_EXTRA_BADGER == strat_proxy.BADGER()
 
         ## Verify new Addresses are setup properly
-        assert strat_proxy.BRIBES_PROCESSOR() == bribes_processor.address
+        assert strat_proxy.BRIBES_PROCESSOR() == cvx_bribes_processor.address
 
-        # Verify that the bribes_processor's manager points to the correct multisig
-        assert bribes_processor.manager() == registry.eth.badger_wallets.techops_multisig
+        # Verify that the cvx_bribes_processor's manager points to the correct multisig
+        assert cvx_bribes_processor.manager() == registry.eth.badger_wallets.techops_multisig
 
         # Test chainlink functions
         if simulation == "true":

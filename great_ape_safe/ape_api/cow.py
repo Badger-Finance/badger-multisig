@@ -77,7 +77,7 @@ class Cow():
         else:
             buy_amount_after_fee = int(int(r.json()['buyAmountAfterFee']) * coef)
             pricer = interface.IOnChainPricing(
-                interface.IBribesProcessor(registry.eth.bribes_processor).pricer(),
+                interface.IBribesProcessor(registry.eth.cvx_bribes_processor).pricer(),
                 owner=self.safe.account
             )
             naive_quote = pricer.findOptimalSwap(

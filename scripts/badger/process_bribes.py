@@ -16,7 +16,7 @@ DEADLINE = 60*60*3
 SAFE = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 SAFE.init_badger()
 SAFE.init_cow(prod=COW_PROD)
-PROCESSOR = SAFE.badger.bribes_processor
+PROCESSOR = SAFE.badger.cvx_bribes_processor
 
 WETH = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=SAFE.account)
 BADGER = interface.ERC20(
@@ -95,7 +95,7 @@ def step1():
     want_to_sell.pop('CVX') # SameBuyAndSellToken
     for _, addr in want_to_sell.items():
         token = SAFE.contract(addr)
-        balance = token.balanceOf(SAFE.badger.bribes_processor)
+        balance = token.balanceOf(SAFE.badger.cvx_bribes_processor)
         if balance == 0:
             continue
         order_payload, order_uid = SAFE.badger.get_order_for_processor(

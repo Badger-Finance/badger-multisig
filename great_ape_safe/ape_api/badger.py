@@ -36,11 +36,14 @@ class Badger():
         self.strat_bvecvx = self.safe.contract(
             r.strategies['native.vestedCVX'], interface.IVestedCvx
         )
+        self.strat_graviaura = self.safe.contract(
+            r.strategies['native.graviAURA'], interface.IVestedAura
+        )
         self.timelock = self.safe.contract(
             r.governance_timelock, interface.IGovernanceTimelock
         )
-        self.bribes_processor = self.safe.contract(
-            r.bribes_processor, interface.IBribesProcessor
+        self.cvx_bribes_processor = self.safe.contract(
+            r.cvx_bribes_processor, interface.IBribesProcessor
         )
         self.registry = self.safe.contract(
             r.registry, interface.IBadgerRegistry
@@ -159,13 +162,13 @@ class Badger():
         if prev_strategy_balance == 0:
             C.print(f"[red]There are no rewards to sweep for: {reward.symbol()}[/red]")
             return 0
-        prev_bribes_processor_balance = reward.balanceOf(self.bribes_processor.address)
+        prev_bribes_processor_balance = reward.balanceOf(self.cvx_bribes_processor.address)
 
         # Sweep the reward token
         self.strat_bvecvx.sweepRewardToken(token_addr)
 
         assert (
-            (reward.balanceOf(self.bribes_processor.address) - prev_bribes_processor_balance) ==
+            (reward.balanceOf(self.cvx_bribes_processor.address) - prev_bribes_processor_balance) ==
             prev_strategy_balance
         )
         assert reward.balanceOf(self.strat_bvecvx.address) == 0
@@ -334,18 +337,18 @@ class Badger():
             mantissa_buy,
             deadline,
             coef,
-            destination=self.bribes_processor.address,
-            origin=self.bribes_processor.address
+            destination=self.cvx_bribes_processor.address,
+            origin=self.cvx_bribes_processor.address
         )
-        order_payload['kind'] = str(self.bribes_processor.KIND_SELL())
-        order_payload['sellTokenBalance'] = str(self.bribes_processor.BALANCE_ERC20())
-        order_payload['buyTokenBalance'] = str(self.bribes_processor.BALANCE_ERC20())
+        order_payload['kind'] = str(self.cvx_bribes_processor.KIND_SELL())
+        order_payload['sellTokenBalance'] = str(self.cvx_bribes_processor.BALANCE_ERC20())
+        order_payload['buyTokenBalance'] = str(self.cvx_bribes_processor.BALANCE_ERC20())
         order_payload.pop('signingScheme')
         order_payload.pop('signature')
         order_payload.pop('from')
         order_payload = tuple(order_payload.values())
 
-        assert self.bribes_processor.getOrderID(order_payload) == order_uid
+        assert self.cvx_bribes_processor.getOrderID(order_payload) == order_uid
 
         return order_payload, order_uid
 
