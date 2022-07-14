@@ -188,9 +188,8 @@ class Aave():
 
             # Swap to debt
             self.safe.init_uni_v3()
-            weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
             to_repay = self.safe.uni_v3.swap(
-                [collateral_token, weth, borrow_token],
+                [collateral_token, borrow_token],
                 available_to_withdraw,
             )
 
