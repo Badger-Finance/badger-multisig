@@ -201,9 +201,8 @@ class Aave():
 
         ## Swap remaining margin of borrow token back into collateral token
         self.safe.init_uni_v3()
-        weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
         self.safe.uni_v3.swap(
-            [borrow_token, weth, collateral_token],
+            [borrow_token, collateral_token],
             bal_borrow_token_after - bal_borrow_token_before,
         )
 
