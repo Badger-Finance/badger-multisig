@@ -147,13 +147,11 @@ class Aave():
         # borrow
         self.borrow(borrow_token, we_want_to_borrow)
 
+        # swap borrowed for more `collateral_token` and deposit back into aave
         self.safe.init_uni_v3()
-        weth = self.safe.contract(registry.eth.treasury_tokens.WETH)
         to_reinvest = self.safe.uni_v3.swap(
-            [borrow_token, weth, collateral_token],
-            we_want_to_borrow
+            [borrow_token, collateral_token], we_want_to_borrow
         )
-
         self.deposit(collateral_token, to_reinvest)
 
 
