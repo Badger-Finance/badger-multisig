@@ -26,7 +26,8 @@ ADDRESSES_ETH = {
         "rembadger_2022_q3": "0x697A8DebFbb6bE97c821b482AECc30477F40A102",
         "tree_2022_q3": "0x5495BDB1f4c170e5C1A939382041Cf46d7f14EAd",
     },
-    "bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
+    "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
+    "aura_bribes_processor": "0x0B6198b324E12a002B60162f8A130d6aedABD04C",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {

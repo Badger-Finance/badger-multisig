@@ -84,7 +84,7 @@ def sweep_to_techops():
 
 def sell_for_badger():
     safe = GreatApeSafe(TECH_OPS)
-    safe.init_cow()
+    safe.init_cow(True)
 
     sell_all_of_token(BOR, safe)
     sell_all_of_token(BORING, safe)
