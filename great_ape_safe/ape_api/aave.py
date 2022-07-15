@@ -148,13 +148,10 @@ class Aave():
         self.borrow(borrow_token, we_want_to_borrow)
 
         # swap borrowed for more `collateral_token` and deposit back into aave
-        # TODO: add swap functions to uni_v3 class and use that instead
-        self.safe.init_sushi()
-        to_reinvest = self.safe.sushi.swap_tokens_for_tokens(
-            borrow_token,
-            we_want_to_borrow,
-            [borrow_token, registry.eth.treasury_tokens.WETH, collateral_token]
-        )[-1]
+        self.safe.init_uni_v3()
+        to_reinvest = self.safe.uni_v3.swap(
+            [borrow_token, collateral_token], we_want_to_borrow
+        )
         self.deposit(collateral_token, to_reinvest)
 
 
@@ -189,13 +186,12 @@ class Aave():
 
             bal_borrow_token_before = borrow_token.balanceOf(self.safe)
 
-            ## Swap to debt
-            self.safe.init_sushi()
-            to_repay = self.safe.sushi.swap_tokens_for_tokens(
-                collateral_token,
+            # Swap to debt
+            self.safe.init_uni_v3()
+            to_repay = self.safe.uni_v3.swap(
+                [collateral_token, borrow_token],
                 available_to_withdraw,
-                [collateral_token, registry.eth.treasury_tokens.WETH, borrow_token]
-            )[-1]
+            )
 
             ## Repay
             self.repay(borrow_token, to_repay)
@@ -204,11 +200,10 @@ class Aave():
         bal_borrow_token_after = borrow_token.balanceOf(self.safe)
 
         ## Swap remaining margin of borrow token back into collateral token
-        self.safe.init_sushi()
-        self.safe.sushi.swap_tokens_for_tokens(
-            borrow_token,
+        self.safe.init_uni_v3()
+        self.safe.uni_v3.swap(
+            [borrow_token, collateral_token],
             bal_borrow_token_after - bal_borrow_token_before,
-            [borrow_token, registry.eth.treasury_tokens.WETH, collateral_token]
         )
 
         assert self._get_debt_in_token(borrow_token) == 0
