@@ -87,7 +87,7 @@ def unwind_lps():
         if label.startswith('slp'):
             SAFE.sushi.remove_liquidity(lp, bal_start)
 
-    # since some btokens hold curve lps we withdrawall btokens, except for
+    # since some btokens hold curve lps we withdrawAll btokens, except for
     # productive ones
     setts = registry.eth.sett_vaults.copy()
     setts.pop('bcrvIbBTC')
@@ -97,6 +97,7 @@ def unwind_lps():
     setts.pop('remDIGG')
     setts.pop('bBADGER')  # dust currently
     setts.pop('graviAURA')
+    setts.pop('bauraBal')  # dust currently
     for addr in setts.values():
         sett = interface.ISettV4h(addr, owner=SAFE.account)
         if sett.balanceOf(SAFE) > 0:
@@ -181,6 +182,14 @@ def main():
         list(registry.eth.treasury_tokens.values()) + \
         list(registry.eth.sett_vaults.values())
     )
+    VAULT.take_snapshot(
+        list(registry.eth.treasury_tokens.values()) + \
+        list(registry.eth.sett_vaults.values())
+    )
+    VOTER.take_snapshot(
+        list(registry.eth.treasury_tokens.values()) + \
+        list(registry.eth.sett_vaults.values())
+    )
 
     SAFE.init_uni_v2()
     SAFE.init_sushi()
@@ -205,7 +214,6 @@ def main():
     SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
 
     # 6: send all relevant influence tokens to voter
-    SAFE.balancer.claim([BADGER, WBTC])
     BAL.transfer(VOTER, BAL.balanceOf(SAFE))
     AURABAL.transfer(VOTER, AURABAL.balanceOf(SAFE))
     BVECVX.transfer(VOTER, BVECVX.balanceOf(SAFE))
@@ -216,7 +224,11 @@ def main():
     # 8: send all digg to vault
     DIGG.transfer(VAULT, DIGG.balanceOf(SAFE))
 
-    SAFE.post_safe_tx()
+    VAULT.print_snapshot()
+    VOTER.print_snapshot()
+    SAFE.print_snapshot()
+
+    SAFE.post_safe_tx(skip_preview=True)
 
     # TODO
     # fPmBTCHBTC and imBTC to wbtc
