@@ -9,7 +9,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 # Relayer endpoint
-SNAPSHOT_VOTE_RELAYER = "https://snapshot-relayer.herokuapp.com/api/message"
+SNAPSHOT_VOTE_RELAYER = "https://relayer.snapshot.org/api/message"
 
 SNAPSHOT_DEFAULT_HEADERS = {
     "Accept": "application/json",
