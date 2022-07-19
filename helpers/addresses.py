@@ -691,6 +691,7 @@ ADDRESSES_ARBITRUM = {
         "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
         "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
+        "ops_executor12": "0x95c1D2014909c04202fa73820B894b45F054F25e",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
     },
