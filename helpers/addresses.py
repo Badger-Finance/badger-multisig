@@ -13,6 +13,7 @@ ADDRESSES_ETH = {
     "EmissionControl": "0x31825c0A6278b89338970e3eB979b05B27FAa263",
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "registryAccessControl": "0x1233A3885b8015f369287Ca53716F66cc755651c",
     "keeperAccessControl": "0x711A339c002386f9db409cA55b6A35a604aB6cF6",
     "guardian": "0x6615e67b8B6b6375D38A0A3f937cd8c1a1e96386",
     "GatedMiniMeController": "0xdDB2dfad74F64F14bb1A1cbaB9C03bc0eed74493",
