@@ -61,6 +61,9 @@ interface IBadgerRegistryV2 {
   function set(string memory key, address at) external;
   function deleteKey(string memory key) external;
   function deleteKeys(string[] memory _keys) external;
+  function governance() external view returns (address);
+  function developer() external view returns (address);
+  function strategistGuild() external view returns (address);
   function get(string memory key) external view returns (address);
   function keysCount() external view returns (uint256);
   function getVaults(string memory version, address author) external view returns (VaultInfo[] memory);
