@@ -11,7 +11,7 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_badger()
 
-    bve_aura = safe.badger.strat_bve_aura
+    bve_aura = safe.badger.strat_graviaura
     tech_ops = registry.eth.badger_wallets.techops_multisig
 
     aura_bribes_processor = interface.IBribesProcessor(registry.eth.aura_bribes_processor)
@@ -22,12 +22,13 @@ def main():
     ## Ensure delegation has happened (for security reasons)
     assert aura_bribes_processor.manager() == tech_ops
 
-    ## Because it's setup let's make sure no address was set previously
-    assert aura_bribes_processor.bribesProcessor() == AddressZero
+    ## Because we're setting up the first Bribes Processor
+    ## Let's make sure no address was set previously
+    assert bve_aura.bribesProcessor() == AddressZero
 
     ## Set it up
     bve_aura.setBribesProcessor(aura_bribes_processor)
 
-    assert aura_bribes_processor.bribesProcessor() == aura_bribes_processor
+    assert bve_aura.bribesProcessor() == aura_bribes_processor
 
     safe.post_safe_tx()
