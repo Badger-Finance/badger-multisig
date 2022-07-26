@@ -51,7 +51,10 @@ class Snapshot():
             json={"query": self.proposal_query, "variables": {"proposal_id": proposal_id}},
         )
 
-        assert response.ok, "Error querying subgraph"
+        if not response.ok:
+            print(f"Error getting proposal data: {response.text}")
+            raise
+
         return response.json()["data"]["proposal"]
 
 
