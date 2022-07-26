@@ -58,12 +58,6 @@ class Snapshot():
         console.print(f"Choices for proposal {self.proposal_id}: {choices}")
     
 
-    def get_index_for_choice(self, choice):
-        # helper method for getting appropriate index to pass to payload as choice
-        choices = self.propoosal_data['choices']
-        return choices.index(choice) + 1
-
-    
     def vote(self, choice, version="0.1.3", type="vote", metadata=""):
         # given a choice, contruct payload, send to vote relayer and return the tx data to sign message
         choice_index = choices.index(choice)
