@@ -1,3 +1,4 @@
+from curses import meta
 import requests
 import json
 import time
@@ -26,6 +27,7 @@ class Snapshot():
                 proposal(id: $proposal_id) {
                     choices
                     state
+                    type
                     space {
                         id
                     }
@@ -47,25 +49,36 @@ class Snapshot():
         response = requests.post(
             self.subgraph,
             json={"query": self.proposal_query, "variables": {"proposal_id": proposal_id}},
-        ).json()
+        )
 
-        return response["data"]["proposal"]
+        assert response.ok, "Error querying subgraph"
+        return response.json()["data"]["proposal"]
 
 
     def show_proposal_choices(self):
         # external helper method to view proposal choices
-        choices = self.propoosal_data['choices']
+        choices = self.propoosal_data["choices"]
         console.print(f"Choices for proposal {self.proposal_id}: {choices}")
     
 
     def vote(self, choice, version="0.1.3", type="vote", metadata=""):
-        # given a choice, contruct payload, send to vote relayer and return the tx data to sign message
-        choices = self.propoosal_data['choices']
-        choice_index = choices.index(choice)
-        space = self.propoosal_data['space']['id']
-        choices = self.propoosal_data['choices']
+        # given a choice, contruct payload, send to vote relayer and safe tx
+        # for single vote, pass in choice as str ex: "yes"
+        # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 100}
+        choices = self.propoosal_data["choices"]
+        space = self.propoosal_data["space"]["id"]
+        vote_type = self.propoosal_data["type"]
 
-        assert choices.index(choice) <= len(choices), "choice out of bounds"
+        assert isinstance(choice, dict if vote_type == "weighted" else str)
+
+        if vote_type == "weighted":
+            choice = json.dumps(
+                {choices.index(k) + 1: v for k, v in choice.items()},
+                separators=(",", ":")
+            )
+        else:
+            choice = str(choices.index(choice) + 1)
+            assert choices.index(choice) <= len(choices) + 1, "choice out of bounds"
 
         payload = {
             "version": version,
@@ -74,8 +87,8 @@ class Snapshot():
             "type": type,
             "payload": {
                 "proposal": self.proposal_id,
-                "choice": str(choice_index + 1), # starts at 1
-                "metadata": json.dumps({metadata}),
+                "choice": choice, # starts at 1
+                "metadata": metadata,
             }
         }
 
