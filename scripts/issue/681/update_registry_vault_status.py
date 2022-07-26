@@ -130,4 +130,7 @@ def main():
         print(vault)
         chain_safe.badger.demote_vault(vault[0], vault[3])
 
-    chain_safe.post_safe_tx()
+    if chain.id == 250:
+        chain_safe.post_safe_tx(replace_nonce=13)
+    else:
+        chain_safe.post_safe_tx()

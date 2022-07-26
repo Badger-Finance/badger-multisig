@@ -252,7 +252,9 @@ class GreatApeSafe(ApeSafe):
         # events, call_trace and reset are params passed to .preview
         # silent=True: prevent printing of safe_tx attributes at end of run
         # post=True: make the actual live posting of the tx to the gnosis api
-        if not safe_tx:
+        if not safe_tx and replace_nonce:
+            safe_tx = self.multisend_from_receipts(safe_nonce=replace_nonce)
+        elif not safe_tx:
             safe_tx = self.multisend_from_receipts()
         if not skip_preview:
             safe_tx = self._set_safe_tx_gas(safe_tx, events, call_trace, reset, log_name, gas_coef)
