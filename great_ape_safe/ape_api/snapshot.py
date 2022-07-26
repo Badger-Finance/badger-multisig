@@ -60,6 +60,7 @@ class Snapshot():
 
     def vote(self, choice, version="0.1.3", type="vote", metadata=""):
         # given a choice, contruct payload, send to vote relayer and return the tx data to sign message
+        choices = self.propoosal_data['choices']
         choice_index = choices.index(choice)
         space = self.propoosal_data['space']['id']
         choices = self.propoosal_data['choices']
