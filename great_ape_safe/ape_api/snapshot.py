@@ -105,4 +105,6 @@ class Snapshot():
             print(f"Error notifying relayer: {response.text}")
             raise
 
-        return tx_data
+        return self.safe.build_multisig_tx(
+            to=registry.eth.gnosis.sign_message_lib, value=0, data=tx_data, operation=1
+        )
