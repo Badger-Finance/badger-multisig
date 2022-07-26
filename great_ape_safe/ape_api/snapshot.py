@@ -62,7 +62,7 @@ class Snapshot():
     
 
     def vote(self, choice, version="0.1.3", type="vote", metadata=""):
-        # given a choice, contruct payload, send to vote relayer and safe tx
+        # given a choice, contruct payload, send to vote relayer and return safe tx
         # for single vote, pass in choice as str ex: "yes"
         # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 100}
         choices = self.propoosal_data["choices"]
