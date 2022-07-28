@@ -34,7 +34,7 @@ def mint_aurabal_and_lock_aura():
 
     bal.approve(wrapper,to_deposit)
     wrapper.deposit(
-        bal.balanceOf(voter),  # uint256 _amount
+        to_deposit,  # uint256 _amount
         wrapper.getMinOut(to_deposit, 9950),  # uint256 _minOut
         False,  # bool _lock
         r.aura.aurabal_staking  # address _stakeAddress
