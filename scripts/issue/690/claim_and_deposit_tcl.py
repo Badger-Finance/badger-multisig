@@ -1,5 +1,5 @@
 from pycoingecko import CoinGeckoAPI
-
+from brownie import accounts
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -7,8 +7,10 @@ from helpers.addresses import r
 MAX_GRAVI_MANTISSA = 25_000e18
 MAX_WBTC_MANTISSA = int(6.5e8)
 
+WBTC_WHALE = "0x218B95BE3ed99141b0144Dba6cE88807c4AD7C09"
+DIGG_WHALE = "0x95EEC544A7Cf2e6a65A71039d58823f4564A6319"
 
-def main():
+def main(simulation="false"):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
     vault.init_aura()
@@ -24,6 +26,15 @@ def main():
     bpt_40_wbtc_40_digg_20_graviaura = vault.contract(
         r.balancer.bpt_40wbtc_40digg_20graviaura
     )
+
+    if simulation == "true":
+        # Fund Vault with wBTC and Digg until thresher is executed
+        wbtc_whale = accounts.at(WBTC_WHALE, force=True)
+        digg_whale = accounts.at(DIGG_WHALE, force=True)
+
+        wbtc.transfer(vault.address, MAX_WBTC_MANTISSA, {"from": wbtc_whale})
+        digg.transfer(vault.address, 14e9, {"from": digg_whale})
+        
     vault.take_snapshot([wbtc, digg, aura, bal, graviaura])
     voter.take_snapshot([bal, aura])
 
@@ -91,5 +102,8 @@ def main():
     vault.aura.deposit_all_and_stake(bpt_40_wbtc_40_digg_20_graviaura)
     assert rewards_contract.balanceOf(vault) == bpt_bal + rewards_vault_bal
 
+    vault.print_snapshot()
     voter.print_snapshot()
-    vault.post_safe_tx()
+    
+    if simulation=="false":
+        vault.post_safe_tx()
