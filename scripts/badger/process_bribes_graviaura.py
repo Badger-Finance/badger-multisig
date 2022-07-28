@@ -1,4 +1,4 @@
-from brownie import interface
+from brownie import interface, web3
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -33,16 +33,22 @@ def claim_and_sell_for_weth():
 
     claimed = SAFE.badger.claim_bribes_hidden_hands()
 
+    # do not introduce orders if we claim badger or aura bribes
+    # likely these assets will be present in the rounds for processing
+    # NOTE: badger is directly emitted by the strat to tree
+    # NOTE: aura is sent to processor, but should not be sold for weth
     for addr, mantissa in claimed.items():
-        order_payload, order_uid = SAFE.badger.get_order_for_processor(
-            sell_token=SAFE.contract(addr),
-            mantissa_sell=int(mantissa),
-            buy_token=WETH,
-            deadline=DEADLINE,
-            coef=COEF,
-            prod=COW_PROD,
-        )
-        PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+        addr = web3.toChecksumAddress(addr)
+        if addr != BADGER.address and addr != AURA.address:
+            order_payload, order_uid = SAFE.badger.get_order_for_processor(
+                sell_token=SAFE.contract(addr),
+                mantissa_sell=int(mantissa),
+                buy_token=WETH,
+                deadline=DEADLINE,
+                coef=COEF,
+                prod=COW_PROD,
+            )
+            PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
     SAFE.post_safe_tx()
 
