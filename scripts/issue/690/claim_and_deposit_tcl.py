@@ -5,7 +5,7 @@ from helpers.addresses import r
 
 # THRESHOLDS FOR TARGET OPS
 MAX_GRAVI_MANTISSA = 25_000e18
-MAX_WBTC_MANTISSA = int(6.3e8)
+MAX_WBTC_MANTISSA = int(6.5e8)
 
 
 def main():
