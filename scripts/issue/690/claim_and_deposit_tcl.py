@@ -49,7 +49,6 @@ def main(simulation="false"):
     aura_bal = aura.balanceOf(vault)
 
     ppfs = graviaura.getPricePerFullShare() / 1e18
-    aura_bal = aura.balanceOf(vault)
     graviaura_needed = MAX_GRAVI_MANTISSA - graviaura_bal
     aura_to_deposit = graviaura_needed * ppfs
     remaining_aura = aura_bal - aura_to_deposit
@@ -104,6 +103,6 @@ def main(simulation="false"):
 
     vault.print_snapshot()
     voter.print_snapshot()
-    
+
     if simulation=="false":
         vault.post_safe_tx()
