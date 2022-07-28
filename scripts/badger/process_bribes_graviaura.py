@@ -1,5 +1,5 @@
 from brownie import interface, web3
-
+from pycoingecko import CoinGeckoAPI
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -15,6 +15,7 @@ DEADLINE = 60 * 60 * 3
 # percentage of the bribes that is used to buyback $badger
 # ref: https://forum.badger.finance/t/bip-95-graviaura-regulations/5716
 BADGER_SHARE = 0.25
+AURA_SHARE = 1 - BADGER_SHARE
 
 SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 SAFE.init_badger()
@@ -55,29 +56,60 @@ def claim_and_sell_for_weth():
 
 def sell_weth():
     weth_total = WETH.balanceOf(PROCESSOR)
-    badger_share = int(WETH.balanceOf(PROCESSOR) * BADGER_SHARE)
-    aura_share = int(WETH.balanceOf(PROCESSOR) - badger_share)
+    badger_total = BADGER.balanceOf(PROCESSOR)
+    aura_total = AURA.balanceOf(PROCESSOR)
+
+    ## Estimate the amount of BADGER and AURA to buy
+    # Grab prices from coingecko
+    ids = ["weth", "aura-finance", "badger-dao"]
+    prices = CoinGeckoAPI().get_price(ids, "usd")
+
+    # Estimate total USD value of bribes
+    weth_usd_balance = weth_total / 1e18 * prices["weth"]["usd"]
+    badger_usd_balance = badger_total / 1e18 * prices["badger-dao"]["usd"]
+    aura_usd_balance = aura_total / 1e18 * prices["aura-finance"]["usd"]
+    total_bribes_usd_balance = weth_usd_balance + badger_usd_balance + aura_usd_balance
+
+    # Estimate current percentage of BADGER and AURA
+    badger_percentage = badger_usd_balance / total_bribes_usd_balance
+    aura_percentage = aura_usd_balance / total_bribes_usd_balance
+
+    # Estiamte BADGER and AURA shares to swap for (NOTE: aura_split is 1 - badger_split)
+    # If processor contains more BADGER than 25% of total bribes, don't get any more
+    if badger_percentage >= BADGER_SHARE:
+        badger_split = 0
+    # If processor contains more AURA than 75% of total bribes, don't get any more
+    elif aura_percentage >= AURA_SHARE:
+        badger_split = 1
+    # Obtain BADGER split considering the current amount sitting on the Processor
+    else:
+        badger_split = (BADGER_SHARE * total_bribes_usd_balance - badger_usd_balance) / weth_usd_balance
+
+    badger_share = int(weth_total * badger_split)
+    aura_share = int(weth_total - badger_share)
     assert badger_share + aura_share == weth_total
 
-    order_payload, order_uid = SAFE.badger.get_order_for_processor(
-        sell_token=WETH,
-        mantissa_sell=badger_share,
-        buy_token=BADGER,
-        deadline=DEADLINE,
-        coef=COEF,
-        prod=COW_PROD,
-    )
-    PROCESSOR.swapWethForBadger(order_payload, order_uid)
+    if badger_share > 0:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            sell_token=WETH,
+            mantissa_sell=badger_share,
+            buy_token=BADGER,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
+        PROCESSOR.swapWethForBadger(order_payload, order_uid)
 
-    order_payload, order_uid = SAFE.badger.get_order_for_processor(
-        sell_token=WETH,
-        mantissa_sell=aura_share,
-        buy_token=AURA,
-        deadline=DEADLINE,
-        coef=COEF,
-        prod=COW_PROD,
-    )
-    PROCESSOR.swapWethForAURA(order_payload, order_uid)
+    if aura_share > 0:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            sell_token=WETH,
+            mantissa_sell=aura_share,
+            buy_token=AURA,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
+        PROCESSOR.swapWethForAURA(order_payload, order_uid)
 
     # since the swapWeth methods each set their own approval, multicalling them
     # will make them replace each other. this performs one more final overwrite
