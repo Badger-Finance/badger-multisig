@@ -2,7 +2,7 @@ from pycoingecko import CoinGeckoAPI
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
-from brownie import Contract
+from brownie import Contract, ZERO_ADDRESS
 
 
 PROD = False
