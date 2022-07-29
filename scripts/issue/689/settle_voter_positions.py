@@ -41,7 +41,7 @@ def mint_aurabal_and_lock_aura():
     )
 
     # transfer to vault to eventually deposit into bauraBAL
-    aurabal_amount = Contract(r.aura.aurabal_staking).balanceOf(voter)
+    aurabal_amount = aurabal.balanceOf(voter)
     aurabal.transfer(vault, aurabal_amount)
 
     # test before aura fees are claimed for voter
