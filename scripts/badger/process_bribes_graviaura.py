@@ -41,6 +41,7 @@ def claim_and_sell_for_weth():
         addr = web3.toChecksumAddress(addr)
         if addr != BADGER.address and addr != AURA.address:
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
+                PROCESSOR,
                 sell_token=SAFE.contract(addr),
                 mantissa_sell=int(mantissa),
                 buy_token=WETH,
@@ -60,6 +61,7 @@ def sell_weth():
     assert badger_share + aura_share == weth_total
 
     order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
         sell_token=WETH,
         mantissa_sell=badger_share,
         buy_token=BADGER,
@@ -70,6 +72,7 @@ def sell_weth():
     PROCESSOR.swapWethForBadger(order_payload, order_uid)
 
     order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
         sell_token=WETH,
         mantissa_sell=aura_share,
         buy_token=AURA,

@@ -351,6 +351,7 @@ class Badger():
 
     def get_order_for_processor(
         self,
+        bribes_processor,
         sell_token,
         mantissa_sell,
         buy_token,
@@ -368,18 +369,18 @@ class Badger():
             mantissa_buy,
             deadline,
             coef,
-            destination=self.cvx_bribes_processor.address,
-            origin=self.cvx_bribes_processor.address
+            destination=bribes_processor.address,
+            origin=bribes_processor.address
         )
-        order_payload['kind'] = str(self.cvx_bribes_processor.KIND_SELL())
-        order_payload['sellTokenBalance'] = str(self.cvx_bribes_processor.BALANCE_ERC20())
-        order_payload['buyTokenBalance'] = str(self.cvx_bribes_processor.BALANCE_ERC20())
+        order_payload['kind'] = str(bribes_processor.KIND_SELL())
+        order_payload['sellTokenBalance'] = str(bribes_processor.BALANCE_ERC20())
+        order_payload['buyTokenBalance'] = str(bribes_processor.BALANCE_ERC20())
         order_payload.pop('signingScheme')
         order_payload.pop('signature')
         order_payload.pop('from')
         order_payload = tuple(order_payload.values())
 
-        assert self.cvx_bribes_processor.getOrderID(order_payload) == order_uid
+        assert bribes_processor.getOrderID(order_payload) == order_uid
 
         return order_payload, order_uid
 
