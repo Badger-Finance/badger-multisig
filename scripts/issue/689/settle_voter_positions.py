@@ -37,7 +37,7 @@ def mint_aurabal_and_lock_aura():
         to_deposit,  # uint256 _amount
         wrapper.getMinOut(to_deposit, 9950),  # uint256 _minOut
         False,  # bool _lock
-        r.aura.aurabal_staking  # address _stakeAddress
+       ZERO_ADDRESS # address _stakeAddress
     )
 
     # transfer to vault to eventually deposit into bauraBAL
