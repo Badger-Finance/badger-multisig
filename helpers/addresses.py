@@ -516,6 +516,7 @@ ADDRESSES_ETH = {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
         "tokenmak_briber": "0x7816b3D0935D668bCfc9A4aaB5a84EBc7fF320cf",
         "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
+        "rewards_distributor": "0x0b139682D5C9Df3e735063f46Fb98c689540Cf3A",
     },
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",

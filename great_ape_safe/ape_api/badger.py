@@ -55,6 +55,7 @@ class Badger():
 
         # misc
         self.api_url = 'https://api.badger.com/v2/'
+        self.api_hh_url = f"https://hhand.xyz/reward/{chain.id}/"
 
 
     def claim_all(self, json_file_path=None):
@@ -149,6 +150,36 @@ class Badger():
                 claimables.append(token_addr)
         if len(claimables) > 0:
             self.strat_bvecvx.claimBribesFromConvex(claimables)
+
+    def claim_bribes_hidden_hands(self) -> dict:
+        """
+        grabs the available claimable tokens from HH endpoint,
+        loop it thru them and returning the list of addresses
+        and mantissas for latter processing.
+        """
+        url = self.api_hh_url + self.strat_graviaura.address # lack of other public source of this info rn
+        response = requests.get(url)
+        data = response.json()["data"]
+
+        aggregate = {"tokens": [], "amounts": []}
+        for item in data:
+            aggregate["tokens"].append(item["token"])
+            aggregate["amounts"].append(item["claimMetadata"]["amount"])
+
+        self.strat_graviaura.claimBribesFromHiddenHand(
+            r.hidden_hand.rewards_distributor,
+            [
+                (
+                    item["claimMetadata"]["identifier"],
+                    item["claimMetadata"]["account"],
+                    item["claimMetadata"]["amount"],
+                    item["claimMetadata"]["merkleProof"],
+                )
+                for item in data
+            ],
+        )
+        
+        return dict(zip(aggregate["tokens"], aggregate["amounts"]))
 
 
     def sweep_reward_token(self, token_addr):
