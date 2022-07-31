@@ -1,4 +1,3 @@
-from curses import meta
 import requests
 import json
 import time
