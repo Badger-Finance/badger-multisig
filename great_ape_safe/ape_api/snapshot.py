@@ -27,6 +27,8 @@ class Snapshot():
                     choices
                     state
                     type
+                    start
+                    end
                     space {
                         id
                     }
@@ -70,6 +72,13 @@ class Snapshot():
         choices = self.propoosal_data["choices"]
         space = self.propoosal_data["space"]["id"]
         vote_type = self.propoosal_data["type"]
+        start = self.propoosal_data["start"]
+        end = self.propoosal_data["end"]
+        current_time = int(time.time())
+
+        assert current_time >= start and current_time <= end, \
+            "Vote is not within proposal time window"
+
 
         assert isinstance(choice, dict if vote_type == "weighted" else str)
 
@@ -80,11 +89,12 @@ class Snapshot():
             )
         else:
             choice = str(choices.index(choice) + 1)
-            assert choices.index(choice) <= len(choices) + 1, "choice out of bounds"
+            assert choices.index(choice) <= len(choices) + 1, \
+                "choice out of bounds"
 
         payload = {
             "version": version,
-            "timestamp": str(int(time.time())),
+            "timestamp": str(current_time),
             "space": space,
             "type": type,
             "payload": {
