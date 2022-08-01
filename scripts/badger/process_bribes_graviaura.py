@@ -1,4 +1,6 @@
-from brownie import interface, web3
+from brownie import interface, web3, chain
+import json
+import os
 from pycoingecko import CoinGeckoAPI
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -51,13 +53,29 @@ def claim_and_sell_for_weth():
             )
             PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
+        # If Badger is claimed, we store the amount to be able to pass it to next 
+        # step's script in order to estimate the Badger split to buy from WETH.
+        if addr == BADGER.address:
+            dump_dir = "data/badger/hh_badger_bribes/"
+            file_name = chain.time()
+            os.makedirs(dump_dir, exist_ok=True)
+            with open(f'{dump_dir}{file_name}.json', 'w') as f:
+                bribe_data = {
+                    'address': addr,
+                    'mantissa': mantissa,
+                    'timestamp': file_name
+                }
+                json.dump(bribe_data, f, indent=4, sort_keys=True)
+            print(f"Badger bribes claimed: {mantissa}")
+
     SAFE.post_safe_tx()
 
-
-def sell_weth():
+# NOTE: If BADGER bribes were received, we pass the claimed amount to the script
+# in order to properly estimate the reminding amount of BADGER to be purchased.
+def sell_weth(badger_total="0"):
     weth_total = WETH.balanceOf(PROCESSOR)
-    badger_total = BADGER.balanceOf(PROCESSOR)
     aura_total = AURA.balanceOf(PROCESSOR)
+    badger_total = int(badger_total)
 
     ## Estimate the amount of BADGER and AURA to buy
     # Grab prices from coingecko
