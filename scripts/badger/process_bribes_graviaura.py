@@ -43,7 +43,7 @@ def claim_and_sell_for_weth():
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
                 PROCESSOR,
                 sell_token=SAFE.contract(addr),
-                mantissa_sell=int(mantissa),
+                mantissa_sell=mantissa,
                 buy_token=WETH,
                 deadline=DEADLINE,
                 coef=COEF,
