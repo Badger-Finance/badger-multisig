@@ -29,7 +29,7 @@ PROPOSAL_QUERY = """
 
 # Currently is static, but we could add in the future args to be introduce in the cli for weights and targets
 GAUGE_TARGET = "80/20 BADGER/WBTC"
-VOTE_WEIGHT = 100
+VOTE_WEIGHT = 1
 
 # UPDATE: introduce proposal ID to cast vote
 def main(
