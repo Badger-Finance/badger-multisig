@@ -214,10 +214,8 @@ def main():
     SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
 
     # 6: send all relevant influence tokens to voter
-    SAFE.balancer.claim([BADGER, WBTC])
-    BAL.transfer(VOTER, BAL.balanceOf(SAFE))
     AURABAL.transfer(VOTER, AURABAL.balanceOf(SAFE))
-    BVECVX.transfer(VOTER, BVECVX.balanceOf(SAFE))
+    # BVECVX.transfer(VOTER, BVECVX.balanceOf(SAFE)) cannot transfer in same block as depositing
 
     # 7: send weth to vault
     WETH.transfer(VAULT, WETH.balanceOf(SAFE) * DUSTY)
