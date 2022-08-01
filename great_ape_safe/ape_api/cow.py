@@ -50,7 +50,7 @@ class Cow():
         destination = self.safe.address if not destination else destination
 
         # make sure mantissa is an integer
-        mantissa_sell == int(mantissa_sell)
+        mantissa_sell = int(mantissa_sell)
 
         # get the fee and exact amount to buy after fee
         fee_and_quote_payload = {

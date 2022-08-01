@@ -53,6 +53,7 @@ def step0_1(sim=False):
 
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
             sell_token=SAFE.contract(addr),
             mantissa_sell=mantissa,
             buy_token=WETH,
@@ -117,6 +118,7 @@ def step2():
     assert badger_share + cvx_share == weth_total
 
     order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
         sell_token=WETH,
         mantissa_sell=badger_share,
         buy_token=BADGER,
@@ -127,6 +129,7 @@ def step2():
     PROCESSOR.swapWethForBadger(order_payload, order_uid)
 
     order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
         sell_token=WETH,
         mantissa_sell=cvx_share,
         buy_token=CVX,
