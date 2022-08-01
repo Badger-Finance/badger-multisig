@@ -85,7 +85,7 @@ class Snapshot():
             )
         else:
             choice = str(choices.index(choice) + 1)
-            assert choices.index(choice) <= len(choices) + 1, \
+            assert int(choice) <= len(choices) + 1, \
                 "choice out of bounds"
 
         payload = {
