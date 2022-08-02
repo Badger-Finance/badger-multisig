@@ -41,7 +41,7 @@ class Snapshot():
         }
 
         self.proposal_id = proposal_id
-        self.propoosal_data = self._get_proposal_data(self.proposal_id)
+        self.proposal_data = self._get_proposal_data(self.proposal_id)
 
 
     def _get_proposal_data(self, proposal_id):
@@ -60,22 +60,20 @@ class Snapshot():
 
     def show_proposal_choices(self):
         # external helper method to view proposal choices
-        choices = self.propoosal_data["choices"]
+        choices = self.proposal_data["choices"]
         console.print(f"Choices for proposal {self.proposal_id}: {choices}")
     
 
-    def vote(self, choice, version="0.1.3", type="vote", metadata=""):
+    def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=""):
         # given a choice, contruct payload, post to vote relayer and return safe tx
         # for single vote, pass in choice as str ex: "yes"
         # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 100}
-        choices = self.propoosal_data["choices"]
-        space = self.propoosal_data["space"]["id"]
-        vote_type = self.propoosal_data["type"]
-        state = self.propoosal_data["state"]
+        choices = self.proposal_data["choices"]
+        space = self.proposal_data["space"]["id"]
+        vote_type = self.proposal_data["type"]
+        state = self.proposal_data["state"]
 
-        assert state == "active", \
-            "Vote is not within proposal time window"
-
+        assert state == "active", "Vote is not within proposal time window"
         assert isinstance(choice, dict if vote_type == "weighted" else str)
 
         if vote_type == "weighted":
@@ -121,6 +119,8 @@ class Snapshot():
             print(f"Error notifying relayer: {response.text}")
             raise
 
-        return self.safe.build_multisig_tx(
+        safe_tx = self.safe.build_multisig_tx(
             to=registry.eth.gnosis.sign_message_lib, value=0, data=tx_data, operation=1
         )
+
+        self.safe.post_safe_tx(safe_tx=safe_tx, skip_preview=True)

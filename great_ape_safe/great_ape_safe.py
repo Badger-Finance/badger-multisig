@@ -170,6 +170,8 @@ class GreatApeSafe(ApeSafe):
 
 
     def print_snapshot(self, csv_destination=None):
+        if 'init_snapshot' in self.__dir__():
+            return
         if self.snapshot is None:
             raise
         df = self.snapshot.set_index('address')
