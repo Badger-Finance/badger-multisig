@@ -1,3 +1,4 @@
+from decimal import Decimal
 from brownie import ZERO_ADDRESS, interface
 from rich.console import Console
 
@@ -76,10 +77,10 @@ def main():
     # bpt out and swap estimation
     bpt_out = vault.balancer.get_amount_bpt_out(
         [bal, weth], [bal_to_deposit, 0], pool=b80bal_20weth
-    ) * SLIPPAGE
-    amt_pool_swapped_out = vault.balancer.get_amount_out(
+    ) * Decimal(SLIPPAGE)
+    amt_pool_swapped_out = float(vault.balancer.get_amount_out(
         b80bal_20weth, auraBAL, bpt_out, pool=bauraBAL_stable
-    ) * SLIPPAGE
+    ) * Decimal(SLIPPAGE))
 
     if amt_pool_swapped_out > wrapper_aurabal_out:
         console.print(
