@@ -65,7 +65,7 @@ ADDRESSES_ETH = {
         "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         # "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",  # can execute from deployer
-        # "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",  # can execute from deployer
+        "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         # "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",  # can execute from deployer
