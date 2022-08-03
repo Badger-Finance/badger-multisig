@@ -36,12 +36,11 @@ def main():
     auraBAL = vault.contract(r.treasury_tokens.AURABAL)
     bauraBal = vault.contract(r.sett_vaults.bauraBal)
     graviaura = vault.contract(r.sett_vaults.graviAURA)
-    bvecvx = vault.contract(r.sett_vaults.bveCVX)
-    bcvxcrv = vault.contract(r.sett_vaults.bcvxCRV)
 
     # contracts
     wrapper = vault.contract(r.aura.wrapper)
     registry_v_2 = vault.contract(r.registry_v2, interface.IBadgerRegistryV2)
+    vlAURA = vault.contract(r.aura.vlAURA)
 
     # snaps
     vault.take_snapshot([usdc, auraBAL, bauraBal, graviaura])
@@ -67,7 +66,9 @@ def main():
     )
 
     # 2.2 send to voter and deposit into aurabal/bauraBAL
-    aura.transfer(voter, balance_aura - aura_swap_for_usdc)
+    aura_lock_in_voter = balance_aura - aura_swap_for_usdc
+    aura.approve(vlAURA, aura_lock_in_voter)
+    vlAURA.lock(voter, aura_lock_in_voter)
 
     bal_to_deposit = balance_bal - bal_swap_for_usdc
 
@@ -78,9 +79,12 @@ def main():
     bpt_out = vault.balancer.get_amount_bpt_out(
         [bal, weth], [bal_to_deposit, 0], pool=b80bal_20weth
     ) * Decimal(SLIPPAGE)
-    amt_pool_swapped_out = float(vault.balancer.get_amount_out(
-        b80bal_20weth, auraBAL, bpt_out, pool=bauraBAL_stable
-    ) * Decimal(SLIPPAGE))
+    amt_pool_swapped_out = float(
+        vault.balancer.get_amount_out(
+            b80bal_20weth, auraBAL, bpt_out, pool=bauraBAL_stable
+        )
+        * Decimal(SLIPPAGE)
+    )
 
     if amt_pool_swapped_out > wrapper_aurabal_out:
         console.print(
@@ -116,21 +120,6 @@ def main():
         auraBAL.approve(bauraBal, 2 ** 256 - 1)
         bauraBal.depositAll()
         auraBAL.approve(bauraBal, 0)
-
-    # 3. tree claim
-    if bauraBal.balanceOf(vault) > 0:
-        vault.init_badger()
-        # will claim: bcvxCRV, bveCVX & graviAURA
-        # NOTE: should we just narrow the claim for graviAURA and modify `claim_all`?
-        # NOTE: short <2h window for signing as new cycles may be posted
-        vault.badger.claim_all()
-
-        # 3.1: send to tree for deficit coverage over time.
-        # will help together with the post-thresher trasnfer
-        bcvxcrv.transfer(r.badger_wallets.badgertree, bcvxcrv.balanceOf(vault))
-
-        # 3.2: send influence asset to voter
-        bvecvx.trasnfer(voter, bvecvx.balanceOf(vault))
 
     voter.print_snapshot()
     vault.post_safe_tx()
