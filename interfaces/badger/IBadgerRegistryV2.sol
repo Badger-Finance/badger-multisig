@@ -72,4 +72,13 @@ interface IBadgerRegistryV2 {
     view
     returns (VaultInfo[] memory);
   function getProductionVaults() external view returns (VaultData[] memory);
+  function productionVaultInfoByVault(address)
+    external
+    view
+    returns (
+          address vault,
+          string memory version,
+          uint8 status,
+          string memory metadata
+    );
 }

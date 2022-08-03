@@ -64,6 +64,33 @@ class Balancer():
         amounts = self.vault.queryBatchSwap.call(calc_out_given_in, swap, underlyings, funds)
         return abs(amounts[asset_out_index])
 
+    def get_amount_bpt_out(self, underlyings, mantissas, pool=None, pool_type=None):
+        # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#token-ordering
+        underlyings, mantissas = self.order_tokens(
+            [x.address for x in underlyings], mantissas=mantissas
+        )
+
+        if pool:
+            pool_id = pool.getPoolId()
+        else:
+            pool_id = self.find_pool_for_underlyings(list(underlyings))
+            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+
+        _, reserves, _ = self.vault.getPoolTokens(pool_id)
+
+        pool_type = pool_type if pool_type else self.pool_type(pool_id)
+
+        if pool_type == "Stable":
+            # wip
+            # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
+            bpt_out = 1
+        else:
+            bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(
+                pool, reserves, mantissas
+            )
+
+        return bpt_out
+
 
     def get_pool_data(self, update_cache=False):
         # no on-chain registry, so pool data is cached locally
