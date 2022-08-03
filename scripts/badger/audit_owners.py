@@ -13,7 +13,7 @@ GNOSIS_URLS  = {
     'bsc': 'https://safe-transaction.bsc.gnosis.io',
     'poly': 'https://safe-transaction.polygon.gnosis.io',
     'arbitrum': 'https://safe-transaction.arbitrum.gnosis.io',
-    'ftm': 'https://safe.fantom.network'
+    'ftm': 'https://safe-txservice.fantom.network'
 }
 C = Console()
 
