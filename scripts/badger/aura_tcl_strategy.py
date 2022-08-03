@@ -57,8 +57,8 @@ def main():
         f"[green] === Claimed rewards {balance_bal/1e18} BAL and {balance_aura/1e18} AURA === [/green]"
     )
 
-    bal_swap_for_usdc = balance_bal * BAL_FOR_STABLES
-    aura_swap_for_usdc = balance_aura * AURA_FOR_STABLES
+    bal_swap_for_usdc = int(balance_bal * BAL_FOR_STABLES)
+    aura_swap_for_usdc = int(balance_aura * AURA_FOR_STABLES)
 
     # 2.1 swap rewards for usdc
     vault.cow.market_sell(bal, usdc, bal_swap_for_usdc, deadline=60 * 60 * 4, coef=COEF)
