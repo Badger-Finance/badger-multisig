@@ -29,6 +29,7 @@ from great_ape_safe.ape_api.maker import Maker
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
 from great_ape_safe.ape_api.rari import Rari
+from great_ape_safe.ape_api.snapshot import Snapshot
 from great_ape_safe.ape_api.solidly import Solidly
 from great_ape_safe.ape_api.spookyswap import SpookySwap
 from great_ape_safe.ape_api.sushi import Sushi
@@ -123,6 +124,10 @@ class GreatApeSafe(ApeSafe):
     def init_rari(self):
         self.rari = Rari(self)
 
+    
+    def init_snapshot(self, proposal_id):
+        self.snapshot = Snapshot(self, proposal_id)
+
 
     def init_solidly(self):
         self.solidly = Solidly(self)
@@ -168,6 +173,8 @@ class GreatApeSafe(ApeSafe):
 
 
     def print_snapshot(self, csv_destination=None):
+        if 'init_snapshot' in self.__dir__():
+            return
         if self.snapshot is None:
             raise
         df = self.snapshot.set_index('address')
