@@ -19,7 +19,7 @@ class Snapshot():
             registry.eth.gnosis.sign_message_lib, owner=self.safe.account
         )
 
-        self.vote_relayer ="https://relayer.snapshot.org/api/message"
+        self.vote_relayer = "https://relayer.snapshot.org/api/message"
         self.subgraph = "https://hub.snapshot.org/graphql?"
         self.proposal_query = """
             query($proposal_id: String) {
@@ -67,7 +67,7 @@ class Snapshot():
     def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=""):
         # given a choice, contruct payload, post to vote relayer and return safe tx
         # for single vote, pass in choice as str ex: "yes"
-        # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 100}
+        # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 1}
         choices = self.proposal_data["choices"]
         space = self.proposal_data["space"]["id"]
         vote_type = self.proposal_data["type"]
