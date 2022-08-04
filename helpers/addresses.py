@@ -21,6 +21,7 @@ ADDRESSES_ETH = {
     "harvest_forwarder": "0xA84B663837D94ec41B0f99903f37e1d69af9Ed3E",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
     "aragon_voting": "0xDc344bFB12522bF3fa58EF0d6b9a41256fc79A1b",
+    "badger_voting_shares": "0x49fa0D0619BdeD9aAc4106974E34CeB516bdeAeF",
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
