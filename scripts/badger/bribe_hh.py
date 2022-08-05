@@ -8,6 +8,8 @@ from helpers.addresses import r
 
 def main(badger_bribe_in_aura=0, badger_bribe_in_balancer=0):
     safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
+    badger_bribe_in_aura = int(badger_bribe_in_aura)
+    badger_bribe_in_balancer = int(badger_bribe_in_balancer)
 
     badger = interface.ERC20(
         r.treasury_tokens.BADGER, owner=safe.account
