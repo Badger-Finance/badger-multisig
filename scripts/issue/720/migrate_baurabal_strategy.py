@@ -6,18 +6,12 @@ from helpers.constants import AddressZero
 
 C = Console()
 
-AURABAL_STRAT_CURRENT = registry.eth.strategies._deprecated["native.bauraBal"]
+AURABAL_STRAT_CURRENT = registry.eth.strategies._deprecated["native.bauraBal"]["v1.1"]
 AURABAL_STRAT_NEW = registry.eth.strategies["native.bauraBal"]
 BAURA_BAL = registry.eth.sett_vaults.bauraBal
 DEV_MULTI = registry.eth.badger_wallets.dev_multisig
 BADGERTREE = registry.eth.badger_wallets.badgertree
 TROPS = registry.eth.badger_wallets.treasury_ops_multisig
-
-BB_A_USD = interface.IERC20(AURABAL_STRAT_NEW.BB_A_USD())
-AURA = interface.IERC20(AURABAL_STRAT_NEW.AURA())
-BAL = interface.IERC20(AURABAL_STRAT_NEW.BAL ())
-AURA_BAL = interface.IERC20(AURABAL_STRAT_NEW.want())
-GRAVIAURA = interface.IERC20(AURABAL_STRAT_NEW.GRAVIAURA())
 
 USER = "0xf18da2faba96793f02264d1a047790002f32010f"
 
@@ -28,6 +22,10 @@ def main(simulation="false"):
     auraBal_vault = interface.ITheVault(BAURA_BAL, owner=safe.account)
     want = interface.IERC20(auraBal_vault.token())
     bb_a_usd = interface.IERC20(auraBal_strat_new.BB_A_USD())
+
+    aura = interface.IERC20(auraBal_strat_new.AURA())
+    bal = interface.IERC20(auraBal_strat_new.BAL ())
+    graviaura = interface.IERC20(auraBal_strat_new.GRAVIAURA())
 
     ## Check integrity
     assert auraBal_vault.strategy() == auraBal_strat_current.address
@@ -55,11 +53,11 @@ def main(simulation="false"):
     tx = auraBal_strat_current.harvest()
     assert len(tx.events["TreeDistribution"]) == 2 # GraviAURA and bBB-A-USD
     # Ensure that no assets remain sitting on strategy
-    assert BB_A_USD.balanceOf(auraBal_strat_current) == 0
-    assert AURA.balanceOf(auraBal_strat_current) == 0
-    assert AURA_BAL.balanceOf(auraBal_strat_current) == 0
-    assert BAL.balanceOf(auraBal_strat_current) == 0
-    assert GRAVIAURA.balanceOf(auraBal_strat_current) == 0
+    assert bb_a_usd.balanceOf(auraBal_strat_current) == 0
+    assert aura.balanceOf(auraBal_strat_current) == 0
+    assert want.balanceOf(auraBal_strat_current) == 0
+    assert bal.balanceOf(auraBal_strat_current) == 0
+    assert graviaura.balanceOf(auraBal_strat_current) == 0
 
     ## withdrawToVault
     prev_strat_balance = auraBal_strat_current.balanceOf() # balanceOfWant().add(balanceOfPool());
