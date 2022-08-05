@@ -317,7 +317,10 @@ ADDRESSES_ETH = {
         "native.bauraBal": "0xED6d51A82065725e283fC035f488213e869FD976",
         "native.b80BADGER-20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
         "_deprecated": {
-            "native.bauraBal": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
+            "native.bauraBal": {
+                "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
+                "v1.1": "0xED6d51A82065725e283fC035f488213e869FD976"
+            },
             "native.pbtcCrv": {
                 "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
                 "v1.1": "0x3f98F3a21B125414e4740316bd6Ef14718764a22",
