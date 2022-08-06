@@ -59,7 +59,7 @@ def main(
             },
         )
         choices = response.json()["data"]["proposal"]["choices"]
-        choice = choices.index(GAUGE_TARGET) + 1
+        choice = choices.index(GAUGE_TARGET)
 
         # grab data from proposals to find out the proposal index
         response = requests.post(
