@@ -173,7 +173,7 @@ class GreatApeSafe(ApeSafe):
 
 
     def print_snapshot(self, csv_destination=None):
-        if 'init_snapshot' in self.__dir__():
+        if not isinstance(self.snapshot, pd.DataFrame):
             return
         if self.snapshot is None:
             raise
