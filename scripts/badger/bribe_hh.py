@@ -69,8 +69,9 @@ def main(
         # reverse the order to have from oldest to newest
         proposals = response.json()["data"]["proposals"][::-1]
         for proposal in proposals:
-            if aura_proposal_id in proposal["id"]:
+            if aura_proposal_id == proposal["id"]:
                 proposal_index = proposals.index(proposal)
+                break
 
         prop = web3.solidityKeccak(["uint256", "uint256"], [proposal_index, choice])
         mantissa = int(Decimal(badger_bribe_in_aura) * Decimal(10 ** badger.decimals()))
