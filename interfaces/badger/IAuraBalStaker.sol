@@ -39,6 +39,8 @@ interface IAuraBalStaker {
 
     function balEthBptToAuraBalMinOutBps() external view returns (uint256);
 
+    function minBbaUsdHarvest() external view returns (uint256);
+
     function balanceOf() external view returns (uint256);
 
     function balanceOfPool() external view returns (uint256);
@@ -95,6 +97,8 @@ interface IAuraBalStaker {
         external;
 
     function setWithdrawalMaxDeviationThreshold(uint256 _threshold) external;
+
+    function setMinBbaUsdHarvest(uint256 _minBbaUsd) external;
 
     function strategist() external view returns (address);
 

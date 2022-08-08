@@ -314,10 +314,13 @@ ADDRESSES_ETH = {
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
-        "native.bauraBal": "0xED6d51A82065725e283fC035f488213e869FD976",
+        "native.bauraBal": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
         "native.b80BADGER-20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
         "_deprecated": {
-            "native.bauraBal": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
+            "native.bauraBal": {
+                "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
+                "v1.1": "0xED6d51A82065725e283fC035f488213e869FD976"
+            },
             "native.pbtcCrv": {
                 "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
                 "v1.1": "0x3f98F3a21B125414e4740316bd6Ef14718764a22",
