@@ -52,6 +52,7 @@ class Badger():
             r.registry_v2, interface.IBadgerRegistryV2
         )
         self.station = self.safe.contract(r.badger_wallets.gas_station)
+        self.rewards = self.safe.contract(r.hidden_hand.rewards_distributor)
 
         # misc
         self.api_url = 'https://api.badger.com/v2/'
@@ -150,35 +151,46 @@ class Badger():
                 claimables.append(token_addr)
         if len(claimables) > 0:
             self.strat_bvecvx.claimBribesFromConvex(claimables)
+    
 
-    def claim_bribes_hidden_hands(self) -> dict:
+    def get_hh_data(self, address=None):
+        """
+        get hidden hand data for a particular address
+        """
+        address = address if address else self.safe.address
+        url = self.api_hh_url + address
+        response = requests.get(url)
+        return response.json()["data"]
+
+
+    def claim_bribes_hidden_hands(self, claim_from_strat=True) -> dict:
         """
         grabs the available claimable tokens from HH endpoint,
         loop it thru them and returning the list of addresses
         and mantissas for latter processing.
         """
-        url = self.api_hh_url + self.strat_graviaura.address # lack of other public source of this info rn
-        response = requests.get(url)
-        data = response.json()["data"]
+        address = self.strat_graviaura.address if claim_from_strat else self.safe.address
+        data = self.get_hh_data(address)
 
         aggregate = {"tokens": [], "amounts": []}
         for item in data:
             aggregate["tokens"].append(item["token"])
             aggregate["amounts"].append(item["claimMetadata"]["amount"])
 
-        self.strat_graviaura.claimBribesFromHiddenHand(
-            r.hidden_hand.rewards_distributor,
-            [
-                (
-                    item["claimMetadata"]["identifier"],
-                    item["claimMetadata"]["account"],
-                    item["claimMetadata"]["amount"],
-                    item["claimMetadata"]["merkleProof"],
-                )
-                for item in data
-            ],
-        )
-        
+        metadata = [(item['claimMetadata']['identifier'], item['claimMetadata']
+                     ['account'], item['claimMetadata']['amount'], item['claimMetadata']['merkleProof'])
+                        for item in data]
+
+        if claim_from_strat:
+            self.strat_graviaura.claimBribesFromHiddenHand(
+                self.rewards.address,
+                metadata,
+            )
+        else:
+            self.rewards.claim(
+                metadata
+            )
+
         return dict(zip(aggregate["tokens"], aggregate["amounts"]))
 
 
@@ -205,8 +217,6 @@ class Badger():
         assert reward.balanceOf(self.strat_bvecvx.address) == 0
 
         return prev_strategy_balance
-
-
 
 
     def queue_timelock(self, target_addr, signature, data, dump_dir, delay_in_days=2.3):
