@@ -9,7 +9,7 @@ TECH_OPS = registry.eth.badger_wallets.techops_multisig
 DEV = registry.eth.badger_wallets.dev_multisig
 REGISTRY = registry.eth.registry_v2
 VAULTS = registry.eth.sett_vaults
-STATUS = 1 # Guarded
+STATUS = 2 # Guarded
 VAULT_IDS = [
     "bauraBal",
     "b80BADGER_20WBTC",
