@@ -33,29 +33,25 @@ class Badger():
         self.tree = self.safe.contract(
             r.badger_wallets.badgertree, interface.IBadgerTreeV2
         )
+        self.strat_bvecvx = self.safe.contract(
+            r.strategies['native.vestedCVX'], interface.IVestedCvx
+        )
+        self.strat_graviaura = self.safe.contract(
+            r.strategies['native.graviAURA'], interface.IVestedAura
+        )
+        self.timelock = self.safe.contract(
+            r.governance_timelock, interface.IGovernanceTimelock
+        )
+        self.cvx_bribes_processor = self.safe.contract(
+            r.cvx_bribes_processor, interface.IBribesProcessor
+        )
         self.registry = self.safe.contract(
             r.registry, interface.IBadgerRegistry
         )
         self.registry_v2 = self.safe.contract(
             r.registry_v2, interface.IBadgerRegistryV2
         )
-
-        # network dependent contracts
-        # Ethereum
-        if chain.id == 1:
-            self.strat_bvecvx = self.safe.contract(
-                r.strategies['native.vestedCVX'], interface.IVestedCvx
-            )
-            self.strat_graviaura = self.safe.contract(
-                r.strategies['native.graviAURA'], interface.IVestedAura
-            )
-            self.timelock = self.safe.contract(
-                r.governance_timelock, interface.IGovernanceTimelock
-            )
-            self.cvx_bribes_processor = self.safe.contract(
-                r.cvx_bribes_processor, interface.IBribesProcessor
-            )
-            self.station = self.safe.contract(r.badger_wallets.gas_station)
+        self.station = self.safe.contract(r.badger_wallets.gas_station)
 
         # misc
         self.api_url = 'https://api.badger.com/v2/'
