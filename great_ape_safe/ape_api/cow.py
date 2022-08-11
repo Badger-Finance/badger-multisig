@@ -42,7 +42,7 @@ class Cow():
         self.api_url = f'{prefix}{chain_label[chain.id]}/api/v1/'
 
 
-    def get_fee_and_quote(self, sell_token, mantissa_sell, buy_token):
+    def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell):
         # make sure mantissa is an integer
         mantissa_sell = int(mantissa_sell)
 
