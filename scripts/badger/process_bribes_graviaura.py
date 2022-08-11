@@ -28,7 +28,7 @@ PROCESSOR = SAFE.contract(r.aura_bribes_processor)
 WETH = interface.IWETH9(r.treasury_tokens.WETH, owner=SAFE.account)
 BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=SAFE.account)
 AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
-GRAVI_AURA = interface.ERC20(r.sett_vaults.graviAURA, owner=SAFE.account)
+GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=SAFE.account)
 
 
 def claim_and_sell_for_weth():
