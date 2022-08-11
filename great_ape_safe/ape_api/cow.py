@@ -42,13 +42,7 @@ class Cow():
         self.api_url = f'{prefix}{chain_label[chain.id]}/api/v1/'
 
 
-    def _sell(self, sell_token, mantissa_sell, buy_token,
-        mantissa_buy, deadline, coef, destination, origin):
-        """call api to get sell quote and post order"""
-
-        # set destination to self if not specified
-        destination = self.safe.address if not destination else destination
-
+    def get_fee_and_quote(self, sell_token, mantissa_sell, buy_token):
         # make sure mantissa is an integer
         mantissa_sell = int(mantissa_sell)
 
@@ -68,14 +62,30 @@ class Cow():
         print('')
         assert r.ok and r.status_code == 200
 
+        return r.json()
+
+
+    def _sell(self, sell_token, mantissa_sell, buy_token,
+        mantissa_buy, deadline, coef, destination, origin):
+        """call api to get sell quote and post order"""
+
+        # set destination to self if not specified
+        destination = self.safe.address if not destination else destination
+
+        # make sure mantissa is an integer
+        mantissa_sell = int(mantissa_sell)
+
+        # get the fee and exact amount to buy after fee
+        fee_and_quote = self.get_fee_and_quote(sell_token, buy_token, mantissa_sell)
+
         # grab values needed to post the order to the api
-        fee_amount = int(r.json()['fee']['amount'])
+        fee_amount = int(fee_and_quote['fee']['amount'])
         if mantissa_buy:
             # overwrite quote in case order has a limit
             mantissa_buy == int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
-            buy_amount_after_fee = int(int(r.json()['buyAmountAfterFee']) * coef)
+            buy_amount_after_fee = int(int(fee_and_quote['buyAmountAfterFee']) * coef)
             pricer = interface.IOnChainPricing(
                 interface.IBribesProcessor(registry.eth.cvx_bribes_processor).pricer(),
                 owner=self.safe.account
