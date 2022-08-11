@@ -109,7 +109,7 @@ class Snapshot():
         state = self.proposal_data["state"]
         is_weighted = vote_type == "weighted"
 
-        # assert state == "active", "Vote is not within proposal time window"
+        assert state == "active", "Vote is not within proposal time window"
         assert isinstance(choice, dict if vote_type == "weighted" else str)
 
         if is_weighted:
