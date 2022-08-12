@@ -125,10 +125,10 @@ def sell_weth(badger_total="0"):
         # Check which path is better
         #  1. Swap WETH for AURA and deposit to GRAVI_AURA
         #  2. Swap WETH directly for GRAVI_AURA
-        buy_amount_aura = SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share)['buyAmountAfterFee']
+        buy_amount_aura = int(SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share)['buyAmountAfterFee'])
         buy_amount_aura_in_gravi_aura = buy_amount_aura * GRAVI_AURA.totalSupply() // GRAVI_AURA.balance()
 
-        buy_amount_gravi_aura = SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)['buyAmountAfterFee']
+        buy_amount_gravi_aura = int(SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)['buyAmountAfterFee'])
 
         if buy_amount_aura_in_gravi_aura > buy_amount_gravi_aura:
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
