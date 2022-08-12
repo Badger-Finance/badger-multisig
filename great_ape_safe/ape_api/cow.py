@@ -82,7 +82,7 @@ class Cow():
         fee_amount = int(fee_and_quote['fee']['amount'])
         if mantissa_buy:
             # overwrite quote in case order has a limit
-            mantissa_buy == int(mantissa_buy)
+            mantissa_buy = int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
             buy_amount_after_fee = int(int(fee_and_quote['buyAmountAfterFee']) * coef)
