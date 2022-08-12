@@ -151,7 +151,7 @@ class Badger():
                 claimables.append(token_addr)
         if len(claimables) > 0:
             self.strat_bvecvx.claimBribesFromConvex(claimables)
-    
+
 
     def get_hh_data(self, address=None):
         """
@@ -175,7 +175,7 @@ class Badger():
         aggregate = {"tokens": [], "amounts": []}
         for item in data:
             aggregate["tokens"].append(item["token"])
-            aggregate["amounts"].append(item["claimMetadata"]["amount"])
+            aggregate["amounts"].append(item["claimable"].replace('.', ''))
 
         metadata = [(item['claimMetadata']['identifier'], item['claimMetadata']
                      ['account'], item['claimMetadata']['amount'], item['claimMetadata']['merkleProof'])
