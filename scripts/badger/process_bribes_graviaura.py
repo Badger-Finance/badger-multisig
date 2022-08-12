@@ -131,25 +131,18 @@ def sell_weth(badger_total="0"):
         buy_amount_gravi_aura = int(SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)['buyAmountAfterFee'])
 
         if buy_amount_aura_in_gravi_aura > buy_amount_gravi_aura:
-            order_payload, order_uid = SAFE.badger.get_order_for_processor(
-                PROCESSOR,
-                sell_token=WETH,
-                mantissa_sell=aura_share,
-                buy_token=AURA,
-                deadline=DEADLINE,
-                coef=COEF,
-                prod=COW_PROD,
-            )
+            buy_token = AURA
         else:
-            order_payload, order_uid = SAFE.badger.get_order_for_processor(
-                PROCESSOR,
-                sell_token=WETH,
-                mantissa_sell=aura_share,
-                buy_token=GRAVI_AURA,
-                deadline=DEADLINE,
-                coef=COEF,
-                prod=COW_PROD,
-            )
+            buy_token = GRAVI_AURA
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
+            sell_token=WETH,
+            mantissa_sell=aura_share,
+            buy_token=buy_token,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
 
         PROCESSOR.swapWethForAURA(order_payload, order_uid)
 
