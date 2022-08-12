@@ -469,6 +469,10 @@ ADDRESSES_ETH = {
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
         "INV": "0x41D5D79431A913C4aE7d69a668ecdfE5fF9DFB68",
     },
+    "bribe_tokens_claimable_hh": {
+        "USDC": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "SD": "0x30d20208d987713f46dfd34ef128bb16c404d10f",
+    },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
         "v3pool_wbtc_badger": "0xe15e6583425700993bd08F51bF6e7B73cd5da91B",

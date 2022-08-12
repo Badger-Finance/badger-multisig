@@ -1,7 +1,11 @@
-from brownie import interface, web3, chain
 import json
 import os
+
+from brownie import chain, interface, web3
+from dotmap import DotMap
 from pycoingecko import CoinGeckoAPI
+from rich.pretty import pprint
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -55,7 +59,7 @@ def claim_and_sell_for_weth():
             )
             PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
-        # If Badger is claimed, we store the amount to be able to pass it to next 
+        # If Badger is claimed, we store the amount to be able to pass it to next
         # step's script in order to estimate the Badger split to buy from WETH.
         if addr == BADGER.address:
             dump_dir = "data/badger/hh_badger_bribes/"
@@ -71,6 +75,61 @@ def claim_and_sell_for_weth():
             print(f"Badger bribes claimed: {mantissa}")
 
     SAFE.post_safe_tx()
+
+
+def claim():
+    bribes_dest = GreatApeSafe(PROCESSOR.address)
+    bribes_dest.take_snapshot(r.bribe_tokens_claimable.values())
+
+    claimed = SAFE.badger.claim_bribes_hidden_hands()
+
+    # If Badger is claimed, we store the amount to be able to pass it to next
+    # step's script in order to estimate the Badger split to buy from WETH.
+    for addr, mantissa in claimed.items():
+        if addr == BADGER.address:
+            dump_dir = "data/badger/hh_badger_bribes/"
+            file_name = chain.time()
+            os.makedirs(dump_dir, exist_ok=True)
+            with open(f'{dump_dir}{file_name}.json', 'w') as f:
+                bribe_data = {
+                    'address': addr,
+                    'mantissa': mantissa,
+                    'timestamp': file_name
+                }
+                json.dump(bribe_data, f, indent=4, sort_keys=True)
+            print(f"Badger bribes claimed: {mantissa}")
+
+    SAFE.post_safe_tx()
+
+
+def sell_for_weth_calldata():
+    receipts = []
+    for addr, mantissa in r.bribe_tokens_claimable_hh.items():
+        addr = web3.toChecksumAddress(addr)
+        if addr != BADGER.address and addr != AURA.address:
+            token = SAFE.contract(addr)
+            mantissa = token.balanceOf(PROCESSOR)
+            order_payload, order_uid = SAFE.badger.get_order_for_processor(
+                PROCESSOR,
+                sell_token=token,
+                mantissa_sell=mantissa,
+                buy_token=WETH,
+                deadline=DEADLINE,
+                coef=COEF,
+                prod=COW_PROD,
+            )
+            receipts.append(DotMap({
+                'receiver': PROCESSOR.address,
+                'value': 0,
+                'input': PROCESSOR.sellBribeForWeth.encode_input(
+                    order_payload, order_uid
+                ),
+            }))
+
+    safe_tx = SAFE.multisend_from_receipts(receipts=receipts)
+    pprint(safe_tx.__dict__)
+    SAFE.post_transaction(safe_tx)
+
 
 # NOTE: If BADGER bribes were received, we pass the claimed amount to the script
 # in order to properly estimate the reminding amount of BADGER to be purchased.
