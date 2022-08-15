@@ -41,6 +41,7 @@ def main():
     wrapper = vault.contract(r.aura.wrapper)
     registry_v_2 = vault.contract(r.registry_v2, interface.IBadgerRegistryV2)
     vlAURA = vault.contract(r.aura.vlAURA)
+    aurabal_rewards = vault.contract(r.aura.aurabal_rewards)
 
     # snaps
     vault.take_snapshot([usdc, auraBAL, bauraBal, graviaura])
@@ -48,6 +49,7 @@ def main():
 
     # 1. claim rewards
     vault.aura.claim_all_from_booster()
+    aurabal_rewards.getReward()
 
     # 2. organised splits for each asset
     balance_bal = bal.balanceOf(vault)
@@ -109,7 +111,7 @@ def main():
         wrapper.deposit(
             bal_to_deposit,  # uint256 _amount
             wrapper_aurabal_out,  # uint256 _minOut
-            False,  # bool _lock
+            True,  # bool _lock. Set as true otherwise, we get deducted a "penalty"
             ZERO_ADDRESS,  # address _stakeAddress
         )
 
@@ -117,6 +119,8 @@ def main():
     vault_status = registry_v_2.productionVaultInfoByVault(bauraBal)[2]
     # check if vault is `open`, then dogfood
     if vault_status == 3:
+        if aurabal_rewards.balanceOf(vault) > 0:
+            aurabal_rewards.withdrawAll(False)
         auraBAL.approve(bauraBal, 2 ** 256 - 1)
         bauraBal.depositAll()
         auraBAL.approve(bauraBal, 0)
