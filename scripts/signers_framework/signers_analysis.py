@@ -98,5 +98,5 @@ def pct_activity(total, signed):
     return "0.00%"
 
 
-def sort_descendecing(d):
+def sort_descending(d):
     return dict(sorted(d.items(), key=lambda x: x[1], reverse=True))
