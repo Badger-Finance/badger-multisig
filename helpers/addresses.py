@@ -647,11 +647,22 @@ ADDRESSES_BSC = {
 
 ADDRESSES_POLYGON = {
     "zero": "0x0000000000000000000000000000000000000000",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "registryAccessControl": "0x9026B950085dcc72269cAc4a8Aa8385cc8A774Cd",
     "badger_wallets": {
         "badgertree": "0x2C798FaFd37C7DCdcAc2498e19432898Bc51376b",
         "rewardLogger": "0xd0EE2A5108b8800D688AbC834445fd03b3b2738e",
         "techops_multisig": "0xeb7341c89ba46CC7945f75Bd5dD7a04f8FA16327",
         "dev_multisig": "0x4977110Ed3CD5eC5598e88c8965951a47dd4e738",
+        "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
+        "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
+        "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
+        "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
+        "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
+        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
     },
     "treasury_tokens": {
         "BADGER": "0x1FcbE5937B0cc2adf69772D228fA4205aCF4D9b2",
@@ -686,15 +697,22 @@ ADDRESSES_POLYGON = {
 
 ADDRESSES_ARBITRUM = {
     "zero": "0x0000000000000000000000000000000000000000",
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "registryAccessControl": "0x6847a17C4AC30AFd24FDcb2422DA01207C480a79",
     "badger_wallets": {
         "badgertree": "0x635EB2C39C75954bb53Ebc011BDC6AfAAcE115A6",
         "techops_multisig": "0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C",
         "techops_multisig_deprecated": "0xF6BC36280F32398A031A7294e81131aEE787D178",
         "dev_multisig": "0xb364bAb258ad35dd83c7dd4E8AC78676b7aa1e9F",
         "dev_multisig_deprecated": "0x468A0FF843BC5D185D7B07e4619119259b03619f",
+        "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
+        "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
@@ -855,6 +873,8 @@ ADDRESSES_RINKEBY = {
 }
 
 ADDRESSES_FANTOM = {
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "registryAccessControl": "0x8E2d940114f4882Acc139A84362a45C5cA4B6a0d",
     "badger_wallets": {
         "badgertree": "0x89122c767a5f543e663db536b603123225bc3823",
         "dev_multisig": "0x4c56ee3295042f8A5dfC83e770a21c707CB46f5b",
@@ -863,7 +883,13 @@ ADDRESSES_FANTOM = {
         "treasury_vault_multisig": "0x45b798384c236ef0d78311D98AcAEc222f8c6F54",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
+        "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
+        "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
+        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
@@ -914,6 +940,25 @@ ADDRESSES_FANTOM = {
     }
 }
 
+ADDRESSES_OPTIMISM = {
+    "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
+    "registryAccessControl": "0xEa8567d84E3e54B32176418B4e0C736b56378961",
+    "badger_wallets": {
+        "dev_multisig": "0x0D5eDB3ECbB15EF4EaD105c018fEd4e1d173B335",
+        "techops_multisig": "0x8D05c5DA2a3Cb4BeB4C5EB500EE9e3Aa71670733",
+        "devProxyAdmin": "0x52FE2D2332FFCE104959DabF45383c6F25c3C21b",
+        "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
+        "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
+        "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
+        "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
+        "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
+        "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
+        "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
+        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
+    },
+}
+
 ADDRESSES_KOVAN = {
     "treasury_tokens": {
         "WETH": "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1",
@@ -954,6 +999,7 @@ registry = DotMap({
     "arbitrum": checksum_address_dict(ADDRESSES_ARBITRUM),
     "rinkeby": checksum_address_dict(ADDRESSES_RINKEBY),
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
+    "op": checksum_address_dict(ADDRESSES_OPTIMISM),
     "kovan": checksum_address_dict(ADDRESSES_KOVAN),
 })
 
@@ -969,6 +1015,8 @@ def get_registry():
         return registry.arbitrum
     elif chain.id == 250:
         return registry.ftm
+    elif chain.id == 10:
+        return registry.op
     elif chain.id == 42:
         return registry.kovan
 
