@@ -38,48 +38,46 @@ def main(start_time=1648771200, end_time=1656547200):
             # judging signed amount
             owners_signed = dict.fromkeys(safe.getOwners(), 0)
 
-            url = f"https://safe-transaction.gnosis.io/api/v1/safes/{web3.toChecksumAddress(addr)}/transactions/"
-            urls = [url]
+            next_url = f"https://safe-transaction.gnosis.io/api/v1/safes/{web3.toChecksumAddress(addr)}/transactions/"
 
-            for next_url in urls:
-                while next_url:
-                    response = requests.get(next_url)
-                    data = response.json()
-                    next_url = data["next"]
-                    for tx in data["results"]:
-                        # posting time
-                        submission_date_ts = pd.to_datetime(
-                            tx["submissionDate"]
-                        ).timestamp()
+            while next_url:
+                response = requests.get(next_url)
+                data = response.json()
+                next_url = data["next"]
+                for tx in data["results"]:
+                    # posting time
+                    submission_date_ts = pd.to_datetime(
+                        tx["submissionDate"]
+                    ).timestamp()
 
-                        if (
-                            submission_date_ts >= start_time
-                            and submission_date_ts <= end_time
-                        ):
-                            # only sum within interval time of judgement
-                            total_tx += 1
+                    if (
+                        submission_date_ts >= start_time
+                        and submission_date_ts <= end_time
+                    ):
+                        # only sum within interval time of judgement
+                        total_tx += 1
 
-                            # check confirmations
-                            confirmations = tx["confirmations"]
+                        # check confirmations
+                        confirmations = tx["confirmations"]
 
-                            for confirmation in confirmations:
-                                owner = confirmation["owner"]
-                                signing_tx_ts = pd.to_datetime(
-                                    confirmation["submissionDate"]
-                                ).timestamp()
-                                # leaving here for next iteration of framework
-                                reaction_ts = signing_tx_ts - submission_date_ts
+                        for confirmation in confirmations:
+                            owner = confirmation["owner"]
+                            signing_tx_ts = pd.to_datetime(
+                                confirmation["submissionDate"]
+                            ).timestamp()
+                            # leaving here for next iteration of framework
+                            reaction_ts = signing_tx_ts - submission_date_ts
 
-                                if owner in owners_signed.keys():
+                            if owner in owners_signed.keys():
+                                try:
+                                    owners_signed[owner] += 1
+                                except KeyError:
                                     try:
+                                        # likely key was replace with other owner
+                                        owner = replacements[key][owner]
                                         owners_signed[owner] += 1
                                     except KeyError:
-                                        try:
-                                            # likely key was replace with other owner
-                                            owner = replacements[key][owner]
-                                            owners_signed[owner] += 1
-                                        except KeyError:
-                                            continue
+                                        continue
 
             owners_signed = {
                 k: pct_activity(total_tx, signed)
