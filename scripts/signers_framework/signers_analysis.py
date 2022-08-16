@@ -83,7 +83,7 @@ def main(start_time=1648771200, end_time=1656547200):
 
             owners_signed = {
                 k: pct_activity(total_tx, signed)
-                for k, signed in sort_descendecing(owners_signed).items()
+                for k, signed in sort_descending(owners_signed).items()
             }
 
             console.print(f"Total txs: {total_tx}")
