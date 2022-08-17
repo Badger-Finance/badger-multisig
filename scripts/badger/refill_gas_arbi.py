@@ -38,6 +38,8 @@ def main():
             post_topup_amount = OVERRIDE_AMOUNT[wallet_name]
         elif 'ops_executor' in wallet_name:
             post_topup_amount = EXEC_AMOUNT
+        elif 'ops_deployer' in wallet_name:
+            continue
         else:
             post_topup_amount = DEFAULT_AMOUNT
 
