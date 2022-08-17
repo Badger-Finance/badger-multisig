@@ -553,7 +553,10 @@ ADDRESSES_ETH = {
     "ens": {
         "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
         "public_resolver": "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"
-    }
+    },
+    "ribbon": {
+        "badger_vault": "0x270F4a26a3fE5766CcEF9608718491bb057Be238",
+    },
 }
 
 ADDRESSES_IBBTC = {
