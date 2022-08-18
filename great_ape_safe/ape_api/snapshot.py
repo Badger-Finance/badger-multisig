@@ -65,6 +65,22 @@ class Snapshot():
         # external helper method to view proposal choices
         choices = self.proposal_data["choices"]
         console.print(f"Choices for proposal {self.proposal_id}: {choices}")
+    
+    
+    def get_choice_index(self, choice, is_weighted):
+        choices = self.proposal_data["choices"]
+        if is_weighted:
+            choices_index = {choices.index(k) + 1: v for k, v in choice.items()}
+            choice = json.dumps(
+                choices_index,
+                separators=(",", ":")
+            )
+        else:
+            choice = str(choices.index(choice) + 1)
+            choices_index = None
+            assert int(choice) <= len(choices) + 1, \
+                "choice out of bounds"
+        return choice, choices_index
 
 
     def create_payload_hash(
@@ -81,9 +97,13 @@ class Snapshot():
         # can be used externally to verify generated hash
         if not payload:
             assert all([timestamp, proposal, choice])
+
+            is_weighted = isinstance(choice, dict)
+            choice = self.get_choice_index(choice, is_weighted)[0]
+
             payload = {
                 "version": version,
-                "timestamp": timestamp,
+                "timestamp": str(timestamp),
                 "space": self.proposal_data["space"]["id"],
                 "type": type,
                 "payload": {
@@ -103,7 +123,6 @@ class Snapshot():
         # given a choice, contruct payload, post to vote relayer and post safe tx
         # for single vote, pass in choice as str ex: "yes"
         # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 1}
-        choices = self.proposal_data["choices"]
         space = self.proposal_data["space"]["id"]
         vote_type = self.proposal_data["type"]
         state = self.proposal_data["state"]
@@ -112,16 +131,7 @@ class Snapshot():
         assert state == "active", "Vote is not within proposal time window"
         assert isinstance(choice, dict if vote_type == "weighted" else str)
 
-        if is_weighted:
-            choices_index = {choices.index(k) + 1: v for k, v in choice.items()}
-            choice = json.dumps(
-                choices_index,
-                separators=(",", ":")
-            )
-        else:
-            choice = str(choices.index(choice) + 1)
-            assert int(choice) <= len(choices) + 1, \
-                "choice out of bounds"
+        choice, choices_index = self.get_choice_index(choice, is_weighted)
 
         payload = {
             "version": version,
