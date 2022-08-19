@@ -112,7 +112,7 @@ class Snapshot():
         return hash, payload_stringify
 
 
-    def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=""):
+    def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=None):
         # given a choice, contruct payload, post to vote relayer and post safe tx
         # for single vote, pass in choice as str ex: "yes"
         # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 1}
@@ -122,30 +122,32 @@ class Snapshot():
         is_weighted = vote_type == "weighted"
 
         assert state == "active", "Vote is not within proposal time window"
-        assert isinstance(choice, dict if vote_type == "weighted" else str)
+        assert isinstance(choice, dict if is_weighted else str)
 
-        choice, choices_index = self.format_choice(choice, is_weighted)
+        choice_formatted = self.format_choice(choice)
+
+        internal_payload = {}
+        internal_payload["proposal"] = self.proposal_id
+        internal_payload["choice"] = choice_formatted
+        if metadata:
+            internal_payload["metadata"] = metadata
 
         payload = {
             "version": version,
             "timestamp": str(int(time.time())),
             "space": space,
             "type": type,
-            "payload": {
-                "proposal": self.proposal_id,
-                "choice": choice, # starts at 1
-                "metadata": metadata,
-            }
+            "payload": internal_payload,
         }
 
         console.print("payload", payload)
         hash, payload_stringify = self.create_payload_hash(payload)
 
         if is_weighted:
-            for choice, weight in choices_index.items():
-                console.print(f"signing vote for choice {choice} with {weight * 100}% weight")
+            for label, weight in choice_formatted.items():
+                console.print(f"signing vote for choice {label} with {weight * 100}% weight")
         else:
-            console.print(f"signing vote for choice {choice}")
+            console.print(f"signing vote for choice {choice_formatted}")
 
         tx_data = self.sign_message_lib.signMessage.encode_input(hash)
 
