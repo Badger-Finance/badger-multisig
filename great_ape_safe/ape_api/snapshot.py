@@ -42,8 +42,8 @@ class Snapshot():
 
         self.proposal_id = proposal_id
         self.proposal_data = self._get_proposal_data(self.proposal_id)
-    
-    
+
+
     def handle_response(self, response):
         if not response.ok:
             console.print(f"Error: {response.text}")
@@ -65,52 +65,45 @@ class Snapshot():
         # external helper method to view proposal choices
         choices = self.proposal_data["choices"]
         console.print(f"Choices for proposal {self.proposal_id}: {choices}")
-    
-    
-    def get_choice_index(self, choice, is_weighted):
+
+
+    def format_choice(self, choice):
         choices = self.proposal_data["choices"]
-        if is_weighted:
-            choices_index = {choices.index(k) + 1: v for k, v in choice.items()}
-            choice = json.dumps(
-                choices_index,
-                separators=(",", ":")
-            )
+        if isinstance(choice, dict):
+            return {str(choices.index(k) + 1): v for k, v in choice.items()}
         else:
-            choice = str(choices.index(choice) + 1)
-            choices_index = None
-            assert int(choice) <= len(choices) + 1, \
-                "choice out of bounds"
-        return choice, choices_index
+            choice = int(choices.index(choice) + 1)
+            assert choice <= len(choices) + 1, "choice out of bounds"
+            return choice
 
 
     def create_payload_hash(
             self,
-            payload=None, 
-            timestamp=None, 
-            proposal=None, 
-            choice=None, 
-            version="0.1.3", 
+            payload=None,
+            timestamp=None,
+            choice=None,
+            proposal=None,
+            version="0.1.3",
             type="vote",
-            metadata=""
+            metadata=None
         ):
         # helper method to create message hash from payload and output to console
         # can be used externally to verify generated hash
         if not payload:
-            assert all([timestamp, proposal, choice])
+            assert all([timestamp, choice])
 
-            is_weighted = isinstance(choice, dict)
-            choice = self.get_choice_index(choice, is_weighted)[0]
+            internal_payload = {}
+            internal_payload["proposal"] = self.proposal_id if not proposal else proposal
+            internal_payload["choice"] = self.format_choice(choice)
+            if metadata:
+                internal_payload["metadata"] = metadata
 
             payload = {
                 "version": version,
                 "timestamp": str(timestamp),
                 "space": self.proposal_data["space"]["id"],
                 "type": type,
-                "payload": {
-                    "proposal": proposal,
-                    "choice": choice,
-                    "metadata": metadata,
-                },
+                "payload": internal_payload,
             }
 
         payload_stringify = json.dumps(payload, separators=(",", ":"))
@@ -119,7 +112,7 @@ class Snapshot():
         return hash, payload_stringify
 
 
-    def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=""):
+    def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=None):
         # given a choice, contruct payload, post to vote relayer and post safe tx
         # for single vote, pass in choice as str ex: "yes"
         # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 1}
@@ -129,30 +122,32 @@ class Snapshot():
         is_weighted = vote_type == "weighted"
 
         assert state == "active", "Vote is not within proposal time window"
-        assert isinstance(choice, dict if vote_type == "weighted" else str)
+        assert isinstance(choice, dict if is_weighted else str)
 
-        choice, choices_index = self.get_choice_index(choice, is_weighted)
+        choice_formatted = self.format_choice(choice)
+
+        internal_payload = {}
+        internal_payload["proposal"] = self.proposal_id
+        internal_payload["choice"] = choice_formatted
+        if metadata:
+            internal_payload["metadata"] = metadata
 
         payload = {
             "version": version,
             "timestamp": str(int(time.time())),
             "space": space,
             "type": type,
-            "payload": {
-                "proposal": self.proposal_id,
-                "choice": choice, # starts at 1
-                "metadata": metadata,
-            }
+            "payload": internal_payload,
         }
 
         console.print("payload", payload)
         hash, payload_stringify = self.create_payload_hash(payload)
 
         if is_weighted:
-            for choice, weight in choices_index.items():
-                console.print(f"signing vote for choice {choice} with {weight * 100}% weight")
+            for label, weight in choice_formatted.items():
+                console.print(f"signing vote for choice {label} with {weight * 100}% weight")
         else:
-            console.print(f"signing vote for choice {choice}")
+            console.print(f"signing vote for choice {choice_formatted}")
 
         tx_data = self.sign_message_lib.signMessage.encode_input(hash)
 
