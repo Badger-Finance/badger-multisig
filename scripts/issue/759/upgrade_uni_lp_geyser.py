@@ -35,6 +35,7 @@ def queue():
         dump_dir=DUMP_DIR,
         delay_in_days=4,
     )
+    DEV.post_safe_tx(call_trace=True)
 
 
 def sim():
