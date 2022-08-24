@@ -10,6 +10,85 @@ r = registry()
 safe = GreatApeSafe(r.badger_wallets.techops_multisig)
 safe.init_badger()
 
+# Allowed metadata behaviors
+# NOTE: Should be kept up to date matching the behaviors defined on the SDK at
+# https://github.com/Badger-Finance/badger-sdk/blob/main/src/vaults/enums/vault-behavior.enum.ts
+ALLOWED_BEHAVIORS = [
+  'Compounder',
+  'Helper',
+  'DCA',
+  'Ecosystem',
+  'Ecosystem Helper',
+  'None'
+]
+
+# Add any vaults's addresses that you want to promote or demote
+VAULTS_ARRAY = []
+# Add the new statuses you want to promote or promote each vault to
+NEW_STATUS_ARRAY = []
+
+# promote a batch of vaults given their addresses and new status
+def promote_vaults():
+    if VAULTS_ARRAY and NEW_STATUS_ARRAY:
+        for vault in VAULTS_ARRAY:
+            info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+            new_status = NEW_STATUS_ARRAY[VAULTS_ARRAY.index(vault)]
+            if info[2] < new_status:
+                print(info)
+                safe.badger.promote_vault(info[0], info[1], info[3], new_status)
+                assert safe.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
+                console.print(f"[green]Promoting {vault} to {new_status}[/green]")
+            else:
+                console.print(f"[red]Promoting {vault} to lower state, current state is {info[2]}[/red]")
+        safe.post_safe_tx()
+    else:
+        console.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
+
+
+# demote a batch of vaults given their addresses and new status
+def demote_vaults():
+    if VAULTS_ARRAY and NEW_STATUS_ARRAY:
+        for vault in VAULTS_ARRAY:
+            info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+            new_status = NEW_STATUS_ARRAY[VAULTS_ARRAY.index(vault)]
+            if info[2] > new_status:
+                safe.badger.demote_vault(vault, new_status)
+                assert safe.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
+                console.print(f"[green]Demoting {vault} to {new_status}[/green]")
+            else:
+                console.print(f"[red]Demoting to higher state, current state is {info[2]}[/red]")
+        safe.post_safe_tx()
+    else:
+        console.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
+
+
+# change a vault's metadata given a vault address and the new matadata
+# Both the vault address and metadata can be passed as strings from the console.
+# NOTE: If metadata includes spaces, it can be passed using single quotation marks
+# Example of call: brownie run scripts/badger/registry.py update_vault_metadata 
+# 0x37d9D2C6035b744849C15F1BFEE8F268a20fCBd8 'name=auraBAL,protocol=Aura,behavior=None'
+def update_vault_metadata(vault, metadata):
+    # Ensure that the new Behavior is allowed
+    if "behavior=" in metadata:
+        new_behavior = metadata.split("behavior=")[1]
+        if new_behavior not in ALLOWED_BEHAVIORS:
+            console.print(f"[red]Wrong vault behavior! Allowed behaviors: {ALLOWED_BEHAVIORS}[/red]")
+            return
+    else:
+        console.print(f"[red]Wrong metadata format[/red]")
+        return
+
+    info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+    console.print(f"Current metadata: {info[3]}")
+    console.print(f"New metadata: {metadata}")
+
+    safe.badger.update_metadata(vault, metadata)
+    info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+    assert info[3] == metadata
+
+    safe.post_safe_tx()
+
+
 def set_key(key, target_addr):
     """
     Sets the input target address on the registry under the specified 'key' 
@@ -62,47 +141,4 @@ def migrate_registry_keys():
             break
 
     # try to simulate tx and see dafuq
-    safe.post_safe_tx()
-
-
-
-# promote a batch of vaults given their addresses and new status
-def promote_vaults(vaults_array, new_status_array):
-    for vault in vaults_array:
-        info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
-        new_status = new_status_array[vaults_array.index(vault)]
-        if info[2] < new_status:
-            safe.badger.promote_vault(info[0], info[1], info[3], new_status)
-            assert safe.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
-            console.print(f"[green]Promoting {vault} to {new_status}[/green]")
-        else:
-            console.print(f"[red]Promoting {vault} to lower state, current state is {info[2]}[/red]")
-    safe.post_safe_tx()
-
-
-
-# demote a batch of vaults given their addresses and new status
-def demote_vaults(vaults_array, new_status_array):
-    for vault in vaults_array:
-        info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
-        new_status = new_status_array[vaults_array.index(vault)]
-        if info[2] < new_status:
-            safe.badger.demote_vault(vault, new_status)
-            assert safe.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
-            console.print(f"[green]Demoting {vault} to {new_status}[/green]")
-        else:
-            console.print(f"[red]Demoting to higher state, current state is {info[2]}[/red]")
-    safe.post_safe_tx()
-
-
-# interactive cli function that allows to change a vault's metadata with ease from options
-def update_vault_metadata(vault, metadata):
-    info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
-    console.print(f"Current metadata: {info[3]}")
-    console.print(f"New metadata: {metadata}")
-
-    safe.badger.update_metadata(vault, metadata)
-    info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
-    assert info[3] == metadata
-
     safe.post_safe_tx()
