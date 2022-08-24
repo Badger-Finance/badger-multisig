@@ -29,6 +29,7 @@ def main():
 
     # might as well stake all aurabal
     rewards_balance_before = aurabal_rewards.balanceOf(vault)
+    aurabal.approve(aurabal_rewards, aurabal.balanceOf(vault))
     aurabal_rewards.stakeAll()
     assert rewards_balance_before < aurabal_rewards.balanceOf(vault)
 
