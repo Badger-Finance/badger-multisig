@@ -11,7 +11,7 @@ SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 SAFE.init_badger()
 
 # Add the vaults addresses to remove caps from
-VAULTS_ARRAY = ["0xf8f5677B6bCecdb9be94AE8f6770a05a6C53C378"]
+VAULTS_ARRAY = []
 
 # Sets a new user cap for a given vault
 def set_vault_user_cap(vault, cap):
