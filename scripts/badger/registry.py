@@ -1,14 +1,13 @@
 from rich.console import Console
 from great_ape_safe import GreatApeSafe
-import click
 from helpers.addresses import get_registry as registry
 
-console = Console()
+C = Console()
 
 # assuming techOps
 r = registry()
-safe = GreatApeSafe(r.badger_wallets.techops_multisig)
-safe.init_badger()
+SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
+SAFE.init_badger()
 
 # Allowed metadata behaviors
 # NOTE: Should be kept up to date matching the behaviors defined on the SDK at
@@ -31,35 +30,35 @@ NEW_STATUS_ARRAY = []
 def promote_vaults():
     if VAULTS_ARRAY and NEW_STATUS_ARRAY:
         for vault in VAULTS_ARRAY:
-            info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+            info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
             new_status = NEW_STATUS_ARRAY[VAULTS_ARRAY.index(vault)]
             if info[2] < new_status:
                 print(info)
-                safe.badger.promote_vault(info[0], info[1], info[3], new_status)
-                assert safe.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
-                console.print(f"[green]Promoting {vault} to {new_status}[/green]")
+                SAFE.badger.promote_vault(info[0], info[1], info[3], new_status)
+                assert SAFE.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
+                C.print(f"[green]Promoting {vault} to {new_status}[/green]")
             else:
-                console.print(f"[red]Promoting {vault} to lower state, current state is {info[2]}[/red]")
-        safe.post_safe_tx()
+                C.print(f"[red]Promoting {vault} to lower state, current state is {info[2]}[/red]")
+        SAFE.post_safe_tx()
     else:
-        console.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
+        C.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
 
 
 # demote a batch of vaults given their addresses and new status
 def demote_vaults():
     if VAULTS_ARRAY and NEW_STATUS_ARRAY:
         for vault in VAULTS_ARRAY:
-            info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+            info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
             new_status = NEW_STATUS_ARRAY[VAULTS_ARRAY.index(vault)]
             if info[2] > new_status:
-                safe.badger.demote_vault(vault, new_status)
-                assert safe.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
-                console.print(f"[green]Demoting {vault} to {new_status}[/green]")
+                SAFE.badger.demote_vault(vault, new_status)
+                assert SAFE.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
+                C.print(f"[green]Demoting {vault} to {new_status}[/green]")
             else:
-                console.print(f"[red]Demoting to higher state, current state is {info[2]}[/red]")
-        safe.post_safe_tx()
+                C.print(f"[red]Demoting to higher state, current state is {info[2]}[/red]")
+        SAFE.post_safe_tx()
     else:
-        console.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
+        C.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
 
 
 # change a vault's metadata given a vault address and the new matadata
@@ -72,21 +71,21 @@ def update_vault_metadata(vault, metadata):
     if "behavior=" in metadata:
         new_behavior = metadata.split("behavior=")[1]
         if new_behavior not in ALLOWED_BEHAVIORS:
-            console.print(f"[red]Wrong vault behavior! Allowed behaviors: {ALLOWED_BEHAVIORS}[/red]")
+            C.print(f"[red]Wrong vault behavior! Allowed behaviors: {ALLOWED_BEHAVIORS}[/red]")
             return
     else:
-        console.print(f"[red]Wrong metadata format[/red]")
+        C.print(f"[red]Wrong metadata format[/red]")
         return
 
-    info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
-    console.print(f"Current metadata: {info[3]}")
-    console.print(f"New metadata: {metadata}")
+    info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
+    C.print(f"Current metadata: {info[3]}")
+    C.print(f"New metadata: {metadata}")
 
-    safe.badger.update_metadata(vault, metadata)
-    info = safe.badger.registry_v2.productionVaultInfoByVault(vault)
+    SAFE.badger.update_metadata(vault, metadata)
+    info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
     assert info[3] == metadata
 
-    safe.post_safe_tx()
+    SAFE.post_safe_tx()
 
 
 def set_key(key, target_addr):
@@ -94,8 +93,8 @@ def set_key(key, target_addr):
     Sets the input target address on the registry under the specified 'key' 
     """
 
-    safe.badger.set_key_on_registry(key, target_addr)
-    safe.post_safe_tx()
+    SAFE.badger.set_key_on_registry(key, target_addr)
+    SAFE.post_safe_tx()
 
 def migrate_registry_keys():
     """
@@ -118,20 +117,20 @@ def migrate_registry_keys():
     while True:
         try:
             # # some registry keys are duplicated with surrounding quotes, let's remove and dedup
-            key = safe.badger.registry.keys(key_index).replace("\"", "")
+            key = SAFE.badger.registry.keys(key_index).replace("\"", "")
 
             # ignore duplicated sanitized keys, only operate on unique values
             if key not in key_set:
                 should_replace = key in key_replacements
                 print(f"Migrating new unique key: {key} {'with' if should_replace else 'without'} replacement")
                 if should_replace:
-                    value = safe.badger.registry.get(key)
+                    value = SAFE.badger.registry.get(key)
                     key = key_replacements[key]
                     if key in key_lookups:
                         value = key_lookups[key]
-                    safe.badger.set_key_on_registry(key, value)
+                    SAFE.badger.set_key_on_registry(key, value)
                 else:
-                    safe.badger.migrate_key_on_registry(key)
+                    SAFE.badger.migrate_key_on_registry(key)
 
                 key_set.add(key)
 
@@ -141,4 +140,4 @@ def migrate_registry_keys():
             break
 
     # try to simulate tx and see dafuq
-    safe.post_safe_tx()
+    SAFE.post_safe_tx()
