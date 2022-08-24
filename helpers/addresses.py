@@ -811,9 +811,9 @@ ADDRESSES_ARBITRUM = {
         "bDXSWbtcWeth": "0x0c41A8613fbeFCC8d6e5dF1020DBb336F875247F",
     },
     "swapr_staking_contracts": {
-        "native.DXSSwaprWeth": "0xef7E71739544b4b9a4f20951966a8F4CD9EB2Dda",
-        "native.DXSWbtcWeth": "0xA009625340b79bCd8054ce3ecEb87BFE4b251272",
-        "native.DXSBadgerWeth": "0x740e615E1db3Cf158D7585F4F14675fAc37df88E",
+        "native.DXSSwaprWeth": "0x4595F4A294D5b40933c82E0dff02B7973853e801",
+        "native.DXSWbtcWeth": "0xEbcE743B5221CA9e9320864a9F635267B8eAD98A",
+        "native.DXSBadgerWeth": "0x693c7bf083aF4F1B8F90B376cd84F55Ca8612684",
         "native.DXSIbbtcWeth": "0x24FC053c8A4932E91CFe9bde3992B26d26c5C818",
     },
     "sushi": {
