@@ -59,6 +59,8 @@ interface IVestedAura {
 
     function bribesProcessor() external view returns (address);
 
+    function bribesRedirectionPaths(address) external view returns (address);
+
     function checkUpkeep(bytes memory checkData)
         external
         view
@@ -115,11 +117,15 @@ interface IVestedAura {
 
     function reinvest() external returns (uint256);
 
+    function redirectionFees(address) external view returns (uint256);
+
     function setAuraBalToBalEthBptMinOutBps(uint256 _minOutBps) external;
 
     function setBribesProcessor(address newBribesProcessor) external;
 
     function setProcessLocksOnReinvest(bool newProcessLocksOnReinvest) external;
+
+    function setRedirectionToken(address token, address recepient, uint256 redirectionFee) external;
 
     function setWithdrawalMaxDeviationThreshold(uint256 _threshold) external;
 
