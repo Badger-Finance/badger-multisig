@@ -11,6 +11,9 @@ NEW_LOGIC = registry.eth.logic["native.graviAURA"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 TROPS = registry.eth.badger_wallets.treasury_ops_multisig
 BADGER = registry.eth.treasury_tokens.BADGER
+TARGET_DELEGATE = registry.eth.badger_wallets.delegate
+
+BALANCER_SPACE_ID = "0x62616c616e6365722e6574680000000000000000000000000000000000000000"
 
 
 def main(queue="true", simulation="false"):
@@ -40,6 +43,9 @@ def main(queue="true", simulation="false"):
         prev_processLocksOnReinvest = strat_proxy.processLocksOnReinvest()
         prev_bribesProcessor = strat_proxy.bribesProcessor()
         prev_auraBalToBalEthBptMinOutBps = strat_proxy.auraBalToBalEthBptMinOutBps()
+        prev_balanceOf = strat_proxy.balanceOf()
+        prev_balanceOfPool = strat_proxy.balanceOfPool()
+        prev_balanceOfWant = strat_proxy.balanceOfWant()
         assert strat_proxy.version() == "1.1"
 
         # Execute upgrade
@@ -60,7 +66,11 @@ def main(queue="true", simulation="false"):
         assert prev_processLocksOnReinvest == strat_proxy.processLocksOnReinvest()
         assert prev_bribesProcessor == strat_proxy.bribesProcessor()
         assert prev_auraBalToBalEthBptMinOutBps == strat_proxy.auraBalToBalEthBptMinOutBps()
+        assert prev_balanceOf == strat_proxy.balanceOf()
+        assert prev_balanceOfPool == strat_proxy.balanceOfPool()
+        assert prev_balanceOfWant == strat_proxy.balanceOfWant()
         assert strat_proxy.version() == "1.2"
+        assert strat_proxy.LOCKER() == "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC"
 
         # Set BADGER redirection path atomically
         # BADGER -> Trops (with 0% fee)
@@ -68,12 +78,16 @@ def main(queue="true", simulation="false"):
         assert strat_proxy.bribesRedirectionPaths(BADGER) == TROPS
         assert strat_proxy.redirectionFees(BADGER) == 0
 
+        # Set balancer snapshot delegation
+        strat_proxy.setSnapshotDelegate(BALANCER_SPACE_ID, TARGET_DELEGATE)
+        assert strat_proxy.getSnapshotDelegate(BALANCER_SPACE_ID) == TARGET_DELEGATE
+
         if simulation == "true":
             ## Test sweeping a redirected token (BADGER)
             amount = 1000e18
             badger = interface.IERC20(BADGER)
             whale = accounts.at(registry.eth.badger_wallets.treasury_vault_multisig, force=True)
-            badger.transfer(amount, strat_proxy, {"from": whale})
+            badger.transfer(strat_proxy, amount, {"from": whale})
             assert badger.balanceOf(strat_proxy) == amount
             previous_trops_balance = badger.balanceOf(TROPS)
 
@@ -88,4 +102,5 @@ def main(queue="true", simulation="false"):
             strat_proxy.harvest()
             C.print("[green]Simulation Successful![/green]")
 
-    safe.post_safe_tx(post=(simulation!="true"))
+        else:
+            safe.post_safe_tx()
