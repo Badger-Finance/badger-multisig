@@ -1,6 +1,4 @@
-from brownie import interface, web3, chain
-import json
-import os
+from brownie import interface, web3
 from pycoingecko import CoinGeckoAPI
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -29,13 +27,20 @@ WETH = interface.IWETH9(r.treasury_tokens.WETH, owner=SAFE.account)
 BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=SAFE.account)
 AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
 GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=SAFE.account)
+DEV = GreatApeSafe(r.badger_wallets.dev_multisig)
+TROPS = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
 
 
-def claim_and_sell_for_weth():
+def claim_and_sell_for_weth(claim_only=False):
     bribes_dest = GreatApeSafe(PROCESSOR.address)
-    bribes_dest.take_snapshot(r.bribe_tokens_claimable.values())
+    bribes_dest.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
 
     claimed = SAFE.badger.claim_bribes_hidden_hands()
+
+    if claim_only:
+        bribes_dest.print_snapshot()
+        SAFE.post_safe_tx()
+        return
 
     # do not introduce orders if we claim badger or aura bribes
     # likely these assets will be present in the rounds for processing
@@ -54,6 +59,17 @@ def claim_and_sell_for_weth():
                 prod=COW_PROD,
             )
             PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+
+    SAFE.post_safe_tx()
+
+
+def ragequit(token_list=r.bribe_tokens_claimable_graviaura.values()):
+    DEV.take_snapshot(token_list)
+    for token in token_list:
+        if token == BADGER.address:
+            continue
+        PROCESSOR.ragequit(token, True)
+    DEV.print_snapshot()
 
     SAFE.post_safe_tx()
 
@@ -135,6 +151,33 @@ def sell_weth():
     PROCESSOR.setCustomAllowance(WETH, weth_total)
 
     SAFE.post_safe_tx()
+
+
+def buy_aura(usdc_mantissa):
+    usdc_mantissa = int(usdc_mantissa)
+
+    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=TROPS.account)
+    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=TROPS.account)
+    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
+    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=TROPS.account)
+
+    proc = GreatApeSafe(PROCESSOR.address)
+    proc.take_snapshot([USDC, BADGER, AURA, GRAVI_AURA])
+
+    TROPS.init_cow(prod=COW_PROD)
+    TROPS.cow.allow_relayer(USDC, usdc_mantissa)
+    TROPS.cow.market_sell(
+        USDC,
+        AURA,
+        usdc_mantissa,
+        deadline=60*60*12,
+        coef=.98,
+        destination=PROCESSOR.address
+    )
+
+    proc.print_snapshot()
+
+    TROPS.post_safe_tx()
 
 
 def emit_tokens():
