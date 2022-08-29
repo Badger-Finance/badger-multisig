@@ -11,14 +11,14 @@ def test_deposit(safe, convex, threepool_lp, convex_threepool_lp):
 
     amount = threepool_lp.balanceOf(safe)
     convex.deposit(threepool_lp, amount)
-    
+
     assert convex_threepool_lp.balanceOf(safe) > before_bal_convex_lp
 
 def test_deposit_all(safe, convex, threepool_lp, convex_threepool_lp):
     before_bal_convex_lp = convex_threepool_lp.balanceOf(safe)
 
     convex.deposit_all(threepool_lp)
-    
+
     assert convex_threepool_lp.balanceOf(safe) > before_bal_convex_lp
 
 def test_deposit_and_stake(safe, convex, threepool_lp):

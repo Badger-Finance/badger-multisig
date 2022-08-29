@@ -27,7 +27,7 @@ def deposited(safe, balancer, wbtc, badger, badger_bpt, badger_staked_bpt):
 def test_claim_all(safe, balancer, bal, badger_bpt):
     bal_before_bal = bal.balanceOf(safe)
 
-    chain.sleep()
+    chain.sleep(100)
     chain.mine()
 
     balancer.claim(pool=badger_bpt)
