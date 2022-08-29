@@ -18,7 +18,7 @@ class Curve:
         self.factory_registry = safe.contract(self.provider.get_address(3))
         self.crypto_registry = safe.contract(self.provider.get_address(5))
         # parameters
-        self.max_slippage_and_fees = 0.1
+        self.max_slippage_and_fees = 0.02
         self.is_v2 = False
 
 
@@ -100,14 +100,6 @@ class Curve:
 
     def _pool_has_wrapped_coins(self, pool):
         return 'exchange_underlying' in pool.signatures.keys()
-        # registry = self._get_registry(pool)
-        # if registry == self.crypto_registry:
-        #     return False
-        # try:
-        #     registry.get_underlying_balances(pool)
-        #     return True
-        # except VirtualMachineError:
-        #     return False
 
 
     def deposit(self, lp_token, mantissas, asset=None):
