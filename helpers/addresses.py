@@ -694,6 +694,7 @@ ADDRESSES_POLYGON = {
     "opolis": {
         "stakingHelper": "0x8bF5aD0dBa1e29741740D96E55Bf27Aec30B18E2",
         "whitelist": "0x44a0487656420FDc15f9CA76dd95F3b8a2ef0Baa",
+        "magic_wallet": "0xb5a2AB06c9B096F1Ca892e42e786c2D6a8Bb4D46",
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
