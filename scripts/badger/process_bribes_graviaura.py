@@ -170,8 +170,8 @@ def buy_aura(usdc_mantissa):
         USDC,
         AURA,
         usdc_mantissa,
-        deadline=60*60*12,
-        coef=.98,
+        deadline=DEADLINE,
+        coef=COEF,
         destination=PROCESSOR.address
     )
 
