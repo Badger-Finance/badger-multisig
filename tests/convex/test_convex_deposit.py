@@ -1,10 +1,9 @@
-from great_ape_safe import GreatApeSafe
 import pytest
 
 
 @pytest.fixture(scope='function', autouse=True)
 def deposited(curve, threepool_lp, USDC):
-    amount = 1000000000
+    amount = 10_000e6
     curve.deposit(threepool_lp, amount, USDC)
 
 def test_deposit(safe, convex, threepool_lp, convex_threepool_lp):

@@ -1,5 +1,3 @@
-
-
 def test_deposit(safe, compound, USDC, cUSDC):
     before_bal_usdc = USDC.balanceOf(safe)
     before_bal_cUSDC = cUSDC.balanceOf(safe)
@@ -16,7 +14,7 @@ def test_deposit_eth(safe, compound, cETH):
     before_bal_ceth = cETH.balanceOf(safe)
     before_bal_eth = safe.account.balance()
 
-    to_deposit = 10**18
+    to_deposit = 1e18
 
     compound.deposit_eth(to_deposit)
 

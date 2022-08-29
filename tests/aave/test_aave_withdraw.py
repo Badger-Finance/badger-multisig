@@ -1,9 +1,11 @@
 import pytest
 
+
 @pytest.fixture(scope='function', autouse=True)
 def deposited(aave, USDC):
     to_deposit = 10_000 * 10**USDC.decimals()
     aave.deposit(USDC, to_deposit)
+
 
 def test_withdraw(safe, aave, USDC, aUSDC):
     bal_before_usdc = USDC.balanceOf(safe)

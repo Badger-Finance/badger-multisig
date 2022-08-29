@@ -1,3 +1,4 @@
+from argparse import ArgumentError
 import numpy as np
 from helpers.addresses import registry
 from brownie import Contract, ZERO_ADDRESS, interface
@@ -17,7 +18,7 @@ class Curve:
         self.factory_registry = safe.contract(self.provider.get_address(3))
         self.crypto_registry = safe.contract(self.provider.get_address(5))
         # parameters
-        self.max_slippage_and_fees = 0.02
+        self.max_slippage_and_fees = 0.1
         self.is_v2 = False
 
 
@@ -98,14 +99,15 @@ class Curve:
 
 
     def _pool_has_wrapped_coins(self, pool):
-        registry = self._get_registry(pool)
-        if registry == self.crypto_registry:
-            return False
-        try:
-            registry.get_underlying_balances(pool)
-            return True
-        except VirtualMachineError:
-            return False
+        return 'exchange_underlying' in pool.signatures.keys()
+        # registry = self._get_registry(pool)
+        # if registry == self.crypto_registry:
+        #     return False
+        # try:
+        #     registry.get_underlying_balances(pool)
+        #     return True
+        # except VirtualMachineError:
+        #     return False
 
 
     def deposit(self, lp_token, mantissas, asset=None):
@@ -121,17 +123,23 @@ class Curve:
         pool = self._get_pool_from_lp_token(lp_token)
         registry = self._get_registry(pool)
         n_coins = self._get_n_coins(lp_token)
+        
 
         if type(mantissas) is not list and asset is not None:
             mantissa = mantissas
             assert mantissa > 0
             mantissas = list(np.zeros(n_coins))
+            print(type(mantissas))
             for i, coin in enumerate(registry.get_coins(pool)):
                 if coin == asset.address:
                     mantissas[i] = mantissa
                     break
             # make sure we found the right slot and populated it
             assert (np.array(mantissas) > 0).any()
+
+        elif type(mantissas) is not list and asset is None:
+            raise ValueError("`asset` must be provided with `mantissa` of type int")
+
         assert n_coins == len(mantissas)
 
         if self.is_v2:

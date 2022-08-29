@@ -7,6 +7,8 @@ def deposited(aave, USDC):
     to_deposit = 10_000 * 10**USDC.decimals()
     aave.deposit(USDC, to_deposit)
 
+
+@pytest.mark.skip(reason="no liquidity mining rewards to claim")
 def test_claim(safe, aave, sktAAVE):
     before_bal_sktaave = sktAAVE.balanceOf(safe)
     chain.sleep(1000)
@@ -14,6 +16,7 @@ def test_claim(safe, aave, sktAAVE):
     aave.claim_all()
 
     assert sktAAVE.balanceOf(safe) > before_bal_sktaave
+
 
 def test_unstake_and_claim(safe, aave, sktAAVE, AAVE):
     before_bal_aave = AAVE.balanceOf(safe)

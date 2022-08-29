@@ -1,5 +1,4 @@
 import pytest
-import brownie
 
 
 def test_deposit_given_amounts(safe, curve, threepool_lptoken, USDC):
@@ -28,5 +27,5 @@ def test_deposit_given_token(safe, curve, threepool_lptoken, USDC):
 def test_deposit_no_token_specified(curve, threepool_lptoken, USDC):
     amount = 100_000 * 10**USDC.decimals()
 
-    with brownie.reverts():
+    with pytest.raises(ValueError):
         curve.deposit(threepool_lptoken, amount)

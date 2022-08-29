@@ -81,9 +81,8 @@ class Balancer():
         pool_type = pool_type if pool_type else self.pool_type(pool_id)
 
         if pool_type == "Stable":
-            # wip
-            # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
-            bpt_out = 1
+            raise NotImplementedError(self.get_amount_bpt_out)
+            bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(
                 pool, reserves, mantissas
@@ -187,9 +186,8 @@ class Balancer():
         pool_type = pool_type if pool_type else self.pool_type(pool_id)
 
         if pool_type == 'Stable':
-            # wip
-            # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
-            bpt_out = 1
+            raise NotImplementedError(self.deposit_and_stake)
+            bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
 
@@ -232,9 +230,8 @@ class Balancer():
         mantissas = [mantissa if x == underlying.address else 0 for x in underlyings]
 
         if self.pool_type(pool_id) == 'Stable':
-            # wip
-            # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
-            bpt_out = 1
+            raise NotImplementedError(self.deposit_and_stake_single_asset)
+            bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
         else:
             bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(pool, reserves, mantissas)
 
@@ -353,6 +350,7 @@ class Balancer():
 
         pool_type = pool_type if pool_type else self.pool_type(pool_id)
         if pool_type == 'Stable':
+            raise NotImplementedError(self.unstake_all_and_withdraw_all)
             underlyings_out = StableMath.calcTokensOutGivenExactBptIn(
                 pool, reserves, amount_in
             )
@@ -411,6 +409,7 @@ class Balancer():
 
 
         if self.pool_type(pool_id) == 'Stable':
+            raise NotImplementedError(self.unstake_and_withdraw_all_single_asset)
             underlying_out = StableMath.calcTokenOutGivenExactBptIn(
                 pool, reserves, underlying_index, amount_in
             )
@@ -529,7 +528,7 @@ class Balancer():
             swap_settings,
             fund_settings,
             min_out,
-            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline
+            web3.eth.get_block(web3.eth.block_number).timestamp + self.deadline
         )
 
         assert asset_out.balanceOf(destination) >= before_balance_out + min_out

@@ -42,7 +42,7 @@ class Compound():
             if ctoken.symbol() == 'cETH':
                 bal_before = ctoken.balanceOf(self.safe)
                 ctoken.mint({'from': self.safe.address, 'value': mantissa})
-                assert ctoken.balanceOf(self.safe) > bal_before
+                # assert ctoken.balanceOf(self.safe) > bal_before
                 return
         # for loop did not find $ceth
         raise

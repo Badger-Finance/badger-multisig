@@ -1008,6 +1008,7 @@ registry = DotMap({
 
 
 def get_registry():
+    return registry.eth
     if chain.id == 1:
         return registry.eth
     elif chain.id == 137:

@@ -55,3 +55,15 @@ def cvxCRV(safe):
     return Contract(
         registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
     )
+
+
+@pytest.fixture
+def dai(safe):
+    Contract.from_explorer(registry_addr.eth.treasury_tokens.DAI)
+    dai = MintableForkToken(
+        registry_addr.eth.treasury_tokens.DAI, owner=safe.account
+    )
+    dai._mint_for_testing(safe, 1_000_000 * 10**dai.decimals())
+    return Contract(
+        registry_addr.eth.treasury_tokens.DAI, owner=safe.account
+    )

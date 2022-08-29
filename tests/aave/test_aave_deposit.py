@@ -1,5 +1,3 @@
-
-
 def test_deposit(safe, aave, USDC, aUSDC):
 
     bal_before_usdc = USDC.balanceOf(safe)

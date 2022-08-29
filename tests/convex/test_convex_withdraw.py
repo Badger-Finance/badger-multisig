@@ -9,7 +9,6 @@ def deposited(safe, curve, convex, threepool_lp, convex_threepool_lp,USDC):
     before = convex_threepool_lp.balanceOf(safe)
     convex.deposit(threepool_lp, amount)
     assert convex_threepool_lp.balanceOf(safe) > before
-    
 
 def test_withdraw(safe, convex, threepool_lp, convex_threepool_lp):
     before_bal_curve_lp = threepool_lp.balanceOf(safe)
