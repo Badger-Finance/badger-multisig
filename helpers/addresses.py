@@ -974,6 +974,12 @@ ADDRESSES_KOVAN = {
     },
 }
 
+ADDRESSES_GOERLI = {
+    "badger_wallets": {
+        "test_multisig": "0xfA87ce273f8C254F345Bc7de42F30e2d2FEe6779",
+    }
+}
+
 
 def checksum_address_dict(addresses):
     """
@@ -1005,6 +1011,7 @@ registry = DotMap({
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
     "op": checksum_address_dict(ADDRESSES_OPTIMISM),
     "kovan": checksum_address_dict(ADDRESSES_KOVAN),
+    "goerli": checksum_address_dict(ADDRESSES_GOERLI),
 })
 
 
@@ -1023,6 +1030,8 @@ def get_registry():
         return registry.op
     elif chain.id == 42:
         return registry.kovan
+    elif chain.id == 5:
+        return registry.goerli
 
 
 r = get_registry()
