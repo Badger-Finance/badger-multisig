@@ -1,11 +1,10 @@
 from rich.console import Console
 from great_ape_safe import GreatApeSafe
-from helpers.addresses import get_registry as registry
+from helpers.addresses import r
 
 C = Console()
 
 # assuming techOps
-r = registry()
 SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 SAFE.init_badger()
 
