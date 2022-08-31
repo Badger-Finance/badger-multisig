@@ -28,7 +28,7 @@ BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=SAFE.account)
 AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
 GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=SAFE.account)
 DEV = GreatApeSafe(r.badger_wallets.dev_multisig)
-TROPS = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
+VAULT = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
 
 
 def claim_and_sell_for_weth(claim_only=False):
@@ -156,17 +156,17 @@ def sell_weth():
 def buy_aura(usdc_mantissa):
     usdc_mantissa = int(usdc_mantissa)
 
-    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=TROPS.account)
-    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=TROPS.account)
-    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
-    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=TROPS.account)
+    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=VAULT.account)
+    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=VAULT.account)
+    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=VAULT.account)
+    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=VAULT.account)
 
     proc = GreatApeSafe(PROCESSOR.address)
     proc.take_snapshot([USDC, BADGER, AURA, GRAVI_AURA])
 
-    TROPS.init_cow(prod=COW_PROD)
-    TROPS.cow.allow_relayer(USDC, usdc_mantissa)
-    TROPS.cow.market_sell(
+    VAULT.init_cow(prod=COW_PROD)
+    VAULT.cow.allow_relayer(USDC, usdc_mantissa)
+    VAULT.cow.market_sell(
         USDC,
         AURA,
         usdc_mantissa,
@@ -177,7 +177,7 @@ def buy_aura(usdc_mantissa):
 
     proc.print_snapshot()
 
-    TROPS.post_safe_tx()
+    VAULT.post_safe_tx()
 
 
 def emit_tokens():
