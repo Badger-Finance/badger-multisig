@@ -21,41 +21,24 @@ ALLOWED_BEHAVIORS = [
   'None'
 ]
 
-# Add any vaults's addresses that you want to promote or demote
-VAULTS_ARRAY = []
-# Add the new statuses you want to promote or promote each vault to
-NEW_STATUS_ARRAY = []
+# Add any vaults's addresses with their corresponding new status to demote or promote to
+VAULTS_STATUS = {
+    "0x0000000000000000000000000000000000000000": 0,
+}
 
-# promote a batch of vaults given their addresses and new status
-def promote_vaults():
-    if VAULTS_ARRAY and NEW_STATUS_ARRAY:
-        for vault in VAULTS_ARRAY:
-            info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
-            new_status = NEW_STATUS_ARRAY[VAULTS_ARRAY.index(vault)]
-            if info[2] < new_status:
-                print(info)
-                SAFE.badger.promote_vault(info[0], info[1], info[3], new_status)
-                assert SAFE.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
+# promote or demote a batch of vaults given their addresses and new status
+def update_vault_status():
+    if VAULTS_STATUS:
+        for vault, new_status in VAULTS_STATUS.items():
+            info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault).dict()
+            if info['status'] < new_status:
+                SAFE.badger.promote_vault(info['vault'], info['version'], info['metadata'], new_status)
+                assert SAFE.badger.registry_v2.productionVaultInfoByVault(vault).dict()['status'] == new_status
                 C.print(f"[green]Promoting {vault} to {new_status}[/green]")
             else:
-                C.print(f"[red]Promoting {vault} to lower state, current state is {info[2]}[/red]")
-        SAFE.post_safe_tx()
-    else:
-        C.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
-
-
-# demote a batch of vaults given their addresses and new status
-def demote_vaults():
-    if VAULTS_ARRAY and NEW_STATUS_ARRAY:
-        for vault in VAULTS_ARRAY:
-            info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
-            new_status = NEW_STATUS_ARRAY[VAULTS_ARRAY.index(vault)]
-            if info[2] > new_status:
                 SAFE.badger.demote_vault(vault, new_status)
-                assert SAFE.badger.registry_v2.productionVaultInfoByVault(vault)[2] == new_status
+                assert SAFE.badger.registry_v2.productionVaultInfoByVault(vault).dict()['status'] == new_status
                 C.print(f"[green]Demoting {vault} to {new_status}[/green]")
-            else:
-                C.print(f"[red]Demoting to higher state, current state is {info[2]}[/red]")
         SAFE.post_safe_tx()
     else:
         C.print(f"[red]Make sure to add your vaults and status to the arrays![/red]")
@@ -77,13 +60,13 @@ def update_vault_metadata(vault, metadata):
         C.print(f"[red]Wrong metadata format[/red]")
         return
 
-    info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
-    C.print(f"Current metadata: {info[3]}")
+    current_metadata = SAFE.badger.registry_v2.productionVaultInfoByVault(vault).dict()['metadata']
+    C.print(f"Current metadata: {current_metadata}")
     C.print(f"New metadata: {metadata}")
 
     SAFE.badger.update_metadata(vault, metadata)
-    info = SAFE.badger.registry_v2.productionVaultInfoByVault(vault)
-    assert info[3] == metadata
+    current_metadata = SAFE.badger.registry_v2.productionVaultInfoByVault(vault).dict()['metadata']
+    assert current_metadata == metadata
 
     SAFE.post_safe_tx()
 
