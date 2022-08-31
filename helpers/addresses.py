@@ -1008,20 +1008,23 @@ registry = DotMap({
 
 
 def get_registry():
-    if chain.id == 1:
+    try:
+        if chain.id == 1:
+            return registry.eth
+        elif chain.id == 137:
+            return registry.poly
+        elif chain.id == 56:
+            return registry.bsc
+        elif chain.id == 42161:
+            return registry.arbitrum
+        elif chain.id == 250:
+            return registry.ftm
+        elif chain.id == 10:
+            return registry.op
+        elif chain.id == 42:
+            return registry.kovan
+    except:
         return registry.eth
-    elif chain.id == 137:
-        return registry.poly
-    elif chain.id == 56:
-        return registry.bsc
-    elif chain.id == 42161:
-        return registry.arbitrum
-    elif chain.id == 250:
-        return registry.ftm
-    elif chain.id == 10:
-        return registry.op
-    elif chain.id == 42:
-        return registry.kovan
 
 
 r = get_registry()
