@@ -66,9 +66,10 @@ def claim_and_sell_for_weth(claim_only=False):
 def ragequit(token_list=r.bribe_tokens_claimable_graviaura.values()):
     DEV.take_snapshot(token_list)
     for token in token_list:
-        if token == BADGER.address:
+        if token == BADGER.address or token == AURA.address:
             continue
-        PROCESSOR.ragequit(token, True)
+        if SAFE.contract(token).balanceOf(PROCESSOR) > 0:
+            PROCESSOR.ragequit(token, True)
     DEV.print_snapshot()
 
     SAFE.post_safe_tx()
