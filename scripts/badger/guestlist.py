@@ -11,7 +11,7 @@ SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 SAFE.init_badger()
 
 # Add the vaults addresses to remove caps from
-VAULTS_ARRAY = []
+VAULTS_ARRAY = ["0x63ad745506BD6a3E57F764409A47ed004BEc40b1", "0x371B7C451858bd88eAf392B383Df8bd7B8955d5a"]
 
 # Sets a new user cap for a given vault
 def set_vault_user_cap(vault, cap):
@@ -58,8 +58,8 @@ def remove_caps_for_vaults():
                 C.print(f"Guestlist: {guestlist}")
                 SAFE.badger.set_guestlist_total_cap(guestlist, int(MaxUint256))
                 SAFE.badger.set_guestlist_user_cap(guestlist, int(MaxUint256))
-                SAFE.post_safe_tx()
             else:
                 C.print(f"[red]No guestlist set for this vault ({vault})![/red]")
+        SAFE.post_safe_tx()
     else:
         C.print(f"[red]Make sure to add your vaults to the array![/red]")
