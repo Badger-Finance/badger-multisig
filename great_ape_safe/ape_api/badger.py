@@ -416,3 +416,23 @@ class Badger():
             {'addrs': addrs, 'min_bals': min_bals, 'min_top_ups': min_top_ups}, index=labels
         ))
         self.station.setWatchList(addrs, min_bals, min_top_ups)
+
+    
+    def set_guestlist_user_cap(self, guestlist, cap):
+        guestlist = interface.IVipCappedGuestListBbtcUpgradeable(
+            guestlist,
+            owner=self.safe.account
+        )
+        guestlist.setUserDepositCap(cap)
+        assert guestlist.userDepositCap() == cap
+        C.print(f'[green]New user cap: {cap}[/green]')
+
+
+    def set_guestlist_total_cap(self, guestlist, cap):
+        guestlist = interface.IVipCappedGuestListBbtcUpgradeable(
+            guestlist,
+            owner=self.safe.account
+        )
+        guestlist.setTotalDepositCap(cap)
+        assert guestlist.totalDepositCap() == cap
+        C.print(f'[green]New total cap: {cap}[/green]')
