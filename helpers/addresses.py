@@ -31,6 +31,7 @@ ADDRESSES_ETH = {
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
+    "on_chain_pricing_mainnet_lenient": "0x2DC7693444aCd1EcA1D6dE5B3d0d8584F3870c49",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
