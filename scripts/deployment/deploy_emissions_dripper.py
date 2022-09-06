@@ -1,4 +1,4 @@
-from calendar import timegm
+from  calendar import timegm
 from datetime import date, timedelta
 
 from brownie import EmissionsDripper, accounts
@@ -6,11 +6,11 @@ from brownie import EmissionsDripper, accounts
 from helpers.addresses import registry
 
 
-def main(deployer_label=None, timestamp=None):
+def main(deployer_label=None):
     deployer = accounts[0] if not deployer_label else accounts.load(deployer_label)
     return EmissionsDripper.deploy(
         registry.eth.sett_vaults.remBADGER,
-        timegm(timestamp if timestamp else date.today().timetuple()),
+        timegm(date(2022, 4, 29).timetuple()),
         int(timedelta(weeks=9).total_seconds()),
         registry.eth.badger_wallets.techops_multisig,
         registry.eth.badger_wallets.dev_multisig,

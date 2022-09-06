@@ -6,13 +6,13 @@ from brownie import AutonomousDripper, accounts, chain, network
 from helpers.addresses import registry
 
 
-def main(deployer_label=None, timestamp=None):
+def main(deployer_label=None):
     deployer = accounts[0] if not deployer_label else accounts.load(deployer_label)
     if chain.id == 1:
         return AutonomousDripper.deploy(
             registry.eth.badger_wallets.techops_multisig, # address initialOwner
             registry.eth.badger_wallets.badgertree, # address beneficiaryAddress
-            timegm(timestamp if timestamp else date.today().timetuple()), # uint64 startTimestamp
+            timegm(date(2022, 5, 20).timetuple()), # uint64 startTimestamp
             int(timedelta(weeks=6).total_seconds()), # uint64 durationSeconds
             60*60*24*7, # uint intervalSeconds
             [

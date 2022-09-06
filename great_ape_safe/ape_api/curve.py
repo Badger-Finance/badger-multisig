@@ -121,7 +121,6 @@ class Curve:
             mantissa = mantissas
             assert mantissa > 0
             mantissas = list(np.zeros(n_coins))
-            print(type(mantissas))
             for i, coin in enumerate(registry.get_coins(pool)):
                 if coin == asset.address:
                     mantissas[i] = mantissa
