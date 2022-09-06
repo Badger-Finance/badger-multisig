@@ -21,6 +21,15 @@ KEYS = [
     "b33auraBAL_33graviAURA_33WETH"
 ]
 
+HODLERS = [
+    "0xD14f076044414C255D2E82cceB1CB00fb1bBA64c",
+    "0xfe51263bd0d075dc5441e89ecd1f6d63ff41e02e",
+    "0xec4fcd1aca723f8456999c5f5d7479dbe9528c11",
+    "0x3cd3dba355776ac76a0485e728ead54092085da2",
+    "0xc3b1f7ab9fabd729cdf9e90ea54ec447f9464269",
+    "0x794783dcfcac8c1944727057a3208d8f8bb91506"
+]
+
 
 def main(queue="true", simulation="false"):
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
@@ -28,8 +37,6 @@ def main(queue="true", simulation="false"):
 
     for key, address in VAULTS.items():
         address = web3.toChecksumAddress(address)
-        print(key)
-        print(address)
         if key in KEYS:
             if queue == "true":
                 C.print(f"[green]Queuing upgrade for {key}[/green]")
@@ -152,9 +159,17 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
         assert prev_totalSupply == vault.totalSupply()
         assert prev_getPricePerFullShare == vault.getPricePerFullShare()
 
+        # Simulate a harvest
         strat = interface.IStrategy(vault.strategy())
         tx = strat.harvest({"from": safe.account})
         # New event triggers
         assert len(tx.events["PerformanceFeeGovernance"]) >= 1
+
+        # Simulate a withdrawal (small amount to keep it simple)
+        if vault.withdrawalFee() > 0:
+            hodler = accounts.at(HODLERS[KEYS.index(key)], force=True)
+            tx = vault.withdraw(1e17, {"from": hodler})
+            # New event triggers
+            assert len(tx.events["WithdrawalFee"]) >= 1
 
         C.print(f"[green]Simulation successful for {key}[/green]")
