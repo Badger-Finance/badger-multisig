@@ -349,6 +349,7 @@ ADDRESSES_ETH = {
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C", # V1.1
         "uFragments": "0x020eb84309243Ed4B8E6C197AF145125dDE4AFDa", # V1.1
         "SimpleWrapperGatedUpgradeable": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
+        "TheVault": "0x55918A84eB7Fd1D930e098a8E86D0206549fA8c3"
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
