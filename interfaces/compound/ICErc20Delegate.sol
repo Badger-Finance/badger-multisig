@@ -205,6 +205,8 @@ interface ICErc20Delegate {
         address cTokenCollateral
     ) external returns (uint256);
 
+    function mint() external payable;
+
     function mint(uint256 mintAmount) external returns (uint256);
 
     function name() external view returns (string memory);
