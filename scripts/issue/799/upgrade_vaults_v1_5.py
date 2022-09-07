@@ -36,7 +36,6 @@ def main(queue="true", simulation="false"):
     safe.init_badger()
 
     for key, address in VAULTS.items():
-        address = web3.toChecksumAddress(address)
         if key in KEYS:
             if queue == "true":
                 C.print(f"[green]Queuing upgrade for {key}[/green]")
@@ -86,18 +85,13 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
             if vault.address == target_vault:
                 if timelock.queuedTransactions(txHash) == True:
 
-                    # Grab all variables before upgrade
-                    prev_available = vault.available()
-                    prev_gov = vault.governance()
-                    prev_keeper = vault.keeper()
-                    prev_guardian = vault.guardian()
-                    prev_strategist = vault.strategist()
-                    prev_treasury = vault.treasury()
-                    prev_token = vault.token()
-                    prev_symbol = vault.symbol()
-                    prev_balance = vault.balance()
-                    prev_totalSupply = vault.totalSupply()
-                    prev_getPricePerFullShare = vault.getPricePerFullShare()
+                    # save storage vars
+                    attributes = {}
+                    for attr in vault.signatures:
+                        try:
+                            attributes[attr] = getattr(vault, attr).call()
+                        except:
+                            C.print(f'[red]error storing {attr}[/red]')
 
                     # Executing upgrade
                     C.print(f"[green]Executing tx with parameters:[/green] {tx}")
@@ -105,18 +99,13 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
                         tx["target"], 0, tx["signature"], tx["data"], tx["eta"]
                     )
 
-                    # Checking all variables are as expected
-                    assert prev_available == vault.available()
-                    assert prev_gov == vault.governance()
-                    assert prev_keeper == vault.keeper()
-                    assert prev_guardian == vault.guardian()
-                    assert prev_strategist == vault.strategist()
-                    assert prev_treasury == vault.treasury()
-                    assert prev_token == vault.token()
-                    assert prev_symbol == vault.symbol()
-                    assert prev_balance == vault.balance()
-                    assert prev_totalSupply == vault.totalSupply()
-                    assert prev_getPricePerFullShare == vault.getPricePerFullShare()
+                    # assert storage vars
+                    for attr in vault.signatures:
+                        try:
+                            assert attributes[attr] == getattr(vault, attr).call()
+                            C.print(f'[green]asserted {attr}[/green]')
+                        except:
+                            pass
 
                 else:
                     with open(f"{queueTx_dir}{filename}") as f:
@@ -130,34 +119,24 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
         dev_proxy = interface.IProxyAdmin(DEV_PROXY)
         timelock_actor = accounts.at(safe.badger.timelock.address, force=True)
 
-        # Grab all variables before upgrade
-        prev_available = vault.available()
-        prev_gov = vault.governance()
-        prev_keeper = vault.keeper()
-        prev_guardian = vault.guardian()
-        prev_strategist = vault.strategist()
-        prev_treasury = vault.treasury()
-        prev_token = vault.token()
-        prev_symbol = vault.symbol()
-        prev_balance = vault.balance()
-        prev_totalSupply = vault.totalSupply()
-        prev_getPricePerFullShare = vault.getPricePerFullShare()
+        # save storage vars
+        attributes = {}
+        for attr in vault.signatures:
+            try:
+                attributes[attr] = getattr(vault, attr).call()
+            except:
+                C.print(f'[red]error storing {attr}[/red]')
 
         # Execute upgrade
         dev_proxy.upgrade(vault.address, NEW_LOGIC, {"from": timelock_actor})
 
-        # Checking all variables are as expected
-        assert prev_available == vault.available()
-        assert prev_gov == vault.governance()
-        assert prev_keeper == vault.keeper()
-        assert prev_guardian == vault.guardian()
-        assert prev_strategist == vault.strategist()
-        assert prev_treasury == vault.treasury()
-        assert prev_token == vault.token()
-        assert prev_symbol == vault.symbol()
-        assert prev_balance == vault.balance()
-        assert prev_totalSupply == vault.totalSupply()
-        assert prev_getPricePerFullShare == vault.getPricePerFullShare()
+        # assert storage vars
+        for attr in vault.signatures:
+            try:
+                assert attributes[attr] == getattr(vault, attr).call()
+                C.print(f'[green]asserted {attr}[/green]')
+            except:
+                pass
 
         # Simulate a harvest
         strat = interface.IStrategy(vault.strategy())
