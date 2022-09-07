@@ -1,6 +1,4 @@
-from brownie import interface, web3, chain
-import json
-import os
+from brownie import interface, web3
 from pycoingecko import CoinGeckoAPI
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -29,13 +27,20 @@ WETH = interface.IWETH9(r.treasury_tokens.WETH, owner=SAFE.account)
 BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=SAFE.account)
 AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
 GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=SAFE.account)
+DEV = GreatApeSafe(r.badger_wallets.dev_multisig)
+VAULT = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
 
 
-def claim_and_sell_for_weth():
+def claim_and_sell_for_weth(claim_only=False):
     bribes_dest = GreatApeSafe(PROCESSOR.address)
-    bribes_dest.take_snapshot(r.bribe_tokens_claimable.values())
+    bribes_dest.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
 
     claimed = SAFE.badger.claim_bribes_hidden_hands()
+
+    if claim_only:
+        bribes_dest.print_snapshot()
+        SAFE.post_safe_tx()
+        return
 
     # do not introduce orders if we claim badger or aura bribes
     # likely these assets will be present in the rounds for processing
@@ -55,29 +60,25 @@ def claim_and_sell_for_weth():
             )
             PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
-        # If Badger is claimed, we store the amount to be able to pass it to next 
-        # step's script in order to estimate the Badger split to buy from WETH.
-        if addr == BADGER.address:
-            dump_dir = "data/badger/hh_badger_bribes/"
-            file_name = chain.time()
-            os.makedirs(dump_dir, exist_ok=True)
-            with open(f'{dump_dir}{file_name}.json', 'w') as f:
-                bribe_data = {
-                    'address': addr,
-                    'mantissa': mantissa,
-                    'timestamp': file_name
-                }
-                json.dump(bribe_data, f, indent=4, sort_keys=True)
-            print(f"Badger bribes claimed: {mantissa}")
+    SAFE.post_safe_tx()
+
+
+def ragequit(token_list=r.bribe_tokens_claimable_graviaura.values()):
+    DEV.take_snapshot(token_list)
+    for token in token_list:
+        if token == BADGER.address or token == AURA.address:
+            continue
+        if SAFE.contract(token).balanceOf(PROCESSOR) > 0:
+            PROCESSOR.ragequit(token, True)
+    DEV.print_snapshot()
 
     SAFE.post_safe_tx()
 
-# NOTE: If BADGER bribes were received, we pass the claimed amount to the script
-# in order to properly estimate the reminding amount of BADGER to be purchased.
-def sell_weth(badger_total="0"):
+
+def sell_weth():
     weth_total = WETH.balanceOf(PROCESSOR)
     aura_total = AURA.balanceOf(PROCESSOR)
-    badger_total = int(badger_total)
+    badger_total = BADGER.balanceOf(PROCESSOR)
 
     ## Estimate the amount of BADGER and AURA to buy
     # Grab prices from coingecko
@@ -151,6 +152,33 @@ def sell_weth(badger_total="0"):
     PROCESSOR.setCustomAllowance(WETH, weth_total)
 
     SAFE.post_safe_tx()
+
+
+def buy_aura(usdc_mantissa):
+    usdc_mantissa = int(usdc_mantissa)
+
+    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=VAULT.account)
+    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=VAULT.account)
+    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=VAULT.account)
+    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=VAULT.account)
+
+    proc = GreatApeSafe(PROCESSOR.address)
+    proc.take_snapshot([USDC, BADGER, AURA, GRAVI_AURA])
+
+    VAULT.init_cow(prod=COW_PROD)
+    VAULT.cow.allow_relayer(USDC, usdc_mantissa)
+    VAULT.cow.market_sell(
+        USDC,
+        AURA,
+        usdc_mantissa,
+        deadline=DEADLINE,
+        coef=COEF,
+        destination=PROCESSOR.address
+    )
+
+    proc.print_snapshot()
+
+    VAULT.post_safe_tx()
 
 
 def emit_tokens():

@@ -31,6 +31,7 @@ ADDRESSES_ETH = {
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
+    "on_chain_pricing_mainnet_lenient": "0x2DC7693444aCd1EcA1D6dE5B3d0d8584F3870c49",
     # the wallets listed here are looped over by scout and checked for all treasury tokens
     "badger_wallets": {
         "fees": "0x8dE82C4C968663a0284b01069DDE6EF231D0Ef9B",
@@ -337,7 +338,7 @@ ADDRESSES_ETH = {
         "StrategyCvxCrvHelper": "0x76328277232c97BAf76D23A69015CB478293A048", # V1.1
         "KeeperAccessControl": "0x4fe70eE8fa906D59A88DE5946F114BdbFC410a80",
         "native.vestedCVX": "0x86ca553D5Ae7cD0005552D6E275786D5043800Bd", # V1.7.1 - Change bribes processor address
-        "native.graviAURA": "0x0d724E8AEE6F73b35A596C8C947c92c75eAc7818", # V1.1
+        "native.graviAURA": "0x7C2a951d062cC7B7C6F9C7Aa7e80a6f20EAA8caB", # V1.2
         "RewardsRecoveryStrategy_distribution": "0xEDb5a82016c95B0F6099Ec51F463691Fa2ba02B9",
         "SettV1h": "0x9376B47E7eC9D4cfd5313Dc1FB0DFF4F61E8c481",
         "SettV1_1h_V1": "0x25c9BD2eE36ef38992f8a6BE4CadDA9442Bf4170",
@@ -468,6 +469,14 @@ ADDRESSES_ETH = {
         "USDN": "0x674C6Ad92Fd080e4004b2312b45f796a192D27a0",
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
         "INV": "0x41D5D79431A913C4aE7d69a668ecdfE5fF9DFB68",
+        "TUSD": "0x0000000000085d4780B73119b644AE5ecd22b376",
+    },
+    "bribe_tokens_claimable_graviaura": {
+        "BADGER": "0x3472A5A71965499acd81997a54BBA8D852C6E53d",
+        "AURA": "0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF",
+        "USDC": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "SD": "0x30D20208d987713f46DFD34EF128Bb16C404D10f",
+        "DFX": "0x888888435FDe8e7d4c54cAb67f206e4199454c60",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
@@ -693,6 +702,7 @@ ADDRESSES_POLYGON = {
     "opolis": {
         "stakingHelper": "0x8bF5aD0dBa1e29741740D96E55Bf27Aec30B18E2",
         "whitelist": "0x44a0487656420FDc15f9CA76dd95F3b8a2ef0Baa",
+        "magic_wallet": "0xb5a2AB06c9B096F1Ca892e42e786c2D6a8Bb4D46",
     },
     "registry": "0xFda7eB6f8b7a9e9fCFd348042ae675d1d652454f",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
@@ -973,6 +983,12 @@ ADDRESSES_KOVAN = {
     },
 }
 
+ADDRESSES_GOERLI = {
+    "badger_wallets": {
+        "test_multisig": "0xfA87ce273f8C254F345Bc7de42F30e2d2FEe6779",
+    }
+}
+
 
 def checksum_address_dict(addresses):
     """
@@ -1004,6 +1020,7 @@ registry = DotMap({
     "ftm": checksum_address_dict(ADDRESSES_FANTOM),
     "op": checksum_address_dict(ADDRESSES_OPTIMISM),
     "kovan": checksum_address_dict(ADDRESSES_KOVAN),
+    "goerli": checksum_address_dict(ADDRESSES_GOERLI),
 })
 
 
@@ -1025,7 +1042,6 @@ def get_registry():
             return registry.kovan
     except:
         return registry.eth
-
 
 r = get_registry()
 
