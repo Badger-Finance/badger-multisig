@@ -214,7 +214,7 @@ class Balancer():
 
         for i, token in enumerate(tokens):
             if token != ZERO_ADDRESS:
-                token = self.safe.contract(token)
+                token = interface.ERC20(token, owner=self.safe.account)
                 token.approve(self.vault, mantissas[i])
 
         self._deposit_and_stake(

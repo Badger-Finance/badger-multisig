@@ -107,12 +107,12 @@ class Convex():
         n_pools = self.booster.poolLength()
         for n in range(n_pools):
             lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
-            if self.safe.contract(rewards).earned(self.safe) > 0:
+            if interface.IBaseRewardPool(rewards).earned(self.safe) > 0:
                 pending_rewards.append(rewards)
         assert len(pending_rewards) > 0
         self.zap.claimRewards(pending_rewards, [], [], [], 0, 0, 0, 0, 0)
         for rewards in pending_rewards:
-            reward_token = self.safe.contract(rewards).rewardToken()
+            reward_token = interface.IBaseRewardPool(rewards).rewardToken()
             # this assert is a bit weak, but no starting balance is known since
             # we cannot know for which reward tokens contracts to check in the
             # beginning
