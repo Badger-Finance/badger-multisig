@@ -9,21 +9,21 @@ def deposited(aave, USDC):
 
 
 @pytest.mark.skip(reason="no liquidity mining rewards to claim")
-def test_claim(safe, aave, sktAAVE):
-    before_bal_sktaave = sktAAVE.balanceOf(safe)
+def test_claim(safe, aave, stkAAVE):
+    before_bal_stkAAVE = stkAAVE.balanceOf(safe)
     chain.sleep(1000)
     chain.mine()
     aave.claim_all()
 
-    assert sktAAVE.balanceOf(safe) > before_bal_sktaave
+    assert stkAAVE.balanceOf(safe) > before_bal_stkAAVE
 
 
-def test_unstake_and_claim(safe, aave, sktAAVE, AAVE):
+def test_unstake_and_claim(safe, aave, stkAAVE, AAVE):
     before_bal_aave = AAVE.balanceOf(safe)
     
     # Start staking vesting period
-    sktAAVE.cooldown()
-    wait_peroid = sktAAVE.COOLDOWN_SECONDS()
+    stkAAVE.cooldown()
+    wait_peroid = stkAAVE.COOLDOWN_SECONDS()
 
     # Fast forward to end of vesting period
     chain.sleep(wait_peroid + 1)
