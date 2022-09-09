@@ -4,7 +4,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-AMOUNT_BADGER_ETH = 50_000 # to deposit into factory pool
+AMOUNT_BADGER_ETH = 50_000  # to deposit into factory pool
 
 console = Console()
 
@@ -26,20 +26,24 @@ def main():
     wbtc = interface.ERC20(registry.eth.treasury_tokens.WBTC)
     badger = interface.ERC20(registry.eth.treasury_tokens.BADGER)
 
-    safe.take_snapshot(tokens=[badger, wbtc, curve_lp.address, bibBTC.address, ibBTC.address])
+    safe.take_snapshot(
+        tokens=[badger, wbtc, curve_lp.address, bibBTC.address, ibBTC.address]
+    )
 
     assert badger.balanceOf(safe) >= AMOUNT_BADGER_ETH * 10 ** badger.decimals()
 
     # get amounts to deposit into factory pool
-    badger_amount = AMOUNT_BADGER_ETH * 10**badger.decimals()
+    badger_amount = AMOUNT_BADGER_ETH * 10 ** badger.decimals()
     badger_per_wbtc = curve_pool.price_oracle() / 10 ** wbtc.decimals()
     wbtc_amount = badger_amount / badger_per_wbtc
 
-    console.print('wBTC needed:', wbtc_amount / 10 ** wbtc.decimals())
-    console.print('wBTC have:', wbtc.balanceOf(safe) / 10 ** wbtc.decimals())
+    console.print("wBTC needed:", wbtc_amount / 10 ** wbtc.decimals())
+    console.print("wBTC have:", wbtc.balanceOf(safe) / 10 ** wbtc.decimals())
 
-    amount_to_withdraw = (wbtc_amount / 10**wbtc.decimals()) - (wbtc.balanceOf(safe) / 10**wbtc.decimals())
-    bibBTC.withdraw(Wei(f'{amount_to_withdraw} ether'))
+    amount_to_withdraw = (wbtc_amount / 10 ** wbtc.decimals()) - (
+        wbtc.balanceOf(safe) / 10 ** wbtc.decimals()
+    )
+    bibBTC.withdraw(Wei(f"{amount_to_withdraw} ether"))
 
     # zap curve lp to wbtc for deposit
     safe.curve.withdraw_to_one_coin_zapper(
@@ -50,11 +54,13 @@ def main():
         wbtc,
     )
 
-    print('bibbtc position yields:', wbtc.balanceOf(safe) / 10 ** wbtc.decimals(), 'wBTC')
+    print(
+        "bibbtc position yields:", wbtc.balanceOf(safe) / 10 ** wbtc.decimals(), "wBTC"
+    )
 
     safe.curve_v2.deposit(curve_lp, [badger_amount, wbtc_amount])
-    console.print('oracle:', curve_pool.price_oracle() / 1e18)
-    console.print('scale:', curve_pool.price_scale() / 1e18)
+    console.print("oracle:", curve_pool.price_oracle() / 1e18)
+    console.print("scale:", curve_pool.price_scale() / 1e18)
 
     safe.print_snapshot()
 

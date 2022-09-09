@@ -9,6 +9,7 @@ WBTC_IBBTC_SLP = registry.poly.sett_vaults.bslpibBTCWbtc
 WBTC_USDC_QLP = registry.poly.sett_vaults.bqlpUsdcWbtc
 AWBTC_REN_CRV = registry.poly.sett_vaults.bcrvRenBTC
 
+
 def deprecate_polygon():
     safe = GreatApeSafe(TECH_OPS)
     safe.init_badger()
@@ -27,4 +28,3 @@ def deprecate_polygon():
     assert info[2] == 0
 
     safe.post_safe_tx()
-

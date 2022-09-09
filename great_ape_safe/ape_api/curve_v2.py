@@ -18,5 +18,5 @@ class CurveV2(Curve):
         self.crypto_registry = safe.contract(self.provider.get_address(5))
         self.factory_crypto_registry = safe.contract(registry.eth.curve.factory)
         # parameters
-        self.max_slippage_and_fees = .02
+        self.max_slippage_and_fees = 0.02
         self.is_v2 = True

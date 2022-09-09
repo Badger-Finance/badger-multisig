@@ -6,7 +6,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-TARGET = .55
+TARGET = 0.55
 THRESHOLD = 5000
 MAX = 50_000e18 - 24_119e18 - 18_561e18
 
@@ -22,26 +22,24 @@ def main():
     safe.init_curve()
 
     cvx = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=safe.account)
-    bvecvx = interface.ISettV4h(
-        registry.eth.treasury_tokens.bveCVX, owner=safe.account
-    )
+    bvecvx = interface.ISettV4h(registry.eth.treasury_tokens.bveCVX, owner=safe.account)
     bvecvxcvx = interface.IStableSwap2Pool(
-        registry.eth.treasury_tokens['bveCVX-CVX-f'], owner=safe.account
+        registry.eth.treasury_tokens["bveCVX-CVX-f"], owner=safe.account
     )
 
     safe.take_snapshot(tokens=[bvecvx.address, bvecvxcvx.address])
 
     bal_cvx = cvx.balanceOf(bvecvxcvx)
     bal_bvecvx = bvecvx.balanceOf(bvecvxcvx)
-    bal_total = bal_cvx + bal_bvecvx # TODO: take ppfs (now==1) into account
+    bal_total = bal_cvx + bal_bvecvx  # TODO: take ppfs (now==1) into account
     cvx_dominance = bal_cvx / bal_total
     bvecvx_dominance = bal_bvecvx / bal_total
-    print('cvx\t\t', bal_cvx / 1e18, cvx_dominance)
-    print('bvecvx\t\t', bal_bvecvx / 1e18, bvecvx_dominance)
-    print('cvx+bvecvx\t', bal_total / 1e18)
+    print("cvx\t\t", bal_cvx / 1e18, cvx_dominance)
+    print("bvecvx\t\t", bal_bvecvx / 1e18, bvecvx_dominance)
+    print("cvx+bvecvx\t", bal_total / 1e18)
 
     if bvecvx_dominance < TARGET:
-        x = Symbol('x')
+        x = Symbol("x")
         mantissa_to_add = solve(
             (int(bal_bvecvx) + x) / (int(bal_total) + x) - TARGET, x
         )[0]
@@ -54,12 +52,12 @@ def main():
 
     bal_cvx = cvx.balanceOf(bvecvxcvx)
     bal_bvecvx = bvecvx.balanceOf(bvecvxcvx)
-    bal_total = bal_cvx + bal_bvecvx # TODO: take ppfs (now==1) into account
+    bal_total = bal_cvx + bal_bvecvx  # TODO: take ppfs (now==1) into account
     cvx_dominance = bal_cvx / bal_total
     bvecvx_dominance = bal_bvecvx / bal_total
-    print('cvx\t\t', bal_cvx / 1e18, cvx_dominance)
-    print('bvecvx\t\t', bal_bvecvx / 1e18, bvecvx_dominance)
-    print('cvx+bvecvx\t', bal_total / 1e18)
+    print("cvx\t\t", bal_cvx / 1e18, cvx_dominance)
+    print("bvecvx\t\t", bal_bvecvx / 1e18, bvecvx_dominance)
+    print("cvx+bvecvx\t", bal_total / 1e18)
 
     assert bvecvx_dominance <= TARGET
 

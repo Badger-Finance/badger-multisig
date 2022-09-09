@@ -47,13 +47,13 @@ last_weeks = [
     # "2022-01-13",
     # "2022-01-20",
     # "2022-01-27",
-    #"2022-02-03",
-    #"2022-02-10",
-    #"2022-02-17",
-    #"2022-02-24",
+    # "2022-02-03",
+    # "2022-02-10",
+    # "2022-02-17",
+    # "2022-02-24",
     "2022-03-03",
     "2022-03-10",
-    "2022-03-17", # last eps airdrop week, no 52w
+    "2022-03-17",  # last eps airdrop week, no 52w
 ]
 
 # claim contracts for the old multisig
@@ -99,7 +99,7 @@ merkle_airdrops_new = [
     # "0xC850B3F0737B59C47Be7E3b3439C45567A0E95fB",
     "0x158F8f5B1cCb172bb79EAb75ED11eE70083f0e12",
     "0x3EE776BE4Eb9Ac0a7D2DF18052d33fD13abaA476",
-    "0xfB5b140b85EC3a05b2E934dbABEc2c9251A3CEaf"
+    "0xfB5b140b85EC3a05b2E934dbABEc2c9251A3CEaf",
 ]
 
 
@@ -123,12 +123,12 @@ def claim(
     # open safe
     if deprecated_multisig:
         safe = GreatApeSafe(multisigAddressDeprecated)
-        #response = requests.get(url_old_multisig) DEV: legacy code for claims
+        # response = requests.get(url_old_multisig) DEV: legacy code for claims
         merkle_airdrop_source = merkle_airdrops_old
         claimable_weeks = last_weeks[:9]
     else:
         safe = GreatApeSafe(multisigAddress)
-        #response = requests.get(url_new_multisig) DEV: legacy code for claims
+        # response = requests.get(url_new_multisig) DEV: legacy code for claims
         merkle_airdrop_source = merkle_airdrops_new
         claimable_weeks = last_weeks[9:]
 
@@ -165,7 +165,9 @@ def claim(
             )
     else:
         for i, date in enumerate(claimable_weeks):
-            target_json = f"data/Convex_EPS/airdrop/eps/{date.replace('-', '_')}/drop_proofs.json"
+            target_json = (
+                f"data/Convex_EPS/airdrop/eps/{date.replace('-', '_')}/drop_proofs.json"
+            )
             with open(target_json) as f:
                 msig_args_details = json.load(f)["users"][safe.address]
                 print(

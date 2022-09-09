@@ -6,7 +6,7 @@ from helpers.addresses import registry
 USER = "0x53ed17651b7dc5131c8878f0c30e6928ff13f8e2"
 TREASURY = registry.eth.badger_wallets.treasury_vault_multisig
 STUCK_BALANCE = 5267941640682
-FEE = 0.2 # Charging a 20% service fee
+FEE = 0.2  # Charging a 20% service fee
 
 #
 #   Sweeps stuck bSLP tokens stuck on itself, charges a 20% service fee,
@@ -20,8 +20,7 @@ def main():
     )
 
     vault = interface.ISettV4h(
-        registry.eth.sett_vaults["bslpWbtcibBTC"],
-        owner=safe.account
+        registry.eth.sett_vaults["bslpWbtcibBTC"], owner=safe.account
     )
 
     balance_gov_before = vault.balanceOf(safe.account)
@@ -36,9 +35,7 @@ def main():
     assert balance_vault_after == 0
     assert balance_gov_after - balance_gov_before == STUCK_BALANCE
 
-    balance_checker.verifyBalance(
-        vault.address, safe.account, balance_gov_after
-    )
+    balance_checker.verifyBalance(vault.address, safe.account, balance_gov_after)
 
     # Process fee
     fee_amount = round(STUCK_BALANCE * FEE)
@@ -55,6 +52,3 @@ def main():
     print("Reminder", reminder)
 
     safe.post_safe_tx()
-
-
-

@@ -4,17 +4,21 @@ from great_ape_safe import GreatApeSafe
 
 
 def main():
-    '''
+    """
     dogfood half oxd into bveoxd,
     lp into bveoxd/oxd,
     dogfood lp into bbveoxd/oxd
-    '''
+    """
     trops = GreatApeSafe(registry.ftm.badger_wallets.treasury_ops_multisig)
 
     oxd = interface.ERC20(registry.ftm.treasury_tokens.OXD, owner=trops.account)
     bveoxd = interface.ISettV4h(registry.ftm.sett_vaults.bveOXD, owner=trops.account)
-    bveoxd_oxd = interface.IUniswapV2Pair(registry.ftm.lp_tokens['bveOXD-OXD'], owner=trops.account)
-    bbveoxd_oxd = interface.ISettV4h(registry.ftm.sett_vaults['bbveOXD-OXD'], owner=trops.account)
+    bveoxd_oxd = interface.IUniswapV2Pair(
+        registry.ftm.lp_tokens["bveOXD-OXD"], owner=trops.account
+    )
+    bbveoxd_oxd = interface.ISettV4h(
+        registry.ftm.sett_vaults["bbveOXD-OXD"], owner=trops.account
+    )
 
     trops.init_solidly()
     trops.take_snapshot(tokens=[oxd, bveoxd, bbveoxd_oxd])
@@ -25,7 +29,7 @@ def main():
 
     oxd_bal = oxd.balanceOf(trops)
     bveoxd_bal = bveoxd.balanceOf(trops)
-    trops.solidly.add_liquidity(bveoxd, oxd, bveoxd_bal * .99, oxd_bal)
+    trops.solidly.add_liquidity(bveoxd, oxd, bveoxd_bal * 0.99, oxd_bal)
 
     lp_bal = bveoxd_oxd.balanceOf(trops) * 0.99
     bveoxd_oxd.approve(bbveoxd_oxd, lp_bal)

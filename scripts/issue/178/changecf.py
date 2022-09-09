@@ -16,7 +16,7 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_rari()
 
-    fdola = registry.eth.rari['fDOLA-22']
+    fdola = registry.eth.rari["fDOLA-22"]
 
     fdola_cf_before = safe.rari.ftoken_get_cf(fdola)
     safe.rari.ftoken_set_cf(fdola, COLLATERAL_FACTOR)

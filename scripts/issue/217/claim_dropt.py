@@ -20,13 +20,15 @@ def main():
     dropt = safe.contract(registry.eth.uma.DIGG_LongShortPair)
     dropt_long = safe.contract(dropt.longToken())
 
-    safe.take_snapshot(tokens=[
-        bdigg.address,
-        digg,
-        dropt_long,
-        bcvxCRV,
-        bveCVX,
-    ])
+    safe.take_snapshot(
+        tokens=[
+            bdigg.address,
+            digg,
+            dropt_long,
+            bcvxCRV,
+            bveCVX,
+        ]
+    )
 
     safe.badger.claim_all()
     assert dropt_long.balanceOf(safe.badger.tree) == 0

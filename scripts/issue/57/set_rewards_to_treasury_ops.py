@@ -60,18 +60,24 @@ def main(queue="true"):
                         dump_dir="data/badger/timelock/set_rewards_to_treasury_ops/",
                         delay_in_days=4.7,
                     )
-                    C.print(f"[green]Rewards set to TreasuryOps on {controller_id} was queued![green]")
+                    C.print(
+                        f"[green]Rewards set to TreasuryOps on {controller_id} was queued![green]"
+                    )
                 else:
-                    safe.badger.execute_timelock("data/badger/timelock/set_rewards_to_treasury_ops/")
+                    safe.badger.execute_timelock(
+                        "data/badger/timelock/set_rewards_to_treasury_ops/"
+                    )
                     assert controller.rewards() == TREASURY_OPS
-                    C.print(f"[green]Rewards set to TreasuryOps on {controller_id}[green]")
+                    C.print(
+                        f"[green]Rewards set to TreasuryOps on {controller_id}[green]"
+                    )
             else:
                 C.print(
                     f"[red]Governance is not the devMulti nor the Timelock for {controller_id}![red]"
                 )
         else:
-            C.print(f"[green]Rewards already set to TreasuryOps on {controller_id}[green]")
-
+            C.print(
+                f"[green]Rewards already set to TreasuryOps on {controller_id}[green]"
+            )
 
     safe.post_safe_tx()
-    

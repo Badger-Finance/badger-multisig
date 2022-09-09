@@ -7,6 +7,7 @@ GRAVI_AURA = registry.eth.sett_vaults.graviAURA
 KEEPER_ACL = registry.eth.keeperAccessControl
 DEV_MULTI = registry.eth.badger_wallets.dev_multisig
 
+
 def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
     graviAura_strat = interface.IVestedAura(VESTED_AURA, owner=safe.account)

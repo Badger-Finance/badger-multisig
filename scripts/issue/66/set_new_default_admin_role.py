@@ -21,7 +21,7 @@ def main(broadcast="true"):
 
     # admin role is '0x0000000000000000000000000000000000000000000000000000000000000000'
     DEFAULT_ADMIN_ROLE = reward_logger.DEFAULT_ADMIN_ROLE()
-    
+
     # same encode output for all
     encode_input_grant_role_admin = reward_logger.grantRole.encode_input(
         DEFAULT_ADMIN_ROLE, NEW_ADMIN
@@ -37,8 +37,14 @@ def main(broadcast="true"):
             {"from": dev},
         )
         safe.submitTransaction(
-            registry.arbitrum.badger_wallets.badgertree, 0, encode_input_grant_role_admin, {"from": dev}
+            registry.arbitrum.badger_wallets.badgertree,
+            0,
+            encode_input_grant_role_admin,
+            {"from": dev},
         )
         safe.submitTransaction(
-            registry.arbitrum.KeeperAccessControl, 0, encode_input_grant_role_admin, {"from": dev}
+            registry.arbitrum.KeeperAccessControl,
+            0,
+            encode_input_grant_role_admin,
+            {"from": dev},
         )

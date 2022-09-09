@@ -7,7 +7,7 @@ from rich.console import Console
 
 C = Console()
 
-NEW_LOGIC = registry.eth.logic["native.vestedCVX"] 
+NEW_LOGIC = registry.eth.logic["native.vestedCVX"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 
 
@@ -28,7 +28,7 @@ def main(queue="true", simulation="false"):
             dump_dir="data/badger/timelock/upgrade_veCVX_strategy_V1_5/",
             delay_in_days=4,
         )
-    else:   
+    else:
         # Setting all variables, we'll use them later
         prev_strategist = strat_proxy.strategist()
         prev_gov = strat_proxy.governance()
@@ -66,13 +66,23 @@ def main(queue="true", simulation="false"):
         assert prev_check_withdrawalSafetyCheck == strat_proxy.withdrawalSafetyCheck()
         assert prev_check_harvestOnRebalance == strat_proxy.harvestOnRebalance()
         assert prev_check_processLocksOnReinvest == strat_proxy.processLocksOnReinvest()
-        assert prev_check_processLocksOnRebalance == strat_proxy.processLocksOnRebalance()
+        assert (
+            prev_check_processLocksOnRebalance == strat_proxy.processLocksOnRebalance()
+        )
 
         ## Verify new Addresses are setup properly
         assert strat_proxy.LOCKER() == registry.eth.convex.vlCVX
-        assert strat_proxy.CVX_EXTRA_REWARDS() == registry.eth.convex.vlCvxExtraRewardDistribution
-        assert strat_proxy.VOTIUM_BRIBE_CLAIMER() == registry.eth.votium.multiMerkleStash
-        assert strat_proxy.BRIBES_RECEIVER() == registry.eth.badger_wallets.politician_multisig
+        assert (
+            strat_proxy.CVX_EXTRA_REWARDS()
+            == registry.eth.convex.vlCvxExtraRewardDistribution
+        )
+        assert (
+            strat_proxy.VOTIUM_BRIBE_CLAIMER() == registry.eth.votium.multiMerkleStash
+        )
+        assert (
+            strat_proxy.BRIBES_RECEIVER()
+            == registry.eth.badger_wallets.politician_multisig
+        )
 
         # Test chainlink functions
         if simulation == "true":
@@ -99,4 +109,4 @@ def main(queue="true", simulation="false"):
 
             C.print("[green]Simulation Successful!")
 
-    safe.post_safe_tx(post=(simulation!="true"))
+    safe.post_safe_tx(post=(simulation != "true"))

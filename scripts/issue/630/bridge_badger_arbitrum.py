@@ -7,7 +7,7 @@ BADGER_BRIDGED = 4285e18
 # https://etherscan.io/tx/0x638ed30daa6ab81b96ed9e8a85cce61c95b2159b423d293560966b09f6e5e013
 # https://etherscan.io/tx/0x47e96c00c09acd73d90ac603374f209661ac184b9cd41e6d07e749f0141996d7
 # values based on the above txs for retrievat/cost L2 retryable ticket
-# thinking how to calc this on the flight, so if it works to become a class item
+# thinking how to calc this on the flight, so if it works to become a class item
 MAX_SUBMISSION_COST = int(0.000003e18)
 MAX_GAS = 440_000
 GAS_PRICE_BID = 1.5e9

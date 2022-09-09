@@ -21,14 +21,14 @@ def main(msig_address):
     aura = msig.contract(r.treasury_tokens.AURA)
 
     # https://raw.githubusercontent.com/aurafinance/aura-token-allocation/master/artifacts/initial/allocations.csv
-    with open('scripts/issue/561/airdrop_list.json', 'r') as f:
+    with open("scripts/issue/561/airdrop_list.json", "r") as f:
         airdrop_list = json.load(f)
 
     if not aura_airdrop.hasClaimed(msig_address):
         msig.take_snapshot(tokens=[aura])
 
-        with open(f'scripts/issue/561/proofs/{msig_address}.json', 'r') as f:
-            proof = json.load(f)['account']
+        with open(f"scripts/issue/561/proofs/{msig_address}.json", "r") as f:
+            proof = json.load(f)["account"]
 
         is_voter = msig_address == r.badger_wallets.treasury_voter_multisig
 
@@ -39,9 +39,11 @@ def main(msig_address):
         msig.print_snapshot()
 
         if not is_voter:
-            aura.transfer(r.badger_wallets.treasury_voter_multisig, aura.balanceOf(msig))
+            aura.transfer(
+                r.badger_wallets.treasury_voter_multisig, aura.balanceOf(msig)
+            )
 
         msig.print_snapshot()
         msig.post_safe_tx()
     else:
-        print(f'Recipient: {msig_address} has already claimed')
+        print(f"Recipient: {msig_address} has already claimed")

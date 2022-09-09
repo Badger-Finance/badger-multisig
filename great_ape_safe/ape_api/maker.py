@@ -18,7 +18,6 @@ class Maker:
                 self.proxy_registry.proxies(safe), interface.IDSProxy
             )
 
-
     def build_proxy(self):
         self.proxy_registry.build()
         # reinit so self.proxy can be properly set

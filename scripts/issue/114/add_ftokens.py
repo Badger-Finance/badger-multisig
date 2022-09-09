@@ -14,8 +14,8 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_rari()
 
-    fFRAX = interface.IFToken(registry.eth.rari['fFRAX-22'])
-    fDOLA = interface.IFToken(registry.eth.rari['fDOLA-22'])
+    fFRAX = interface.IFToken(registry.eth.rari["fFRAX-22"])
+    fDOLA = interface.IFToken(registry.eth.rari["fDOLA-22"])
 
     safe.rari.add_ftoken_to_pool(fFRAX, cf=COLLATERAL_FACTOR)
     safe.rari.add_ftoken_to_pool(fDOLA, cf=COLLATERAL_FACTOR)

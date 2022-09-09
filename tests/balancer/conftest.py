@@ -35,7 +35,7 @@ def threepool_staked_bpt(dev, balancer, threepool_bpt):
 @pytest.fixture
 def weighted_bpt(dev):
     # 60 weth/40 dai
-    return dev.contract('0x0b09deA16768f0799065C475bE02919503cB2a35')
+    return dev.contract("0x0b09deA16768f0799065C475bE02919503cB2a35")
 
 
 @pytest.fixture
@@ -74,48 +74,32 @@ def ldo(dev):
 @pytest.fixture
 def bal(dev, vault):
     Contract.from_explorer(registry.eth.treasury_tokens.BAL)
-    bal = MintableForkToken(
-        registry.eth.treasury_tokens.BAL, owner=dev.account
-    )
-    bal._mint_for_testing(dev, 1000 * 10**bal.decimals())
-    bal._mint_for_testing(vault, 1000 * 10**bal.decimals())
+    bal = MintableForkToken(registry.eth.treasury_tokens.BAL, owner=dev.account)
+    bal._mint_for_testing(dev, 1000 * 10 ** bal.decimals())
+    bal._mint_for_testing(vault, 1000 * 10 ** bal.decimals())
 
-    return Contract(
-        registry.eth.treasury_tokens.BAL, owner=dev.account
-    )
+    return Contract(registry.eth.treasury_tokens.BAL, owner=dev.account)
 
 
 @pytest.fixture
 def wbtc(dev):
     Contract.from_explorer(registry.eth.treasury_tokens.WBTC)
-    wbtc = MintableForkToken(
-        registry.eth.treasury_tokens.WBTC, owner=dev.account
-    )
-    wbtc._mint_for_testing(dev, 10 * 10**wbtc.decimals())
-    return Contract(
-        registry.eth.treasury_tokens.WBTC, owner=dev.account
-    )
+    wbtc = MintableForkToken(registry.eth.treasury_tokens.WBTC, owner=dev.account)
+    wbtc._mint_for_testing(dev, 10 * 10 ** wbtc.decimals())
+    return Contract(registry.eth.treasury_tokens.WBTC, owner=dev.account)
 
 
 @pytest.fixture
 def weth(dev):
     Contract.from_explorer(registry.eth.treasury_tokens.WETH)
-    weth = MintableForkToken(
-        registry.eth.treasury_tokens.WETH, owner=dev.account
-    )
-    weth._mint_for_testing(dev, 100 * 10**weth.decimals())
-    return Contract(
-        registry.eth.treasury_tokens.WETH, owner=dev.account
-    )
+    weth = MintableForkToken(registry.eth.treasury_tokens.WETH, owner=dev.account)
+    weth._mint_for_testing(dev, 100 * 10 ** weth.decimals())
+    return Contract(registry.eth.treasury_tokens.WETH, owner=dev.account)
 
 
 @pytest.fixture
 def badger(dev):
     Contract.from_explorer(registry.eth.treasury_tokens.BADGER)
-    badger = MintableForkToken(
-        registry.eth.treasury_tokens.BADGER
-    )
-    badger._mint_for_testing(dev, 100_000 * 10**badger.decimals())
-    return Contract(
-        registry.eth.treasury_tokens.BADGER, owner=dev.account
-    )
+    badger = MintableForkToken(registry.eth.treasury_tokens.BADGER)
+    badger._mint_for_testing(dev, 100_000 * 10 ** badger.decimals())
+    return Contract(registry.eth.treasury_tokens.BADGER, owner=dev.account)
