@@ -25,10 +25,10 @@ def main():
             registry.rinkeby.badger_wallets.ops_executor3,
             registry.rinkeby.badger_wallets.ops_executor7,
             registry.rinkeby.badger_wallets.ops_executor8,
-            registry.rinkeby.badger_wallets.ops_executor12
+            registry.rinkeby.badger_wallets.ops_executor12,
         ],
         [1e18, 1e18, 1e18, 1e18, 1e18],
-        [.1e18, .1e18, .1e18, .1e18, .1e18]
+        [0.1e18, 0.1e18, 0.1e18, 0.1e18, 0.1e18],
     )
     # safe.account.transfer(station, 2e18)
 

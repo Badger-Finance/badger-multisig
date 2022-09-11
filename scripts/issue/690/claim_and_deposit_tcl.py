@@ -10,6 +10,7 @@ MAX_WBTC_MANTISSA = int(6.5e8)
 WBTC_WHALE = "0x218B95BE3ed99141b0144Dba6cE88807c4AD7C09"
 DIGG_WHALE = "0x95EEC544A7Cf2e6a65A71039d58823f4564A6319"
 
+
 def main(simulation="false"):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
@@ -34,7 +35,7 @@ def main(simulation="false"):
 
         wbtc.transfer(vault.address, MAX_WBTC_MANTISSA, {"from": wbtc_whale})
         digg.transfer(vault.address, 14e9, {"from": digg_whale})
-        
+
     vault.take_snapshot([wbtc, digg, aura, bal, graviaura])
     voter.take_snapshot([bal, aura])
 
@@ -104,5 +105,5 @@ def main(simulation="false"):
     vault.print_snapshot()
     voter.print_snapshot()
 
-    if simulation=="false":
+    if simulation == "false":
         vault.post_safe_tx()

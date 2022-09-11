@@ -2,6 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from decimal import Decimal
 
+
 def main(amount_wbtc_ether=3):
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     safe.init_balancer()
@@ -15,9 +16,13 @@ def main(amount_wbtc_ether=3):
 
     wbtc_to_deposit = int(Decimal(amount_wbtc_ether) * Decimal(10 ** wbtc.decimals()))
     ratio = bpt.getNormalizedWeights()[0] / bpt.getNormalizedWeights()[1]
-    badger_to_deposit = int(safe.balancer.get_amount_out(
-        wbtc, badger, 1000
-    ) / 1000 * wbtc_to_deposit / .997 / ratio)
+    badger_to_deposit = int(
+        safe.balancer.get_amount_out(wbtc, badger, 1000)
+        / 1000
+        * wbtc_to_deposit
+        / 0.997
+        / ratio
+    )
 
     underlyings = [wbtc, badger]
     amounts = [wbtc_to_deposit, badger_to_deposit]

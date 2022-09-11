@@ -10,23 +10,27 @@ SAFE = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 
 
 def main():
-    fusdc = interface.IFToken(registry.eth.rari['fUSDC-22'], owner=SAFE.account)
-    fwbtc = interface.IFToken(registry.eth.rari['fWBTC-22'], owner=SAFE.account)
+    fusdc = interface.IFToken(registry.eth.rari["fUSDC-22"], owner=SAFE.account)
+    fwbtc = interface.IFToken(registry.eth.rari["fWBTC-22"], owner=SAFE.account)
 
     amount_fusdc = int(fusdc.balanceOf(SAFE) * 0.75)
     amount_fwbtc = int(fwbtc.balanceOf(SAFE) * 0.75)
 
     receipts = [
-        DotMap({
-            'receiver': fusdc.address,
-            'value': 0,
-            'input': fusdc.redeem.encode_input(amount_fusdc),
-        }),
-        DotMap({
-            'receiver': fwbtc.address,
-            'value': 0,
-            'input': fwbtc.redeem.encode_input(amount_fwbtc)
-        })
+        DotMap(
+            {
+                "receiver": fusdc.address,
+                "value": 0,
+                "input": fusdc.redeem.encode_input(amount_fusdc),
+            }
+        ),
+        DotMap(
+            {
+                "receiver": fwbtc.address,
+                "value": 0,
+                "input": fwbtc.redeem.encode_input(amount_fwbtc),
+            }
+        ),
     ]
 
     safe_tx = SAFE.multisend_from_receipts(receipts=receipts)

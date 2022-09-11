@@ -8,7 +8,7 @@ def main():
     safe = GreatApeSafe(r.badger_wallets.dev_multisig)
     trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     stabiliser = safe.contract(
-        r.strategies['experimental.digg'], interface.IStabilizeStrategyDiggV1
+        r.strategies["experimental.digg"], interface.IStabilizeStrategyDiggV1
     )
     digg = safe.contract(r.treasury_tokens.DIGG)
     wbtc = safe.contract(r.treasury_tokens.WBTC)
@@ -24,7 +24,7 @@ def main():
 
     stabiliser.governancePullSomeCollateral(wbtc.balanceOf(stabiliser))
     stabiliser.setController(dummy)
-    dummy.sweepStratToTrops(stabiliser, {'from': safe.account})
+    dummy.sweepStratToTrops(stabiliser, {"from": safe.account})
 
     # do a sweep of all assets from dev to trops
     digg.transfer(trops, digg.balanceOf(safe))

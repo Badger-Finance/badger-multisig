@@ -9,14 +9,15 @@ TECH_OPS = registry.eth.badger_wallets.techops_multisig
 DEV = registry.eth.badger_wallets.dev_multisig
 REGISTRY = registry.eth.registry_v2
 VAULTS = registry.eth.sett_vaults
-STATUS = 2 # Guarded
+STATUS = 2  # Guarded
 VAULT_IDS = [
     "bauraBal",
     "b80BADGER_20WBTC",
     "b40WBTC_40DIGG_20graviAURA",
     "bBB_a_USD",
-    "b33auraBAL_33graviAURA_33WETH"
+    "b33auraBAL_33graviAURA_33WETH",
 ]
+
 
 def main():
     safe = GreatApeSafe(TECH_OPS)

@@ -27,6 +27,6 @@ def test_sweep_erc20_from_random(dai, gas_station, random):
 
     bal_before = dai.balanceOf(gas_station.owner())
     # call to sweep them to the owner
-    with brownie.reverts('Only callable by owner'):
-        gas_station.sweep(dai, gas_station.owner(), {'from': random})
+    with brownie.reverts("Only callable by owner"):
+        gas_station.sweep(dai, gas_station.owner(), {"from": random})
     assert dai.balanceOf(gas_station.owner()) == bal_before

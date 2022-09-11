@@ -1,10 +1,10 @@
 from math import ceil
 
 BASE = 1.0001
-Q128 = 2 ** 128
-Q96 = 2 ** 96
-Q32 = 2 ** 32
-MAXUINT256 = 2 ** 256 - 1
+Q128 = 2**128
+Q96 = 2**96
+Q32 = 2**32
+MAXUINT256 = 2**256 - 1
 
 
 def maxLiquidityForAmount0(sqrtA, sqrtB, amount):

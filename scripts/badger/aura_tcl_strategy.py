@@ -121,7 +121,7 @@ def main():
     if vault_status == 3:
         if aurabal_rewards.balanceOf(vault) > 0:
             aurabal_rewards.withdrawAll(False)
-        auraBAL.approve(bauraBal, 2 ** 256 - 1)
+        auraBAL.approve(bauraBal, 2**256 - 1)
         bauraBal.depositAll()
         auraBAL.approve(bauraBal, 0)
 

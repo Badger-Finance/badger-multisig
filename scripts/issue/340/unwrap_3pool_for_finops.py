@@ -8,9 +8,7 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     payments = GreatApeSafe(registry.eth.badger_wallets.payments_multisig)
     threepool = safe.contract(registry.eth.treasury_tokens.crv3pool)
-    usdc = interface.ERC20(
-        registry.eth.treasury_tokens.USDC, owner=safe.account
-    )
+    usdc = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=safe.account)
 
     safe.take_snapshot([threepool, usdc])
     payments.take_snapshot([threepool, usdc])

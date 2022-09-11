@@ -242,7 +242,7 @@ def main():
         addresses, height = get_depositors_sett(start_block)
         with addresses_json.open("w") as file:
             json.dump({"addresses": addresses, "latest": height}, file, indent=4)
-    
+
     for date in last_weeks:
         dt = datetime.datetime.strptime(f"{date} 00:00:00", "%Y-%m-%d %H:%M:%S")
         dt = dt.replace(tzinfo=timezone.utc)
@@ -265,7 +265,7 @@ def main():
         r = list(balances.items())
         for idx in range(len(r)):
             # format amount - better visual
-            r[idx] = (r[idx][0], r[idx][1] / (10 ** 18))
+            r[idx] = (r[idx][0], r[idx][1] / (10**18))
 
         r.sort(key=takeSecond, reverse=True)
         array_formatted_distribution = np.array(r)

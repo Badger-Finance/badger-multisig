@@ -1,9 +1,9 @@
-'''the EthBalanceMonitor contract, which was used as a base for
+"""the EthBalanceMonitor contract, which was used as a base for
 GasStationExact, already has been tested extensively by chainlink. the
 following unit tests only cover the changes made to that base contract.
 
 existing tests: https://github.com/smartcontractkit/chainlink/blob/develop/contracts/test/v0.8/EthBalanceMonitor.test.ts
-diff with EthBalanceMonitor.sol: https://www.diffchecker.com/mMyjvPXl'''
+diff with EthBalanceMonitor.sol: https://www.diffchecker.com/mMyjvPXl"""
 
 
 import pytest
@@ -14,18 +14,19 @@ from brownie_tokens import MintableForkToken
 from helpers.addresses import registry
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def deployer():
     return accounts[0]
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def gas_station():
     from scripts.deployment.deploy_gas_station import main
+
     return main()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def keeper(gas_station):
     return interface.IKeeperRegistry(gas_station.getKeeperRegistryAddress())
 

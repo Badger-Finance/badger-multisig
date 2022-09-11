@@ -23,14 +23,11 @@ class Aura(Convex):
     def _alert_not_relevant():
         print(" ==== NOT RELEVANT METHOD IN AURA CLASS ==== \n")
 
-
     def claim_all_from_booster(self):
         self.claim_all(1)
 
-
     def claim_all_from_locker(self):
         self.claim_all(2)
-
 
     def claim_all(self, option=1):
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool

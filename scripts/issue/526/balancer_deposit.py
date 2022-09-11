@@ -19,9 +19,13 @@ def main():
 
     wbtc_to_deposit = int(Decimal(WBTC_AMOUNT) * Decimal(10 ** wbtc.decimals()))
     ratio = bpt.getNormalizedWeights()[0] / bpt.getNormalizedWeights()[1]
-    badger_to_deposit = int(safe.balancer.get_amount_out(
-        wbtc, badger, 1000
-    ) / 1000 * wbtc_to_deposit / .997 / ratio)
+    badger_to_deposit = int(
+        safe.balancer.get_amount_out(wbtc, badger, 1000)
+        / 1000
+        * wbtc_to_deposit
+        / 0.997
+        / ratio
+    )
 
     underlyings = [wbtc, badger]
     amounts = [wbtc_to_deposit, badger_to_deposit]

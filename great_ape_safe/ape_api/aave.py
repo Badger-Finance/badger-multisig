@@ -8,7 +8,7 @@ from helpers.addresses import registry
 C = Console()
 
 
-class Aave():
+class Aave:
     def __init__(self, safe):
         self.safe = safe
 
@@ -22,7 +22,6 @@ class Aave():
         self.pool = safe.contract(registry.eth.aave.aave_lending_pool_v2)
         self.oracle = safe.contract(registry.eth.aave.price_oracle_v2)
 
-
     def deposit(self, underlying, mantissa, destination=None):
         # deposit `mantissa` amount of `underlying` into aave pool
         # https://docs.aave.com/developers/the-core-protocol/lendingpool#deposit
@@ -34,7 +33,6 @@ class Aave():
         self.pool.deposit(underlying, mantissa, destination, 0)
         assert atoken.balanceOf(destination) > bal_before
 
-
     def withdraw(self, underlying, mantissa, destination=None):
         # withdraw `underlying asset` from aave pool
         # https://docs.aave.com/developers/the-core-protocol/lendingpool#withdraw
@@ -43,15 +41,13 @@ class Aave():
         self.pool.withdraw(underlying, mantissa, destination)
         assert underlying.balanceOf(destination) > bal_before
 
-
     def withdraw_all(self, underlying, destination=None):
         # withdraw maximum balance of `underlying asset` from aave pool
         # https://docs.aave.com/developers/the-core-protocol/lendingpool#withdraw
         destination = self.safe.address if not destination else destination
         bal_before = underlying.balanceOf(destination)
-        self.pool.withdraw(underlying, 2**256-1, destination)
+        self.pool.withdraw(underlying, 2**256 - 1, destination)
         assert underlying.balanceOf(destination) > bal_before
-
 
     def claim_all(self, markets=[], destination=None):
         # claim all pending rewards from the aave pool
@@ -61,12 +57,17 @@ class Aave():
         # https://docs.aave.com/developers/v/2.0/guides/liquidity-mining#getuserunclaimedrewards
         pending_from_last_action = self.controller.getUserUnclaimedRewards(self.safe)
         # https://docs.aave.com/developers/v/2.0/guides/liquidity-mining#getrewardsbalance
-        pending_from_assets = self.controller.getRewardsBalance(markets, self.safe.address)
+        pending_from_assets = self.controller.getRewardsBalance(
+            markets, self.safe.address
+        )
         assert pending_from_last_action > 0 or pending_from_assets > 0
-        pending = pending_from_last_action if pending_from_last_action > 0 else pending_from_assets
+        pending = (
+            pending_from_last_action
+            if pending_from_last_action > 0
+            else pending_from_assets
+        )
         self.controller.claimRewards(markets, pending, destination)
         assert self.stkaave.balanceOf(destination) > bal_before
-
 
     def unstake_and_claim_all(self, destination=None):
         # unstake $stkaave into $aave and claim all rewards it accrued. if
@@ -82,41 +83,37 @@ class Aave():
             if timestamp <= threshold:
                 # report exact unstaking window
                 t0 = datetime.fromtimestamp(threshold).astimezone(timezone.utc)
-                t0 = t0.strftime('%Y-%m-%d %H:%M:%S %Z')
+                t0 = t0.strftime("%Y-%m-%d %H:%M:%S %Z")
                 t1 = datetime.fromtimestamp(deadline).astimezone(timezone.utc)
-                t1 = t1.strftime('%Y-%m-%d %H:%M:%S %Z')
-                C.print(f'unstaking will be available between {t0} and {t1}\n')
+                t1 = t1.strftime("%Y-%m-%d %H:%M:%S %Z")
+                C.print(f"unstaking will be available between {t0} and {t1}\n")
                 return
             elif timestamp <= deadline:
                 bal_before = self.aave.balanceOf(destination)
-                self.stkaave.redeem(destination, 2**256-1)
+                self.stkaave.redeem(destination, 2**256 - 1)
                 assert self.aave.balanceOf(destination) > bal_before
                 bal_before = self.aave.balanceOf(destination)
-                self.stkaave.claimRewards(destination, 2**256-1)
+                self.stkaave.claimRewards(destination, 2**256 - 1)
                 assert self.aave.balanceOf(destination) > bal_before
                 return
-        C.print('no valid window found; calling cooldown now...')
+        C.print("no valid window found; calling cooldown now...")
         self.stkaave.cooldown()
         self.unstake_and_claim(destination)
-
 
     def borrow(self, underlying, mantissa, variable_rate=True):
         mode = 2 if variable_rate else 1
         self.pool.borrow(underlying, mantissa, mode, 0, self.safe.address)
-
 
     def repay(self, underlying, mantissa, variable_rate=True):
         mode = 2 if variable_rate else 1
         underlying.approve(self.pool, mantissa)
         self.pool.repay(underlying, mantissa, mode, self.safe.address)
 
-
     def repay_all(self, underlying, variable_rate=True):
         mode = 2 if variable_rate else 1
-        underlying.approve(self.pool, 2**256-1)
-        self.pool.repay(underlying, 2**256-1, mode, self.safe.address)
+        underlying.approve(self.pool, 2**256 - 1)
+        self.pool.repay(underlying, 2**256 - 1, mode, self.safe.address)
         underlying.approve(self.pool, 0)
-
 
     def _get_debt_in_token(self, token):
         info = self.pool.getUserAccountData(self.safe.address)
@@ -124,12 +121,11 @@ class Aave():
         token_to_eth_rate = self.oracle.getAssetPrice(token)
         return (debt_in_eth * 10 ** token.decimals()) / token_to_eth_rate
 
-
     def lever_up(self, collateral_token, borrow_token, perc):
-        '''
+        """
         given total borrow amounts in the aave user account, we will use
         `percent_bps` of it to borrow `borrow_token`
-        '''
+        """
         ## get total borrowable
         info = self.pool.getUserAccountData(self.safe.address)
 
@@ -154,21 +150,36 @@ class Aave():
         )
         self.deposit(collateral_token, to_reinvest)
 
-
     def delever(self, collateral_token, borrow_token):
         debt_to_repay = self._get_debt_in_token(borrow_token)
         debt_paid = 0
         while debt_paid < debt_to_repay:
             ## Given amount of debt_to_repay, withdraw what is possible and repay
-            collateral_in_eth, debt_in_eth, available_borrows_eth, liq_threshold, _, _ = self.pool.getUserAccountData(self.safe)
+            (
+                collateral_in_eth,
+                debt_in_eth,
+                available_borrows_eth,
+                liq_threshold,
+                _,
+                _,
+            ) = self.pool.getUserAccountData(self.safe)
             borrow_to_eth_rate = self.oracle.getAssetPrice(borrow_token)
             collateral_to_eth_rate = self.oracle.getAssetPrice(collateral_token)
-            max_to_withdraw = (debt_to_repay * borrow_to_eth_rate * 10**collateral_token.decimals()) / (collateral_to_eth_rate * 10**borrow_token.decimals())
+            max_to_withdraw = (
+                debt_to_repay * borrow_to_eth_rate * 10 ** collateral_token.decimals()
+            ) / (collateral_to_eth_rate * 10 ** borrow_token.decimals())
 
             ## How much `collateral_token` do we need to withdraw, to repay this debt?
             available_withdraw_eth = available_borrows_eth * 10_000 / liq_threshold
-            assert 0 < available_withdraw_eth and available_withdraw_eth <= collateral_in_eth
-            available_to_withdraw = available_withdraw_eth * 10 ** collateral_token.decimals() / collateral_to_eth_rate
+            assert (
+                0 < available_withdraw_eth
+                and available_withdraw_eth <= collateral_in_eth
+            )
+            available_to_withdraw = (
+                available_withdraw_eth
+                * 10 ** collateral_token.decimals()
+                / collateral_to_eth_rate
+            )
 
             ## Cap withdrawal to maximum required for debt_to_repay
             available_to_withdraw = min(available_to_withdraw, max_to_withdraw)
@@ -178,7 +189,11 @@ class Aave():
             available_to_withdraw *= 1.05
 
             ## Cap withdrawal to maximum collateral deposited
-            max_deposited = (collateral_in_eth - debt_in_eth) * 10 ** collateral_token.decimals() / collateral_to_eth_rate
+            max_deposited = (
+                (collateral_in_eth - debt_in_eth)
+                * 10 ** collateral_token.decimals()
+                / collateral_to_eth_rate
+            )
             available_to_withdraw = min(available_to_withdraw, max_deposited)
 
             ## Withdraw

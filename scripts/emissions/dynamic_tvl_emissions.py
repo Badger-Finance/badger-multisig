@@ -21,7 +21,7 @@ def dynamic_bveCVX_emissions():
 
     decimals = bveCVX.decimals()
     total_supply = bveCVX.totalSupply()
-    ppfs = bveCVX.getPricePerFullShare() / 10 ** decimals
+    ppfs = bveCVX.getPricePerFullShare() / 10**decimals
 
     total_cvx_aum = total_supply * ppfs
 
@@ -52,7 +52,7 @@ def dynamic_bveCVX_emissions():
     print(f"badger_rate={badger_rate}")
     print(f"cvx_rate={cvx_rate}")
 
-    cvx_aum_formatted = total_cvx_aum / 10 ** decimals
+    cvx_aum_formatted = total_cvx_aum / 10**decimals
 
     print(f"\n ==== cvx_aum_usd={cvx_aum_formatted * spot_price_cvx} ==== ")
 
@@ -65,4 +65,4 @@ def dynamic_bveCVX_emissions():
     print(f" ==== badger_units={badger_units} ==== \n")
 
     # badger has same decimals as CVX, reuse
-    return badger_units * 10 ** decimals
+    return badger_units * 10**decimals

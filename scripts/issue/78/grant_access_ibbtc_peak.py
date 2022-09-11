@@ -4,6 +4,7 @@ from brownie import interface
 
 TREASURY_OPS = registry.eth.badger_wallets.treasury_ops_multisig
 
+
 def main(peak="badger"):
     safe = GreatApeSafe(registry.ibbtc.dfdBadgerShared)
 

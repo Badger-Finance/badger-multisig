@@ -15,16 +15,19 @@ TROPS = registry.eth.badger_wallets.treasury_ops_multisig
 
 USER = "0xf18da2faba96793f02264d1a047790002f32010f"
 
+
 def main(simulation="false"):
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
-    auraBal_strat_current = interface.IAuraBalStaker(AURABAL_STRAT_CURRENT, owner=safe.account)
+    auraBal_strat_current = interface.IAuraBalStaker(
+        AURABAL_STRAT_CURRENT, owner=safe.account
+    )
     auraBal_strat_new = interface.IAuraBalStaker(AURABAL_STRAT_NEW, owner=safe.account)
     auraBal_vault = interface.ITheVault(BAURA_BAL, owner=safe.account)
     want = interface.IERC20(auraBal_vault.token())
     bb_a_usd = interface.IERC20(auraBal_strat_new.BB_A_USD())
 
     aura = interface.IERC20(auraBal_strat_new.AURA())
-    bal = interface.IERC20(auraBal_strat_new.BAL ())
+    bal = interface.IERC20(auraBal_strat_new.BAL())
     graviaura = interface.IERC20(auraBal_strat_new.GRAVIAURA())
 
     ## Check integrity
@@ -36,7 +39,10 @@ def main(simulation="false"):
         auraBal_strat_new.withdrawalMaxDeviationThreshold()
         == auraBal_strat_current.withdrawalMaxDeviationThreshold()
     )
-    assert auraBal_strat_new.autoCompoundRatio() == auraBal_strat_current.autoCompoundRatio()
+    assert (
+        auraBal_strat_new.autoCompoundRatio()
+        == auraBal_strat_current.autoCompoundRatio()
+    )
     assert (
         auraBal_strat_new.claimRewardsOnWithdrawAll()
         == auraBal_strat_current.claimRewardsOnWithdrawAll()
@@ -51,7 +57,7 @@ def main(simulation="false"):
 
     ## Harvest current strat
     tx = auraBal_strat_current.harvest()
-    assert len(tx.events["TreeDistribution"]) == 2 # GraviAURA and bBB-A-USD
+    assert len(tx.events["TreeDistribution"]) == 2  # GraviAURA and bBB-A-USD
     # Ensure that no assets remain sitting on strategy
     assert bb_a_usd.balanceOf(auraBal_strat_current) == 0
     assert aura.balanceOf(auraBal_strat_current) == 0
@@ -60,14 +66,16 @@ def main(simulation="false"):
     assert graviaura.balanceOf(auraBal_strat_current) == 0
 
     ## withdrawToVault
-    prev_strat_balance = auraBal_strat_current.balanceOf() # balanceOfWant().add(balanceOfPool());
+    prev_strat_balance = (
+        auraBal_strat_current.balanceOf()
+    )  # balanceOfWant().add(balanceOfPool());
     prev_vault_balance = want.balanceOf(BAURA_BAL)
     auraBal_vault.withdrawToVault()
     assert want.balanceOf(BAURA_BAL) == prev_strat_balance + prev_vault_balance
     assert auraBal_strat_current.balanceOf() == 0
 
     # setStrategy
-    assert auraBal_strat_current.want() == auraBal_strat_new.want() # Confirm strategy
+    assert auraBal_strat_current.want() == auraBal_strat_new.want()  # Confirm strategy
     auraBal_vault.setStrategy(AURABAL_STRAT_NEW)
     assert auraBal_vault.strategy() == auraBal_strat_new.address
 
@@ -79,15 +87,17 @@ def main(simulation="false"):
 
     # Run a few test actions
     if simulation == "true":
-        chain.sleep(13*100)
+        chain.sleep(13 * 100)
         chain.mine()
 
         # Harvest
         tx = auraBal_strat_new.harvest()
-        assert len(tx.events["TreeDistribution"]) == 1 # graviAURA (No bBB_A_USD anymore)
-        assert bb_a_usd.balanceOf(AURABAL_STRAT_NEW) > 0 # With 
+        assert (
+            len(tx.events["TreeDistribution"]) == 1
+        )  # graviAURA (No bBB_A_USD anymore)
+        assert bb_a_usd.balanceOf(AURABAL_STRAT_NEW) > 0  # With
 
-        chain.sleep(13*100)
+        chain.sleep(13 * 100)
         chain.mine()
 
         # Withdraw
@@ -96,7 +106,7 @@ def main(simulation="false"):
         auraBal_vault.withdrawAll({"from": user})
         assert want.balanceOf(USER) > prev_user_balance
 
-        chain.sleep(13*100)
+        chain.sleep(13 * 100)
         chain.mine()
 
         # Harvest with min threshold for USD set to 0
@@ -104,7 +114,7 @@ def main(simulation="false"):
         assert auraBal_strat_new.minBbaUsdHarvest() == 0
 
         tx = auraBal_strat_new.harvest()
-        assert bb_a_usd.balanceOf(AURABAL_STRAT_NEW) == 0 # All bb-a-usd gets processed
+        assert bb_a_usd.balanceOf(AURABAL_STRAT_NEW) == 0  # All bb-a-usd gets processed
 
         C.print("[green]Simulation successful![/green]")
     else:

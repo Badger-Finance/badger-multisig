@@ -1,6 +1,6 @@
-'''
+"""
 ref: https://github.com/smartcontractkit/keeper/blob/master/contracts/UpkeepRegistrationRequests.sol
-'''
+"""
 
 from brownie import chain, interface
 
@@ -9,12 +9,11 @@ from helpers.addresses import r
 
 
 LINK_MANTISSA = 75e18
-UPKEEP_ID_TREE_22Q2 = 87 # https://keepers.chain.link/mainnet/87
+UPKEEP_ID_TREE_22Q2 = 87  # https://keepers.chain.link/mainnet/87
 
 SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 RELAYER = SAFE.contract(
-    r.chainlink.upkeep_registration_requests,
-    interface.IUpkeepRegistrationRequests
+    r.chainlink.upkeep_registration_requests, interface.IUpkeepRegistrationRequests
 )
 LINK = SAFE.contract(r.treasury_tokens.LINK, interface.ILinkToken)
 STATION = SAFE.contract(r.badger_wallets.gas_station)
@@ -44,16 +43,10 @@ def register_q3(sim=False):
 
     # register upkeeps for new drippers
     SAFE.chainlink.register_upkeep(
-        'TreeDripper2022Q3',
-        r.drippers.tree_2022_q3,
-        300_000,
-        LINK_MANTISSA
+        "TreeDripper2022Q3", r.drippers.tree_2022_q3, 300_000, LINK_MANTISSA
     )
     SAFE.chainlink.register_upkeep(
-        'RemBadgerDripper2022Q3',
-        r.drippers.rembadger_2022_q3,
-        300_000,
-        LINK_MANTISSA
+        "RemBadgerDripper2022Q3", r.drippers.rembadger_2022_q3, 300_000, LINK_MANTISSA
     )
 
     # maintenance on the gas station; top up with ether and update watchlist

@@ -22,7 +22,7 @@ def main(broadcast="true"):
     for key, addr in strategies.items():
 
         strategy = Contract(addr)
-        
+
         if strategy.governance() == safe.address:
             print(
                 f"Current governance address is in ({key}) strategy: {strategy.governance()}\n"

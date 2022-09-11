@@ -4,7 +4,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-DUSTY = .998
+DUSTY = 0.998
 
 
 def main():
@@ -24,19 +24,15 @@ def main():
         registry.eth.treasury_tokens.crv3pool, owner=safe.account
     )
     # TODO: IStableSwap3Pool doesnt have name attr???
-    three_eur = Contract.from_explorer( #interface.IStableSwap3Pool(
+    three_eur = Contract.from_explorer(  # interface.IStableSwap3Pool(
         registry.eth.treasury_tokens.crv3eur, owner=safe.account
     )
-    usdc = interface.ERC20(
-        registry.eth.treasury_tokens.USDC, owner=safe.account
-    )
-    eurs = interface.ERC20(
-        registry.eth.treasury_tokens.EURS, owner=safe.account
-    )
+    usdc = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=safe.account)
+    eurs = interface.ERC20(registry.eth.treasury_tokens.EURS, owner=safe.account)
 
-    safe.take_snapshot(tokens=[
-        threepool.address, three_eur.address, usdc.address, eurs.address
-    ])
+    safe.take_snapshot(
+        tokens=[threepool.address, three_eur.address, usdc.address, eurs.address]
+    )
 
     bal_threepool = threepool.balanceOf(safe)
 
@@ -48,7 +44,7 @@ def main():
     # confirm staked balance onchain
     _, _, _, rewards = safe.convex.get_pool_info(three_eur)
     # rough expectation; covert usd -> eur and allow 1% fee and slippage
-    expected = bal_threepool / 1.17 * .99
+    expected = bal_threepool / 1.17 * 0.99
     balance_checker.verifyBalance(rewards, safe, expected)
 
     # skipping preview; getting timeout of 10s here, probably from

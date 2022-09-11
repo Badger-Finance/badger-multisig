@@ -12,12 +12,10 @@ def main():
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
 
     bvecvx_cvx_lp = interface.ICurveLP(
-        registry.eth.treasury_tokens['bveCVX-CVX-f'],
-        owner=trops.account
-)
+        registry.eth.treasury_tokens["bveCVX-CVX-f"], owner=trops.account
+    )
     bbveCVX_sett = interface.ISettV4h(
-        registry.eth.sett_vaults['bbveCVX-CVX-f'],
-        owner=trops.account
+        registry.eth.sett_vaults["bbveCVX-CVX-f"], owner=trops.account
     )
 
     trops.take_snapshot(tokens=[bvecvx_cvx_lp.address, bbveCVX_sett.address])

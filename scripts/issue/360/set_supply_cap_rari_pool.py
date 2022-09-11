@@ -2,6 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from decimal import Decimal
 
+
 def main():
     dev_msig = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
 

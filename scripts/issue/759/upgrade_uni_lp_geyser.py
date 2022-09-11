@@ -20,8 +20,8 @@ WETH = DEV.contract(r.treasury_tokens.WETH)
 WBTC = DEV.contract(r.treasury_tokens.WBTC)
 ULP = DEV.contract(r.treasury_tokens.uniWbtcBadger)
 
-NEW_LOGIC = '0xf8C383A50984Ea50D9e343572F49a09152b3e674'
-DUMP_DIR = 'data/badger/timelock/upgrade_uni_lp_geyser/'
+NEW_LOGIC = "0xf8C383A50984Ea50D9e343572F49a09152b3e674"
+DUMP_DIR = "data/badger/timelock/upgrade_uni_lp_geyser/"
 
 C = Console()
 
@@ -30,8 +30,8 @@ def queue():
     # queue the upgrade
     DEV.badger.queue_timelock(
         target_addr=DEV_PROXY_ADMIN.address,
-        signature='upgrade(address,address)',
-        data=encode_abi(['address', 'address'], [GEYSER.address, NEW_LOGIC]),
+        signature="upgrade(address,address)",
+        data=encode_abi(["address", "address"], [GEYSER.address, NEW_LOGIC]),
         dump_dir=DUMP_DIR,
         delay_in_days=4,
     )
@@ -58,7 +58,7 @@ def main(sim=None):
         try:
             attributes[attr] = getattr(GEYSER, attr).call()
         except:
-            C.print(f'[red]error storing {attr}[/red]')
+            C.print(f"[red]error storing {attr}[/red]")
 
     if sim:
         # simulate the upgrade
@@ -70,13 +70,13 @@ def main(sim=None):
     # assert balances
     for token in tokens:
         assert prev_balance[token.address] == token.balanceOf(GEYSER)
-        C.print(f'[green]asserted balanceOf for {token.address}[/green]')
+        C.print(f"[green]asserted balanceOf for {token.address}[/green]")
 
     # assert storage vars
     for attr in GEYSER.signatures:
         try:
             assert attributes[attr] == getattr(GEYSER, attr).call()
-            C.print(f'[green]asserted {attr}[/green]')
+            C.print(f"[green]asserted {attr}[/green]")
         except:
             pass
 

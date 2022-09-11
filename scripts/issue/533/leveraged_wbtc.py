@@ -9,20 +9,20 @@ USDC = SAFE.contract(registry.eth.treasury_tokens.USDC)
 
 
 def lever_up():
-  SAFE.init_aave()
-  SAFE.take_snapshot([WBTC, AWBTC, USDC])
+    SAFE.init_aave()
+    SAFE.take_snapshot([WBTC, AWBTC, USDC])
 
-  SAFE.aave.deposit(WBTC, 1e8)
-  SAFE.aave.lever_up(WBTC, USDC, .5)
+    SAFE.aave.deposit(WBTC, 1e8)
+    SAFE.aave.lever_up(WBTC, USDC, 0.5)
 
-  SAFE.post_safe_tx()
+    SAFE.post_safe_tx()
 
 
 def delever():
-  SAFE.init_aave()
-  SAFE.take_snapshot([WBTC, AWBTC, USDC])
+    SAFE.init_aave()
+    SAFE.take_snapshot([WBTC, AWBTC, USDC])
 
-  SAFE.aave.delever(WBTC, USDC)
-  SAFE.aave.withdraw_all(WBTC)
+    SAFE.aave.delever(WBTC, USDC)
+    SAFE.aave.withdraw_all(WBTC)
 
-  SAFE.post_safe_tx()
+    SAFE.post_safe_tx()

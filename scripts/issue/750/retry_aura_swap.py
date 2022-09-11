@@ -19,7 +19,7 @@ def main():
     vault.take_snapshot([bal, usdc, aura, aurabal])
     vault.init_cow()
     vault.cow.market_sell(
-        aura, usdc, aura.balanceOf(vault), deadline=60*60*4, coef=.9825
+        aura, usdc, aura.balanceOf(vault), deadline=60 * 60 * 4, coef=0.9825
     )
 
     bal_to_deposit = bal.balanceOf(vault)

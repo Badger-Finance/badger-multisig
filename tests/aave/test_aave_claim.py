@@ -4,8 +4,9 @@ from brownie import chain
 
 @pytest.fixture(scope="function", autouse=True)
 def deposited(aave, USDC):
-    to_deposit = 10_000 * 10**USDC.decimals()
+    to_deposit = 10_000 * 10 ** USDC.decimals()
     aave.deposit(USDC, to_deposit)
+
 
 def test_claim(safe, aave, sktAAVE):
     before_bal_sktaave = sktAAVE.balanceOf(safe)
@@ -15,9 +16,10 @@ def test_claim(safe, aave, sktAAVE):
 
     assert sktAAVE.balanceOf(safe) > before_bal_sktaave
 
+
 def test_unstake_and_claim(safe, aave, sktAAVE, AAVE):
     before_bal_aave = AAVE.balanceOf(safe)
-    
+
     # Start staking vesting period
     sktAAVE.cooldown()
     wait_peroid = sktAAVE.COOLDOWN_SECONDS()

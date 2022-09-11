@@ -10,21 +10,19 @@ TROPS = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
 xSUSHI = interface.ISushiBar(registry.eth.treasury_tokens.xSUSHI)
 SUSHI = TROPS.contract(registry.eth.treasury_tokens.SUSHI)
 CVX = TROPS.contract(registry.eth.treasury_tokens.CVX)
-BVECVX = interface.ISettV4h(
-    registry.eth.treasury_tokens.bveCVX, owner=TROPS.account
-)
+BVECVX = interface.ISettV4h(registry.eth.treasury_tokens.bveCVX, owner=TROPS.account)
 
 
 def transfer_xsushi_to_trops():
     TROPS.take_snapshot(tokens=[xSUSHI])
-    xSUSHI.transfer(TROPS, xSUSHI.balanceOf(VAULT), {'from': VAULT.account})
+    xSUSHI.transfer(TROPS, xSUSHI.balanceOf(VAULT), {"from": VAULT.account})
     TROPS.print_snapshot()
     VAULT.post_safe_tx()
 
 
 def unwrap_xsushi():
     TROPS.take_snapshot(tokens=[xSUSHI, SUSHI])
-    xSUSHI.leave(xSUSHI.balanceOf(TROPS), {'from': TROPS.account})
+    xSUSHI.leave(xSUSHI.balanceOf(TROPS), {"from": TROPS.account})
     TROPS.print_snapshot()
     TROPS.post_safe_tx()
 
@@ -36,12 +34,12 @@ def post_orders_to_cowswap():
     a_tenth = int(SUSHI.balanceOf(TROPS) / 10)
     rest = SUSHI.balanceOf(TROPS) - half - 4 * a_tenth
     assert half + 4 * a_tenth + rest == SUSHI.balanceOf(TROPS)
-    TROPS.cow.market_sell(SUSHI, CVX, half, deadline=60*60*24)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=1.01)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=1.02)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=1.03)
-    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60*60*24*10, coef=1.04)
-    TROPS.cow.market_sell(SUSHI, CVX, rest, deadline=60*60*24*10, coef=1.05)
+    TROPS.cow.market_sell(SUSHI, CVX, half, deadline=60 * 60 * 24)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.01)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.02)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.03)
+    TROPS.cow.market_sell(SUSHI, CVX, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.04)
+    TROPS.cow.market_sell(SUSHI, CVX, rest, deadline=60 * 60 * 24 * 10, coef=1.05)
     TROPS.post_safe_tx()
 
 

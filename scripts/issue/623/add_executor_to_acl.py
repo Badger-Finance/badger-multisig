@@ -6,6 +6,7 @@ DEV_MULTI = registry.eth.badger_wallets.dev_multisig
 BVECVX_STRATEGY = ADDRESSES_ETH["strategies"]["native.vestedCVX"]
 BVECVX_SETT = ADDRESSES_ETH["sett_vaults"]["bveCVX"]
 
+
 def main(simulation="false"):
     safe = GreatApeSafe(DEV_MULTI)
     keeper_acl = safe.contract(registry.eth.keeperAccessControl)

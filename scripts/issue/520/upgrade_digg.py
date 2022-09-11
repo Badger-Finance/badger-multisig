@@ -7,7 +7,7 @@ from brownie.test.managers.runner import RevertContextManager as reverts
 
 C = Console()
 
-NEW_LOGIC = registry.eth.logic["uFragments"] 
+NEW_LOGIC = registry.eth.logic["uFragments"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 TROPS_MSIG = registry.eth.badger_wallets.treasury_ops_multisig
 DIGG_ADDRESS = registry.eth.treasury_tokens["DIGG"]
@@ -34,8 +34,7 @@ def main(queue="true", simulation="false"):
 
     digg = interface.IUFragments(DIGG_ADDRESS, owner=safe.account)
     balance_checker = interface.IBalanceChecker(
-        registry.eth.helpers.balance_checker, 
-        owner=safe.account
+        registry.eth.helpers.balance_checker, owner=safe.account
     )
 
     if queue == "true":
@@ -49,7 +48,7 @@ def main(queue="true", simulation="false"):
             dump_dir="data/badger/timelock/upgrade_digg/",
             delay_in_days=2.88,
         )
-    else:   
+    else:
         # record current digg information
         prev_total_supply = digg.totalSupply()
         prev_name = digg.name()
@@ -104,9 +103,8 @@ def main(queue="true", simulation="false"):
             # Toggle Rebase
             monetary_policy = accounts.at(MONETARY_POLICY, force=True)
             digg.toggleRebase()
-            with reverts('Rebase paused'):
+            with reverts("Rebase paused"):
                 digg.rebase(100, 50, {"from": monetary_policy})
-
 
             # test sweep
             # Note: this test assumes there's a balance of link in the digg contract
@@ -127,12 +125,10 @@ def main(queue="true", simulation="false"):
             assert prev_trops_msig_balance + MINT_AMOUNT == new_trops_msig_balance
             # Verify on-chain
             balance_checker.verifyBalance(
-                digg.address, 
-                TROPS_MSIG,
-                prev_trops_msig_balance + MINT_AMOUNT
+                digg.address, TROPS_MSIG, prev_trops_msig_balance + MINT_AMOUNT
             )
 
             # Call toggleRebase atomically with upgrade execution
             digg.toggleRebase()
 
-    safe.post_safe_tx(post=(simulation!="true"), replace_nonce=1046)
+    safe.post_safe_tx(post=(simulation != "true"), replace_nonce=1046)

@@ -9,7 +9,8 @@ C = Console()
 STRAT_ADDRESS = registry.ftm.strategies["native.bveOXD-OXD"]
 DEV_PROXY = registry.ftm.badger_wallets.devProxyAdmin
 DEV_MULTI = registry.ftm.badger_wallets.dev_multisig
-NEW_LOGIC = registry.ftm.logic["StrategybveOxdOxdStakingOptimizer"] 
+NEW_LOGIC = registry.ftm.logic["StrategybveOxdOxdStakingOptimizer"]
+
 
 def main(simulation="false"):
     safe = GreatApeSafe(DEV_MULTI)
@@ -55,4 +56,4 @@ def main(simulation="false"):
     if simulation == "true":
         strat.harvest({"from": safe.account})
 
-    safe.post_safe_tx(post=(simulation!="true"))
+    safe.post_safe_tx(post=(simulation != "true"))
