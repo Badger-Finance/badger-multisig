@@ -233,8 +233,9 @@ class Convex:
 
             assert staking_token.balanceOf(self.safe) > balance_staking_token_before
 
-            for idx, reward in enumerate(rewards):
-                assert (
-                    self.safe.contract(reward).balanceOf(self.safe)
-                    > balances_rewards_before[idx]
-                )
+            assert any(
+                [
+                    self.safe.contract(reward).balanceOf(self.safe) > balance
+                    for balance, reward in zip(balances_rewards_before, rewards)
+                ]
+            )

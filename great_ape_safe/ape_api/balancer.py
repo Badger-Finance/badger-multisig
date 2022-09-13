@@ -346,7 +346,9 @@ class Balancer:
                 pool, reserves, amount_in
             )
 
-        min_underlyings_out = [x * (1 - self.max_slippage) for x in underlyings_out]
+        min_underlyings_out = [
+            Decimal(x) * (1 - self.max_slippage) for x in underlyings_out
+        ]
 
         if is_eth:
             underlyings = list(underlyings)
