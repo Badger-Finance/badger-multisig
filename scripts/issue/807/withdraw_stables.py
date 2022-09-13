@@ -1,5 +1,3 @@
-from brownie import interface
-
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -17,10 +15,10 @@ def main():
     usdt = vault.contract(r.treasury_tokens.USDT)
     usdc = vault.contract(r.treasury_tokens.USDC)
     fei = vault.contract(r.treasury_tokens.FEI)
-    frax = interface.ERC20(r.treasury_tokens.FRAX, owner=vault.account)
+    frax = vault.contract(r.treasury_tokens.FRAX)
     dai = vault.contract(r.treasury_tokens.DAI)
 
-    fxs = interface.ERC20(r.treasury_tokens.FXS, owner=vault.account)
+    fxs = vault.contract(r.treasury_tokens.FXS)
     comp = vault.contract(r.treasury_tokens.COMP)
     weth = vault.contract(r.treasury_tokens.WETH)
 
