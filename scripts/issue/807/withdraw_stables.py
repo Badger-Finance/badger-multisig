@@ -61,17 +61,8 @@ def main():
     # roughly 2:2:2:1:1 USDT:USDC:DAI:FRAX:FEI at this point
 
     # target: 1:1:1 USDT:USDC:DAI
-    frax_portion = frax.balanceOf(vault) * 2 / 3
-    fei_portion = fei.balanceOf(vault) * 2 / 3
-
-    vault.curve.swap(frax, dai, frax_portion)
-    vault.curve.swap(fei, usdc, fei_portion)
-
-    left_over_frax = frax.balanceOf(vault)
-    left_over_fei = fei.balanceOf(vault)
-
-    vault.curve.swap(frax, usdt, left_over_frax)
-    vault.curve.swap(fei, usdt, left_over_fei)
+    vault.curve.swap(frax, dai, frax.balanceOf(vault))
+    vault.curve.swap(fei, usdt, fei.balanceOf(vault))
 
     # sell rewards to lowest balance token of the 3
     lowest_bal_token = min([usdt, usdc, dai], key=lambda token: token.balanceOf(vault))
