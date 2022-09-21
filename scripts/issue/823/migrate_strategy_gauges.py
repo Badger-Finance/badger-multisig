@@ -116,8 +116,3 @@ def main(simulation="false"):
 
     if simulation == "false":
         safe.post_safe_tx()
-
-
-
-
-        
