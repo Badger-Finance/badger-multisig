@@ -7,7 +7,7 @@ C = Console()
 
 VAULTS_PIDS = {
     "b80BADGER_20WBTC": 33,
-    # "b40WBTC_40DIGG_20graviAURA": 34,
+    "b40WBTC_40DIGG_20graviAURA": 34,
 }
 
 def main():
