@@ -69,7 +69,10 @@ class Snapshot:
     def format_choice(self, choice):
         choices = self.proposal_data["choices"]
         if isinstance(choice, dict):
-            return {str(choices.index(k) + 1): v for k, v in choice.items()}
+            try:
+                return {str(choices.index(k) + 1): v for k, v in choice.items()}
+            except ValueError:
+                print(choices)
         else:
             choice = int(choices.index(choice) + 1)
             assert choice <= len(choices) + 1, "choice out of bounds"
