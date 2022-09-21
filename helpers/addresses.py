@@ -316,7 +316,8 @@ ADDRESSES_ETH = {
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
         "native.bauraBal": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
-        "native.b80BADGER-20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
+        "native.b80BADGER_20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
+        "native.b40WBTC_40DIGG_20graviAURA": "0xD87F2cdE238D0122b3865164359CFF6b2431d927",
         "_deprecated": {
             "native.bauraBal": {
                 "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
