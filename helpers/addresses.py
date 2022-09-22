@@ -193,6 +193,7 @@ ADDRESSES_ETH = {
         "AURA": "0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF",
         "AURABAL": "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
         "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
+        "badgerFRAXBP_f_lp": "0x09b2E090531228d1b8E3d948C73b990Cb6e60720",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -242,6 +243,7 @@ ADDRESSES_ETH = {
         "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d",
         "t_eth_f": "0x752eBeb79963cf0732E9c0fec72a49FD1DEfAEAC",
         "cvx_eth_f": "0xB576491F1E6e5E62f1d8F26062Ee822B40B0E0d4",
+        "badgerFRAXBP_f": "0x13B876C26Ad6d21cb87AE459EaF6d7A1b788A113"
     },
     # mStable want tokens
     "mstable_vaults": {
@@ -500,6 +502,7 @@ ADDRESSES_ETH = {
         "zap_ibbtc": "0xbba4b444FD10302251d9F5797E763b0d912286A1",
         "zap_pbtc": "0x11F419AdAbbFF8d595E7d5b223eee3863Bb3902C",
         "zap_obtc": "0xd5BCf53e2C81e1991570f33Fa881c49EEa570C8D",
+        "zap_fraxbp": "0x5De4EF4879F4fe3bBADF2227D2aC5d0E2D76C895",
     },
     "uma": {
         "DIGG_LongShortPair": "0x65DCcd928C71ef98e6eC887FEA24d116765c8A8D",

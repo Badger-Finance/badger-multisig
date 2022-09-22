@@ -101,7 +101,7 @@ class Curve:
         except VirtualMachineError:
             return False
 
-    def deposit(self, lp_token, mantissas, asset=None):
+    def deposit(self, lp_token, mantissas, asset=None, seeding=False):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
         # `mantissas` do not need to be balanced in any way
         # if `mantissas` is not a list but an int, `asset` needs to be specified
@@ -127,10 +127,13 @@ class Curve:
             assert (np.array(mantissas) > 0).any()
         assert n_coins == len(mantissas)
 
-        if self.is_v2:
-            expected = pool.calc_token_amount(mantissas)
+        if not seeding:
+            if self.is_v2:
+                expected = pool.calc_token_amount(mantissas)
+            else:
+                expected = pool.calc_token_amount(mantissas, 1)
         else:
-            expected = pool.calc_token_amount(mantissas, 1)
+            expected = 0
         # approve for assets corresponding to mantissas
         for i, mantissa in enumerate(mantissas):
             if mantissa > 0:
@@ -141,6 +144,16 @@ class Curve:
         bal_before = lp_token.balanceOf(self.safe)
         pool.add_liquidity(mantissas, expected * (1 - self.max_slippage_and_fees))
         assert lp_token.balanceOf(self.safe) > bal_before
+
+    def deposit_zapper(self, zapper, pool, assets, mantissas, seeding=False):
+        for asset, mantissa in zip(assets, mantissas):
+            if mantissa > 0:
+                asset.approve(zapper, mantissa)
+        if not seeding:
+            expected = zapper.calc_token_amount(pool, mantissas)
+        else:
+            expected = 0
+        zapper.add_liquidity(pool, mantissas, expected)
 
     def withdraw(self, lp_token, mantissa):
         # unwrap `mantissa` amount of lp_token back to its underlyings
@@ -223,3 +236,4 @@ class Curve:
             expected = pool.get_dy(i, j, mantissa) * (1 - self.max_slippage_and_fees)
             pool.exchange(i, j, mantissa, expected)
         assert asset_out.balanceOf(self.safe) >= initial_asset_out_balance + expected
+
