@@ -13,9 +13,9 @@ NEW_LOGIC = registry.eth.logic.TheVault
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 
 KEYS = [
-    # "graviAURA",
-    # "bauraBal",
-    # "b80BADGER_20WBTC",
+    "graviAURA",
+    "bauraBal",
+    "b80BADGER_20WBTC",
     "b40WBTC_40DIGG_20graviAURA",
     "bBB_a_USD",
     "b33auraBAL_33graviAURA_33WETH",
@@ -24,9 +24,9 @@ KEYS = [
 ]
 
 HODLERS = [
-    # "0xD14f076044414C255D2E82cceB1CB00fb1bBA64c",
-    # "0xfe51263bd0d075dc5441e89ecd1f6d63ff41e02e",
-    # "0xec4fcd1aca723f8456999c5f5d7479dbe9528c11",
+    "0xD14f076044414C255D2E82cceB1CB00fb1bBA64c",
+    "0xfe51263bd0d075dc5441e89ecd1f6d63ff41e02e",
+    "0xec4fcd1aca723f8456999c5f5d7479dbe9528c11",
     "0x95eec544a7cf2e6a65a71039d58823f4564a6319",
     "0xc3b1f7ab9fabd729cdf9e90ea54ec447f9464269",
     "0x794783dcfcac8c1944727057a3208d8f8bb91506",
