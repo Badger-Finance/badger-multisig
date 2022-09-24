@@ -197,3 +197,26 @@ def emit_tokens():
     if BADGER.balanceOf(PROCESSOR) > 0:
         PROCESSOR.emitBadger()
     SAFE.post_safe_tx(call_trace=True)
+
+
+def custom_sell_for_weth(addr=None):
+    bribes_dest = GreatApeSafe(PROCESSOR.address)
+    bribes_dest.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
+
+    addr = web3.toChecksumAddress(addr)
+    token = SAFE.contract(addr)
+    mantissa = token.balanceOf(PROCESSOR)
+
+    if addr != BADGER.address and addr != AURA.address:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
+            sell_token=token,
+            mantissa_sell=mantissa,
+            buy_token=WETH,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
+        PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+
+    SAFE.post_safe_tx()
