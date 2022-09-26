@@ -245,7 +245,7 @@ ADDRESSES_ETH = {
         "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d",
         "t_eth_f": "0x752eBeb79963cf0732E9c0fec72a49FD1DEfAEAC",
         "cvx_eth_f": "0xB576491F1E6e5E62f1d8F26062Ee822B40B0E0d4",
-        "badgerFRAXBP_f": "0x13B876C26Ad6d21cb87AE459EaF6d7A1b788A113"
+        "badgerFRAXBP_f": "0x13B876C26Ad6d21cb87AE459EaF6d7A1b788A113",
     },
     # mStable want tokens
     "mstable_vaults": {
@@ -563,6 +563,11 @@ ADDRESSES_ETH = {
         "booster": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
         "claim_zap": "0x623B83755a39B12161A63748f3f595A530917Ab2",
         "extra_rewards_distributor": "0xa3739b206097317c72ef416f0e75bb8f58fbd308",
+        "gauge_migrator": "0x7954bcDce86e86BeE7b1dEff48c3a0b9BCCe578B",
+        "aura_20wbtc80badger": "0x05df1E87f41F793D9e03d341Cdc315b76595654C",
+        "aura_20wbtc80badger_old": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
+        "aura_40wbtc40digg20gravi": "0xe86f0312b06126855810B4a13a43c3E2b1B8DD90",
+        "aura_40wbtc40digg20gravi_old": "0x10Ca519614b0F3463890387c24819001AFfC5152",
     },
     "ens": {
         "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
