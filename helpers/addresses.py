@@ -27,6 +27,8 @@ ADDRESSES_ETH = {
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
         "rembadger_2022_q3": "0x697A8DebFbb6bE97c821b482AECc30477F40A102",
         "tree_2022_q3": "0x5495BDB1f4c170e5C1A939382041Cf46d7f14EAd",
+        "rembadger_2022_q4": "0x9032618620fEDaC90990d4ba562ab0A86f5abaE7",
+        "tree_2022_q4": "0x7b222fBac58680c3456230b2e9f3E196512A9CF3",
     },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
