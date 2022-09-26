@@ -13,18 +13,17 @@ BADGER_GEYSER = registry.eth.badger_geyser
 
 TOLERANCE = 0.95
 
+
 def main(upgrade="true", simulation="false"):
     badger_token = interface.IBadger(registry.eth.treasury_tokens.BADGER)
 
     old_multi = GreatApeSafe(OLD_OPS_MULTISIG)
 
     old_devProxyAdmin = interface.IProxyAdmin(
-        registry.eth.badger_wallets.opsProxyAdmin_old,
-        owner=old_multi.account
+        registry.eth.badger_wallets.opsProxyAdmin_old, owner=old_multi.account
     )
     dao_treasury = interface.ISimpleTimelockWithVoting(
-        registry.eth.badger_wallets.DAO_treasury,
-        owner=old_multi.account
+        registry.eth.badger_wallets.DAO_treasury, owner=old_multi.account
     )
 
     if upgrade == "true":
@@ -35,7 +34,7 @@ def main(upgrade="true", simulation="false"):
         token = dao_treasury.token()
         releaseTime = dao_treasury.releaseTime()
         beneficiary = dao_treasury.beneficiary()
-        
+
         # Upgrades logic and verifies storage
         new_logic = registry.eth.logic.SimpleTimelockWithVoting
         old_devProxyAdmin.upgrade(dao_treasury.address, new_logic)
@@ -63,28 +62,23 @@ def main(upgrade="true", simulation="false"):
 
         # Contracts needed
         controller = interface.IController(
-            registry.eth.controllers.native,
-            owner=safe.account
+            registry.eth.controllers.native, owner=safe.account
         )
         balance_checker = interface.IBalanceChecker(
-            registry.eth.helpers.balance_checker,
-            owner=safe.account
+            registry.eth.helpers.balance_checker, owner=safe.account
         )
         dao_treasury = interface.ISimpleTimelockWithVoting(
-            registry.eth.badger_wallets.DAO_treasury,
-            owner=safe.account
+            registry.eth.badger_wallets.DAO_treasury, owner=safe.account
         )
         bBadger_vault = interface.ISettV4h(
-            registry.eth.sett_vaults.bBADGER,
-            owner=safe.account
+            registry.eth.sett_vaults.bBADGER, owner=safe.account
         )
         bBadger_strat = interface.IStrategy(
-            registry.eth.strategies["native.badger"],
-            owner=safe.account
+            registry.eth.strategies["native.badger"], owner=safe.account
         )
 
         ## == Release all BADGER from DAO_Treasury to devMulti == ##
-        
+
         # Sets new beneficiary
         dao_treasury.setBeneficiary(DEV_MULTISIG)
         assert dao_treasury.beneficiary() == DEV_MULTISIG
@@ -96,9 +90,7 @@ def main(upgrade="true", simulation="false"):
         dao_treasury.release()
 
         balance_checker.verifyBalance(
-            badger_token.address,
-            DEV_MULTISIG,
-            treasury_balance + gov_balance
+            badger_token.address, DEV_MULTISIG, treasury_balance + gov_balance
         )
 
         ## == Transfer missing BADGER to Geyser and withdrawAll to vault == ##
@@ -108,7 +100,7 @@ def main(upgrade="true", simulation="false"):
 
         # Ensure geyser is in deficit
         assert geyser_deficit > 0
-        
+
         # Transfer missing BADGER to Geyser
         badger_token.transfer(BADGER_GEYSER, geyser_deficit, {"from": safe.address})
 
@@ -117,7 +109,8 @@ def main(upgrade="true", simulation="false"):
         balance_checker.verifyBalance(
             badger_token.address,
             BADGER_GEYSER,
-            geyser_deficit + (geyser_balance * TOLERANCE) # Geyser balance may change from post
+            geyser_deficit
+            + (geyser_balance * TOLERANCE),  # Geyser balance may change from post
         )
 
         # Once the Geyser has enough BADGER within, we can
@@ -135,9 +128,7 @@ def main(upgrade="true", simulation="false"):
         badger_token.transfer(TREASURY_VAULT, amount, {"from": safe.address})
 
         balance_checker.verifyBalance(
-            badger_token.address,
-            TREASURY_VAULT,
-            amount + treasury_vault_balance
+            badger_token.address, TREASURY_VAULT, amount + treasury_vault_balance
         )
 
         safe.print_snapshot()

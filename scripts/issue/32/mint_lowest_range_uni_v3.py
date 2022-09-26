@@ -10,7 +10,7 @@ RANGE_1 = 0.000125
 # only 1 for minting
 WBTC_AMOUNT = 1 * 10 ** wbtc.decimals()
 
-SLIPPAGE = .995
+SLIPPAGE = 0.995
 
 
 def main():
@@ -49,7 +49,11 @@ def main():
     safe.uni_v3.positions_info()  # print general info, to get general picture from current nfts
 
     safe.uni_v3.mint_position(
-        registry.eth.uniswap.v3pool_wbtc_badger, RANGE_0, RANGE_1, wbtc.balanceOf(safe) * SLIPPAGE, 0
+        registry.eth.uniswap.v3pool_wbtc_badger,
+        RANGE_0,
+        RANGE_1,
+        wbtc.balanceOf(safe) * SLIPPAGE,
+        0,
     )
 
     safe.post_safe_tx()

@@ -24,23 +24,63 @@ def main():
     bpt_3pool = safe.contract(r.balancer.B_3POOL)
     bvecvx = safe.contract(r.treasury_tokens.bveCVX)
 
-    safe.take_snapshot([
-        badger, usdc, weth, wbtc, bal, usdt, dai, eurs, crv, cvx, fei, angle,
-        threepool, ibbtc_lp, slp, bpt_badgerwbtc, bpt_3pool, bvecvx
-    ])
-    trops.take_snapshot([
-        badger, usdc, weth, wbtc, bal, usdt, dai, eurs, crv, cvx, fei, angle,
-        threepool, ibbtc_lp, slp, bpt_badgerwbtc, bpt_3pool, bvecvx
-    ])
+    safe.take_snapshot(
+        [
+            badger,
+            usdc,
+            weth,
+            wbtc,
+            bal,
+            usdt,
+            dai,
+            eurs,
+            crv,
+            cvx,
+            fei,
+            angle,
+            threepool,
+            ibbtc_lp,
+            slp,
+            bpt_badgerwbtc,
+            bpt_3pool,
+            bvecvx,
+        ]
+    )
+    trops.take_snapshot(
+        [
+            badger,
+            usdc,
+            weth,
+            wbtc,
+            bal,
+            usdt,
+            dai,
+            eurs,
+            crv,
+            cvx,
+            fei,
+            angle,
+            threepool,
+            ibbtc_lp,
+            slp,
+            bpt_badgerwbtc,
+            bpt_3pool,
+            bvecvx,
+        ]
+    )
 
     # badger for emissions, rembadger, bribes and contribs q3
     badger.transfer(r.drippers.tree_2022_q3, 351_000e18)
     badger.transfer(r.drippers.rembadger_2022_q3, 75_000e18)
     badger.transfer(trops, 104_000e18)
-    badger.transfer(r.badger_wallets.payments_multisig, 500_000e18 - 110_000e18)  # prob ~110k left at end of q2
+    badger.transfer(
+        r.badger_wallets.payments_multisig, 500_000e18 - 110_000e18
+    )  # prob ~110k left at end of q2
 
     # usdc for contribs q3
-    usdc.transfer(r.badger_wallets.payments_multisig, 1_200_000e6 - 250_000e6)  # ~250k left after payroll q2
+    usdc.transfer(
+        r.badger_wallets.payments_multisig, 1_200_000e6 - 250_000e6
+    )  # ~250k left after payroll q2
 
     # claim bal and send to voter for locking to aurabal
     safe.init_balancer()
@@ -57,26 +97,36 @@ def main():
 
     # dust to trops for processing
     for dust in [
-        wbtc, usdc, usdt, dai, eurs, crv, cvx, fei,
-        angle, threepool, ibbtc_lp, slp
+        wbtc,
+        usdc,
+        usdt,
+        dai,
+        eurs,
+        crv,
+        cvx,
+        fei,
+        angle,
+        threepool,
+        ibbtc_lp,
+        slp,
     ]:
         dust.transfer(trops, dust.balanceOf(safe))
 
     # consolidate eth into weth position
-    weth.deposit({'value': safe.account.balance()})
+    weth.deposit({"value": safe.account.balance()})
 
     # bvecvx to treasury voter
-    bvecvx.transfer(
-        r.badger_wallets.treasury_voter_multisig, bvecvx.balanceOf(safe)
-    )
+    bvecvx.transfer(r.badger_wallets.treasury_voter_multisig, bvecvx.balanceOf(safe))
 
     print(
-        'bpt_3pool in balancer gauge:',
-        safe.contract(safe.balancer.gauge_factory.getPoolGauge(bpt_3pool)).balanceOf(safe)
+        "bpt_3pool in balancer gauge:",
+        safe.contract(safe.balancer.gauge_factory.getPoolGauge(bpt_3pool)).balanceOf(
+            safe
+        ),
     )
     print(
-        'bpt_3pool in aura gauge:',
-        safe.contract('0x08b8a86B9498AC249bF4B86e14C5d4187085a239').balanceOf(safe)
+        "bpt_3pool in aura gauge:",
+        safe.contract("0x08b8a86B9498AC249bF4B86e14C5d4187085a239").balanceOf(safe),
     )
 
     trops.print_snapshot()

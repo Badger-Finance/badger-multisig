@@ -4,16 +4,16 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-EXTRA_WALLETS = [] # also consider these badger wallets that do not prefix ops_
+EXTRA_WALLETS = []  # also consider these badger wallets that do not prefix ops_
 
-DEFAULT_AMOUNT = .1e18 # target balance for any ops_* badger wallet
-EXEC_AMOUNT = .05e18 # target balance for any ops_executor* badger wallet
-OVERRIDE_AMOUNT = { # override DEFAULT_AMOUNT for exceptional badger wallets
-    'ops_botsquad': .5e18,
-    'ops_botsquad_cycle0': .5e18,
-    'ops_deployer': .25e18,
+DEFAULT_AMOUNT = 0.1e18  # target balance for any ops_* badger wallet
+EXEC_AMOUNT = 0.05e18  # target balance for any ops_executor* badger wallet
+OVERRIDE_AMOUNT = {  # override DEFAULT_AMOUNT for exceptional badger wallets
+    "ops_botsquad": 0.5e18,
+    "ops_botsquad_cycle0": 0.5e18,
+    "ops_deployer": 0.25e18,
 }
-MIN_TRANSFER = .01e18 # if difference is less than min, transfer min amount instead
+MIN_TRANSFER = 0.01e18  # if difference is less than min, transfer min amount instead
 
 
 def main():
@@ -26,9 +26,9 @@ def main():
     wallets = {}
     for wallet_name, wallet_address in candidates.items():
         # only refill ops_* wallets
-        if not(wallet_name.startswith('ops_') or wallet_name in EXTRA_WALLETS):
+        if not (wallet_name.startswith("ops_") or wallet_name in EXTRA_WALLETS):
             continue
-        if wallet_name == 'techops_multisig':
+        if wallet_name == "techops_multisig":
             # no need to send ourselves eth
             continue
 
@@ -36,9 +36,9 @@ def main():
         aeth_balance = accounts.at(wallet_address, force=True).balance()
         if wallet_name in OVERRIDE_AMOUNT:
             post_topup_amount = OVERRIDE_AMOUNT[wallet_name]
-        elif 'ops_executor' in wallet_name:
+        elif "ops_executor" in wallet_name:
             post_topup_amount = EXEC_AMOUNT
-        elif 'ops_deployer' in wallet_name:
+        elif "ops_deployer" in wallet_name:
             continue
         else:
             post_topup_amount = DEFAULT_AMOUNT
@@ -58,7 +58,7 @@ def main():
         print(wallet_name)
         wallet_obj.print_snapshot()
 
-    print('techops_multisig')
+    print("techops_multisig")
     safe.print_snapshot()
 
     safe.post_safe_tx(skip_preview=True)

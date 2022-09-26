@@ -4,7 +4,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-def main(msig='treasury_ops_multisig'):
+def main(msig="treasury_ops_multisig"):
     safe = GreatApeSafe(registry.eth.badger_wallets[msig])
 
     bcvx = safe.contract(registry.eth.treasury_tokens.bCVX)

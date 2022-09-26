@@ -2,6 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 from decimal import Decimal
 
+
 def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     safe.init_balancer()

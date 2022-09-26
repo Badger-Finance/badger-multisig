@@ -8,9 +8,7 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     safe.init_convex()
 
-    pool2 = Contract(
-        registry.eth.treasury_tokens.badgerWBTC_f, owner=safe.account
-    )
+    pool2 = Contract(registry.eth.treasury_tokens.badgerWBTC_f, owner=safe.account)
     pool2_bal = pool2.balanceOf(safe)
     safe.take_snapshot([pool2])
     safe.convex.deposit_all_and_stake(pool2)

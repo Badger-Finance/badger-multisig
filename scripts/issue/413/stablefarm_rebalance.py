@@ -14,7 +14,9 @@ vault.init_compound()
 vault.init_balancer()
 vault.init_uni_v3()
 
-balance_checker = interface.IBalanceChecker(registry.eth.helpers.balance_checker, owner=vault.account)
+balance_checker = interface.IBalanceChecker(
+    registry.eth.helpers.balance_checker, owner=vault.account
+)
 
 usdt = vault.contract(registry.eth.treasury_tokens.USDT)
 usdc = vault.contract(registry.eth.treasury_tokens.USDC)
@@ -71,7 +73,7 @@ def main():
         ausdc: 600_000e6,
         ausdt: 600_000e6,
         cdai: 27_000_000e8,
-        afei: 300_000e18
+        afei: 300_000e18,
     }
 
     # withdrawals
@@ -95,7 +97,6 @@ def main():
     # 600k usdt + 100k for balancer
     vault.curve.withdraw_to_one_coin(crv3pool, 615_000e18 + 105_000e18, usdt)
 
-
     # deposits
     vault.aave.deposit(usdc, 614_746e6)
     vault.aave.deposit(usdt, 614_746e6)
@@ -103,7 +104,7 @@ def main():
     vault.compound.deposit(dai, 614_746e18)
 
     for token, amount in min_amounts.items():
-            balance_checker.verifyBalance(token, vault, amount)
+        balance_checker.verifyBalance(token, vault, amount)
 
     # bonus: collect univ3 fees
     vault.uni_v3.collect_fees()

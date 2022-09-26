@@ -22,7 +22,7 @@ def main(broadcast="true"):
     for key, addr in setts.items():
 
         sett = Contract(addr)
-        
+
         if sett.governance() == safe.address:
             print(
                 f"Current governance address is in ({key}) sett: {sett.governance()}\n"

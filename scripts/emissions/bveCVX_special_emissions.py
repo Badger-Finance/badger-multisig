@@ -6,7 +6,6 @@ from helpers.addresses import registry
 DEVELOPMENT = False
 
 
-
 # UPDATE THESE VARIABLES WITH THE NEEDS FOR A NEW GUARD LAUNCH OR SIMILAR SCENARIO
 STARTING_TIME = 1643241600
 ENDING_TIME = 1644537600
@@ -20,8 +19,8 @@ def main():
     rewards_logger = safe.contract(registry.eth.rewardsLogger)
 
     rewards_logger.setUnlockSchedule(
-        registry.eth.treasury_tokens.bveCVX,#beneficiary,
-        registry.eth.treasury_tokens.bveCVX, #payout token
+        registry.eth.treasury_tokens.bveCVX,  # beneficiary,
+        registry.eth.treasury_tokens.bveCVX,  # payout token
         Wei(f"{AMOUNT_TO_EMIT_DURING_PERIOD} ether"),
         STARTING_TIME,
         ENDING_TIME,

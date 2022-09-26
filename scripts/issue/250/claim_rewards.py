@@ -13,7 +13,7 @@ def main():
         vault.contract(registry.eth.treasury_tokens.BADGER),
         vault.contract(registry.eth.treasury_tokens.CRV),
         vault.contract(registry.eth.treasury_tokens.CVX),
-        vault.contract(registry.eth.bribe_tokens_claimable.ANGLE)
+        vault.contract(registry.eth.bribe_tokens_claimable.ANGLE),
     ]
 
     trops.take_snapshot(tokens=tokens)

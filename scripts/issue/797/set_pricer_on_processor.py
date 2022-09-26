@@ -16,6 +16,7 @@ BRIBE_TOKEN = registry.eth.bribe_tokens_claimable_graviaura.DFX
 WHALE = "0xA4fc358455Febe425536fd1878bE67FfDBDEC59a"
 AMOUNT = 1000e18
 
+
 def main(simulation="false"):
     safe = GreatApeSafe(DEV)
     safe.init_badger()
@@ -25,7 +26,7 @@ def main(simulation="false"):
     processor.setPricer(PRICER)
     assert processor.pricer() == PRICER
 
-    # Simulate 
+    # Simulate
     if simulation == "true":
         weth = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=safe.account)
         whale = accounts.at(WHALE, force=True)
@@ -47,7 +48,11 @@ def main(simulation="false"):
             coef=COEF,
             prod=False,
         )
-        processor.sellBribeForWeth(order_payload, order_uid, {"from": accounts.at(processor.manager(), force=True)})
+        processor.sellBribeForWeth(
+            order_payload,
+            order_uid,
+            {"from": accounts.at(processor.manager(), force=True)},
+        )
 
         assert settlement.preSignature(order_uid) > 0
 

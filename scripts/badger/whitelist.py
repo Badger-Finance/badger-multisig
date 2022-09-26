@@ -23,7 +23,7 @@ def all_setts(candidate_addr):
     for sett_name, sett_addr in registry.eth.sett_vaults.items():
         if SAFE.badger.whitelist(candidate_addr, sett_addr):
             approved.append(sett_name)
-    console.print('whitelisted/queued:', approved)
+    console.print("whitelisted/queued:", approved)
     SAFE.post_safe_tx()
 
 
@@ -37,5 +37,5 @@ def single_sett(candidate_addr, sett_addr):
     sett_addr = web3.toChecksumAddress(sett_addr)
 
     if SAFE.badger.whitelist(candidate_addr, sett_addr):
-        console.print('whitelisted/queued:', sett_addr)
+        console.print("whitelisted/queued:", sett_addr)
     SAFE.post_safe_tx()

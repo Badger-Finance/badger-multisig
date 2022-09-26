@@ -14,29 +14,25 @@ from helpers.addresses import registry
 
 SAFE = GreatApeSafe(registry.eth.badger_wallets.politician_multisig)
 CVX = SAFE.contract(registry.eth.treasury_tokens.CVX)
-BVECVX = interface.ISettV4h(
-    registry.eth.treasury_tokens.bveCVX, owner=SAFE.account
-)
+BVECVX = interface.ISettV4h(registry.eth.treasury_tokens.bveCVX, owner=SAFE.account)
 WETH = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=SAFE.account)
-BADGER = interface.ERC20(
-    registry.eth.treasury_tokens.BADGER, owner=SAFE.account
-)
+BADGER = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=SAFE.account)
 TREE = GreatApeSafe(registry.eth.badger_wallets.badgertree)
 TECHOPS = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
 VOTING_SAFE = GreatApeSafe(registry.eth.badger_wallets.treasury_voter_multisig)
 
 WANT_TO_SELL = registry.eth.bribe_tokens_claimable.copy()
-WANT_TO_SELL.pop('CVX') # SameBuyAndSellToken
+WANT_TO_SELL.pop("CVX")  # SameBuyAndSellToken
 
 # not enough volume to make gas for swap worth it
-WANT_TO_SELL.pop('MTA')
-WANT_TO_SELL.pop('NSBT')
+WANT_TO_SELL.pop("MTA")
+WANT_TO_SELL.pop("NSBT")
 
 # percentage of the bribes that is used to buyback $badger
-BADGER_SHARE = .275
+BADGER_SHARE = 0.275
 # percentage of the bribes that are dedicated to the treasury
-OPS_FEE = .05
+OPS_FEE = 0.05
 
 
 def multi_approve():
@@ -55,18 +51,18 @@ def multi_sell():
         token = SAFE.contract(addr)
         if token.balanceOf(SAFE) > 0:
             SAFE.cow.market_sell(
-                token, CVX, token.balanceOf(SAFE), deadline=60*60*4
+                token, CVX, token.balanceOf(SAFE), deadline=60 * 60 * 4
             )
     SAFE.post_safe_tx()
 
 
-def multi_sell_cheap(coef=.985):
+def multi_sell_cheap(coef=0.985):
     SAFE.init_cow()
     for _, addr in WANT_TO_SELL.items():
         token = SAFE.contract(addr)
         if token.balanceOf(SAFE) > 0:
             SAFE.cow.market_sell(
-                token, WETH, token.balanceOf(SAFE), deadline=60*60, coef=coef
+                token, WETH, token.balanceOf(SAFE), deadline=60 * 60, coef=coef
             )
     SAFE.post_safe_tx()
 
@@ -78,16 +74,21 @@ def swap_for_cvx_and_badger():
     SAFE.init_cow()
     SAFE.cow.allow_relayer(WETH, WETH.balanceOf(SAFE))
     SAFE.cow.market_sell(
-        WETH, BADGER, badger_share, deadline=60*60, coef=.985,
-        destination=TREE.address
+        WETH,
+        BADGER,
+        badger_share,
+        deadline=60 * 60,
+        coef=0.985,
+        destination=TREE.address,
     )
-    SAFE.cow.market_sell(WETH, CVX, cvx_share, deadline=60*60, coef=.985)
+    SAFE.cow.market_sell(WETH, CVX, cvx_share, deadline=60 * 60, coef=0.985)
     SAFE.post_safe_tx()
 
 
 def swap_bvecvxcvxf_pool():
-    SAFE.take_snapshot(tokens=[CVX.address, BVECVX.address] \
-        + list(registry['eth']['bribe_tokens_claimable'].values())
+    SAFE.take_snapshot(
+        tokens=[CVX.address, BVECVX.address]
+        + list(registry["eth"]["bribe_tokens_claimable"].values())
     )
     SAFE.init_curve()
     SAFE.curve.swap(CVX, BVECVX, CVX.balanceOf(SAFE))
@@ -116,37 +117,31 @@ def lock_cvx():
     starting_time = calendar.timegm(friday.timetuple())
     ending_time = starting_time + 14 * 24 * 60 * 60
 
-    print(f'brownie run emissions/bribes_emissions main {emissions} <badger_bought> {starting_time} {ending_time} {BADGER_SHARE} {OPS_FEE}\n')
+    print(
+        f"brownie run emissions/bribes_emissions main {emissions} <badger_bought> {starting_time} {ending_time} {BADGER_SHARE} {OPS_FEE}\n"
+    )
 
     SAFE.post_safe_tx()
 
 
 def sell_t_on_curve():
-    t = interface.ERC20(
-        registry.eth.bribe_tokens_claimable.T, owner=SAFE.account
-    )
-    t_v2_pool = Contract(
-        registry.eth.crv_factory_pools.t_eth_f, owner=SAFE.account
-    )
-    cvx_v2_pool = Contract(
-        registry.eth.crv_factory_pools.cvx_eth_f, owner=SAFE.account
-    )
+    t = interface.ERC20(registry.eth.bribe_tokens_claimable.T, owner=SAFE.account)
+    t_v2_pool = Contract(registry.eth.crv_factory_pools.t_eth_f, owner=SAFE.account)
+    cvx_v2_pool = Contract(registry.eth.crv_factory_pools.cvx_eth_f, owner=SAFE.account)
     SAFE.init_curve_v2()
     SAFE.take_snapshot([t.address, CVX.address])
 
     bal_t = t.balanceOf(SAFE)
     t.approve(t_v2_pool, bal_t)
     i, j = 1, 0
-    expected = t_v2_pool.get_dy(i, j, bal_t) * (
-        1 - SAFE.curve_v2.max_slippage_and_fees
-    )
+    expected = t_v2_pool.get_dy(i, j, bal_t) * (1 - SAFE.curve_v2.max_slippage_and_fees)
     t_v2_pool.exchange(i, j, bal_t, expected, True)
 
-    bal_eth = SAFE.account.balance() * .995 # dusty
+    bal_eth = SAFE.account.balance() * 0.995  # dusty
     i, j = 0, 1
     expected = cvx_v2_pool.get_dy(i, j, bal_eth) * (
         1 - SAFE.curve_v2.max_slippage_and_fees
     )
-    cvx_v2_pool.exchange(i, j, bal_eth, expected, True, {'value': bal_eth})
+    cvx_v2_pool.exchange(i, j, bal_eth, expected, True, {"value": bal_eth})
 
     SAFE.post_safe_tx()

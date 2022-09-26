@@ -29,18 +29,18 @@ def convex(safe):
 
 @pytest.fixture
 def convex_rewards(safe, convex, threepool_lp):
-    (_,_,_,rewards ) = convex.get_pool_info(threepool_lp)
+    (_, _, _, rewards) = convex.get_pool_info(threepool_lp)
     return safe.contract(rewards)
 
 
 @pytest.fixture
 def convex_threepool_lp(safe, convex, threepool_lp):
-    (_,token,_,_ ) = convex.get_pool_info(threepool_lp)
+    (_, token, _, _) = convex.get_pool_info(threepool_lp)
     return safe.contract(token)
 
 
 @pytest.fixture
 def convex_threepool_reward(safe, convex, threepool_lp):
-    (_,_,_,rewards ) = convex.get_pool_info(threepool_lp)
+    (_, _, _, rewards) = convex.get_pool_info(threepool_lp)
     reward = safe.contract(rewards).rewardToken()
     return safe.contract(reward)

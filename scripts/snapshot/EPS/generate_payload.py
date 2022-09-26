@@ -24,7 +24,9 @@ def main():
     distribution_threshold = 1 / spot_eps_price
 
     # for records to drop it into ticket
-    print(f"\nThreshold is {distribution_threshold} EPSs and current EPS price is ${spot_eps_price}\n")
+    print(
+        f"\nThreshold is {distribution_threshold} EPSs and current EPS price is ${spot_eps_price}\n"
+    )
 
     # create directory
     os.makedirs(f"{os.path.dirname(__file__)}/payload_gnosis_csv", exist_ok=True)

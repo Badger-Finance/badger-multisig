@@ -6,16 +6,16 @@ def main():
     candidates_votium = registry.eth.bribe_tokens_claimable.copy()
 
     # current strat logic cannot handle ("protected asset")
-    candidates_votium.pop('CVX')
+    candidates_votium.pop("CVX")
 
     # not eligible this week
-    candidates_votium.pop('BADGER')
-    candidates_votium.pop('MATIC')
-    candidates_votium.pop('DAI')
-    candidates_votium.pop('MTA')
+    candidates_votium.pop("BADGER")
+    candidates_votium.pop("MATIC")
+    candidates_votium.pop("DAI")
+    candidates_votium.pop("MTA")
 
     # not a votium candidate
-    candidates_votium.pop('NSBT')
+    candidates_votium.pop("NSBT")
 
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_badger()

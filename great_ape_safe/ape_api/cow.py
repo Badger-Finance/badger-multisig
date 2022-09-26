@@ -111,6 +111,7 @@ class Cow:
                     )
                     if override:
                         buy_amount_after_fee = naive_quote[1]
+
         assert fee_amount > 0
         assert buy_amount_after_fee > 0
 

@@ -6,8 +6,8 @@ from rich.console import Console
 
 C = Console()
 
-STRAT_PROXY = registry.eth.strategies["native.graviAURA"] 
-NEW_LOGIC = registry.eth.logic["native.graviAURA"] 
+STRAT_PROXY = registry.eth.strategies["native.graviAURA"]
+NEW_LOGIC = registry.eth.logic["native.graviAURA"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 TROPS = registry.eth.badger_wallets.treasury_ops_multisig
 BADGER = registry.eth.treasury_tokens.BADGER
@@ -33,11 +33,13 @@ def main(queue="true", simulation="false"):
             dump_dir="data/badger/timelock/upgrade_graviAURA_strategy_V1_2/",
             delay_in_days=4,
         )
-    else:   
+    else:
         # Setting all variables, we'll use them later
         prev_want = strat_proxy.want()
         prev_vault = strat_proxy.vault()
-        prev_withdrawalMaxDeviationThreshold = strat_proxy.withdrawalMaxDeviationThreshold()
+        prev_withdrawalMaxDeviationThreshold = (
+            strat_proxy.withdrawalMaxDeviationThreshold()
+        )
         prev_autoCompoundRatio = strat_proxy.autoCompoundRatio()
         prev_withdrawalSafetyCheck = strat_proxy.withdrawalSafetyCheck()
         prev_processLocksOnReinvest = strat_proxy.processLocksOnReinvest()
@@ -55,17 +57,25 @@ def main(queue="true", simulation="false"):
             proxyAdmin = interface.IProxyAdmin(DEV_PROXY, owner=timelock)
             proxyAdmin.upgrade(strat_proxy.address, NEW_LOGIC)
         else:
-            safe.badger.execute_timelock("data/badger/timelock/upgrade_graviAURA_strategy_V1_2/")
+            safe.badger.execute_timelock(
+                "data/badger/timelock/upgrade_graviAURA_strategy_V1_2/"
+            )
 
         ## Checking all variables are as expected
         assert prev_want == strat_proxy.want()
         assert prev_vault == strat_proxy.vault()
-        assert prev_withdrawalMaxDeviationThreshold == strat_proxy.withdrawalMaxDeviationThreshold()
+        assert (
+            prev_withdrawalMaxDeviationThreshold
+            == strat_proxy.withdrawalMaxDeviationThreshold()
+        )
         assert prev_autoCompoundRatio == strat_proxy.autoCompoundRatio()
         assert prev_withdrawalSafetyCheck == strat_proxy.withdrawalSafetyCheck()
         assert prev_processLocksOnReinvest == strat_proxy.processLocksOnReinvest()
         assert prev_bribesProcessor == strat_proxy.bribesProcessor()
-        assert prev_auraBalToBalEthBptMinOutBps == strat_proxy.auraBalToBalEthBptMinOutBps()
+        assert (
+            prev_auraBalToBalEthBptMinOutBps
+            == strat_proxy.auraBalToBalEthBptMinOutBps()
+        )
         assert prev_balanceOf == strat_proxy.balanceOf()
         assert prev_balanceOfPool == strat_proxy.balanceOfPool()
         assert prev_balanceOfWant == strat_proxy.balanceOfWant()
@@ -86,7 +96,9 @@ def main(queue="true", simulation="false"):
             ## Test sweeping a redirected token (BADGER)
             amount = 1000e18
             badger = interface.IERC20(BADGER)
-            whale = accounts.at(registry.eth.badger_wallets.treasury_vault_multisig, force=True)
+            whale = accounts.at(
+                registry.eth.badger_wallets.treasury_vault_multisig, force=True
+            )
             badger.transfer(strat_proxy, amount, {"from": whale})
             assert badger.balanceOf(strat_proxy) == amount
             previous_trops_balance = badger.balanceOf(TROPS)

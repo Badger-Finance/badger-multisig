@@ -11,9 +11,7 @@ def main():
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     dripper = GreatApeSafe(registry.eth.drippers.rembadger_2022_q2)
 
-    badger = interface.ERC20(
-        registry.eth.treasury_tokens.BADGER, owner=safe.account
-    )
+    badger = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=safe.account)
 
     safe.take_snapshot([badger])
     trops.take_snapshot([badger])

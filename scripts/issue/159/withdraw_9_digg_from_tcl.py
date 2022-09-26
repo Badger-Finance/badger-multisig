@@ -20,7 +20,7 @@ def main():
 
     # expected_asset1 = slp.getReserves()[1] * slp_amount / slp.totalSupply()
     # solve for expected_asset1 = 9000000000
-    x = Symbol('x')
+    x = Symbol("x")
     target = 9 * 10 ** digg.decimals()
     slp = slp_wbtcdigg
     mantissa_to_withdraw = solve(

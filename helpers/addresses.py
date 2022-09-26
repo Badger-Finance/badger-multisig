@@ -27,6 +27,8 @@ ADDRESSES_ETH = {
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
         "rembadger_2022_q3": "0x697A8DebFbb6bE97c821b482AECc30477F40A102",
         "tree_2022_q3": "0x5495BDB1f4c170e5C1A939382041Cf46d7f14EAd",
+        "rembadger_2022_q4": "0x9032618620fEDaC90990d4ba562ab0A86f5abaE7",
+        "tree_2022_q4": "0x7b222fBac58680c3456230b2e9f3E196512A9CF3",
     },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
@@ -193,6 +195,7 @@ ADDRESSES_ETH = {
         "AURA": "0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF",
         "AURABAL": "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
         "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
+        "badgerFRAXBP_f_lp": "0x09b2E090531228d1b8E3d948C73b990Cb6e60720",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -242,6 +245,7 @@ ADDRESSES_ETH = {
         "badgerWBTC_f": "0x50f3752289e1456BfA505afd37B241bca23e685d",
         "t_eth_f": "0x752eBeb79963cf0732E9c0fec72a49FD1DEfAEAC",
         "cvx_eth_f": "0xB576491F1E6e5E62f1d8F26062Ee822B40B0E0d4",
+        "badgerFRAXBP_f": "0x13B876C26Ad6d21cb87AE459EaF6d7A1b788A113",
     },
     # mStable want tokens
     "mstable_vaults": {
@@ -316,7 +320,8 @@ ADDRESSES_ETH = {
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
         "native.bauraBal": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
-        "native.b80BADGER-20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
+        "native.b80BADGER_20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
+        "native.b40WBTC_40DIGG_20graviAURA": "0xD87F2cdE238D0122b3865164359CFF6b2431d927",
         "_deprecated": {
             "native.bauraBal": {
                 "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
@@ -503,6 +508,7 @@ ADDRESSES_ETH = {
         "zap_ibbtc": "0xbba4b444FD10302251d9F5797E763b0d912286A1",
         "zap_pbtc": "0x11F419AdAbbFF8d595E7d5b223eee3863Bb3902C",
         "zap_obtc": "0xd5BCf53e2C81e1991570f33Fa881c49EEa570C8D",
+        "zap_fraxbp": "0x5De4EF4879F4fe3bBADF2227D2aC5d0E2D76C895",
     },
     "uma": {
         "DIGG_LongShortPair": "0x65DCcd928C71ef98e6eC887FEA24d116765c8A8D",
@@ -560,6 +566,11 @@ ADDRESSES_ETH = {
         "booster": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
         "claim_zap": "0x623B83755a39B12161A63748f3f595A530917Ab2",
         "extra_rewards_distributor": "0xa3739b206097317c72ef416f0e75bb8f58fbd308",
+        "gauge_migrator": "0x7954bcDce86e86BeE7b1dEff48c3a0b9BCCe578B",
+        "aura_20wbtc80badger": "0x05df1E87f41F793D9e03d341Cdc315b76595654C",
+        "aura_20wbtc80badger_old": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
+        "aura_40wbtc40digg20gravi": "0xe86f0312b06126855810B4a13a43c3E2b1B8DD90",
+        "aura_40wbtc40digg20gravi_old": "0x10Ca519614b0F3463890387c24819001AFfC5152",
     },
     "ens": {
         "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
@@ -732,7 +743,7 @@ ADDRESSES_ARBITRUM = {
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
-        "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
+        "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
         "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",
@@ -904,7 +915,7 @@ ADDRESSES_FANTOM = {
         "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
-        "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
+        "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",

@@ -102,7 +102,7 @@ def main(queue="true", simulation="false"):
             gac = interface.IGac(vault_proxy.GAC(), owner=DEV_MULTI)
             gac_guardian = accounts.at(gac.WAR_ROOM_ACL(), force=True)
             gac.pause({"from": gac_guardian})
-            with reverts('Pausable: GAC Paused'):
+            with reverts("Pausable: GAC Paused"):
                 vault_proxy.withdraw(123, {"from": user})
 
     if simulation != "true":

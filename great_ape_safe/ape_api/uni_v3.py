@@ -45,7 +45,7 @@ class UniV3:
         )
 
         # constant helpers
-        self.Q128 = 2 ** 128
+        self.Q128 = 2**128
         self.deadline = 60 * 180
         self.slippage = 0.98
 
@@ -56,7 +56,7 @@ class UniV3:
             ),
             owner=self.safe.account,
         )
-    
+
     def _build_multihop_path(self, path):
         # given a token path, construct a multihop swap path by adding token pair pools with highest liquidity
         # https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps#input-parameters
@@ -64,21 +64,22 @@ class UniV3:
         for i in range(len(path) - 1):
             fee_tiers = {100: 0, 3000: 0, 10000: 0}
             for tier in fee_tiers.keys():
-                pool_addr = self.factory.getPool(path[i], path[i+1], tier)
+                pool_addr = self.factory.getPool(path[i], path[i + 1], tier)
 
                 if pool_addr == ZERO_ADDRESS:
                     continue
 
                 pool = interface.IUniswapV3Pool(pool_addr)
                 fee_tiers[tier] = pool.liquidity()
-            
+
             if list(fee_tiers.values()).count(0) == 3:
                 raise Exception(
-                    f"No liquidity found for {path[i].symbol()} - {path[i+1].symbol()}")
+                    f"No liquidity found for {path[i].symbol()} - {path[i+1].symbol()}"
+                )
 
             best_tier = max(fee_tiers, key=fee_tiers.get)
             multihop.append(best_tier)
-            multihop.append(path[i+1].address)
+            multihop.append(path[i + 1].address)
 
         return multihop
 
@@ -146,7 +147,7 @@ class UniV3:
 
         # https://etherscan.io/address/0xC36442b4a4522E871399CD717aBDD847Ab11FE88#code#F1#L314
         amount0, amount1 = self.nonfungible_position_manager.collect.call(params)
-        
+
         if amount0 > 0 or amount1 > 0:
             self.nonfungible_position_manager.collect(params)
 
@@ -316,8 +317,8 @@ class UniV3:
         decimals_diff = token1.decimals() - token0.decimals()
 
         # params for minting method
-        lower_tick = int(math.log((1 / range1) * 10 ** decimals_diff, BASE) // 60 * 60)
-        upper_tick = int(math.log((1 / range0) * 10 ** decimals_diff, BASE) // 60 * 60)
+        lower_tick = int(math.log((1 / range1) * 10**decimals_diff, BASE) // 60 * 60)
+        upper_tick = int(math.log((1 / range0) * 10**decimals_diff, BASE) // 60 * 60)
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
@@ -436,11 +437,11 @@ class UniV3:
     def swap(self, path, mantissa, destination=None):
         # https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps
         destination = self.safe.address if not destination else destination
-    
+
         token_in, token_out = path[0], path[-1]
 
         balance_token_out = token_out.balanceOf(self.safe)
-    
+
         multihop_path = self._build_multihop_path(path)
 
         path_encoded = b""

@@ -40,11 +40,7 @@ def test_deposit_and_stake_single_asset(dev, balancer, wbtc, bpt, staked_bpt):
     bal_before_staked_bpt = staked_bpt.balanceOf(dev)
 
     with brownie.reverts():
-        balancer.deposit_and_stake_single_asset(
-            wbtc,
-            wbtc.balanceOf(dev),
-            bpt
-        )
+        balancer.deposit_and_stake_single_asset(wbtc, wbtc.balanceOf(dev), bpt)
 
         # fails - single asset calc leaves dust
         assert wbtc.balanceOf(dev) == 0
@@ -56,15 +52,15 @@ def test_deposit_and_stake_single_asset(dev, balancer, wbtc, bpt, staked_bpt):
 # revert: BAL#506, src: StableMath.calcBptOutGivenExactTokensIn
 # possibly due to the balpy module not supporting more than 2 pools:
 # https://github.com/balancer-labs/balpy/blob/a907f7b984f4e3ba3460a1ef064003d95da5e884/balpy/balancerv2cad/src/balancerv2cad/StablePool.py#L33-L40
-def test_deposit_and_stake_threepool(dev, balancer, dai, threepool_bpt, threepool_staked_bpt):
+def test_deposit_and_stake_threepool(
+    dev, balancer, dai, threepool_bpt, threepool_staked_bpt
+):
     bal_before_staked_bpt = threepool_staked_bpt.balanceOf(dev)
     bal_before_dai = dai.balanceOf(dev)
 
     with brownie.reverts():
         balancer.deposit_and_stake_single_asset(
-            dai,
-            dai.balanceOf(dev) / 4,
-            threepool_bpt
+            dai, dai.balanceOf(dev) / 4, threepool_bpt
         )
 
         assert dai.balanceOf(dev) < bal_before_dai
@@ -72,15 +68,13 @@ def test_deposit_and_stake_threepool(dev, balancer, dai, threepool_bpt, threepoo
     chain.reset()
 
 
-def test_deposit_and_stake_weighted(dev, balancer, dai, weighted_bpt, weighted_staked_bpt):
+def test_deposit_and_stake_weighted(
+    dev, balancer, dai, weighted_bpt, weighted_staked_bpt
+):
     bal_before_staked_bpt = weighted_staked_bpt.balanceOf(dev)
     bal_before_dai = dai.balanceOf(dev)
 
-    balancer.deposit_and_stake_single_asset(
-        dai,
-        dev.account.balance(),
-        weighted_bpt
-    )
+    balancer.deposit_and_stake_single_asset(dai, dev.account.balance(), weighted_bpt)
 
     assert dai.balanceOf(dev) < bal_before_dai
     assert weighted_staked_bpt.balanceOf(dev) > bal_before_staked_bpt
@@ -89,16 +83,15 @@ def test_deposit_and_stake_weighted(dev, balancer, dai, weighted_bpt, weighted_s
 
 # balancer.deposit_and_stake_single_asset still needs support for sending
 # native ether opposed to erc20 only
-def test_deposit_and_stake_weighted_eth(dev, balancer, dai, weighted_bpt, weighted_staked_bpt):
+def test_deposit_and_stake_weighted_eth(
+    dev, balancer, dai, weighted_bpt, weighted_staked_bpt
+):
     bal_before_staked_bpt = weighted_staked_bpt.balanceOf(dev)
     bal_before_eth = dev.account.balance()
 
     with brownie.reverts():
         balancer.deposit_and_stake_single_asset(
-            dai,
-            dev.account.balance(),
-            weighted_bpt,
-            is_eth=True
+            dai, dev.account.balance(), weighted_bpt, is_eth=True
         )
 
         assert dev.account.balance() < bal_before_eth

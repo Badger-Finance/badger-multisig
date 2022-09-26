@@ -14,32 +14,30 @@ def main():
 
     # https://github.com/Badger-Finance/badger-multisig/issues/323
     # add badger to the tree for weekly emissions
-    week_14_badger_emissions = Decimal('20_000')
-    week_14_rembadger_emissions = Decimal('7692.307692')
+    week_14_badger_emissions = Decimal("20_000")
+    week_14_rembadger_emissions = Decimal("7692.307692")
     df["token_address"].append(registry.eth.treasury_tokens.BADGER)
     df["receiver"].append(registry.eth.badger_wallets.badgertree)
     # multiply by two to catch up on week 13
-    df["value"].append(
-        (week_14_badger_emissions + week_14_rembadger_emissions) * 2
-    )
+    df["value"].append((week_14_badger_emissions + week_14_rembadger_emissions) * 2)
 
     # https://github.com/Badger-Finance/badger-multisig/issues/324
     # add digg to the tree for weekly emissions
-    week_13_14_digg_emissions = Decimal('3')
+    week_13_14_digg_emissions = Decimal("3")
     df["token_address"].append(registry.eth.treasury_tokens.DIGG)
     df["receiver"].append(registry.eth.badger_wallets.badgertree)
     df["value"].append(week_13_14_digg_emissions)
 
     # https://github.com/Badger-Finance/badger-multisig/issues/320
     # catch up on rembadger
-    week_13_rembadger_deposit = Decimal('11538.461538')
+    week_13_rembadger_deposit = Decimal("11538.461538")
     df["token_address"].append(registry.eth.treasury_tokens.BADGER)
     df["receiver"].append(registry.eth.sett_vaults.remBADGER)
     df["value"].append(week_13_rembadger_deposit)
 
     # https://github.com/Badger-Finance/badger-multisig/issues/328
     # bridge badger to arbitrum through eoa
-    q2_arb1_emissions = Decimal('11141')
+    q2_arb1_emissions = Decimal("11141")
     df["token_address"].append(registry.eth.treasury_tokens.BADGER)
     df["receiver"].append(registry.eth.badger_wallets.ops_executor3)
     df["value"].append(q2_arb1_emissions)

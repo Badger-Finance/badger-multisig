@@ -7,6 +7,7 @@ from helpers.constants import AddressZero
   Sets Bribes Processor to target address
 """
 
+
 def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_badger()
@@ -14,7 +15,9 @@ def main():
     bve_aura = safe.badger.strat_graviaura
     tech_ops = registry.eth.badger_wallets.techops_multisig
 
-    aura_bribes_processor = interface.IBribesProcessor(registry.eth.aura_bribes_processor)
+    aura_bribes_processor = interface.IBribesProcessor(
+        registry.eth.aura_bribes_processor
+    )
 
     ## Ensure Strategy makes sense
     assert aura_bribes_processor.STRATEGY() == bve_aura

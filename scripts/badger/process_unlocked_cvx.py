@@ -14,7 +14,7 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     bvecvx_vault = GreatApeSafe(registry.eth.sett_vaults.bveCVX)
     bvecvx_strat = interface.IVestedCvx(
-        registry.eth.strategies['native.vestedCVX'], owner=safe.account
+        registry.eth.strategies["native.vestedCVX"], owner=safe.account
     )
     cvx = interface.ERC20(registry.eth.treasury_tokens.CVX)
 
