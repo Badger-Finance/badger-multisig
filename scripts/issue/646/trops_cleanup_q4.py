@@ -7,7 +7,6 @@ def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     safe.init_badger()
     safe.init_curve()
-    safe.init_cow()
 
     cvx = safe.contract(r.treasury_tokens.CVX)
     bvecvx = safe.contract(r.treasury_tokens.bveCVX)
