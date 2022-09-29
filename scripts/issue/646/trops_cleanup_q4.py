@@ -3,57 +3,57 @@ from helpers.addresses import r
 
 
 def main():
-    safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
+    trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
-    safe.init_badger()
-    safe.init_curve()
+    trops.init_badger()
+    trops.init_curve()
 
-    cvx = safe.contract(r.treasury_tokens.CVX)
-    bvecvx = safe.contract(r.treasury_tokens.bveCVX)
-    cvxcrv = safe.contract(r.treasury_tokens.cvxCRV)
-    bcvxcrv = safe.contract(r.treasury_tokens.bcvxCRV)
-    gravi = safe.contract(r.sett_vaults.graviAURA)
-    crv3pool = safe.contract(r.treasury_tokens.crv3pool)
-    usdc = safe.contract(r.treasury_tokens.USDC)
-    baurabal = safe.contract(r.sett_vaults.bauraBal)
+    cvx = trops.contract(r.treasury_tokens.CVX)
+    bvecvx = trops.contract(r.treasury_tokens.bveCVX)
+    cvxcrv = trops.contract(r.treasury_tokens.cvxCRV)
+    bcvxcrv = trops.contract(r.treasury_tokens.bcvxCRV)
+    gravi = trops.contract(r.sett_vaults.graviAURA)
+    crv3pool = trops.contract(r.treasury_tokens.crv3pool)
+    usdc = trops.contract(r.treasury_tokens.USDC)
+    baurabal = trops.contract(r.sett_vaults.bauraBal)
 
     send_to_vault = [cvxcrv, bcvxcrv, baurabal]
 
-    safe.take_snapshot(
+    trops.take_snapshot(
         tokens=[bvecvx, bcvxcrv, gravi, usdc, baurabal, cvx] + send_to_vault
     )
     vault.take_snapshot(tokens=send_to_vault)
 
     # receive bvecvx, bcvxCRV, graviAURA
-    safe.badger.claim_all()
+    trops.badger.claim_all()
 
     # withdraw all 3crv to usdc
-    safe.curve.withdraw_to_one_coin(crv3pool, crv3pool.balanceOf(safe), usdc)
+    trops.curve.withdraw_to_one_coin(crv3pool, crv3pool.balanceOf(trops), usdc)
 
     # deposit cvx
-    cvx.approve(bvecvx, cvx.balanceOf(safe))
-    bvecvx.deposit(cvx.balanceOf(safe))
+    cvx.approve(bvecvx, cvx.balanceOf(trops))
+    bvecvx.deposit(cvx.balanceOf(trops))
 
     # transfers to vault
     for token in send_to_vault:
-        token.transfer(vault, token.balanceOf(safe))
+        token.transfer(vault, token.balanceOf(trops))
 
-    safe.print_snapshot()
+    trops.print_snapshot()
     vault.print_snapshot()
-    safe.post_safe_tx()
+    trops.post_safe_tx()
 
 
 def sell_to_weth():
-    safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
-    safe.init_cow(prod=False)
+    trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
+    trops.init_cow(prod=False)
 
-    sd = safe.contract(r.bribe_tokens_claimable_graviaura.SD)
-    ens = safe.contract(r.treasury_tokens.ENS)
-    sushi = safe.contract(r.treasury_tokens.SUSHI)
-    xsushi = safe.contract(r.treasury_tokens.xSUSHI)
-    weth = safe.contract(r.treasury_tokens.WETH)
+    sd = trops.contract(r.bribe_tokens_claimable_graviaura.SD)
+    ens = trops.contract(r.treasury_tokens.ENS)
+    sushi = trops.contract(r.treasury_tokens.SUSHI)
+    xsushi = trops.contract(r.treasury_tokens.xSUSHI)
+    weth = trops.contract(r.treasury_tokens.WETH)
 
     for token in [sd, ens, sushi, xsushi]:
-        safe.cow.market_sell(token, weth, token.balanceOf(safe), deadline=60 * 60 * 4)
+        trops.cow.market_sell(token, weth, token.balanceOf(trops), deadline=60 * 60 * 4)
 
-    safe.post_safe_tx()
+    trops.post_safe_tx()
