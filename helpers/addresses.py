@@ -288,6 +288,8 @@ ADDRESSES_ETH = {
         "b40WBTC_40DIGG_20graviAURA": "0x371B7C451858bd88eAf392B383Df8bd7B8955d5a",
         "bBB_a_USD": "0x06D756861De0724FAd5B5636124e0f252d3C1404",
         "b33auraBAL_33graviAURA_33WETH": "0xf8f5677B6bCecdb9be94AE8f6770a05a6C53C378",
+        "bB_stETH_STABLE": "0x41466b8ec544e3192Aa1aA30f65fC60FAb4D52Bf",
+        "bB-rETH-STABLE": "0xA484427CF91bbd945c39eF87dF0A02Bb8625dC97"
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -322,6 +324,8 @@ ADDRESSES_ETH = {
         "native.bauraBal": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
         "native.b80BADGER_20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
         "native.b40WBTC_40DIGG_20graviAURA": "0xD87F2cdE238D0122b3865164359CFF6b2431d927",
+        "native.bB_stETH_STABLE": "0x1cC3731d8f30341EF4527E7da1B6a4DA88ef71DF",
+        "native.bB-rETH-STABLE": "0xE6153AdD9913c7D25a6d475acFfACc5Eb570D8bE",
         "_deprecated": {
             "native.bauraBal": {
                 "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
@@ -354,7 +358,7 @@ ADDRESSES_ETH = {
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C",  # V1.1
         "uFragments": "0x020eb84309243Ed4B8E6C197AF145125dDE4AFDa",  # V1.1
         "SimpleWrapperGatedUpgradeable": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
-        "TheVault": "0x55918A84eB7Fd1D930e098a8E86D0206549fA8c3",
+        "TheVault": "0x60c796ACb2E0949178086294f03A44C450511784", # V1.5.2.a
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
