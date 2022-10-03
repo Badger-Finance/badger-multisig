@@ -196,6 +196,7 @@ ADDRESSES_ETH = {
         "AURABAL": "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
         "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
         "badgerFRAXBP_f_lp": "0x09b2E090531228d1b8E3d948C73b990Cb6e60720",
+        "ENS": "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -487,6 +488,7 @@ ADDRESSES_ETH = {
         "USDC": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         "SD": "0x30D20208d987713f46DFD34EF128Bb16C404D10f",
         "DFX": "0x888888435FDe8e7d4c54cAb67f206e4199454c60",
+        "RPL": "0xD33526068D116cE69F19A9ee46F0bd304F21A51f",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
