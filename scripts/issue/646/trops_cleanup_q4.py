@@ -37,6 +37,7 @@ def main():
     # deposit cvx for voter
     cvx.approve(bvecvx, cvx.balanceOf(trops))
     bvecvx.depositFor(voter, cvx.balanceOf(trops))
+    bvecvx.transfer(voter, bvecvx.balanceOf(trops))
 
     # deposit cvxcrv for tree
     cvxcrv.approve(bcvxcrv, cvxcrv.balanceOf(trops))
