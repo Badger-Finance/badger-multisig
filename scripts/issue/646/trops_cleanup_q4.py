@@ -22,7 +22,7 @@ def main():
     baurabal = trops.contract(r.sett_vaults.bauraBal)
 
     trops.take_snapshot(
-        tokens=[bvecvx, cvxcrv, gravi, usdc, baurabal, cvx, baurabal]
+        tokens=[bvecvx, bcvxcrv, cvxcrv, gravi, usdc, baurabal, cvx, baurabal]
     )
     vault.take_snapshot(tokens=[baurabal])
     voter.take_snapshot(tokens=[bvecvx])
