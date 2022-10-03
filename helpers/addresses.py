@@ -67,7 +67,6 @@ ADDRESSES_ETH = {
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
-        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         # "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",  # can execute from deployer
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
@@ -79,7 +78,7 @@ ADDRESSES_ETH = {
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
         # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
         "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
-        "ops_root-validator-new": "0x1318d5c0C24830D86Cc27Db13Ced0CED31412438",
+        "ops_root-validator_v3": "0xcA63a374ec5f41dA402dD17b6d90DddFea3d64C4",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
         "digg_treasury": "0x5A54Ca44e8F5A1A695f8621f15Bfa159a140bB61",
@@ -95,12 +94,14 @@ ADDRESSES_ETH = {
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
         "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
         "_deprecated": {
+            "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
             "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
             "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
             "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
             "ops_guardian": "0x29F7F8896Fb913CF7f9949C623F896a154727919",
             "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
             "ops_root-validator": "0x626f69162ea1556a75dd4443d87d2fe38dd25901",
+            "ops_root-validator-new": "0x1318d5c0C24830D86Cc27Db13Ced0CED31412438",
             "ops_cycle_bot": "0x68de9E2b015904530593426d934CE608e117Fa7A",
             "ops_earner": "0x46099Ffa86aAeC689D11F5D5130044Ff7082C2AD",
             "ops_harvester": "0x73433896620E71f7b1C72405b8D2898e951Ca4d5",
@@ -289,7 +290,7 @@ ADDRESSES_ETH = {
         "bBB_a_USD": "0x06D756861De0724FAd5B5636124e0f252d3C1404",
         "b33auraBAL_33graviAURA_33WETH": "0xf8f5677B6bCecdb9be94AE8f6770a05a6C53C378",
         "bB_stETH_STABLE": "0x41466b8ec544e3192Aa1aA30f65fC60FAb4D52Bf",
-        "bB-rETH-STABLE": "0xA484427CF91bbd945c39eF87dF0A02Bb8625dC97"
+        "bB-rETH-STABLE": "0xA484427CF91bbd945c39eF87dF0A02Bb8625dC97",
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -358,7 +359,7 @@ ADDRESSES_ETH = {
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C",  # V1.1
         "uFragments": "0x020eb84309243Ed4B8E6C197AF145125dDE4AFDa",  # V1.1
         "SimpleWrapperGatedUpgradeable": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
-        "TheVault": "0x60c796ACb2E0949178086294f03A44C450511784", # V1.5.2.a
+        "TheVault": "0x60c796ACb2E0949178086294f03A44C450511784",  # V1.5.2.a
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
@@ -742,7 +743,6 @@ ADDRESSES_ARBITRUM = {
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
-        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
@@ -753,6 +753,9 @@ ADDRESSES_ARBITRUM = {
         "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
+        "_deprecated": {
+            "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        },
     },
     "sett_vaults": {
         "bslpWbtcEth": "0xFc13209cAfE8fb3bb5fbD929eC9F11a39e8Ac041",
@@ -873,11 +876,13 @@ ADDRESSES_RINKEBY = {
         "solo_multisig": "0x4e9B82f40a657105b083db308D33E93789329ddb",
         "gas_station": "0x747a4c9073B68AE16A29e65f4b95C9bbEa1E19cD",
         "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
-        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
+        "_deprecated": {
+            "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        },
     },
     "treasury_tokens": {
         "WBTC": "0x577D296678535e4903D59A4C929B718e1D575e0A",
@@ -914,7 +919,6 @@ ADDRESSES_FANTOM = {
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
-        "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
         "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
@@ -926,6 +930,9 @@ ADDRESSES_FANTOM = {
         "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
         "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
         "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
+        "_deprecated": {
+            "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+        },
     },
     "treasury_tokens": {
         "WFTM": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
