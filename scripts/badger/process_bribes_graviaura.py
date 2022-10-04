@@ -47,6 +47,9 @@ def claim_and_sell_for_weth(claim_only=False):
     # NOTE: badger is directly emitted by the strat to tree
     # NOTE: aura is sent to processor, but should not be sold for weth
     for addr, mantissa in claimed.items():
+        if addr == "0x0":
+            # $eth. strat will auto convert to $weth
+            continue
         addr = web3.toChecksumAddress(addr)
         if addr != BADGER.address and addr != AURA.address:
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
@@ -60,6 +63,7 @@ def claim_and_sell_for_weth(claim_only=False):
             )
             PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
+    bribes_dest.print_snapshot()
     SAFE.post_safe_tx()
 
 

@@ -41,10 +41,15 @@ def step0_1(sim=False):
         claimed = {alcx.address: 500e18}
     else:
         claimed = SAFE.badger.claim_bribes_votium(registry.eth.bribe_tokens_claimable)
-        # Handling cvxFXS rewards as bribes (Ref: https://github.com/Badger-Finance/badger-strategies/issues/56)
-        cvxFXS_amount = SAFE.badger.sweep_reward_token(CVX_FXS)
-        if cvxFXS_amount > 0:
-            claimed[CVX_FXS] = claimed.setdefault(CVX_FXS, 0) + cvxFXS_amount
+        for token_addr in registry.eth.bribe_tokens_claimable.values():
+            # handle any non $cvx token present in the strat contract as bribes
+            # ref: https://github.com/Badger-Finance/badger-strategies/issues/56
+            if token_addr != CVX.address:
+                token_amount = SAFE.badger.sweep_reward_token(token_addr)
+                if token_amount > 0:
+                    claimed[token_addr] = (
+                        claimed.setdefault(token_addr, 0) + token_amount
+                    )
 
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
