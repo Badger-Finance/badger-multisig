@@ -196,6 +196,7 @@ ADDRESSES_ETH = {
         "AURABAL": "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
         "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
         "badgerFRAXBP_f_lp": "0x09b2E090531228d1b8E3d948C73b990Cb6e60720",
+        "ENS": "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -288,6 +289,8 @@ ADDRESSES_ETH = {
         "b40WBTC_40DIGG_20graviAURA": "0x371B7C451858bd88eAf392B383Df8bd7B8955d5a",
         "bBB_a_USD": "0x06D756861De0724FAd5B5636124e0f252d3C1404",
         "b33auraBAL_33graviAURA_33WETH": "0xf8f5677B6bCecdb9be94AE8f6770a05a6C53C378",
+        "bB_stETH_STABLE": "0x41466b8ec544e3192Aa1aA30f65fC60FAb4D52Bf",
+        "bB-rETH-STABLE": "0xA484427CF91bbd945c39eF87dF0A02Bb8625dC97"
     },
     "strategies": {
         "native.badger": "0x75b8E21BD623012Efb3b69E1B562465A68944eE6",
@@ -322,6 +325,8 @@ ADDRESSES_ETH = {
         "native.bauraBal": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
         "native.b80BADGER_20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
         "native.b40WBTC_40DIGG_20graviAURA": "0xD87F2cdE238D0122b3865164359CFF6b2431d927",
+        "native.bB_stETH_STABLE": "0x1cC3731d8f30341EF4527E7da1B6a4DA88ef71DF",
+        "native.bB-rETH-STABLE": "0xE6153AdD9913c7D25a6d475acFfACc5Eb570D8bE",
         "_deprecated": {
             "native.bauraBal": {
                 "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
@@ -354,7 +359,7 @@ ADDRESSES_ETH = {
         "BadgerSettPeak": "0x56bb91BfbeEB5400db72bcE4c15eb0Ddfd06002C",  # V1.1
         "uFragments": "0x020eb84309243Ed4B8E6C197AF145125dDE4AFDa",  # V1.1
         "SimpleWrapperGatedUpgradeable": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
-        "TheVault": "0x55918A84eB7Fd1D930e098a8E86D0206549fA8c3",
+        "TheVault": "0x60c796ACb2E0949178086294f03A44C450511784", # V1.5.2.a
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
@@ -485,7 +490,7 @@ ADDRESSES_ETH = {
         "SD": "0x30D20208d987713f46DFD34EF128Bb16C404D10f",
         "DFX": "0x888888435FDe8e7d4c54cAb67f206e4199454c60",
         "WETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-        "RPL": "0xd33526068d116ce69f19a9ee46f0bd304f21a51f",
+        "RPL": "0xD33526068D116cE69F19A9ee46F0bd304F21A51f",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
@@ -527,6 +532,7 @@ ADDRESSES_ETH = {
         "B_20_BTC_80_BADGER": "0xb460DAa847c45f1C4a41cb05BFB3b51c92e41B36",
         "B_3POOL": "0x06Df3b2bbB68adc8B0e302443692037ED9f91b42",
         "B_80_BAL_20_WETH": "0x5c6ee304399dbdb9c8ef030ab642b10820db8f56",
+        "BB_A_USD": "0x7B50775383d3D6f0215A8F290f2C9e2eEBBEceb2",
         "B_auraBAL_STABLE": "0x3dd0843A028C86e0b760b1A76929d1C5Ef93a2dd",
         "veBAL": "0xC128a9954e6c874eA3d62ce62B468bA073093F25",
         "minter": "0x239e55F427D44C3cc793f49bFB507ebe76638a2b",
@@ -785,7 +791,7 @@ ADDRESSES_ARBITRUM = {
         },
     },
     "treasury_tokens": {
-        "BADGER": "0xbfa641051ba0a0ad1b0acf549a89536a0d76472e",
+        "BADGER": "0xBfa641051Ba0a0Ad1b0AcF549a89536A0D76472E",
         "WBTC": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
         "CRV": "0x11cdb42b0eb46d95f990bedd4695a6e3fa034978",
         "SUSHI": "0xd4d42f0b6def4ce0383636770ef773390d85c61a",
