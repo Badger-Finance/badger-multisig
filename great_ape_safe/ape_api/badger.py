@@ -167,10 +167,19 @@ class Badger:
         )
         data = self.get_hh_data(address)
 
+        def transform_claimable(amount_string, n_decimals):
+            # if the last number is a zero it gets omitted by the api,
+            # here we pad the matissa with zeroes to correct for this
+            assert "." in amount_string
+            splitted = amount_string.split(".")
+            return splitted[0] + splitted[-1].ljust(n_decimals, "0")
+
         aggregate = {"tokens": [], "amounts": []}
         for item in data:
             aggregate["tokens"].append(item["token"])
-            aggregate["amounts"].append(item["claimable"].replace(".", ""))
+            aggregate["amounts"].append(
+                transform_claimable(item["claimable"], item["decimals"])
+            )
 
         metadata = [
             (
