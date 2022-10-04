@@ -18,16 +18,20 @@ KEYS = [
     "b80BADGER_20WBTC",
     "b40WBTC_40DIGG_20graviAURA",
     "bBB_a_USD",
-    "b33auraBAL_33graviAURA_33WETH"
+    "b33auraBAL_33graviAURA_33WETH",
+    "bB_stETH_STABLE",
+    "bB-rETH-STABLE"
 ]
 
 HODLERS = [
     "0xD14f076044414C255D2E82cceB1CB00fb1bBA64c",
     "0xfe51263bd0d075dc5441e89ecd1f6d63ff41e02e",
     "0xec4fcd1aca723f8456999c5f5d7479dbe9528c11",
-    "0x3cd3dba355776ac76a0485e728ead54092085da2",
+    "0x95eec544a7cf2e6a65a71039d58823f4564a6319",
     "0xc3b1f7ab9fabd729cdf9e90ea54ec447f9464269",
-    "0x794783dcfcac8c1944727057a3208d8f8bb91506"
+    "0x794783dcfcac8c1944727057a3208d8f8bb91506",
+    "0xee8b29aa52dd5ff2559da2c50b1887adee257556",
+    "0xee8b29aa52dd5ff2559da2c50b1887adee257556"
 ]
 
 
@@ -46,13 +50,13 @@ def main(queue="true", simulation="false"):
                         ["address", "address"],
                         [address, NEW_LOGIC],
                     ),
-                    dump_dir="data/badger/timelock/upgrade_vaults_v1_5_fee_events/",
+                    dump_dir="data/badger/timelock/upgrade_vaults_v1_5_2a_fee_events/",
                     delay_in_days=4,
                 )
             else:
                 execute_timelock(
                     safe.badger.timelock,
-                    "data/badger/timelock/upgrade_vaults_v1_5_fee_events/",
+                    "data/badger/timelock/upgrade_vaults_v1_5_2a_fee_events/",
                     key,
                     address,
                     simulation,
@@ -144,10 +148,10 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
         # New event triggers
         assert len(tx.events["PerformanceFeeGovernance"]) >= 1
 
-        # Simulate a withdrawal (small amount to keep it simple)
+        # Simulate a withdrawal
         if vault.withdrawalFee() > 0:
             hodler = accounts.at(HODLERS[KEYS.index(key)], force=True)
-            tx = vault.withdraw(1e17, {"from": hodler})
+            tx = vault.withdrawAll({"from": hodler})
             # New event triggers
             assert len(tx.events["WithdrawalFee"]) >= 1
 
