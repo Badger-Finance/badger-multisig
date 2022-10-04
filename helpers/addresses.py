@@ -789,7 +789,7 @@ ADDRESSES_ARBITRUM = {
         },
     },
     "treasury_tokens": {
-        "BADGER": "0xbfa641051ba0a0ad1b0acf549a89536a0d76472e",
+        "BADGER": "0xBfa641051Ba0a0Ad1b0AcF549a89536A0D76472E",
         "WBTC": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
         "CRV": "0x11cdb42b0eb46d95f990bedd4695a6e3fa034978",
         "SUSHI": "0xd4d42f0b6def4ce0383636770ef773390d85c61a",
