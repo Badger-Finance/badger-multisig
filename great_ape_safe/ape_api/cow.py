@@ -1,11 +1,10 @@
 import json
 import os
 import requests
-import sys
 from decimal import Decimal
 from pprint import pprint
 
-from brownie import chain, interface, web3
+from brownie import Contract, chain, interface, web3
 from rich.prompt import Confirm
 
 from helpers.addresses import registry
@@ -90,20 +89,29 @@ class Cow:
             buy_amount_after_fee = mantissa_buy
         else:
             buy_amount_after_fee = int(int(fee_and_quote["buyAmountAfterFee"]) * coef)
-            pricer = interface.IOnChainPricing(
-                interface.IBribesProcessor(registry.eth.cvx_bribes_processor).pricer(),
-                owner=self.safe.account,
-            )
-            naive_quote = pricer.findOptimalSwap(sell_token, buy_token, mantissa_sell)
-            if naive_quote[1] > buy_amount_after_fee:
-                # manual sanity check whether onchain quote is acceptable
-                override = Confirm.ask(
-                    f"""cowswap quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {buy_amount_after_fee / 10**buy_token.decimals()} {buy_token.symbol()}
-{naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {naive_quote[1] / 10**buy_token.decimals()} {buy_token.symbol()}
-pass {naive_quote[0]}'s quote to cowswap instead?"""
+            try:
+                processor = Contract(origin)
+            except ValueError:
+                # origin is not a (verified) contract
+                pass
+            if "processor" in locals() and "pricer" in processor.signatures:
+                pricer = self.safe.contract(
+                    interface.IBribesProcessor(origin).pricer(),
+                    Interface=interface.IOnChainPricing,
                 )
-                if override:
-                    buy_amount_after_fee = naive_quote[1]
+                naive_quote = pricer.findOptimalSwap(
+                    sell_token, buy_token, mantissa_sell
+                )
+                if naive_quote[1] > buy_amount_after_fee:
+                    # manual sanity check whether onchain quote is acceptable
+                    override = Confirm.ask(
+                        f"""cowswap quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {buy_amount_after_fee / 10**buy_token.decimals()} {buy_token.symbol()}
+    {naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {naive_quote[1] / 10**buy_token.decimals()} {buy_token.symbol()}
+    pass {naive_quote[0]}'s quote to cowswap instead?"""
+                    )
+                    if override:
+                        buy_amount_after_fee = naive_quote[1]
+
         assert fee_amount > 0
         assert buy_amount_after_fee > 0
 
@@ -131,6 +139,13 @@ pass {naive_quote[0]}'s quote to cowswap instead?"""
         print("ORDER PAYLOAD")
         pprint(order_payload)
         print("")
+
+        # confirm seller actually has the assets that are to be swapped
+        if sell_token.balanceOf(origin) < mantissa_sell:
+            if not Confirm.ask(
+                f"[red]seller only has {sell_token.balanceOf(origin)} {sell_token.symbol()}, but is trying to swap {mantissa_sell}![/red]\ncontinue?"
+            ):
+                raise
 
         r = requests.post(f"{self.api_url}orders", json=order_payload)
         order_uid = r.json()
