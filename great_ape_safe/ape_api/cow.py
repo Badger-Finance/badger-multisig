@@ -96,8 +96,7 @@ class Cow:
                 pass
             if "processor" in locals() and "pricer" in processor.signatures:
                 pricer = self.safe.contract(
-                    interface.IBribesProcessor(origin).pricer(),
-                    Interface=interface.IOnChainPricing,
+                    interface.IBribesProcessor(origin).pricer(), from_explorer=True
                 )
                 naive_quote = pricer.findOptimalSwap(
                     sell_token, buy_token, mantissa_sell
