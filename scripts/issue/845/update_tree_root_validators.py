@@ -10,4 +10,10 @@ def main():
         tree.ROOT_VALIDATOR_ROLE(), r.badger_wallets["ops_root-validator_v3"]
     )
 
+    # also remove an old one
+    tree.revokeRole(
+        tree.ROOT_VALIDATOR_ROLE(),
+        r.badger_wallets._deprecated["ops_root-validator-old"],
+    )
+
     dev.post_safe_tx(call_trace=True)

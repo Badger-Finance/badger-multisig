@@ -102,6 +102,7 @@ ADDRESSES_ETH = {
             "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
             "ops_root-validator": "0x626f69162ea1556a75dd4443d87d2fe38dd25901",
             "ops_root-validator-new": "0x1318d5c0C24830D86Cc27Db13Ced0CED31412438",
+            "ops_root-validator-old": "0x71e604d7db051eB7d9d0572dd06DbdB4435c9B1E",
             "ops_cycle_bot": "0x68de9E2b015904530593426d934CE608e117Fa7A",
             "ops_earner": "0x46099Ffa86aAeC689D11F5D5130044Ff7082C2AD",
             "ops_harvester": "0x73433896620E71f7b1C72405b8D2898e951Ca4d5",
