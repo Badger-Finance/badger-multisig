@@ -17,11 +17,7 @@ def main():
 
     vault.take_snapshot(tokens=[lp.address])
 
-    # this doesn't return `True` which fails assertion check?
-    # vault.convex.deposit_all_and_stake(lp)
-
-    vault.convex.deposit_all(lp)
-    vault.convex.stake_all(lp)
+    vault.convex.deposit_all_and_stake(lp)
 
     rewards_after = rewards.balanceOf(vault)
     delta = rewards_after - rewards_before
