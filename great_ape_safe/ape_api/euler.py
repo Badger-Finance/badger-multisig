@@ -1,5 +1,6 @@
 from brownie import interface
 from helpers.addresses import r
+from helpers.constants import MaxUint256
 
 
 class Euler:
@@ -42,7 +43,7 @@ class Euler:
         after_underlying = underlying.balanceOf(self.safe)
 
         assert after_etoken < before_etoken
-        assert after_underlying > before_underlying + amount
+        assert after_underlying > before_underlying
 
     def withdraw_all(self, underlying):
-        self.withdraw(underlying, self.safe.balanceOf(underlying))
+        self.withdraw(underlying, MaxUint256)
