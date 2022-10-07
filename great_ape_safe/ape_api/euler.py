@@ -1,9 +1,5 @@
 from brownie import interface
-from rich.console import Console
 from helpers.addresses import r
-
-
-C = Console()
 
 
 class Euler:
