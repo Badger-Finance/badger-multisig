@@ -19,7 +19,7 @@ def main():
 
     vault.take_snapshot(tokens=[badger])
 
-    vault.euler.deposit(badger, 250_000e18)
+    vault.euler.deposit(badger, 100_000e18)
 
     after_ebadger = ebadger.balanceOf(vault)/ 1e18
     delta = after_ebadger - before_ebadger
