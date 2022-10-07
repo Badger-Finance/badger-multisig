@@ -9,16 +9,44 @@ C = Console()
 class Euler:
     def __init__(self, safe):
         self.safe = safe
-        self.euler_markets = interface.IEuler("0x27182842E098f60e3D576794A5bFFb0777E025d3")
-
+        self.euler = safe.contract(r.euler.euler)
+        self.markets = interface.IEuler(r.euler.euler_markets, owner=safe.account)
 
     def deposit(self, underlying, amount):
-        etoken = self.safe.contract(self.euler_markets.underlyingToEToken(underlying))
-        before = etoken.balanceOf(self.safe)
+        etoken = interface.IEToken(
+            self.markets.underlyingToEToken(underlying), owner=self.safe.account
+        )
+
+        before_etoken = etoken.balanceOf(self.safe)
+        before_underlying = underlying.balanceOf(self.safe)
+
+        underlying.approve(self.euler, amount)
         etoken.deposit(0, amount)
-        after = etoken.balanceOf(self.safe)
-        assert after > before
 
+        after_etoken = etoken.balanceOf(self.safe)
+        after_underlying = underlying.balanceOf(self.safe)
 
-    def withdraw():
-        pass
+        assert after_etoken > before_etoken
+        assert after_underlying < before_underlying
+
+    def deposit_all(self, underlying):
+        self.deposit(underlying, underlying.balanceOf(self.safe))
+
+    def withdraw(self, underlying, amount):
+        etoken = interface.IEToken(
+            self.markets.underlyingToEToken(underlying), owner=self.safe.account
+        )
+
+        before_etoken = etoken.balanceOf(self.safe)
+        before_underlying = underlying.balanceOf(self.safe)
+
+        etoken.withdraw(0, amount)
+
+        after_etoken = etoken.balanceOf(self.safe)
+        after_underlying = underlying.balanceOf(self.safe)
+
+        assert after_etoken < before_etoken
+        assert after_underlying > before_underlying + amount
+
+    def withdraw_all(self, underlying):
+        self.withdraw(underlying, self.safe.balanceOf(underlying))

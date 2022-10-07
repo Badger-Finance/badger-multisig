@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
 
-interface IEuler {
+interface IEToken {
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
     event AssetStatus(
         address indexed underlying,
         uint256 totalBalances,
@@ -37,7 +41,11 @@ interface IEuler {
     );
     event GovSetAssetConfig(
         address indexed underlying,
-        IStorage.AssetConfig newConfig
+        IStorageToken.AssetConfig newConfig
+    );
+    event GovSetChainlinkPriceFeed(
+        address indexed underlying,
+        address chainlinkAggregator
     );
     event GovSetIRM(
         address indexed underlying,
@@ -93,6 +101,7 @@ interface IEuler {
     event RequestBorrow(address indexed account, uint256 amount);
     event RequestBurn(address indexed account, uint256 amount);
     event RequestDeposit(address indexed account, uint256 amount);
+    event RequestDonate(address indexed account, uint256 amount);
     event RequestLiquidate(
         address indexed liquidator,
         address indexed violator,
@@ -123,6 +132,7 @@ interface IEuler {
     );
     event RequestWithdraw(address indexed account, uint256 amount);
     event TrackAverageLiquidity(address indexed account);
+    event Transfer(address indexed from, address indexed to, uint256 value);
     event UnTrackAverageLiquidity(address indexed account);
     event Withdraw(
         address indexed underlying,
@@ -130,83 +140,80 @@ interface IEuler {
         uint256 amount
     );
 
-    function activateMarket(address underlying) external returns (address);
-
-    function activatePToken(address underlying) external returns (address);
-
-    function eTokenToDToken(address eToken)
-        external
-        view
-        returns (address dTokenAddr);
-
-    function eTokenToUnderlying(address eToken)
-        external
-        view
-        returns (address underlying);
-
-    function enterMarket(uint256 subAccountId, address newMarket) external;
-
-    function exitMarket(uint256 subAccountId, address oldMarket) external;
-
-    function getEnteredMarkets(address account)
-        external
-        view
-        returns (address[] memory);
-
-    function getPricingConfig(address underlying)
-        external
-        view
-        returns (
-            uint16 pricingType,
-            uint32 pricingParameters,
-            address pricingForwarded
-        );
-
-    function interestAccumulator(address underlying)
+    function allowance(address holder, address spender)
         external
         view
         returns (uint256);
 
-    function interestRate(address underlying) external view returns (int96);
+    function approve(address spender, uint256 amount) external returns (bool);
 
-    function interestRateModel(address underlying)
+    function approveSubAccount(
+        uint256 subAccountId,
+        address spender,
+        uint256 amount
+    ) external returns (bool);
+
+    function balanceOf(address account) external view returns (uint256);
+
+    function balanceOfUnderlying(address account)
         external
         view
         returns (uint256);
+
+    function burn(uint256 subAccountId, uint256 amount) external;
+
+    function convertBalanceToUnderlying(uint256 balance)
+        external
+        view
+        returns (uint256);
+
+    function convertUnderlyingToBalance(uint256 underlyingAmount)
+        external
+        view
+        returns (uint256);
+
+    function decimals() external pure returns (uint8);
+
+    function deposit(uint256 subAccountId, uint256 amount) external;
+
+    function donateToReserves(uint256 subAccountId, uint256 amount) external;
+
+    function mint(uint256 subAccountId, uint256 amount) external;
 
     function moduleGitCommit() external view returns (bytes32);
 
     function moduleId() external view returns (uint256);
 
-    function reserveFee(address underlying) external view returns (uint32);
+    function name() external view returns (string memory);
 
-    function underlyingToAssetConfig(address underlying)
-        external
-        view
-        returns (IStorage.AssetConfig memory);
+    function reserveBalance() external view returns (uint256);
 
-    function underlyingToAssetConfigUnresolved(address underlying)
-        external
-        view
-        returns (IStorage.AssetConfig memory config);
+    function reserveBalanceUnderlying() external view returns (uint256);
 
-    function underlyingToDToken(address underlying)
-        external
-        view
-        returns (address);
+    function symbol() external view returns (string memory);
 
-    function underlyingToEToken(address underlying)
-        external
-        view
-        returns (address);
+    function totalSupply() external view returns (uint256);
 
-    function underlyingToPToken(address underlying)
-        external
-        view
-        returns (address);
+    function totalSupplyUnderlying() external view returns (uint256);
+
+    function touch() external;
+
+    function transfer(address to, uint256 amount) external returns (bool);
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) external returns (bool);
+
+    function transferFromMax(address from, address to) external returns (bool);
+
+    function underlyingAsset() external view returns (address);
+
+    function withdraw(uint256 subAccountId, uint256 amount) external;
 }
 
-interface IStorage {
+interface IStorageToken {
     struct AssetConfig {
         address eTokenAddress;
         bool borrowIsolated;
@@ -215,3 +222,4 @@ interface IStorage {
         uint24 twapWindow;
     }
 }
+
