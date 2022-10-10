@@ -591,6 +591,10 @@ ADDRESSES_ETH = {
     "ribbon": {
         "badger_vault": "0x270F4a26a3fE5766CcEF9608718491bb057Be238",
     },
+    "euler": {
+        "euler": "0x27182842E098f60e3D576794A5bFFb0777E025d3",
+        "euler_markets": "0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3",
+    }
 }
 
 ADDRESSES_IBBTC = {

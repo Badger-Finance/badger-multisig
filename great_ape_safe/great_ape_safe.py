@@ -25,6 +25,7 @@ from great_ape_safe.ape_api.convex import Convex
 from great_ape_safe.ape_api.cow import Cow
 from great_ape_safe.ape_api.curve import Curve
 from great_ape_safe.ape_api.curve_v2 import CurveV2
+from great_ape_safe.ape_api.euler import Euler
 from great_ape_safe.ape_api.maker import Maker
 from great_ape_safe.ape_api.opolis import Opolis
 from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
@@ -97,6 +98,9 @@ class GreatApeSafe(ApeSafe):
 
     def init_curve_v2(self):
         self.curve_v2 = CurveV2(self)
+
+    def init_euler(self):
+        self.euler = Euler(self)
 
     def init_maker(self):
         self.maker = Maker(self)
