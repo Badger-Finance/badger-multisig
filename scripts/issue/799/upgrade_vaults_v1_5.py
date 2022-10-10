@@ -63,7 +63,7 @@ def main(queue="true", simulation="false"):
                     safe
                 )
         
-    safe.post_safe_tx()
+    safe.post_safe_tx(replace_nonce=1079)
 
 
 def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
