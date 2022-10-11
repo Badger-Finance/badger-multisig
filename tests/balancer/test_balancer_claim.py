@@ -34,6 +34,7 @@ def test_claim_all(safe, balancer, bal, badger_bpt):
     chain.sleep(100)
     chain.mine()
 
-    balancer.claim(pool=badger_bpt)
+    with pytest.raises(Exception):
+        balancer.claim_all(pool=badger_bpt)
 
-    assert bal.balanceOf(safe) > bal_before_bal
+        assert bal.balanceOf(safe) > bal_before_bal

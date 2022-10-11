@@ -1,6 +1,5 @@
-from random import random
 import pytest
-from brownie import Contract, accounts, interface
+from brownie import accounts, interface
 from brownie_tokens import MintableForkToken
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry

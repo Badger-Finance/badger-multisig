@@ -1,5 +1,5 @@
 import pytest
-from brownie import Contract, interface
+from brownie import interface
 from brownie_tokens import MintableForkToken
 from helpers.addresses import registry
 
