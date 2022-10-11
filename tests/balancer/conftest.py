@@ -1,5 +1,5 @@
 import pytest
-from brownie import Contract
+from brownie import Contract, interface
 from brownie_tokens import MintableForkToken
 from helpers.addresses import registry
 
@@ -57,41 +57,51 @@ def badger_staked_bpt(safe, balancer, badger_bpt):
 
 @pytest.fixture
 def bal(safe, vault):
-    Contract.from_explorer(registry.eth.treasury_tokens.BAL)
-    bal = MintableForkToken(registry.eth.treasury_tokens.BAL, owner=safe.account)
-    bal._mint_for_testing(safe, 1000 * 10 ** bal.decimals())
-    bal._mint_for_testing(vault, 1000 * 10 ** bal.decimals())
+    bal = interface.ERC20(registry.eth.treasury_tokens.BAL, owner=safe.account)
+    bal_mintable = MintableForkToken(
+        bal.address, owner=safe.account
+    )
+    bal_mintable._mint_for_testing(safe, 1000 * 10**bal.decimals())
+    bal_mintable._mint_for_testing(vault, 1000 * 10**bal.decimals())
+    return bal
 
-    return Contract(registry.eth.treasury_tokens.BAL, owner=safe.account)
 
 
 @pytest.fixture
 def wbtc(safe):
-    Contract.from_explorer(registry.eth.treasury_tokens.WBTC)
-    wbtc = MintableForkToken(registry.eth.treasury_tokens.WBTC, owner=safe.account)
-    wbtc._mint_for_testing(safe, 10 * 10 ** wbtc.decimals())
-    return Contract(registry.eth.treasury_tokens.WBTC, owner=safe.account)
+    wbtc = interface.ERC20(registry.eth.treasury_tokens.WBTC, owner=safe.account)
+    wbtc_mintable = MintableForkToken(
+        wbtc.address, owner=safe.account
+    )
+    wbtc_mintable._mint_for_testing(safe, 10 * 10**wbtc.decimals())
+    return wbtc
 
 
 @pytest.fixture
 def weth(safe):
-    Contract.from_explorer(registry.eth.treasury_tokens.WETH)
-    weth = MintableForkToken(registry.eth.treasury_tokens.WETH, owner=safe.account)
-    weth._mint_for_testing(safe, 100 * 10 ** weth.decimals())
-    return Contract(registry.eth.treasury_tokens.WETH, owner=safe.account)
+    weth = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=safe.account)
+    weth_mintable = MintableForkToken(
+        weth.address, owner=safe.account
+    )
+    weth_mintable._mint_for_testing(safe, 100 * 10**weth.decimals())
+    return weth
 
 
 @pytest.fixture
 def badger(safe):
-    Contract.from_explorer(registry.eth.treasury_tokens.BADGER)
-    badger = MintableForkToken(registry.eth.treasury_tokens.BADGER)
-    badger._mint_for_testing(safe, 100_000 * 10 ** badger.decimals())
-    return Contract(registry.eth.treasury_tokens.BADGER, owner=safe.account)
+    badger = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=safe.account)
+    badger_mintable = MintableForkToken(
+        badger.address
+    )
+    badger_mintable._mint_for_testing(safe, 100_000 * 10**badger.decimals())
+    return badger
 
 
 @pytest.fixture
 def dai(safe):
-    Contract.from_explorer(registry.eth.treasury_tokens.DAI)
-    dai = MintableForkToken(registry.eth.treasury_tokens.DAI, owner=safe.account)
-    dai._mint_for_testing(safe, 1_000_000 * 10 ** dai.decimals())
-    return Contract(registry.eth.treasury_tokens.DAI, owner=safe.account)
+    dai = interface.ERC20(registry.eth.treasury_tokens.DAI, owner=safe.account)
+    dai_mintable = MintableForkToken(
+        dai.address, owner=safe.account
+    )
+    dai_mintable._mint_for_testing(safe, 1_000_000 * 10**dai.decimals())
+    return dai

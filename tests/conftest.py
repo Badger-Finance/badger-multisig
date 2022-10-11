@@ -1,6 +1,6 @@
 from random import random
 import pytest
-from brownie import Contract, accounts
+from brownie import Contract, accounts, interface
 from brownie_tokens import MintableForkToken
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
@@ -38,7 +38,10 @@ def ibbtc_msig():
 
 @pytest.fixture
 def USDC(safe):
-    Contract.from_explorer(registry.eth.treasury_tokens.USDC)
-    usdc = MintableForkToken(registry.eth.treasury_tokens.USDC, owner=safe.account)
-    usdc._mint_for_testing(safe, 1_000_000 * 10 ** usdc.decimals())
-    return Contract(registry.eth.treasury_tokens.USDC, owner=safe.account)
+    usdc = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=safe.account)
+    usdc_mintable = MintableForkToken(
+       usdc.address, owner=safe.account
+    )
+    usdc_mintable._mint_for_testing(safe, 1_000_000 * 10**usdc.decimals())
+    return usdc
+
