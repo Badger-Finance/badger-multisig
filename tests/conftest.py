@@ -39,10 +39,6 @@ def ibbtc_msig():
 @pytest.fixture
 def USDC(safe):
     Contract.from_explorer(registry.eth.treasury_tokens.USDC)
-    usdc = MintableForkToken(
-        registry.eth.treasury_tokens.USDC, owner=safe.account
-    )
-    usdc._mint_for_testing(safe, 1_000_000 * 10**usdc.decimals())
-    return Contract(
-        registry.eth.treasury_tokens.USDC, owner=safe.account
-    )
+    usdc = MintableForkToken(registry.eth.treasury_tokens.USDC, owner=safe.account)
+    usdc._mint_for_testing(safe, 1_000_000 * 10 ** usdc.decimals())
+    return Contract(registry.eth.treasury_tokens.USDC, owner=safe.account)

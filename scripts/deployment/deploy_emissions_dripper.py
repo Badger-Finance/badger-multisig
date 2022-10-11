@@ -1,4 +1,4 @@
-from  calendar import timegm
+from calendar import timegm
 from datetime import date, timedelta
 
 from brownie import EmissionsDripper, accounts
@@ -15,8 +15,8 @@ def main(deployer_label=None):
         registry.eth.badger_wallets.techops_multisig,
         registry.eth.badger_wallets.dev_multisig,
         deployer,
-        {'from': deployer},
-        publish_source=False#True
+        {"from": deployer},
+        publish_source=False,  # True
     )
 
 
@@ -29,6 +29,6 @@ def rinkeby(deployer_label=None):
         registry.rinkeby.badger_wallets.rinkeby_multisig,
         registry.rinkeby.badger_wallets.rinkeby_multisig,
         deployer,
-        {'from': deployer},
-        publish_source=True
+        {"from": deployer},
+        publish_source=True,
     )

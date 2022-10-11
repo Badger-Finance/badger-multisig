@@ -26,7 +26,5 @@ def sktAAVE(safe):
     sktaave = MintableForkToken(
         registry.eth.treasury_tokens.stkAAVE, owner=safe.account
     )
-    sktaave._mint_for_testing(safe, 1000 * 10**sktaave.decimals())
-    return Contract(
-        registry.eth.treasury_tokens.stkAAVE, owner=safe.account
-    )
+    sktaave._mint_for_testing(safe, 1000 * 10 ** sktaave.decimals())
+    return Contract(registry.eth.treasury_tokens.stkAAVE, owner=safe.account)

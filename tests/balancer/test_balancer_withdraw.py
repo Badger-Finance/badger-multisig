@@ -22,17 +22,15 @@ def deposited_stable(safe, balancer, dai, threepool_bpt, threepool_staked_bpt):
     bal_before_staked_bpt = threepool_staked_bpt.balanceOf(safe)
     bal_before_dai = dai.balanceOf(safe)
 
-    balancer.deposit_and_stake_single_asset(
-        dai,
-        dai.balanceOf(safe) / 4,
-        threepool_bpt
-    )
+    balancer.deposit_and_stake_single_asset(dai, dai.balanceOf(safe) / 4, threepool_bpt)
 
     assert dai.balanceOf(safe) < bal_before_dai
     assert threepool_staked_bpt.balanceOf(safe) > bal_before_staked_bpt
 
 
-def test_unstake_and_withdraw_all_weighted(safe, balancer, wbtc, weth, bpt, staked_bpt, deposited_weighted):
+def test_unstake_and_withdraw_all_weighted(
+    safe, balancer, wbtc, weth, bpt, staked_bpt, deposited_weighted
+):
     bal_before_weth = weth.balanceOf(safe)
     bal_before_wbtc = wbtc.balanceOf(safe)
 
@@ -45,7 +43,9 @@ def test_unstake_and_withdraw_all_weighted(safe, balancer, wbtc, weth, bpt, stak
     assert bpt.balanceOf(safe) == 0
 
 
-def test_unstake_and_withdraw_all_single_asset(safe, balancer, wbtc, bpt, staked_bpt, deposited_weighted):
+def test_unstake_and_withdraw_all_single_asset(
+    safe, balancer, wbtc, bpt, staked_bpt, deposited_weighted
+):
     bal_before_wbtc = wbtc.balanceOf(safe)
 
     balancer.unstake_and_withdraw_all_single_asset(wbtc, pool=bpt)
@@ -55,9 +55,11 @@ def test_unstake_and_withdraw_all_single_asset(safe, balancer, wbtc, bpt, staked
     assert bpt.balanceOf(safe) == 0
 
 
-def test_unstake_and_withdraw_all_stable(safe, balancer, dai, threepool_bpt, threepool_staked_bpt):
+def test_unstake_and_withdraw_all_stable(
+    safe, balancer, dai, threepool_bpt, threepool_staked_bpt
+):
     bal_before_dai = dai.balanceOf(safe)
-    
+
     with pytest.raises(NotImplementedError):
         with brownie.reverts():
             balancer.unstake_and_withdraw_all_single_asset(dai, pool=threepool_bpt)
