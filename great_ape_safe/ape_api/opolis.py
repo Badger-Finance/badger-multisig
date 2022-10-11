@@ -2,7 +2,7 @@ from brownie import interface
 from helpers.addresses import registry
 
 
-class Opolis():
+class Opolis:
     def __init__(self, safe):
         self.safe = safe
         # have to use erc20 interface for proxy token
@@ -10,14 +10,12 @@ class Opolis():
         self.staking_helper = safe.contract(registry.poly.opolis.stakingHelper)
         self.whitelist = safe.contract(registry.poly.opolis.whitelist)
 
-
     def stake(self, mantissas):
         # stake `mantissa` amount of `WORK` into staking helper contract
-        self.work.approve(self.staking_helper, mantissas, {'from': self.safe.address})
+        self.work.approve(self.staking_helper, mantissas, {"from": self.safe.address})
         bal_before = self.work.balanceOf(self.safe)
         self.staking_helper.stake(mantissas)
         assert self.work.balanceOf(self.safe) < bal_before
-
 
     def unstake(self, mantissas):
         # unstake `mantissa` amount of `WORK` from staking helper contract

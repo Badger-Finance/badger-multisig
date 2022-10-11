@@ -3,7 +3,7 @@ from helpers.addresses import r
 
 FRAX_AMT = 307_373e18
 # make sure we will have always enough frax for aave deposit
-DUSTY= .995
+DUSTY = 0.995
 DAY = 86400
 
 vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)

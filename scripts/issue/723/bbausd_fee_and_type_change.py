@@ -38,5 +38,3 @@ def change_vault_withdrawal_fee():
     assert vault.withdrawalFee() == 10
 
     safe.post_safe_tx()
-
-

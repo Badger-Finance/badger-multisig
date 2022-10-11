@@ -11,6 +11,7 @@ def deposited(safe, curve, convex, threepool_lp, USDC):
     convex.deposit(threepool_lp, amount)
 
 
+
 def test_stake(safe, convex, convex_rewards, threepool_lp, convex_threepool_lp):
     before_bal_rewards = convex_rewards.balanceOf(safe)
 

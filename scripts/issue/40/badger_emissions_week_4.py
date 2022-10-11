@@ -11,9 +11,7 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     tree = GreatApeSafe(registry.eth.badger_wallets.badgertree)
 
-    badger = interface.ERC20(
-        registry.eth.treasury_tokens.BADGER, owner=safe.account
-    )
+    badger = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=safe.account)
 
     safe.take_snapshot([badger.address])
     tree.take_snapshot([badger.address])

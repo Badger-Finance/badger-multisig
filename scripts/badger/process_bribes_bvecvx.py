@@ -8,10 +8,10 @@ from helpers.addresses import registry
 COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
-COEF = .9825
+COEF = 0.9825
 
 # time after which cowswap order expires
-DEADLINE = 60*60*3
+DEADLINE = 60 * 60 * 3
 
 SAFE = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
 SAFE.init_badger()
@@ -19,16 +19,14 @@ SAFE.init_cow(prod=COW_PROD)
 PROCESSOR = SAFE.badger.cvx_bribes_processor
 
 WETH = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=SAFE.account)
-BADGER = interface.ERC20(
-    registry.eth.treasury_tokens.BADGER, owner=SAFE.account
-)
+BADGER = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=SAFE.account)
 CVX = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=SAFE.account)
 CVX_FXS = registry.eth.bribe_tokens_claimable.cvxFXS
 
 # percentage of the bribes that is used to buyback $badger
-BADGER_SHARE = .275
+BADGER_SHARE = 0.275
 # percentage of the bribes that are dedicated to the treasury
-OPS_FEE = .05
+OPS_FEE = 0.05
 
 
 def step0_1(sim=False):
@@ -37,19 +35,21 @@ def step0_1(sim=False):
 
     if sim:
         from brownie_tokens import MintableForkToken
+
         alcx = MintableForkToken(registry.eth.treasury_tokens.ALCX)
         alcx._mint_for_testing(SAFE.badger.strat_bvecvx, 500e18)
         claimed = {alcx.address: 500e18}
     else:
-        claimed = SAFE.badger.claim_bribes_votium(
-            registry.eth.bribe_tokens_claimable
-        )
-        # Handling cvxFXS rewards as bribes (Ref: https://github.com/Badger-Finance/badger-strategies/issues/56)
-        cvxFXS_amount = SAFE.badger.sweep_reward_token(
-            CVX_FXS
-        )
-        if cvxFXS_amount > 0:
-            claimed[CVX_FXS] = claimed.setdefault(CVX_FXS, 0) + cvxFXS_amount
+        claimed = SAFE.badger.claim_bribes_votium(registry.eth.bribe_tokens_claimable)
+        for token_addr in registry.eth.bribe_tokens_claimable.values():
+            # handle any non $cvx token present in the strat contract as bribes
+            # ref: https://github.com/Badger-Finance/badger-strategies/issues/56
+            if token_addr != CVX.address:
+                token_amount = SAFE.badger.sweep_reward_token(token_addr)
+                if token_amount > 0:
+                    claimed[token_addr] = (
+                        claimed.setdefault(token_addr, 0) + token_amount
+                    )
 
     for addr, mantissa in claimed.items():
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
@@ -59,7 +59,7 @@ def step0_1(sim=False):
             buy_token=WETH,
             deadline=DEADLINE,
             coef=COEF,
-            prod=COW_PROD
+            prod=COW_PROD,
         )
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
         SAFE.badger.claim_bribes_convex(registry.eth.bribe_tokens_claimable)
@@ -70,13 +70,14 @@ def step0_1(sim=False):
 
 
 def step0(sim=False):
-    '''can be skipped if step0_1 was successful'''
+    """can be skipped if step0_1 was successful"""
 
     bribes_dest = GreatApeSafe(PROCESSOR.address)
     bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
 
     if sim:
         from brownie_tokens import MintableForkToken
+
         alcx = MintableForkToken(registry.eth.treasury_tokens.ALCX)
         alcx._mint_for_testing(SAFE.badger.strat_bvecvx, 500e18)
     else:
@@ -90,10 +91,10 @@ def step0(sim=False):
 
 
 def step1():
-    '''can be skipped if step0_1 was successful'''
+    """can be skipped if step0_1 was successful"""
 
     want_to_sell = registry.eth.bribe_tokens_claimable.copy()
-    want_to_sell.pop('CVX') # SameBuyAndSellToken
+    want_to_sell.pop("CVX")  # SameBuyAndSellToken
     for _, addr in want_to_sell.items():
         token = SAFE.contract(addr)
         balance = token.balanceOf(SAFE.badger.cvx_bribes_processor)
@@ -105,7 +106,7 @@ def step1():
             buy_token=WETH,
             deadline=DEADLINE,
             coef=COEF,
-            prod=COW_PROD
+            prod=COW_PROD,
         )
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
     SAFE.post_safe_tx(call_trace=True)
@@ -124,7 +125,7 @@ def step2():
         buy_token=BADGER,
         deadline=DEADLINE,
         coef=COEF,
-        prod=COW_PROD
+        prod=COW_PROD,
     )
     PROCESSOR.swapWethForBadger(order_payload, order_uid)
 
@@ -135,7 +136,7 @@ def step2():
         buy_token=CVX,
         deadline=DEADLINE,
         coef=COEF,
-        prod=COW_PROD
+        prod=COW_PROD,
     )
     PROCESSOR.swapWethForCVX(order_payload, order_uid)
 
@@ -155,7 +156,7 @@ def step3():
 
 
 def step3_a():
-    '''can be skipped if step3 was successful'''
+    """can be skipped if step3 was successful"""
 
     if CVX.balanceOf(PROCESSOR) > 0:
         PROCESSOR.swapCVXTobveCVXAndEmit()
@@ -163,7 +164,7 @@ def step3_a():
 
 
 def step3_b():
-    '''can be skipped if step3 was successful'''
+    """can be skipped if step3 was successful"""
 
     if BADGER.balanceOf(PROCESSOR) > 0:
         PROCESSOR.emitBadger()

@@ -17,23 +17,28 @@ def main():
     bpt_grav_weth_aurabal = safe.contract(r.balancer.bpt_33_grav_33_weth_33_aurabal)
 
     tokens = [
-        aura, weth, graviaura, aurabal, bal, bpt_grav_weth_aura,
-        bpt_grav_weth_aurabal
+        aura,
+        weth,
+        graviaura,
+        aurabal,
+        bal,
+        bpt_grav_weth_aura,
+        bpt_grav_weth_aurabal,
     ]
 
     safe.init_balancer()
     safe.balancer.get_pool_data(update_cache=True)
     safe.take_snapshot(tokens)
 
-    ids = ['aura-finance', 'ethereum', 'balancer']
-    prices =  CoinGeckoAPI().get_price(ids, 'usd')
+    ids = ["aura-finance", "ethereum", "balancer"]
+    prices = CoinGeckoAPI().get_price(ids, "usd")
 
     # calc amounts needed per token based on usd rate
     # 1 aurabal ~= 2.5 bal; adding .5x extra margin here
     bucket = 20_000e18 / 3
-    usd_weth = int(bucket / prices['ethereum']['usd'])
-    usd_aura = int(bucket / prices['aura-finance']['usd'])
-    usd_aurabal = int(bucket / (prices['balancer']['usd'] * 3))
+    usd_weth = int(bucket / prices["ethereum"]["usd"])
+    usd_aura = int(bucket / prices["aura-finance"]["usd"])
+    usd_aurabal = int(bucket / (prices["balancer"]["usd"] * 3))
 
     safe.balancer.swap(weth, bal, usd_weth * 1.1)
 
@@ -46,19 +51,19 @@ def main():
         [usd_aura, usd_weth, usd_aura],
         pool=bpt_grav_weth_aura,
         stake=False,
-        pool_type='non_stable' # temp hack due to api not having pools available yet
+        pool_type="non_stable",  # temp hack due to api not having pools available yet
     )
 
     # deposit bal via wrapper: bal -> 80bal20weth -> vebal -> aurabal
     # pass address(0) as stake to prevent minting for the depositor's contract:
     # https://etherscan.io/address/0xead792b55340aa20181a80d6a16db6a0ecd1b827#code#F33#L192
-    dusty_bal = bal.balanceOf(safe) * .98
+    dusty_bal = bal.balanceOf(safe) * 0.98
     bal.approve(wrapper, dusty_bal)
     wrapper.deposit(
         dusty_bal,  # uint256 _amount
         wrapper.getMinOut(dusty_bal, 9950),  # uint256 _minOut
         False,  # bool _lock
-        ZERO_ADDRESS  # address _stakeAddress
+        ZERO_ADDRESS,  # address _stakeAddress
     )
 
     safe.balancer.deposit_and_stake(
@@ -66,13 +71,11 @@ def main():
         [usd_aura, usd_weth, usd_aurabal],
         pool=bpt_grav_weth_aurabal,
         stake=False,
-        pool_type='non_stable' # temp hack due to api not having pools available yet
+        pool_type="non_stable",  # temp hack due to api not having pools available yet
     )
 
     # clean up; send remaining aura to voter as graviaura
     aura.approve(graviaura, aura.balanceOf(safe))
-    graviaura.depositFor(
-        r.badger_wallets.treasury_voter_multisig, aura.balanceOf(safe)
-    )
+    graviaura.depositFor(r.badger_wallets.treasury_voter_multisig, aura.balanceOf(safe))
 
     safe.post_safe_tx()

@@ -39,8 +39,6 @@ def main():
     balanceInLock = locker.balanceOf(safe.badger.strat_bvecvx)
     totalCVXBalance = balanceOfWant + balanceInLock
 
-
-
     ## We want to lock half of what's in the Strategy
     ## Our Target is 50% of the CVX in the strat
     target_amount = balanceOfWant // 2
@@ -69,15 +67,21 @@ def main():
 
     ## Before Balances
     before_balance_in_vault = safe.convex.cvx.balanceOf(registry.eth.sett_vaults.bveCVX)
-    before_balance_of_locker = safe.convex.cvx.balanceOf(safe.badger.strat_bvecvx.LOCKER())
+    before_balance_of_locker = safe.convex.cvx.balanceOf(
+        safe.badger.strat_bvecvx.LOCKER()
+    )
 
     ## Lock
     safe.badger.strat_bvecvx.manualRebalance(as_bps)
 
     after_balance_in_vault = safe.convex.cvx.balanceOf(registry.eth.sett_vaults.bveCVX)
-    after_balance_of_locker = safe.convex.cvx.balanceOf(safe.badger.strat_bvecvx.LOCKER())
+    after_balance_of_locker = safe.convex.cvx.balanceOf(
+        safe.badger.strat_bvecvx.LOCKER()
+    )
 
-    assert approx(after_balance_in_vault - before_balance_in_vault, expected_in_vault, 1)
+    assert approx(
+        after_balance_in_vault - before_balance_in_vault, expected_in_vault, 1
+    )
     assert approx(after_balance_of_locker - before_balance_of_locker, cvxToLock, 1)
 
     safe.post_safe_tx()

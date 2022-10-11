@@ -17,10 +17,10 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_rari()
 
-    fbveCVX = interface.IFToken(registry.eth.rari['fbveCVX-22'])
+    fbveCVX = interface.IFToken(registry.eth.rari["fbveCVX-22"])
 
-    console.print('Current fbveCVX implementation:', fbveCVX.implementation())
+    console.print("Current fbveCVX implementation:", fbveCVX.implementation())
     safe.rari.upgrade_ftoken(fbveCVX, NEW_IMPLEMENTATION)
-    console.print('New fbveCVX implementation:', fbveCVX.implementation())
+    console.print("New fbveCVX implementation:", fbveCVX.implementation())
 
     safe.post_safe_tx()

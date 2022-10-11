@@ -13,8 +13,8 @@ def main():
     safe.init_rari()
 
     for label, addr in registry.eth.rari.items():
-        if label.endswith('-22'):
-            if label.startswith('fETH') or label.startswith('fWBTC'):
+        if label.endswith("-22"):
+            if label.startswith("fETH") or label.startswith("fWBTC"):
                 safe.rari.ftoken_set_rate_model(
                     addr, registry.eth.fei.jump_rate_model_fei_eth
                 )

@@ -13,6 +13,7 @@ DEV_PROXY = registry.ftm.badger_wallets.devProxyAdmin
 ## Account with funds stuck due to integration
 USER = "0xB943cdb5622E7Bb26D3E462dB68Ee71D8868C940"
 
+
 def main(simulation="false"):
     safe = GreatApeSafe(registry.ftm.badger_wallets.dev_multisig)
 
@@ -56,4 +57,4 @@ def main(simulation="false"):
         assert want.balanceOf(user) > initial_bal
         assert vault.balanceOf(user) == 0
 
-    safe.post_safe_tx(post=(simulation!="true"))
+    safe.post_safe_tx(post=(simulation != "true"))

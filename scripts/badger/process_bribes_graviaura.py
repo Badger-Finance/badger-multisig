@@ -47,6 +47,9 @@ def claim_and_sell_for_weth(claim_only=False):
     # NOTE: badger is directly emitted by the strat to tree
     # NOTE: aura is sent to processor, but should not be sold for weth
     for addr, mantissa in claimed.items():
+        if addr == "0x0":
+            # $eth. strat will auto convert to $weth
+            continue
         addr = web3.toChecksumAddress(addr)
         if addr != BADGER.address and addr != AURA.address:
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
@@ -60,6 +63,7 @@ def claim_and_sell_for_weth(claim_only=False):
             )
             PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
+    bribes_dest.print_snapshot()
     SAFE.post_safe_tx()
 
 
@@ -104,7 +108,9 @@ def sell_weth():
         badger_split = 1
     # Obtain BADGER split considering the current amount sitting on the Processor
     else:
-        badger_split = (BADGER_SHARE * total_bribes_usd_balance - badger_usd_balance) / weth_usd_balance
+        badger_split = (
+            BADGER_SHARE * total_bribes_usd_balance - badger_usd_balance
+        ) / weth_usd_balance
 
     badger_share = int(weth_total * badger_split)
     aura_share = int(weth_total - badger_share)
@@ -126,10 +132,18 @@ def sell_weth():
         # Check which path is better
         #  1. Swap WETH for AURA and deposit to GRAVI_AURA
         #  2. Swap WETH directly for GRAVI_AURA
-        buy_amount_aura = int(SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share)['buyAmountAfterFee'])
-        buy_amount_aura_in_gravi_aura = buy_amount_aura * GRAVI_AURA.totalSupply() // GRAVI_AURA.balance()
+        buy_amount_aura = int(
+            SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share)["buyAmountAfterFee"]
+        )
+        buy_amount_aura_in_gravi_aura = (
+            buy_amount_aura * GRAVI_AURA.totalSupply() // GRAVI_AURA.balance()
+        )
 
-        buy_amount_gravi_aura = int(SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)['buyAmountAfterFee'])
+        buy_amount_gravi_aura = int(
+            SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)[
+                "buyAmountAfterFee"
+            ]
+        )
 
         if buy_amount_aura_in_gravi_aura > buy_amount_gravi_aura:
             buy_token = AURA
@@ -173,7 +187,7 @@ def buy_aura(usdc_mantissa):
         usdc_mantissa,
         deadline=DEADLINE,
         coef=COEF,
-        destination=PROCESSOR.address
+        destination=PROCESSOR.address,
     )
 
     proc.print_snapshot()
@@ -187,3 +201,26 @@ def emit_tokens():
     if BADGER.balanceOf(PROCESSOR) > 0:
         PROCESSOR.emitBadger()
     SAFE.post_safe_tx(call_trace=True)
+
+
+def custom_sell_for_weth(addr=None):
+    bribes_dest = GreatApeSafe(PROCESSOR.address)
+    bribes_dest.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
+
+    addr = web3.toChecksumAddress(addr)
+    token = SAFE.contract(addr)
+    mantissa = token.balanceOf(PROCESSOR)
+
+    if addr != BADGER.address and addr != AURA.address:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
+            sell_token=token,
+            mantissa_sell=mantissa,
+            buy_token=WETH,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
+        PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+
+    SAFE.post_safe_tx()

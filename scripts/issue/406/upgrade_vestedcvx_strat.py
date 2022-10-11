@@ -61,7 +61,9 @@ def main(queue="true", simulation="false"):
             proxyAdmin = interface.IProxyAdmin(DEV_PROXY, owner=timelock)
             proxyAdmin.upgrade(strat_proxy.address, NEW_LOGIC)
         else:
-            safe.badger.execute_timelock("data/badger/timelock/upgrade_veCVX_strategy_V1_7/")
+            safe.badger.execute_timelock(
+                "data/badger/timelock/upgrade_veCVX_strategy_V1_7/"
+            )
 
         ## Checking all variables are as expected
         assert prev_strategist == strat_proxy.strategist()
@@ -75,7 +77,9 @@ def main(queue="true", simulation="false"):
         assert prev_check_withdrawalSafetyCheck == strat_proxy.withdrawalSafetyCheck()
         assert prev_check_harvestOnRebalance == strat_proxy.harvestOnRebalance()
         assert prev_check_processLocksOnReinvest == strat_proxy.processLocksOnReinvest()
-        assert prev_check_processLocksOnRebalance == strat_proxy.processLocksOnRebalance()
+        assert (
+            prev_check_processLocksOnRebalance == strat_proxy.processLocksOnRebalance()
+        )
 
         # Verify constants
         assert prev_CVX_EXTRA_SNAPSHOT == strat_proxy.SNAPSHOT()
@@ -92,10 +96,13 @@ def main(queue="true", simulation="false"):
         assert strat_proxy.BRIBES_PROCESSOR() == cvx_bribes_processor.address
 
         # Verify that the cvx_bribes_processor's manager points to the correct multisig
-        assert cvx_bribes_processor.manager() == registry.eth.badger_wallets.techops_multisig
+        assert (
+            cvx_bribes_processor.manager()
+            == registry.eth.badger_wallets.techops_multisig
+        )
 
         # Test chainlink functions
         if simulation == "true":
             C.print("[green]Simulation Successful![/green]")
 
-    safe.post_safe_tx(post=(simulation!="true"))
+    safe.post_safe_tx(post=(simulation != "true"))

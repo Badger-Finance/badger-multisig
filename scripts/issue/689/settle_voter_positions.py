@@ -32,12 +32,12 @@ def mint_aurabal_and_lock_aura():
     if to_deposit > MAX_BAL_DEPOSIT:
         to_deposit = MAX_BAL_DEPOSIT
 
-    bal.approve(wrapper,to_deposit)
+    bal.approve(wrapper, to_deposit)
     wrapper.deposit(
         to_deposit,  # uint256 _amount
         wrapper.getMinOut(to_deposit, 9950),  # uint256 _minOut
         False,  # bool _lock
-       ZERO_ADDRESS # address _stakeAddress
+        ZERO_ADDRESS,  # address _stakeAddress
     )
 
     # transfer to vault to eventually deposit into bauraBAL
@@ -47,21 +47,19 @@ def mint_aurabal_and_lock_aura():
     # test before aura fees are claimed for voter
     if not PROD:
         from brownie_tokens import MintableForkToken
+
         aura = MintableForkToken(r.treasury_tokens.AURA, owner=voter.account)
         aura._mint_for_testing(voter, 500e18)
-    
+
     before = vlaura.balances(voter)[0] / 1e18
 
     # lock all of voters aura
     aura.approve(voter.aura.aura_locker, aura.balanceOf(voter))
-    voter.aura.aura_locker.lock(
-        voter.address, 
-        aura.balanceOf(voter)
-    )
+    voter.aura.aura_locker.lock(voter.address, aura.balanceOf(voter))
 
     after = vlaura.balances(voter)[0] / 1e18
     print(f"Received {after - before} vlAURA")
-    
+
     voter.print_snapshot()
     voter.post_safe_tx()
 
@@ -83,13 +81,12 @@ def sell_bal_for_wbtc():
     # sell up to MAX_WBTC_SELL
     if to_sell > max_bal_sell:
         to_sell = max_bal_sell
-    
+
     to_sell_mantissa = int(to_sell * 1e18)
     print(f"Selling {to_sell} BAL")
 
     voter.cow.market_sell(
-        bal, wbtc, to_sell_mantissa, deadline=60*60*4, destination=vault.address
+        bal, wbtc, to_sell_mantissa, deadline=60 * 60 * 4, destination=vault.address
     )
-    
-    voter.post_safe_tx()
 
+    voter.post_safe_tx()

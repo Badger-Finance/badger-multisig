@@ -6,7 +6,6 @@ def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_balancer()
     vault.init_aura()
-    
 
     bpt = vault.contract(r.balancer.B_20_BTC_80_BADGER)
     # mainly to ensure no dust is left on snap

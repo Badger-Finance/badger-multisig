@@ -44,8 +44,9 @@ def main():
     aurabal_rewards = vault.contract(r.aura.aurabal_rewards)
 
     # snaps
-    vault.take_snapshot([usdc, auraBAL, bauraBal, graviaura])
-    voter.take_snapshot([aura])
+    tokens = [usdc, bal, weth, aura, auraBAL, bauraBal, graviaura]
+    vault.take_snapshot(tokens)
+    voter.take_snapshot(tokens)
 
     # 1. claim rewards
     vault.aura.claim_all_from_booster()
@@ -121,7 +122,7 @@ def main():
     if vault_status == 3:
         if aurabal_rewards.balanceOf(vault) > 0:
             aurabal_rewards.withdrawAll(False)
-        auraBAL.approve(bauraBal, 2 ** 256 - 1)
+        auraBAL.approve(bauraBal, 2**256 - 1)
         bauraBal.depositAll()
         auraBAL.approve(bauraBal, 0)
 

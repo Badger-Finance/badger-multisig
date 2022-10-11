@@ -12,7 +12,7 @@ ACCOUNT_TO_LOAD = ""
 # Set new dev_msig as strategist, governance & rewards
 def main(broadcast="true"):
     dev = accounts.load(ACCOUNT_TO_LOAD)
-    
+
     print(NEW_SET_PARAM)
 
     safe = interface.IMultisigWalletWithDailyLimit(

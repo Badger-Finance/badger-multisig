@@ -40,7 +40,7 @@ safe.init_badger()
 
 # Other constants
 TX_DIR = "data/badger/timelock/upgrade_new_sett_controllers/"
-TIMELOCK_DELAY_DAYS=4
+TIMELOCK_DELAY_DAYS = 4
 
 
 def main(submit_tx="false", queue="true", simulation="false"):

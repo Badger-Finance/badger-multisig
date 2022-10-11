@@ -2,7 +2,6 @@ from helpers.addresses import registry
 
 from brownie import interface
 
-
 class Compound:
     def __init__(self, safe):
         self.safe = safe

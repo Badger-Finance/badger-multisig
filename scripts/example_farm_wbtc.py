@@ -2,7 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-SLIPPAGE = .995
+SLIPPAGE = 0.995
 
 
 def main():
@@ -16,9 +16,7 @@ def main():
     zap = safe.contract(registry.eth.curve.zap_ibbtc)
     bcrvibbtc = safe.contract(registry.eth.sett_vaults.bcrvIbBTC)
 
-    safe.take_snapshot(tokens=[
-        wbtc.address, crvibbtc.address, bcrvibbtc.address
-    ])
+    safe.take_snapshot(tokens=[wbtc.address, crvibbtc.address, bcrvibbtc.address])
 
     # first step is to deposit into the curve ibbtc pool
     to_deposit = wbtc.balanceOf(safe)

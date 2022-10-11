@@ -46,12 +46,12 @@ def post_cvx_orders():
     half = int(amount / 2)
     a_tenth = int(amount / 10)
     rest = amount - half - 4 * a_tenth
-    trops.cow.market_sell(cvx, bal, half, deadline=60*60*24)
-    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.03)
-    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.06)
-    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.09)
-    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60*60*24*10, coef=1.12)
-    trops.cow.market_sell(cvx, bal, rest, deadline=60*60*24*10, coef=1.15)
+    trops.cow.market_sell(cvx, bal, half, deadline=60 * 60 * 24)
+    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.03)
+    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.06)
+    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.09)
+    trops.cow.market_sell(cvx, bal, a_tenth, deadline=60 * 60 * 24 * 10, coef=1.12)
+    trops.cow.market_sell(cvx, bal, rest, deadline=60 * 60 * 24 * 10, coef=1.15)
     trops.post_safe_tx()
 
 
@@ -75,10 +75,8 @@ def lock_bal(simulation="False"):
     vault.init_balancer()
 
     if simulation == "True":
-        bal = MintableForkToken(
-            registry.eth.treasury_tokens.BAL, owner=vault.account
-        )
-        bal._mint_for_testing(vault, 1000 * 10**bal.decimals())
+        bal = MintableForkToken(registry.eth.treasury_tokens.BAL, owner=vault.account)
+        bal._mint_for_testing(vault, 1000 * 10 ** bal.decimals())
     else:
         bal = vault.contract(registry.eth.treasury_tokens.BAL)
 
@@ -91,4 +89,3 @@ def lock_bal(simulation="False"):
 
     vault.print_snapshot()
     vault.post_safe_tx()
-

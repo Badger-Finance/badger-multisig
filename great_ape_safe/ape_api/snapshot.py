@@ -11,7 +11,7 @@ from helpers.addresses import registry
 console = Console()
 
 
-class Snapshot():
+class Snapshot:
     def __init__(self, safe, proposal_id):
         self.safe = safe
 
@@ -43,57 +43,60 @@ class Snapshot():
         self.proposal_id = proposal_id
         self.proposal_data = self._get_proposal_data(self.proposal_id)
 
-
     def handle_response(self, response):
         if not response.ok:
             console.print(f"Error: {response.text}")
             raise
 
-
     def _get_proposal_data(self, proposal_id):
         # query subgraph for proposal data
         response = requests.post(
             self.subgraph,
-            json={"query": self.proposal_query, "variables": {"proposal_id": proposal_id}},
+            json={
+                "query": self.proposal_query,
+                "variables": {"proposal_id": proposal_id},
+            },
         )
 
         self.handle_response(response)
         return response.json()["data"]["proposal"]
-
 
     def show_proposal_choices(self):
         # external helper method to view proposal choices
         choices = self.proposal_data["choices"]
         console.print(f"Choices for proposal {self.proposal_id}: {choices}")
 
-
     def format_choice(self, choice):
         choices = self.proposal_data["choices"]
         if isinstance(choice, dict):
-            return {str(choices.index(k) + 1): v for k, v in choice.items()}
+            try:
+                return {str(choices.index(k) + 1): v for k, v in choice.items()}
+            except ValueError:
+                print(choices)
         else:
             choice = int(choices.index(choice) + 1)
             assert choice <= len(choices) + 1, "choice out of bounds"
             return choice
 
-
     def create_payload_hash(
-            self,
-            payload=None,
-            timestamp=None,
-            choice=None,
-            proposal=None,
-            version="0.1.3",
-            type="vote",
-            metadata=None
-        ):
+        self,
+        payload=None,
+        timestamp=None,
+        choice=None,
+        proposal=None,
+        version="0.1.3",
+        type="vote",
+        metadata=None,
+    ):
         # helper method to create message hash from payload and output to console
         # can be used externally to verify generated hash
         if not payload:
             assert all([timestamp, choice])
 
             internal_payload = {}
-            internal_payload["proposal"] = self.proposal_id if not proposal else proposal
+            internal_payload["proposal"] = (
+                self.proposal_id if not proposal else proposal
+            )
             internal_payload["choice"] = self.format_choice(choice)
             if metadata:
                 internal_payload["metadata"] = metadata
@@ -110,7 +113,6 @@ class Snapshot():
         hash = messages.defunct_hash_message(text=payload_stringify)
         console.print(f"msg hash: {hash.hex()}")
         return hash, payload_stringify
-
 
     def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=None):
         # given a choice, contruct payload, post to vote relayer and post safe tx
@@ -145,7 +147,9 @@ class Snapshot():
 
         if is_weighted:
             for label, weight in choice_formatted.items():
-                console.print(f"signing vote for choice {label} with {weight * 100}% weight")
+                console.print(
+                    f"signing vote for choice {label} with {weight * 100}% weight"
+                )
         else:
             console.print(f"signing vote for choice {choice_formatted}")
 

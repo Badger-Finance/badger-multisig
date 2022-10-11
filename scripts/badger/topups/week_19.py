@@ -10,13 +10,9 @@ def main():
     trops = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
     tree = GreatApeSafe(registry.eth.badger_wallets.badgertree)
 
-    badger = interface.ERC20(
-        registry.eth.treasury_tokens.BADGER, owner=trops.account
-    )
+    badger = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=trops.account)
 
-    digg = interface.ERC20(
-        registry.eth.treasury_tokens.DIGG, owner=trops.account
-    )
+    digg = interface.ERC20(registry.eth.treasury_tokens.DIGG, owner=trops.account)
 
     trops.take_snapshot([badger, digg])
     tree.take_snapshot([badger, digg])
@@ -25,9 +21,7 @@ def main():
     week_19_badger_emissions = Decimal(20_000e18)
     week_19_rembadger_emissions = Decimal(7692.307692e18)
 
-    badger.transfer(
-        tree, week_19_badger_emissions + week_19_rembadger_emissions
-    )
+    badger.transfer(tree, week_19_badger_emissions + week_19_rembadger_emissions)
 
     # digg emissions
     week_19_digg_emissions_tree = Decimal(1.302461219e9)
