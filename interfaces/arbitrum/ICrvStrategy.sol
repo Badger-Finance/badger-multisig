@@ -6,6 +6,8 @@ interface ICrvStrategy {
 
     function SWAPR_ROUTER() external view returns (address);
 
+    function UNIV3_ROUTER() external view returns (address);
+
     function gauge() external view returns (address);
 
     function strategist() external view returns (address);
@@ -27,6 +29,8 @@ interface ICrvStrategy {
     function setGauge(address newGauge) external;
 
     function setGaugeFactory(address newGaugeFactory) external;
+    
+    function setUniV3Allowance() external;
 
     function deposit() external;
 
