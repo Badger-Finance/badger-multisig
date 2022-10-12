@@ -18,11 +18,11 @@ def registry(safe):
 
 @pytest.fixture
 def threepool_lptoken(safe):
-    threepool = interface.ICurveLP(registry_addr.eth.treasury_tokens.crv3pool, owner=safe.account)
-    threepool_mintable = MintableForkToken(
-        threepool.address, owner=safe.account
+    threepool = interface.ICurveLP(
+        registry_addr.eth.treasury_tokens.crv3pool, owner=safe.account
     )
-    threepool_mintable._mint_for_testing(safe, 100_000 * 10**threepool.decimals())
+    threepool_mintable = MintableForkToken(threepool.address, owner=safe.account)
+    threepool_mintable._mint_for_testing(safe, 100_000 * 10 ** threepool.decimals())
     return threepool
 
 
@@ -34,28 +34,14 @@ def threepool_lp(safe):
 @pytest.fixture
 def CRV(safe):
     crv = interface.ERC20(registry_addr.eth.treasury_tokens.CRV, owner=safe.account)
-    crv_mintable = MintableForkToken(
-        crv.address, owner=safe.account
-    )
-    crv_mintable._mint_for_testing(safe, 100 * 10**crv.decimals())
+    crv_mintable = MintableForkToken(crv.address, owner=safe.account)
+    crv_mintable._mint_for_testing(safe, 100 * 10 ** crv.decimals())
     return crv
 
 
 @pytest.fixture
 def cvxCRV(safe):
     cvxcrv = interface.ICurveLP(registry_addr.eth.treasury_tokens.cvxCRV)
-    cvxcrv_mintable = MintableForkToken(
-        cvxcrv.address, owner=safe.account
-    )
-    cvxcrv_mintable._mint_for_testing(safe, 100 * 10**cvxcrv.decimals())
+    cvxcrv_mintable = MintableForkToken(cvxcrv.address, owner=safe.account)
+    cvxcrv_mintable._mint_for_testing(safe, 100 * 10 ** cvxcrv.decimals())
     return cvxcrv
-
-
-@pytest.fixture
-def dai(safe):
-    dai = interface.ERC20(registry_addr.eth.treasury_tokens.DAI, owner=safe.account)
-    dai_mintable = MintableForkToken(
-        dai.address, owner=safe.account
-    )
-    dai_mintable._mint_for_testing(safe, 1_000_000 * 10**dai.decimals())
-    return dai

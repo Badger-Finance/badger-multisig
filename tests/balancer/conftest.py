@@ -58,50 +58,31 @@ def badger_staked_bpt(safe, balancer, badger_bpt):
 @pytest.fixture
 def bal(safe, vault):
     bal = interface.ERC20(registry.eth.treasury_tokens.BAL, owner=safe.account)
-    bal_mintable = MintableForkToken(
-        bal.address, owner=safe.account
-    )
-    bal_mintable._mint_for_testing(safe, 1000 * 10**bal.decimals())
-    bal_mintable._mint_for_testing(vault, 1000 * 10**bal.decimals())
+    bal_mintable = MintableForkToken(bal.address, owner=safe.account)
+    bal_mintable._mint_for_testing(safe, 1000 * 10 ** bal.decimals())
+    bal_mintable._mint_for_testing(vault, 1000 * 10 ** bal.decimals())
     return bal
-
 
 
 @pytest.fixture
 def wbtc(safe):
-    wbtc = interface.ERC20(registry.eth.treasury_tokens.WBTC, owner=safe.account)
-    wbtc_mintable = MintableForkToken(
-        wbtc.address, owner=safe.account
-    )
-    wbtc_mintable._mint_for_testing(safe, 10 * 10**wbtc.decimals())
+    wbtc = interface.IWBTC(registry.eth.treasury_tokens.WBTC, owner=safe.account)
+    wbtc_mintable = MintableForkToken(wbtc.address, owner=safe.account)
+    wbtc_mintable._mint_for_testing(safe, 10 * 10 ** wbtc.decimals())
     return wbtc
 
 
 @pytest.fixture
 def weth(safe):
     weth = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=safe.account)
-    weth_mintable = MintableForkToken(
-        weth.address, owner=safe.account
-    )
-    weth_mintable._mint_for_testing(safe, 100 * 10**weth.decimals())
+    weth_mintable = MintableForkToken(weth.address, owner=safe.account)
+    weth_mintable._mint_for_testing(safe, 100 * 10 ** weth.decimals())
     return weth
 
 
 @pytest.fixture
 def badger(safe):
     badger = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=safe.account)
-    badger_mintable = MintableForkToken(
-        badger.address
-    )
-    badger_mintable._mint_for_testing(safe, 100_000 * 10**badger.decimals())
+    badger_mintable = MintableForkToken(badger.address)
+    badger_mintable._mint_for_testing(safe, 100_000 * 10 ** badger.decimals())
     return badger
-
-
-@pytest.fixture
-def dai(safe):
-    dai = interface.ERC20(registry.eth.treasury_tokens.DAI, owner=safe.account)
-    dai_mintable = MintableForkToken(
-        dai.address, owner=safe.account
-    )
-    dai_mintable._mint_for_testing(safe, 1_000_000 * 10**dai.decimals())
-    return dai

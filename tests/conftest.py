@@ -37,10 +37,17 @@ def ibbtc_msig():
 
 @pytest.fixture
 def USDC(safe):
-    usdc = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=safe.account)
-    usdc_mintable = MintableForkToken(
-       usdc.address, owner=safe.account
+    usdc = interface.IFiatTokenV2_1(
+        registry.eth.treasury_tokens.USDC, owner=safe.account
     )
-    usdc_mintable._mint_for_testing(safe, 1_000_000 * 10**usdc.decimals())
+    usdc_mintable = MintableForkToken(usdc.address, owner=safe.account)
+    usdc_mintable._mint_for_testing(safe, 1_000_000 * 10 ** usdc.decimals())
     return usdc
 
+
+@pytest.fixture
+def dai(safe):
+    dai = interface.IDai(registry.eth.treasury_tokens.DAI, owner=safe.account)
+    dai_mintable = MintableForkToken(dai.address, owner=safe.account)
+    dai_mintable._mint_for_testing(safe, 1_000_000 * 10 ** dai.decimals())
+    return dai
