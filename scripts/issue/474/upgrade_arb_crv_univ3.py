@@ -1,6 +1,4 @@
-from decimal import Decimal
-
-from brownie import accounts, web3, interface, chain
+from brownie import chain, interface
 from rich.console import Console
 
 from great_ape_safe import GreatApeSafe
@@ -20,7 +18,7 @@ RENCRV_STRATEGY = ADDRESSES_ARBITRUM["strategies"]["native.renCrv"]
 RENCRV_LOGIC = ADDRESSES_ARBITRUM["logic"]["native.renCrv"]
 RENCRV_VAULT = ADDRESSES_ARBITRUM["sett_vaults"]["bcrvRenBTC"]
 
-UNIV3_ROUTER = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+UNIV3_ROUTER = ADDRESSES_ARBITRUM["uniswap"]["routerV3"]
 
 
 def main(simulation=True):
@@ -76,7 +74,7 @@ def upgrade_strategy_logic(
         strat_proxy.harvest()
 
         # Harvest on old strat, store gain in want
-        want = interface.IERC20(gauge)
+        want = interface.ERC20(gauge)
         prev_want_bal = want.balanceOf(strat_proxy.address)
 
         chain.sleep(60*60*2)

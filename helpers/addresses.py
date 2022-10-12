@@ -861,6 +861,7 @@ ADDRESSES_ARBITRUM = {
     },
     "sushi": {"router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"},
     "swapr": {"router": "0x530476d5583724A89c8841eB6Da76E7Af4C0F17E"},
+    "uniswap": {"routerV3": "0xE592427A0AEce92De3Edee1F18E0157C05861564"},
     "arbitrum_node": "0x00000000000000000000000000000000000000C8",
     "arbitrum_gateway_router": "0x5288c571Fd7aD117beA99bF60FE0846C4E84F933",
     "controller": "0x3811448236d4274705b81C6ab99d617bfab617Cd",
