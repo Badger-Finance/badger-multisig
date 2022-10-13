@@ -456,6 +456,7 @@ ADDRESSES_ETH = {
         },
     },
     "votium": {
+        "bribe": "0x19BBC3463Dd8d07f55438014b021Fb457EBD4595",
         "multiMerkleStash": "0x378Ba9B73309bE80BF4C2c027aAD799766a7ED5A",
     },
     "bribe_tokens_claimable": {
