@@ -119,7 +119,7 @@ def main(
 
     if badger_bribe_in_convex > 0:
         # https://etherscan.io/address/0x19bbc3463dd8d07f55438014b021fb457ebd4595#code#F7#L30
-        proposal = web3.sha3(text=convex_proposal_id)
+        proposal = web3.keccak(hexstr=convex_proposal_id)
         mantissa = int(
             Decimal(badger_bribe_in_convex) * Decimal(1e18)
         )
