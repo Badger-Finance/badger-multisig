@@ -13,20 +13,27 @@ def main():
     AURA = voter.contract(r.treasury_tokens.AURA)
 
     data = voter.badger.get_hh_data()
-    rewards = [x["token"] for x in data]
 
-    voter.take_snapshot(tokens=rewards)
-    destination.take_snapshot(tokens=rewards)
+    tokens_snap = [AURABAL, GRAVI]
 
-    voter.badger.claim_bribes_hidden_hands(claim_from_strat=False)
+    if len(data) > 1:
+        rewards = [x["token"] for x in data]
+        tokens_snap += rewards
 
-    voter.print_snapshot()
+        # snap together with the rewards claimed from hh bribes
+        voter.take_snapshot(tokens=tokens_snap)
+        destination.take_snapshot(tokens=tokens_snap)
 
-    for token in rewards:
-        token = voter.contract(token)
-        token_balance = token.balanceOf(voter)
-        if token_balance > 0:
-            token.transfer(destination, token_balance)
+        voter.badger.claim_bribes_hidden_hands(claim_from_strat=False)
+        for token in rewards:
+            token = voter.contract(token)
+            token_balance = token.balanceOf(voter)
+            if token_balance > 0:
+                token.transfer(destination, token_balance)
+    else:
+        # vanilla snap no hh claims
+        voter.take_snapshot(tokens=tokens_snap)
+        destination.take_snapshot(tokens=tokens_snap)
 
     # add relock chore
     _, unlockable, _, _ = vlAURA.lockedBalances(voter)
