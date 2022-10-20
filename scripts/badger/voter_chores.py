@@ -2,7 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 
-def main():
+def main(relock_only=False):
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
     destination = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     voter.init_badger()
@@ -15,6 +15,19 @@ def main():
     data = voter.badger.get_hh_data()
 
     tokens_snap = [AURABAL, GRAVI]
+
+    if relock_only:
+        # add relock chore
+        _, unlockable, _, _ = vlAURA.lockedBalances(voter)
+        if unlockable > 0:
+            vlAURA.processExpiredLocks(True)
+
+            _, unlockable, _, _ = vlAURA.lockedBalances(voter)
+            assert unlockable == 0
+            voter.post_safe_tx()
+        else:
+            print("============ CURRENTLY NO AURA IS UNLOCKABLE! ============")
+        return
 
     if len(data) > 1:
         rewards = [x["token"] for x in data]
@@ -57,3 +70,7 @@ def main():
 
     destination.print_snapshot()
     voter.post_safe_tx()
+
+
+def relock_only():
+    main(True)
