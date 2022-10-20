@@ -1,6 +1,9 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
+# NOTE: voter is 5/n msig, so may be slow on the wd and state may change since we did the calc here
+WD_PROTECTION = 0.98
+
 
 def main(relock_only=False):
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
@@ -62,8 +65,18 @@ def main(relock_only=False):
 
     # wd from gravi and lock aura. gravi is coming as fee os processing bribes
     gravi_balance = GRAVI.balanceOf(voter)
+    gravi_ppfs = GRAVI.getPricePerFullShare() / 1e18
+    aura_in_vault = AURA.balanceOf(GRAVI)
+    _, unlockable_strat, _, _ = vlAURA.lockedBalances(r.strategies["native.graviAURA"])
+
     if gravi_balance > 0:
-        GRAVI.withdrawAll()
+        total_wd_aura = aura_in_vault + unlockable_strat
+        if total_wd_aura < gravi_balance * gravi_ppfs:
+            GRAVI.withdraw((total_wd_aura / gravi_ppfs) * WD_PROTECTION)
+        else:
+            GRAVI.withdrawAll()
+
+        # lock aura
         aura_balance = AURA.balanceOf(voter)
         AURA.approve(vlAURA, aura_balance)
         vlAURA.lock(voter, aura_balance)
