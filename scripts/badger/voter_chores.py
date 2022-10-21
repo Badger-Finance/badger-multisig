@@ -67,10 +67,11 @@ def main(relock_only=False):
     gravi_balance = GRAVI.balanceOf(voter)
     gravi_ppfs = GRAVI.getPricePerFullShare() / 1e18
     aura_in_vault = AURA.balanceOf(GRAVI)
+    aura_in_strat = AURA.balanceOf(r.strategies["native.graviAURA"])
     _, unlockable_strat, _, _ = vlAURA.lockedBalances(r.strategies["native.graviAURA"])
 
     if gravi_balance > 0:
-        total_wd_aura = aura_in_vault + unlockable_strat
+        total_wd_aura = aura_in_vault + aura_in_strat + unlockable_strat
         if total_wd_aura < gravi_balance * gravi_ppfs:
             GRAVI.withdraw((total_wd_aura / gravi_ppfs) * WD_PROTECTION)
         else:
