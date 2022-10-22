@@ -11,7 +11,7 @@ Read more about the Badger DAO and its community at https://badger.com/dao-and-c
 ![f](https://badger.com/images/badger-logo.svg)
 
 
-# Multisig Adresses
+# Multisig Addresses
 
 | Label | Description | Address (Links) |
 |-|-|-|
