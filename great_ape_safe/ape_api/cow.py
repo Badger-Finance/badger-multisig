@@ -151,12 +151,13 @@ class Cow:
                 raise
 
         r = requests.post(self.api_url + "orders", json=order_payload)
+        if not r.ok:
+            r.raise_for_status()
+
         order_uid = r.json()
         print("ORDER RESPONSE")
         pprint(order_uid)
         print("")
-        if not r.ok:
-            r.raise_for_status()
 
         # dump order to json and add staging label if necessary
         path = "logs/trading/prod/" if self.prod else "logs/trading/staging/"
