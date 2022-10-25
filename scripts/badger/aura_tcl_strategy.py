@@ -31,7 +31,6 @@ def main():
 
     # contracts
     vlAURA = vault.contract(r.aura.vlAURA)
-    aurabal_rewards = vault.contract(r.aura.aurabal_rewards)
 
     # snaps
     tokens = [usdc, bal, weth, aura, auraBAL, bauraBal, graviaura]
