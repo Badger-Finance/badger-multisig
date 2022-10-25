@@ -261,6 +261,7 @@ class Balancer:
 
         pool_recipient = self.safe if stake else destination
         balance_before = pool.balanceOf(pool_recipient)
+        assert len(request[0]) == len(request[1])
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins
         self.vault.joinPool(pool_id, self.safe, pool_recipient, request)
