@@ -40,7 +40,6 @@ def main():
 
     # 1. claim rewards
     vault.aura.claim_all_from_booster()
-    aurabal_rewards.getReward()
 
     # 2. organised splits for each asset
     balance_bal = bal.balanceOf(vault)
