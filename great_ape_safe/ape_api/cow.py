@@ -35,7 +35,7 @@ class Cow:
         prefix = "https://api.cow.fi/" if prod else "https://barn.api.cow.fi/"
         self.api_url = f"{prefix}{chain_label[chain.id]}/api/v1/"
 
-    def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell):
+    def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell, origin):
         # make sure mantissa is an integer
         mantissa_sell = int(mantissa_sell)
 
@@ -43,19 +43,21 @@ class Cow:
         fee_and_quote_payload = {
             "sellToken": sell_token.address,
             "buyToken": buy_token.address,
-            "sellAmountBeforeFee": mantissa_sell,
+            "sellAmountBeforeFee": str(mantissa_sell),
+            "kind": "sell",
+            "from": origin,
         }
         print("FEE AND QUOTE PAYLOAD:")
         pprint(fee_and_quote_payload)
         print("")
 
-        r = requests.get(
-            self.api_url + "feeAndQuote/sell", params=fee_and_quote_payload
-        )
+        r = requests.post(self.api_url + "quote", json=fee_and_quote_payload)
+        if not r.ok:
+            r.raise_for_status()
+
         print("FEE AND QUOTE RESPONSE:")
         pprint(r.json())
         print("")
-        assert r.ok and r.status_code == 200
 
         return r.json()
 
@@ -79,16 +81,18 @@ class Cow:
         mantissa_sell = int(mantissa_sell)
 
         # get the fee and exact amount to buy after fee
-        fee_and_quote = self.get_fee_and_quote(sell_token, buy_token, mantissa_sell)
+        fee_and_quote = self.get_fee_and_quote(
+            sell_token, buy_token, mantissa_sell, origin
+        )
 
         # grab values needed to post the order to the api
-        fee_amount = int(fee_and_quote["fee"]["amount"])
+        fee_amount = int(fee_and_quote["quote"]["feeAmount"])
         if mantissa_buy:
             # overwrite quote in case order has a limit
             mantissa_buy = int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
-            buy_amount_after_fee = int(int(fee_and_quote["buyAmountAfterFee"]) * coef)
+            buy_amount_after_fee = int(int(fee_and_quote["quote"]["buyAmount"]) * coef)
             try:
                 processor = Contract(origin)
             except ValueError:
@@ -146,12 +150,14 @@ class Cow:
             ):
                 raise
 
-        r = requests.post(f"{self.api_url}orders", json=order_payload)
+        r = requests.post(self.api_url + "orders", json=order_payload)
+        if not r.ok:
+            r.raise_for_status()
+
         order_uid = r.json()
         print("ORDER RESPONSE")
         pprint(order_uid)
         print("")
-        assert r.ok and r.status_code == 201
 
         # dump order to json and add staging label if necessary
         path = "logs/trading/prod/" if self.prod else "logs/trading/staging/"
