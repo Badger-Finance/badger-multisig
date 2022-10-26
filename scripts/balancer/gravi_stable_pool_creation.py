@@ -66,42 +66,15 @@ def main():
 
     aura_to_deposit = aura.balanceOf(safe.address)
 
-    graviaura_to_deposit = int(aura_to_deposit)
+    graviaura_to_deposit = int(
+        aura_to_deposit / graviaura.getPricePerFullShare() * 1e18
+    )
 
     underlyings = [bpt, graviaura, aura]
     amounts = [MAX_UINT112, graviaura_to_deposit, aura_to_deposit]
-    initial_deposit(
-        safe,
-        underlyings,
-        amounts,
-        bpt,
+    safe.balancer.deposit_and_stake(
+        underlyings, amounts, bpt, stake=False, initial_deposit=True
     )
 
     safe.print_snapshot()
     safe.post_safe_tx()
-
-
-def initial_deposit(
-    safe: GreatApeSafe,
-    underlyings: List[str],
-    mantissas: List[int],
-    pool: Contract,
-):
-    # given underlyings and their amounts, deposit and stake `underlyings`
-
-    # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#token-ordering
-    underlyings, mantissas = safe.balancer.order_tokens(
-        [x.address for x in underlyings], mantissas=mantissas
-    )
-
-    # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#encoding-how-do-i-encode
-    data_encoded = eth_abi.encode_abi(["uint256", "uint256[]"], [0, mantissas])
-
-    # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#arguments-explained
-    request = (underlyings, mantissas, data_encoded, False)
-
-    for index, token in enumerate(underlyings):
-        token = safe.balancer.safe.contract(token)
-        token.approve(safe.balancer.vault, mantissas[index])
-
-    safe.balancer._deposit_and_stake(pool, request, stake=False)
