@@ -136,12 +136,17 @@ class Balancer:
 
     def order_tokens(self, underlyings, mantissas=None):
         # helper function to order tokens/amounts numerically
-        underlyings_checked = [Web3.toChecksumAddress(x.lower()) for x in underlyings]
         if mantissas:
-            tokens = dict(zip(underlyings_checked, mantissas))
+            tokens = dict(zip([x.lower() for x in underlyings], mantissas))
             sorted_tokens = dict(sorted(tokens.items()))
-            return list(sorted_tokens.keys()), list(sorted_tokens.values())
-        return sorted(underlyings_checked)
+            sorted_underlyings, sorted_mantissas = zip(*sorted_tokens.items())
+            underlyings_checksummed = [
+                Web3.toChecksumAddress(x) for x in sorted_underlyings
+            ]
+            return underlyings_checksummed, list(sorted_mantissas)
+        else:
+            sorted_tokens = sorted([x.lower() for x in underlyings])
+            return [Web3.toChecksumAddress(x) for x in sorted_tokens]
 
     def pool_type(self, pool_id):
         pool_data = self.get_pool_data()
