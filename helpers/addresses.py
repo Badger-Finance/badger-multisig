@@ -958,7 +958,7 @@ ADDRESSES_FANTOM = {
     "lp_tokens": {"bveOXD-OXD": "0x6519546433dCB0a34A0De908e1032c46906EF664"},
     "sett_vaults": {
         "bveOXD": "0x96d4dBdc91Bef716eb407e415c9987a9fAfb8906",
-        "bbveOXD-OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9",
+        "bbveOXD_OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9",
         "bwFTM-WETH-wBTC": "0x5dA75c76565B69A5cDC5F2195E31362CEA00CD14",
     },
     "strategies": {
