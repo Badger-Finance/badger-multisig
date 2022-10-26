@@ -10,9 +10,10 @@ from great_ape_safe.ape_api.helpers.balancer.weighted_math import WeightedMath
 from helpers.addresses import registry
 
 
-WBTC_AMOUNT = 15
+MAX_UINT112 = int(2 ** 112 - 1)
 BALANCER_STABLE_FACTORY = "0xf9ac7B9dF2b3454E841110CcE5550bD5AC6f875F"
 GRAVIAURA_WHALE = "0x465b357Bbac5F6f3BC78669Db6980f9Eaa21D0C2"
+STABLE_POOL = "0x6A9603E481Fb8F2c09804ea9AdaB49A338855B90"
 
 # Params for pool creation
 POOL_NAME = "Balancer graviAURA Stable Pool"
@@ -36,20 +37,20 @@ def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
     safe.init_balancer()
 
-    factory = interface.IBalancerStablePoolFactory(
-        BALANCER_STABLE_FACTORY, owner=safe.account
-    )
-    pool_address = factory.create(
-        POOL_NAME,
-        SYMBOL,
-        TOKENS,
-        AMPLIFICATION,
-        RATE_PROVIDERS,
-        TOKEN_RATE_CACHE_DURATION,
-        EXEMPT_FROM_YIELD,
-        SWAP_FEE_PERCENTAGE,
-        OWNER,
-    ).return_value
+    # factory = interface.IBalancerStablePoolFactory(
+    #     BALANCER_STABLE_FACTORY, owner=safe.account
+    # )
+    # pool_address = factory.create(
+    #     POOL_NAME,
+    #     SYMBOL,
+    #     TOKENS,
+    #     AMPLIFICATION,
+    #     RATE_PROVIDERS,
+    #     TOKEN_RATE_CACHE_DURATION,
+    #     EXEMPT_FROM_YIELD,
+    #     SWAP_FEE_PERCENTAGE,
+    #     OWNER,
+    # ).return_value
 
     whale = accounts.at(GRAVIAURA_WHALE, force=True)
 
@@ -59,7 +60,7 @@ def main():
 
     graviaura.transfer(safe.address, transfer_balance, {"from": whale})
     aura = safe.contract(registry.eth.treasury_tokens.AURA)
-    bpt = interface.IBalancerStablePool(pool_address, owner=safe.account)
+    bpt = interface.IBalancerStablePool(STABLE_POOL, owner=safe.account)
 
     safe.take_snapshot([graviaura.address, aura.address, bpt.address])
 
@@ -67,8 +68,8 @@ def main():
 
     graviaura_to_deposit = int(aura_to_deposit)
 
-    underlyings = [graviaura, aura]
-    amounts = [graviaura_to_deposit, aura_to_deposit]
+    underlyings = [bpt, graviaura, aura]
+    amounts = [MAX_UINT112, graviaura_to_deposit, aura_to_deposit]
     initial_deposit(
         safe,
         underlyings,
@@ -78,6 +79,7 @@ def main():
 
     safe.print_snapshot()
     safe.post_safe_tx()
+
 
 def initial_deposit(
     safe: GreatApeSafe,
@@ -93,9 +95,7 @@ def initial_deposit(
     )
 
     # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#encoding-how-do-i-encode
-    data_encoded = eth_abi.encode_abi(
-        ["uint256", "uint256[]"], [0, mantissas]
-    )
+    data_encoded = eth_abi.encode_abi(["uint256", "uint256[]"], [0, mantissas])
 
     # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#arguments-explained
     request = (underlyings, mantissas, data_encoded, False)
@@ -105,4 +105,3 @@ def initial_deposit(
         token.approve(safe.balancer.vault, mantissas[index])
 
     safe.balancer._deposit_and_stake(pool, request, stake=False)
-
