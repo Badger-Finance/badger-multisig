@@ -34,7 +34,7 @@ def main():
     # 2. get reth via balancer swap
     vault.balancer.swap(weth, reth, weth_mantissa, pool=bpt_pool_swap)
 
-    reth_mantissa = reth.balanceOf(vault) * 0.98 # dusty
+    reth_mantissa = int(reth.balanceOf(vault) * 0.98) # dusty
 
     # print to cross-check: mantissas
     print(
