@@ -199,6 +199,7 @@ ADDRESSES_ETH = {
         "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
         "badgerFRAXBP_f_lp": "0x09b2E090531228d1b8E3d948C73b990Cb6e60720",
         "ENS": "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
+        "RETH": "0xae78736Cd615f374D3085123A210448E74Fc6393",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -547,6 +548,8 @@ ADDRESSES_ETH = {
         "bpt_33_grav_33_weth_33_aura": "0xA3283E3470D3CD1F18C074E3f2d3965F6D62fFF2",
         "bpt_33_grav_33_weth_33_aurabal": "0x0578292CB20a443bA1CdE459c985CE14Ca2bDEe5",
         "bpt_40wbtc_40digg_20graviaura": "0x8eB6c82C3081bBBd45DcAC5afA631aaC53478b7C",
+        "B_50_BADGER_50_RETH": "0xe340EBfcAA544da8bB1Ee9005F1a346D50Ec422e",
+        "B_50_WETH_50_RETH": "0x1E19CF2D73a72Ef1332C882F20534B6519Be0276",
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
