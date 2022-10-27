@@ -29,7 +29,7 @@ def main():
     weth_price = prices["weth"]["usd"]
 
     badger_mantissa = int((SEED_PER_TOKEN_IN_DOLLAR / badger_price) * 1e18)
-    weth_mantissa = int((SEED_PER_TOKEN_IN_DOLLAR / weth_price) * 1e18)
+    weth_mantissa = int((SEED_PER_TOKEN_IN_DOLLAR / weth_price) * 1e18 / 0.98)
 
     # 2. get reth via balancer swap
     vault.balancer.swap(weth, reth, weth_mantissa, pool=bpt_pool_swap)
