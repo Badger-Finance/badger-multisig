@@ -33,7 +33,7 @@ def main():
     trops.badger.claim_all()
 
     bcvxcrv.transfer(tree, TREE_DEFICIT)
-    crvIbBTC.transfer(vault, crvIbBTC.balanceOf(trops))
+    ibbtc.transfer(vault, ibbtc.balanceOf(trops))
     weth.transfer(vault, weth.balanceOf(trops))
 
     trops.cow.market_sell(eurs, usdc, eurs.balanceOf(trops), DEADLINE)
