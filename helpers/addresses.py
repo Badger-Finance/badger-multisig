@@ -78,6 +78,7 @@ ADDRESSES_ETH = {
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
         # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
         "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
+        "ops_executor14": "0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e",
         "ops_root-validator_v3": "0xcA63a374ec5f41dA402dD17b6d90DddFea3d64C4",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
