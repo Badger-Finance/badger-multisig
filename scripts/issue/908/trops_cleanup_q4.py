@@ -24,7 +24,7 @@ def main():
     bvecvx = trops.contract(r.treasury_tokens.bveCVX)
     bcvxcrv = trops.contract(r.treasury_tokens.bcvxCRV)
     gravi = trops.contract(r.sett_vaults.graviAURA)
-    crvIbBTC = trops.contract(r.treasury_tokens.crvIbBTC)
+    ibbtc = trops.contract(r.treasury_tokens.ibBTC)
 
     trops.take_snapshot(tokens=[bvecvx, bcvxcrv, gravi, crvIbBTC.address])
     tree.take_snapshot(tokens=[bcvxcrv])
