@@ -26,7 +26,7 @@ def main():
     gravi = trops.contract(r.sett_vaults.graviAURA)
     ibbtc = trops.contract(r.treasury_tokens.ibBTC)
 
-    trops.take_snapshot(tokens=[bvecvx, bcvxcrv, gravi, crvIbBTC.address])
+    trops.take_snapshot(tokens=[bvecvx, bcvxcrv, gravi, ibbtc])
     tree.take_snapshot(tokens=[bcvxcrv])
     vault.take_snapshot(tokens=[crvIbBTC.address, weth])
 
