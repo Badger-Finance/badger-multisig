@@ -46,5 +46,6 @@ def main():
     trops.print_snapshot()
     tree.print_snapshot()
     vault.print_snapshot()
+    voter.print_snapshot()
 
     trops.post_safe_tx()
