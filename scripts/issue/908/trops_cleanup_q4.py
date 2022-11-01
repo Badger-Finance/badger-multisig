@@ -28,7 +28,7 @@ def main():
 
     trops.take_snapshot(tokens=[bvecvx, bcvxcrv, gravi, ibbtc])
     tree.take_snapshot(tokens=[bcvxcrv])
-    vault.take_snapshot(tokens=[crvIbBTC.address, weth])
+    vault.take_snapshot(tokens=[ibbtc, weth])
 
     trops.badger.claim_all()
 
