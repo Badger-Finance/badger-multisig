@@ -599,7 +599,7 @@ ADDRESSES_ETH = {
     "euler": {
         "euler": "0x27182842E098f60e3D576794A5bFFb0777E025d3",
         "euler_markets": "0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3",
-    }
+    },
 }
 
 ADDRESSES_IBBTC = {
@@ -746,6 +746,7 @@ ADDRESSES_ARBITRUM = {
     "zero": "0x0000000000000000000000000000000000000000",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
     "registryAccessControl": "0x6847a17C4AC30AFd24FDcb2422DA01207C480a79",
+    "EmissionControl": "0x78418681f9ed228d627f785fb9607ed5175518fd",
     "badger_wallets": {
         "badgertree": "0x635EB2C39C75954bb53Ebc011BDC6AfAAcE115A6",
         "techops_multisig": "0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C",
