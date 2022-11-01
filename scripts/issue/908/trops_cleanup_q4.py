@@ -10,6 +10,7 @@ def main():
     trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     tree = GreatApeSafe(r.badger_wallets.badgertree)
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
+    voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
 
     trops.init_badger()
     trops.init_cow(prod=False)
@@ -29,9 +30,11 @@ def main():
     trops.take_snapshot(tokens=[bvecvx, bcvxcrv, gravi, ibbtc])
     tree.take_snapshot(tokens=[bcvxcrv])
     vault.take_snapshot(tokens=[ibbtc, weth])
+    voter.take_snapshot(tokens=[gravi])
 
     trops.badger.claim_all()
 
+    gravi.transfer(voter, gravi.balanceOf(trops))
     bcvxcrv.transfer(tree, TREE_DEFICIT)
     ibbtc.transfer(vault, ibbtc.balanceOf(trops))
     weth.transfer(vault, weth.balanceOf(trops))
