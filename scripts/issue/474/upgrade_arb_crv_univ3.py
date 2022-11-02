@@ -21,24 +21,19 @@ RENCRV_VAULT = ADDRESSES_ARBITRUM["sett_vaults"]["bcrvRenBTC"]
 UNIV3_ROUTER = ADDRESSES_ARBITRUM["uniswap"]["routerV3"]
 
 
-def main(simulation=True):
+def main(simulation="true"):
     safe = GreatApeSafe(DEV_MULTI)
 
-    console.print(
-        f"Updating Tricrypto strategy logic to {TRICRYPTO_LOGIC}"
-    )
+    console.print(f"Updating Tricrypto strategy logic to {TRICRYPTO_LOGIC}")
     upgrade_strategy_logic(
         TRICRYPTO_STRATEGY,
         TRICRYPTO_LOGIC,
-        TRICRYPTO_VAULT,
         safe,
         simulation,
     )
 
     console.print(f"Updating Rencrv strategy logic to {RENCRV_LOGIC}")
-    upgrade_strategy_logic(
-        RENCRV_STRATEGY, RENCRV_LOGIC, RENCRV_VAULT, safe, simulation
-    )
+    upgrade_strategy_logic(RENCRV_STRATEGY, RENCRV_LOGIC, safe, simulation)
 
     safe.post_safe_tx(call_trace=True)
 
@@ -46,14 +41,11 @@ def main(simulation=True):
 def upgrade_strategy_logic(
     strategy_proxy_address: str,
     logic_address: str,
-    vault_proxy_address: str,
     safe: GreatApeSafe,
     simulation: bool = True,
 ):
-    vault = interface.ITheVault(vault_proxy_address, owner=safe.account)
     proxy_admin = interface.IProxyAdmin(PROXY_ADMIN, owner=safe.account)
     strat_proxy = interface.ICrvStrategy(strategy_proxy_address, owner=safe.account)
-    controller_proxy = interface.IController(strat_proxy.controller(), owner=vault)
 
     prev_strategist = strat_proxy.strategist()
     prev_controller = strat_proxy.controller()
@@ -68,16 +60,16 @@ def upgrade_strategy_logic(
     prev_gauge_factory = strat_proxy.gaugeFactory()
     prev_swapr_router = strat_proxy.SWAPR_ROUTER()
 
-    if simulation:
+    if simulation == "true":
+        chain.snapshot()
         # Harvest to clear any pending rewards for fresh test case
         gauge = strat_proxy.gauge()
-        strat_proxy.harvest()
 
         # Harvest on old strat, store gain in want
         want = interface.ERC20(gauge)
         prev_want_bal = want.balanceOf(strat_proxy.address)
 
-        chain.sleep(60*60*2)
+        chain.sleep(60 * 60 * 2)
         chain.mine()
 
         strat_proxy.harvest()
@@ -85,8 +77,8 @@ def upgrade_strategy_logic(
         after_want_bal = want.balanceOf(strat_proxy.address)
         old_path_want_gain = after_want_bal - prev_want_bal
 
-        # Withdraw want change to keep same conditions for future test
-        controller_proxy.withdraw(vault.token(), old_path_want_gain)
+        # revert to keep same conditions for future test
+        chain.revert()
         assert want.balanceOf(strat_proxy.address) == prev_want_bal
 
     proxy_admin.upgrade(strategy_proxy_address, logic_address)
@@ -107,13 +99,13 @@ def upgrade_strategy_logic(
     assert prev_gauge_factory == strat_proxy.gaugeFactory()
     assert UNIV3_ROUTER == strat_proxy.UNIV3_ROUTER()
 
-    if simulation:
+    if simulation == "true":
         # Harvest on new strat, store gain in want, compare to prev swap (should be more efficient)
         prev_want_bal = want.balanceOf(strat_proxy.address)
 
-        chain.sleep(60*60*2)
+        chain.sleep(60 * 60 * 2)
         chain.mine()
-        
+
         strat_proxy.harvest()
 
         after_want_bal = want.balanceOf(strat_proxy.address)
