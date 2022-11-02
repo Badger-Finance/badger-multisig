@@ -62,10 +62,9 @@ def upgrade_strategy_logic(
 
     if simulation == "true":
         chain.snapshot()
-        # Harvest to clear any pending rewards for fresh test case
-        gauge = strat_proxy.gauge()
 
         # Harvest on old strat, store gain in want
+        gauge = strat_proxy.gauge()
         want = interface.ERC20(gauge)
         prev_want_bal = want.balanceOf(strat_proxy.address)
 
