@@ -20,6 +20,8 @@ RENCRV_VAULT = ADDRESSES_ARBITRUM["sett_vaults"]["bcrvRenBTC"]
 
 UNIV3_ROUTER = ADDRESSES_ARBITRUM["uniswap"]["routerV3"]
 
+HOURS_TO_SLEEP = 20
+
 
 def main(simulation="true"):
     safe = GreatApeSafe(DEV_MULTI)
@@ -68,7 +70,7 @@ def upgrade_strategy_logic(
         want = interface.ERC20(gauge)
         prev_want_bal = want.balanceOf(strat_proxy.address)
 
-        chain.sleep(60 * 60 * 2)
+        chain.sleep(60 * 60 * HOURS_TO_SLEEP)
         chain.mine()
 
         strat_proxy.harvest()
@@ -102,7 +104,7 @@ def upgrade_strategy_logic(
         # Harvest on new strat, store gain in want, compare to prev swap (should be more efficient)
         prev_want_bal = want.balanceOf(strat_proxy.address)
 
-        chain.sleep(60 * 60 * 2)
+        chain.sleep(60 * 60 * HOURS_TO_SLEEP)
         chain.mine()
 
         strat_proxy.harvest()
