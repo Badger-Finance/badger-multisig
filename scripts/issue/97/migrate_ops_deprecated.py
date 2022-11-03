@@ -5,7 +5,7 @@ from brownie import Wei
 # https://opensea.io/assets/0xe1e546e25a5ed890dff8b8d005537c0d373497f8/1
 token_id = 1
 
-# one time-off addr, not adding in book
+# one time-off addr, not adding in book
 recipient = "0xdE0AEf70a7ae324045B7722C903aaaec2ac175F5"
 
 

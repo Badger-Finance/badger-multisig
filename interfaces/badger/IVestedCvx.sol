@@ -43,7 +43,7 @@ interface IVestedCvx {
 
     function BADGER_TREE() external view returns (address);
 
-    function BRIBES_RECEIVER() external view returns (address);
+    function BRIBES_PROCESSOR() external view returns (address);
 
     function CVXCRV_VAULT() external view returns (address);
 

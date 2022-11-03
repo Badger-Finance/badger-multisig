@@ -1,31 +1,22 @@
-from brownie import interface, accounts, Contract, web3
-from helpers.addresses import ADDRESSES_ARBITRUM
+import time
+from brownie import interface, web3
+from great_ape_safe import GreatApeSafe
+from helpers.addresses import registry
 
-dev_multisig = ADDRESSES_ARBITRUM["badger_wallets"]["dev_multisig_deprecated"]
-strategies = ADDRESSES_ARBITRUM["strategies"]
-staking_contracts = ADDRESSES_ARBITRUM["swapr_staking_contracts"]
+SAFE = GreatApeSafe(registry.arbitrum.badger_wallets.dev_multisig)
+
+strategies = registry.arbitrum.strategies
+staking_contracts = registry.arbitrum.swapr_staking_contracts
 
 
-# REPLACE HERE THE NAME OF YOUR ADDRESS WITH THE RIGHTS
-ACCOUNT_TO_LOAD = ""
-
-
-def main(simulation="false"):
-
-    if simulation == "true":
-        dev = accounts.at(dev_multisig, force=True)
-    else:
-        dev = accounts.load(ACCOUNT_TO_LOAD)
-
-    safe = interface.IMultisigWalletWithDailyLimit(dev_multisig)
-
+def main():
     for key in [
         "native.DXSSwaprWeth",
         "native.DXSWbtcWeth",
         "native.DXSBadgerWeth",
         "native.DXSIbbtcWeth",
     ]:
-        strategy = Contract(strategies[key])
+        strategy = SAFE.contract(strategies[key])
 
         if strategy.stakingContract() == web3.toChecksumAddress(staking_contracts[key]):
             continue
@@ -39,16 +30,12 @@ def main(simulation="false"):
 
         assert strategy.want() == staking_contract.stakableToken()
         assert (
-            old_staking_contract.endingTimestamp()
-            == staking_contract.startingTimestamp()
+            staking_contract.startingTimestamp()
+            >= old_staking_contract.endingTimestamp()
         )
+        assert staking_contract.endingTimestamp() > time.time()
 
         # Make sure the staking contracts are accurate
-        encode_input = strategy.setStakingContract.encode_input(
-            staking_contract.address
-        )
+        strategy.setStakingContract(staking_contract.address)
 
-        print(f"{key} ({strategy.address})")
-        print(f"==== calldata={encode_input} ==== \n")
-
-        # safe.submitTransaction(strategy.address, 0, encode_input, {"from": dev})
+    SAFE.post_safe_tx()

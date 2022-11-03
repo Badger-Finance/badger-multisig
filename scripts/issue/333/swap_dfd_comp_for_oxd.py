@@ -15,7 +15,9 @@ if network.chain.id == 1:
 
 else:
     TROPS_FTM = GreatApeSafe(registry.ftm.badger_wallets.treasury_ops_multisig)
-    USDC_FTM = interface.ERC20(registry.ftm.treasury_tokens.USDC, owner=TROPS_FTM.account)
+    USDC_FTM = interface.ERC20(
+        registry.ftm.treasury_tokens.USDC, owner=TROPS_FTM.account
+    )
     OXD = interface.ERC20(registry.ftm.treasury_tokens.OXD, owner=TROPS_FTM.account)
     WFTM = interface.ERC20(registry.ftm.treasury_tokens.WFTM, owner=TROPS_FTM.account)
 
@@ -26,7 +28,7 @@ def move_dfd_to_trops():
     TROPS.take_snapshot([DFD])
 
     # since dfd isnt owned by trops yet, overwrite from param
-    DFD.transfer(TROPS, DFD.balanceOf(VAULT), {'from': VAULT.account})
+    DFD.transfer(TROPS, DFD.balanceOf(VAULT), {"from": VAULT.account})
 
     VAULT.print_snapshot()
     TROPS.print_snapshot()
@@ -45,8 +47,8 @@ def swap_for_usdc():
     # swap dsd for usdc
     # swap comp for usdc
     TROPS.init_cow()
-    TROPS.cow.market_sell(DFD, USDC_ETH, DFD.balanceOf(TROPS), coef=.985)
-    TROPS.cow.market_sell(COMP, USDC_ETH, COMP.balanceOf(TROPS), coef=.985)
+    TROPS.cow.market_sell(DFD, USDC_ETH, DFD.balanceOf(TROPS), coef=0.985)
+    TROPS.cow.market_sell(COMP, USDC_ETH, COMP.balanceOf(TROPS), coef=0.985)
     TROPS.post_safe_tx(call_trace=True)
 
 
@@ -57,15 +59,12 @@ def bridge_usdc_to_ftm(mantissa):
     info = TROPS.anyswap.get_token_bridge_info(
         registry.eth.treasury_tokens.USDC, chain_id_origin=1
     )
-    anytoken = info['anyToken']['address']
+    anytoken = info["anyToken"]["address"]
 
-    router = interface.IAnyswapV6Router(info['router'], owner=TROPS.account)
+    router = interface.IAnyswapV6Router(info["router"], owner=TROPS.account)
     USDC_ETH.approve(router, mantissa)
-    router.anySwapOutUnderlying['address,address,uint256,uint256'](
-        anytoken,
-        TROPS_FTM.address,
-        mantissa,
-        250
+    router.anySwapOutUnderlying["address,address,uint256,uint256"](
+        anytoken, TROPS_FTM.address, mantissa, 250
     )
 
     TROPS.post_safe_tx(call_trace=True)
@@ -80,14 +79,12 @@ def swap_usdc_for_oxd(amount_mantissa=None):
     TROPS_FTM.spookyswap.swap_tokens_for_tokens(
         USDC_FTM,
         USDC_FTM.balanceOf(TROPS_FTM) if amount_mantissa is None else amount_mantissa,
-        [USDC_FTM, WFTM]
-        )
+        [USDC_FTM, WFTM],
+    )
 
     TROPS_FTM.solidly.swap_tokens_for_tokens(
-        WFTM,
-        WFTM.balanceOf(TROPS_FTM) * 0.98,
-        [WFTM, OXD]
-        )
+        WFTM, WFTM.balanceOf(TROPS_FTM) * 0.98, [WFTM, OXD]
+    )
 
     TROPS_FTM.print_snapshot()
     TROPS_FTM.post_safe_tx()

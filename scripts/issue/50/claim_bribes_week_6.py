@@ -6,12 +6,12 @@ def main():
     candidates_votium = registry.eth.bribe_tokens_claimable.copy()
 
     # claimed before and no new incentives this round
-    candidates_votium.pop('BADGER')
-    candidates_votium.pop('OGN')
+    candidates_votium.pop("BADGER")
+    candidates_votium.pop("OGN")
 
     # not a votium candidate
-    candidates_votium.pop('MATIC')
-    candidates_votium.pop('NSBT')
+    candidates_votium.pop("MATIC")
+    candidates_votium.pop("NSBT")
 
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
     safe.init_badger()

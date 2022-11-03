@@ -4,42 +4,40 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
 
 
-DUSTY = .995
-SLIPPAGE = .99
+DUSTY = 0.995
+SLIPPAGE = 0.99
 
 SAFE = GreatApeSafe(registry.eth.badger_wallets.treasury_ops_multisig)
 VAULT = GreatApeSafe(registry.eth.badger_wallets.treasury_vault_multisig)
+VOTER = GreatApeSafe(registry.eth.badger_wallets.treasury_voter_multisig)
 
 ZAP = SAFE.contract(registry.eth.curve.zap_ibbtc)
-BIBBTC = interface.ISettV4h(
-    registry.eth.sett_vaults.bcrvIbBTC, owner=SAFE.account
-)
+BIBBTC = SAFE.contract(registry.eth.sett_vaults.bcrvIbBTC)
+BSLPIBBTC = SAFE.contract(registry.eth.sett_vaults.bslpWbtcibBTC)
 IBBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvIbBTC)
-IBBTC = interface.ERC20(registry.eth.treasury_tokens.ibBTC, owner=SAFE.account)
+IBBTC = SAFE.contract(registry.eth.treasury_tokens.ibBTC)
+WIBBTC = SAFE.contract(registry.eth.treasury_tokens.wibBTC)
 SBTC_LP = SAFE.contract(registry.eth.treasury_tokens.crvSBTC)
 YVWBTC = SAFE.contract(registry.eth.treasury_tokens.yvWBTC)
 BYVWBTC = SAFE.contract(registry.eth.yearn_vaults.byvWBTC)
-RENBTC = interface.ERC20(
-    registry.eth.treasury_tokens.renBTC, owner=SAFE.account
-)
+RENBTC = interface.ERC20(registry.eth.treasury_tokens.renBTC, owner=SAFE.account)
 WBTC = interface.ERC20(registry.eth.treasury_tokens.WBTC, owner=SAFE.account)
 SBTC = interface.ERC20(registry.eth.treasury_tokens.sBTC, owner=SAFE.account)
 CRV = interface.ERC20(registry.eth.treasury_tokens.CRV, owner=SAFE.account)
 CVX = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=SAFE.account)
 CVXCRV = interface.ERC20(registry.eth.treasury_tokens.cvxCRV, owner=SAFE.account)
-BCVX = interface.ISettV4h(
-    registry.eth.treasury_tokens.bCVX, owner=SAFE.account
-)
-BCVXCRV = interface.ISettV4h(
-    registry.eth.sett_vaults.bcvxCRV, owner=SAFE.account
-)
-BVECVX = interface.ISettV4h(
-    registry.eth.sett_vaults.bveCVX, owner=SAFE.account
-)
+BCVX = interface.ISettV4h(registry.eth.treasury_tokens.bCVX, owner=SAFE.account)
+BCVXCRV = interface.ISettV4h(registry.eth.sett_vaults.bcvxCRV, owner=SAFE.account)
+BVECVX = interface.ISettV4h(registry.eth.sett_vaults.bveCVX, owner=SAFE.account)
 THREEPOOL = SAFE.contract(registry.eth.treasury_tokens.crv3pool)
 DAI = interface.ERC20(registry.eth.treasury_tokens.DAI, owner=SAFE.account)
 USDC = interface.ERC20(registry.eth.treasury_tokens.USDC, owner=SAFE.account)
 USDT = interface.ERC20(registry.eth.treasury_tokens.USDT, owner=SAFE.account)
+AURABAL = SAFE.contract(registry.eth.treasury_tokens.AURABAL)
+WETH = SAFE.contract(registry.eth.treasury_tokens.WETH)
+DIGG = SAFE.contract(registry.eth.treasury_tokens.DIGG)
+BADGER = SAFE.contract(registry.eth.treasury_tokens.BADGER)
+BAL = SAFE.contract(registry.eth.treasury_tokens.BAL)
 
 
 def consolidate_stables():
@@ -52,13 +50,13 @@ def dogfood_curve_convex():
     if CRV.balanceOf(SAFE) > 0:
         SAFE.curve.swap(CRV, CVXCRV, CRV.balanceOf(SAFE))
     if CVXCRV.balanceOf(SAFE) > 0:
-        CVXCRV.approve(BCVXCRV, 2**256-1)
+        CVXCRV.approve(BCVXCRV, 2**256 - 1)
         BCVXCRV.depositAll()
         CVXCRV.approve(BCVXCRV, 0)
     if BCVX.balanceOf(SAFE) > 0:
         BCVX.withdraw(BCVX.balanceOf(SAFE))
     if CVX.balanceOf(SAFE) > 0:
-        CVX.approve(BVECVX, 2**256-1)
+        CVX.approve(BVECVX, 2**256 - 1)
         BVECVX.depositAll()
         CVX.approve(BVECVX, 0)
 
@@ -67,7 +65,7 @@ def unwind_lps():
     # build list with lp token labels
     lps = []
     for lp in registry.eth.treasury_tokens.keys():
-        if lp.startswith('uni') or lp.startswith('slp') or lp.startswith('crv'):
+        if lp.startswith("uni") or lp.startswith("slp") or lp.startswith("crv"):
             lps.append(lp)
 
     # withdraw from uni and sushi lps
@@ -76,19 +74,22 @@ def unwind_lps():
         bal_start = lp.balanceOf(SAFE)
         if bal_start <= 0:
             continue
-        if label.startswith('uni'):
+        if label.startswith("uni"):
             SAFE.uni_v2.remove_liquidity(lp, bal_start)
-        if label.startswith('slp'):
+        if label.startswith("slp"):
             SAFE.sushi.remove_liquidity(lp, bal_start)
 
-    # since some btokens hold curve lps we withdrawall btokens, except for
+    # since some btokens hold curve lps we withdrawAll btokens, except for
     # productive ones
     setts = registry.eth.sett_vaults.copy()
-    setts.pop('bcrvIbBTC')
-    setts.pop('bcvxCRV')
-    setts.pop('bveCVX')
-    setts.pop('bbveCVX-CVX-f')
-    setts.pop('remDIGG')
+    setts.pop("bcrvIbBTC")
+    setts.pop("bcvxCRV")
+    setts.pop("bveCVX")
+    setts.pop("bbveCVX-CVX-f")
+    setts.pop("remDIGG")
+    setts.pop("bBADGER")  # dust currently
+    setts.pop("graviAURA")
+    setts.pop("bauraBal")  # dust currently
     for addr in setts.values():
         sett = interface.ISettV4h(addr, owner=SAFE.account)
         if sett.balanceOf(SAFE) > 0:
@@ -96,18 +97,18 @@ def unwind_lps():
 
     # withdraw from curve lps
     for label in lps:
-        if label == 'crv3pool':
+        if label == "crv3pool":
             continue
         lp = Contract(registry.eth.treasury_tokens[label], owner=SAFE.account)
         bal_start = lp.balanceOf(SAFE)
         if bal_start <= 0:
             continue
-        if label.startswith('crv'):
+        if label.startswith("crv"):
             try:
-                SAFE.curve.withdraw_to_one_coin(lp, bal_start, SBTC_LP)
+                SAFE.curve.withdraw_to_one_coin(lp, bal_start, WBTC)
             except:
                 try:
-                    SAFE.curve.withdraw_to_one_coin(lp, bal_start, WBTC)
+                    SAFE.curve.withdraw_to_one_coin(lp, bal_start, SBTC_LP)
                 except:
                     try:
                         SAFE.curve.withdraw_to_one_coin(lp, bal_start, THREEPOOL)
@@ -121,16 +122,17 @@ def unwind_lps():
         YVWBTC.withdraw()
 
 
-def dogfood_btc():
-    # zap ibbtc, renbtc, wbtc and sbtc into the ibbtc_lp
+def consolidate_to_wbtc():
+    # unwrap wibbtc
+    WIBBTC.burn(WIBBTC.balanceToShares(WIBBTC.balanceOf(SAFE)))
+
+    # zap ibbtc, renbtc and sbtc into the ibbtc_lp
     dep_ibbtc = IBBTC.balanceOf(SAFE) * DUSTY
     dep_renbtc = RENBTC.balanceOf(SAFE) * DUSTY
-    dep_wbtc = WBTC.balanceOf(SAFE) * DUSTY
+    dep_wbtc = 0
     dep_sbtc = SBTC.balanceOf(SAFE) * DUSTY
     expected = ZAP.calc_token_amount(
-        IBBTC_LP,
-        [dep_ibbtc, dep_renbtc, dep_wbtc, dep_sbtc],
-        True
+        IBBTC_LP, [dep_ibbtc, dep_renbtc, dep_wbtc, dep_sbtc], True
     )
     if dep_ibbtc > 0:
         IBBTC.approve(ZAP, dep_ibbtc)
@@ -141,20 +143,12 @@ def dogfood_btc():
     if dep_sbtc > 0:
         SBTC.approve(ZAP, dep_sbtc)
     ZAP.add_liquidity(
-        IBBTC_LP,
-        [dep_ibbtc, dep_renbtc, dep_wbtc, dep_sbtc],
-        expected * SLIPPAGE
+        IBBTC_LP, [dep_ibbtc, dep_renbtc, dep_wbtc, dep_sbtc], expected * SLIPPAGE
     )
 
-    # deposit sbtc_lp directly into ibbtc_lp
-    if SBTC_LP.balanceOf(SAFE) > 0:
-        SAFE.curve.deposit(IBBTC_LP, [0, SBTC_LP.balanceOf(SAFE) * DUSTY])
-
-    # finally dogfood all into our own ibbtc sett
-    if IBBTC_LP.balanceOf(SAFE) > 0:
-        IBBTC_LP.approve(BIBBTC, 2**256-1)
-        BIBBTC.depositAll()
-        IBBTC_LP.approve(BIBBTC, 0)
+    # withdraw the ibbtc_lp to sbtc_lp and withdraw the sbtc_lp to wbtc
+    SAFE.curve.withdraw_to_one_coin(IBBTC_LP, IBBTC_LP.balanceOf(SAFE) * DUSTY, SBTC_LP)
+    SAFE.curve.withdraw_to_one_coin(SBTC_LP, SBTC_LP.balanceOf(SAFE) * DUSTY, WBTC)
 
 
 def main():
@@ -162,20 +156,29 @@ def main():
     drive around the farm with the thresher and turn all yield and fees into
     an asset worthy of the treasury vault:
     - badger, digg
-    - bibbtc
+    - wbtc
     - weth
     - 3pool
     - bvecvx, bcvxcrv
     """
 
     SAFE.take_snapshot(
-        list(registry.eth.treasury_tokens.values()) + \
-        list(registry.eth.sett_vaults.values())
+        list(registry.eth.treasury_tokens.values())
+        + list(registry.eth.sett_vaults.values())
+    )
+    VAULT.take_snapshot(
+        list(registry.eth.treasury_tokens.values())
+        + list(registry.eth.sett_vaults.values())
+    )
+    VOTER.take_snapshot(
+        list(registry.eth.treasury_tokens.values())
+        + list(registry.eth.sett_vaults.values())
     )
 
     SAFE.init_uni_v2()
     SAFE.init_sushi()
     SAFE.init_curve()
+    SAFE.init_balancer()
 
     # 1: deposit usdc, usdt and dai into 3pool
     consolidate_stables()
@@ -184,9 +187,31 @@ def main():
     dogfood_curve_convex()
 
     # 3: unwind every possible lp (uni, sushi, crv)
+    BIBBTC.withdrawAll()
+    BSLPIBBTC.withdrawAll()
     unwind_lps()
 
-    # 4: dusty dogfooding of btc variants
-    dogfood_btc()
+    # 4: consolidate btc positions to $wbtc
+    consolidate_to_wbtc()
+
+    # 5: unwind xsushi
+    SAFE.sushi.xsushi.leave(SAFE.sushi.xsushi.balanceOf(SAFE))
+
+    # 6: send all relevant influence tokens to voter
+    AURABAL.transfer(VOTER, AURABAL.balanceOf(SAFE))
+    # BVECVX.transfer(VOTER, BVECVX.balanceOf(SAFE)) cannot transfer in same block as depositing
+
+    # 7: send weth to vault
+    WETH.transfer(VAULT, WETH.balanceOf(SAFE) * DUSTY)
+
+    # 8: send all digg to vault
+    DIGG.transfer(VAULT, DIGG.balanceOf(SAFE))
+
+    VAULT.print_snapshot()
+    VOTER.print_snapshot()
+    SAFE.print_snapshot()
 
     SAFE.post_safe_tx(skip_preview=True)
+
+    # TODO
+    # fPmBTCHBTC and imBTC to wbtc

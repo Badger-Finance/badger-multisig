@@ -3,15 +3,17 @@ import os
 from datetime import datetime
 import math
 from pathlib import Path
-from brownie import interface, chain, multicall
+
+from brownie import interface, chain, multicall, web3, ZERO_ADDRESS
+
 from helpers.addresses import registry
 
 # general helpers and sdk
-from great_ape_safe.ape_api.helpers.uni_v3 import (
+from great_ape_safe.ape_api.helpers.uni_v3.uni_v3 import (
     print_position,
     calc_all_accum_fees,
 )
-from great_ape_safe.ape_api.helpers.uni_v3_sdk import (
+from great_ape_safe.ape_api.helpers.uni_v3.uni_v3_sdk import (
     getAmountsForLiquidity,
     getSqrtRatioAtTick,
     getAmount1Delta,
@@ -32,12 +34,18 @@ class UniV3:
         self.factory = interface.IUniswapV3Factory(
             registry.eth.uniswap.factoryV3, owner=self.safe.account
         )
+        self.router = interface.ISwapRouter(
+            registry.eth.uniswap.routerV3, owner=self.safe.account
+        )
+        self.quoter = interface.IQuoter(
+            registry.eth.uniswap.quoter, owner=self.safe.account
+        )
         self.v3pool_wbtc_badger = interface.IUniswapV3Pool(
             registry.eth.uniswap.v3pool_wbtc_badger, owner=self.safe.account
         )
 
         # constant helpers
-        self.Q128 = 2 ** 128
+        self.Q128 = 2**128
         self.deadline = 60 * 180
         self.slippage = 0.98
 
@@ -48,6 +56,32 @@ class UniV3:
             ),
             owner=self.safe.account,
         )
+
+    def _build_multihop_path(self, path):
+        # given a token path, construct a multihop swap path by adding token pair pools with highest liquidity
+        # https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps#input-parameters
+        multihop = [path[0].address]
+        for i in range(len(path) - 1):
+            fee_tiers = {100: 0, 3000: 0, 10000: 0}
+            for tier in fee_tiers.keys():
+                pool_addr = self.factory.getPool(path[i], path[i + 1], tier)
+
+                if pool_addr == ZERO_ADDRESS:
+                    continue
+
+                pool = interface.IUniswapV3Pool(pool_addr)
+                fee_tiers[tier] = pool.liquidity()
+
+            if list(fee_tiers.values()).count(0) == 3:
+                raise Exception(
+                    f"No liquidity found for {path[i].symbol()} - {path[i+1].symbol()}"
+                )
+
+            best_tier = max(fee_tiers, key=fee_tiers.get)
+            multihop.append(best_tier)
+            multihop.append(path[i + 1].address)
+
+        return multihop
 
     def burn_token_id(self, token_id, burn_nft=False):
         """
@@ -111,7 +145,18 @@ class UniV3:
         # https://docs.uniswap.org/protocol/reference/periphery/interfaces/INonfungiblePositionManager#collectparams
         params = (token_id, self.safe.address, self.Q128 - 1, self.Q128 - 1)
 
-        self.nonfungible_position_manager.collect(params)
+        # revert to this snapshot in case the collected amounts are 0
+        # using collect.call somehow always returns 0, even when there are
+        # indeed fees to collect
+        chain.snapshot()
+
+        # https://etherscan.io/address/0xC36442b4a4522E871399CD717aBDD847Ab11FE88#code#F1#L314
+        amount0, amount1 = self.nonfungible_position_manager.collect(
+            params
+        ).return_value
+
+        if amount0 == 0 and amount1 == 0:
+            chain.revert()
 
     def collect_fees(self):
         """
@@ -128,21 +173,7 @@ class UniV3:
                 ]
 
             for token_id in token_ids:
-                position = self.nonfungible_position_manager.positions(token_id)
-                # in case token_ids are from diff pools, check bal on each iteration
-                pool = self._get_pool(position)
-
-                token0 = self.safe.contract(pool.token0())
-                token1 = self.safe.contract(pool.token1())
-
-                token0_bal_init = token0.balanceOf(self.safe.address)
-                token1_bal_init = token1.balanceOf(self.safe.address)
-
                 self.collect_fee(token_id)
-
-                # check that increase the balance off-chain
-                assert token0.balanceOf(self.safe.address) > token0_bal_init
-                assert token1.balanceOf(self.safe.address) > token1_bal_init
         else:
             print(f" === Safe ({self.safe.address}) does not own any NFT === ")
 
@@ -293,8 +324,8 @@ class UniV3:
         decimals_diff = token1.decimals() - token0.decimals()
 
         # params for minting method
-        lower_tick = int(math.log((1 / range1) * 10 ** decimals_diff, BASE) // 60 * 60)
-        upper_tick = int(math.log((1 / range0) * 10 ** decimals_diff, BASE) // 60 * 60)
+        lower_tick = int(math.log((1 / range1) * 10**decimals_diff, BASE) // 60 * 60)
+        upper_tick = int(math.log((1 / range0) * 10**decimals_diff, BASE) // 60 * 60)
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
@@ -409,3 +440,41 @@ class UniV3:
 
         # assert new owner
         assert self.nonfungible_position_manager.ownerOf(token_id) == new_owner
+
+    def swap(self, path, mantissa, destination=None):
+        # https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps
+        destination = self.safe.address if not destination else destination
+
+        token_in, token_out = path[0], path[-1]
+
+        balance_token_out = token_out.balanceOf(self.safe)
+
+        multihop_path = self._build_multihop_path(path)
+
+        path_encoded = b""
+        for item in multihop_path:
+            if web3.isAddress(item):
+                path_encoded += web3.toBytes(hexstr=item)
+            else:
+                path_encoded += int.to_bytes(item, 3, byteorder="big")
+
+        min_out = self.quoter.quoteExactInput.call(
+            path_encoded,
+            mantissa,
+        ) * (1 - self.slippage)
+
+        params = (
+            path_encoded,
+            destination,
+            web3.eth.getBlock(web3.eth.blockNumber).timestamp + self.deadline,
+            mantissa,
+            min_out,
+        )
+
+        token_in.approve(self.router, mantissa)
+
+        tx = self.router.exactInput(params)
+
+        assert token_out.balanceOf(destination) >= balance_token_out + min_out
+
+        return tx.return_value

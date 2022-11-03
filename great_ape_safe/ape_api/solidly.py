@@ -9,4 +9,4 @@ class Solidly(UniV2):
         self.factory = self.safe.contract(self.router.factory())
 
     max_slippage = 0.05
-    router_symbol = 'FTM'
+    router_symbol = "FTM"

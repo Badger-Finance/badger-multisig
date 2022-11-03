@@ -17,9 +17,7 @@ def main():
     verifier = interface.IBalanceVerifier(
         registry.eth.helpers.balance_checker, owner=safe.account
     )
-    badger = interface.ERC20(
-        registry.eth.treasury_tokens.BADGER, owner=safe.account
-    )
+    badger = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=safe.account)
 
     safe.take_snapshot(tokens=[badger.address])
 

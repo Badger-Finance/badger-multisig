@@ -3,6 +3,10 @@ pragma solidity ^0.6.11;
 pragma experimental ABIEncoderV2;
 
 interface IERC20StakingRewardsDistribution {
+    event Staked(address indexed staker, uint256 amount);
+    event Withdrawn(address indexed withdrawer, uint256 amount);
+    event Claimed(address indexed claimer, uint256[] amounts);
+
     /// @dev Token that can be staked
     function stakableToken() external view returns (address);
 
