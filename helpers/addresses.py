@@ -89,7 +89,7 @@ ADDRESSES_ETH = {
         "mStable_feesSplit": "0x01D5912c6001bc0892e2b1440B8E44fe736BAf8F",
         "delegate": "0x14f83ff95d4ec5e8812ddf42da1232b0ba1015e6",
         "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
-        "devUngatedProxyAdmin": "0x7D0398D7D7432c47Dffc942Cd097B9eA3d88C385",
+        "devUngatedProxyAdmin": "0x9215cBDCDe25629d0e3D69ee5562d1b444Cf69F9",
         "testProxyAdmin": "0xB10b3Af646Afadd9C62D663dd5d226B15C25CdFA",
         "techOpsProxyAdmin": "0x7D0398D7D7432c47Dffc942Cd097B9eA3d88C385",
         "opsProxyAdmin_old": "0x4599F2913a3db4E73aA77A304cCC21516dd7270D",
