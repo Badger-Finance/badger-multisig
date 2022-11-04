@@ -184,8 +184,9 @@ class Convex:
 
         return self.frax_pool_registry.vaultMap(pid, owner)
 
-    def create_vault(self, staking_token):
-        pid = self.get_pool_pid(staking_token)
+    def create_vault(self, staking_token, pid=None):
+        if not pid:
+            pid = self.get_pool_pid(staking_token)
         # internally happens the approval of the staking_token for the staking_address
         # ref: https://github.com/convex-eth/frax-cvx-platform/blob/main/contracts/contracts/StakingProxyERC20.sol#L34
         self.frax_booster.createVault(pid)
