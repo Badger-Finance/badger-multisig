@@ -84,7 +84,7 @@ def main(
         proposals = response.json()["data"]["proposals"][::-1]
         for proposal in proposals:
             if aura_proposal_id == proposal["id"]:
-                proposal_index = proposals.index(prop)
+                proposal_index = proposals.index(proposal)
                 break
         prop = web3.solidityKeccak(["uint256", "uint256"], [proposal_index, choice])
 
