@@ -82,8 +82,8 @@ def main(
         response = requests.post(SNAPSHOT_URL, json={"query": QUERY_PROPOSALS})
         # reverse the order to have from oldest to newest
         proposals = response.json()["data"]["proposals"][::-1]
-        for prop in proposals:
-            if aura_proposal_id == prop["id"]:
+        for proposal in proposals:
+            if aura_proposal_id == proposal["id"]:
                 proposal_index = proposals.index(prop)
                 break
         prop = web3.solidityKeccak(["uint256", "uint256"], [proposal_index, choice])
