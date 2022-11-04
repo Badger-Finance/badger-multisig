@@ -598,7 +598,7 @@ ADDRESSES_ETH = {
         "euler_markets": "0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3",
     },
     "frax": {
-        "BADGER_FRAXBP_GAUGE": ""
+        "BADGER_FRAXBP_GAUGE": "0x5a92EF27f4baA7C766aee6d751f754EBdEBd9fae",
     },
 }
 
