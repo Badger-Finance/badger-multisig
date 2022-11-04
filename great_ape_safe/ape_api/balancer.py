@@ -327,11 +327,11 @@ class Balancer:
             pool_id = pool.getPoolId()
 
         underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
-        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
 
         amount_in = pool.balanceOf(self.safe)
 
         if unstake:
+            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
             amount_in += gauge.balanceOf(self.safe)
 
         data_encoded = eth_abi.encode_abi(["uint256", "uint256"], [1, amount_in])
@@ -380,11 +380,11 @@ class Balancer:
             pool_id = pool.getPoolId()
 
         underlyings, reserves, _ = self.vault.getPoolTokens(pool_id)
-        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
 
         amount_in = pool.balanceOf(self.safe)
 
         if unstake:
+            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
             amount_in += gauge.balanceOf(self.safe)
 
         underlying_index = underlyings.index(asset.address)

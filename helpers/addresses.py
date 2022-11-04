@@ -78,6 +78,7 @@ ADDRESSES_ETH = {
         # "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
         # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
         "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
+        "ops_executor14": "0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e",
         "ops_root-validator_v3": "0xcA63a374ec5f41dA402dD17b6d90DddFea3d64C4",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
@@ -199,6 +200,7 @@ ADDRESSES_ETH = {
         "ANGLE": "0x31429d1856aD1377A8A0079410B297e1a9e214c2",
         "badgerFRAXBP_f_lp": "0x09b2E090531228d1b8E3d948C73b990Cb6e60720",
         "ENS": "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
+        "RETH": "0xae78736Cd615f374D3085123A210448E74Fc6393",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -498,6 +500,7 @@ ADDRESSES_ETH = {
         "RPL": "0xD33526068D116cE69F19A9ee46F0bd304F21A51f",
         "INV": "0x41D5D79431A913C4aE7d69a668ecdfE5fF9DFB68",
         "LDO": "0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32",
+        "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
@@ -547,6 +550,8 @@ ADDRESSES_ETH = {
         "bpt_33_grav_33_weth_33_aura": "0xA3283E3470D3CD1F18C074E3f2d3965F6D62fFF2",
         "bpt_33_grav_33_weth_33_aurabal": "0x0578292CB20a443bA1CdE459c985CE14Ca2bDEe5",
         "bpt_40wbtc_40digg_20graviaura": "0x8eB6c82C3081bBBd45DcAC5afA631aaC53478b7C",
+        "B_50_BADGER_50_RETH": "0xe340EBfcAA544da8bB1Ee9005F1a346D50Ec422e",
+        "B_50_WETH_50_RETH": "0x1E19CF2D73a72Ef1332C882F20534B6519Be0276",
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
@@ -746,6 +751,7 @@ ADDRESSES_ARBITRUM = {
     "zero": "0x0000000000000000000000000000000000000000",
     "registry_v2": "0xdc602965F3e5f1e7BAf2446d5564b407d5113A06",
     "registryAccessControl": "0x6847a17C4AC30AFd24FDcb2422DA01207C480a79",
+    "EmissionControl": "0x78418681f9ed228d627f785fb9607ed5175518fd",
     "badger_wallets": {
         "badgertree": "0x635EB2C39C75954bb53Ebc011BDC6AfAAcE115A6",
         "techops_multisig": "0x292549E6bd5a41aE4521Bb8679aDA59631B9eD4C",
@@ -962,7 +968,7 @@ ADDRESSES_FANTOM = {
     "lp_tokens": {"bveOXD-OXD": "0x6519546433dCB0a34A0De908e1032c46906EF664"},
     "sett_vaults": {
         "bveOXD": "0x96d4dBdc91Bef716eb407e415c9987a9fAfb8906",
-        "bbveOXD-OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9",
+        "bbveOXD_OXD": "0xbF2F3a9ba42A00CA5B18842D8eB1954120e4a2A9",
         "bwFTM-WETH-wBTC": "0x5dA75c76565B69A5cDC5F2195E31362CEA00CD14",
     },
     "strategies": {

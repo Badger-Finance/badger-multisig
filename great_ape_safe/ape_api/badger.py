@@ -153,8 +153,10 @@ class Badger:
         """
         address = address if address else self.safe.address
         url = self.api_hh_url + address
-        response = requests.get(url)
-        return response.json()["data"]
+        r = requests.get(url)
+        if not r.ok: 
+            r.raise_for_status()
+        return r.json()["data"]
 
     def claim_bribes_hidden_hands(self, claim_from_strat=True) -> dict:
         """
