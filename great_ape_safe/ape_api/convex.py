@@ -8,6 +8,7 @@ class VaultTypes:
     UNIV2_TEMPLE = 1
     AFRAX = 2
     CURVE_LP = 3
+    BADGER_FRAXBP = 33
 
 
 class Convex:
@@ -192,7 +193,7 @@ class Convex:
     def stake_lock(self, staking_token, mantissa, seconds):
         pid = self.get_pool_pid(staking_token)
 
-        if pid == VaultTypes.AFRAX:
+        if pid in [VaultTypes.AFRAX, VaultTypes.BADGER_FRAXBP]:
             staking_proxy = self.safe.contract(self.get_vault(staking_token))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
             staking_token.approve(staking_proxy, mantissa)
