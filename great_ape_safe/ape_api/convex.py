@@ -8,7 +8,7 @@ class VaultTypes:
     UNIV2_TEMPLE = 1
     AFRAX = 2
     CURVE_LP = 3
-    BADGER_FRAXBP = 33
+    BADGER_FRAXBP = 35
 
 
 class Convex:
@@ -178,9 +178,8 @@ class Convex:
             if _staking_token == staking_token:
                 return i
 
-    def get_vault(self, staking_token, owner=None):
+    def get_vault(self, pid, owner=None):
         owner = self.safe.address if not owner else owner
-        pid = self.get_pool_pid(staking_token)
 
         return self.frax_pool_registry.vaultMap(pid, owner)
 
@@ -191,11 +190,12 @@ class Convex:
         # ref: https://github.com/convex-eth/frax-cvx-platform/blob/main/contracts/contracts/StakingProxyERC20.sol#L34
         self.frax_booster.createVault(pid)
 
-    def stake_lock(self, staking_token, mantissa, seconds):
-        pid = self.get_pool_pid(staking_token)
+    def stake_lock(self, staking_token, mantissa, seconds, pid=None):
+        if not pid:
+            pid = self.get_pool_pid(staking_token)
 
         if pid in [VaultTypes.AFRAX, VaultTypes.BADGER_FRAXBP]:
-            staking_proxy = self.safe.contract(self.get_vault(staking_token))
+            staking_proxy = self.safe.contract(self.get_vault(pid))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
             staking_token.approve(staking_proxy, mantissa)
 
@@ -216,11 +216,12 @@ class Convex:
                 staking_contract.lockedLiquidityOf(staking_proxy) > initial_locked_liq
             )
 
-    def withdraw_locked(self, staking_token, kek_id):
-        pid = self.get_pool_pid(staking_token)
+    def withdraw_locked(self, staking_token, kek_id, pid=None):
+        if not pid:
+            pid = self.get_pool_pid(staking_token)
 
-        if pid == VaultTypes.AFRAX:
-            staking_proxy = self.safe.contract(self.get_vault(staking_token))
+        if pid == [VaultTypes.AFRAX, VaultTypes.BADGER_FRAXBP]:
+            staking_proxy = self.safe.contract(self.get_vault(pid))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
 
             rewards = staking_contract.getAllRewardTokens()

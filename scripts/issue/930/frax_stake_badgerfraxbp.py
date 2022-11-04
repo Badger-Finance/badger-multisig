@@ -37,6 +37,6 @@ def stake_in_vault():
     assert staking_lp_balance == lp_balance
 
     # 3. lock in the vault
-    vault.convex.stake_lock(stkcvx_badger_fraxbp, staking_lp_balance, MIN_LOCK_TIME)
+    vault.convex.stake_lock(stkcvx_badger_fraxbp, staking_lp_balance, MIN_LOCK_TIME, PID)
 
     vault.post_safe_tx()
