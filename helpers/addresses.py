@@ -456,7 +456,7 @@ ADDRESSES_ETH = {
         "claim_zap": "0x92Cf9E5e4D1Dfbf7dA0d2BB3e884a68416a65070",
         "vlCVX": "0xD18140b4B819b895A3dba5442F959fA44994AF50",
         "frax": {
-            "booster": "0xEe3Ab4e439ed52C7B8668864e2452ed23a9D67e8",
+            "booster": "0x569f5B842B5006eC17Be02B8b94510BA8e79FbCa",
             "pool_registry": "0x41a5881c17185383e19Df6FA4EC158a6F4851A69",
             "wcvx_badger_fraxbp": "0xb92e3fD365Fc5E038aa304Afe919FeE158359C88",
         },
