@@ -6,7 +6,6 @@ from helpers.addresses import registry
 # dictionary holding the different frax vault pids
 VAULT_TYPES = {
     "VAFRAX": 0,
-    "VAFRAX": 0,
     "UNIV2_TEMPLE": 1,
     "AFRAX": 2,
     "CURVE_LP": 3,
