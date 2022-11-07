@@ -562,6 +562,7 @@ ADDRESSES_ETH = {
         "balancer_briber": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
         "rewards_distributor": "0x0b139682D5C9Df3e735063f46Fb98c689540Cf3A",
         "aura_briber": "0x642c59937A62cf7dc92F70Fd78A13cEe0aa2Bd9c",
+        "frax_briber": "0x123683885310851Ca29e83AE3FF3e2490D4420Cd",
     },
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
@@ -603,6 +604,9 @@ ADDRESSES_ETH = {
     "euler": {
         "euler": "0x27182842E098f60e3D576794A5bFFb0777E025d3",
         "euler_markets": "0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3",
+    },
+    "frax": {
+        "BADGER_FRAXBP_GAUGE": "0x5a92EF27f4baA7C766aee6d751f754EBdEBd9fae",
     },
 }
 

@@ -6,18 +6,20 @@ from brownie import web3, interface
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
-url = "https://hub.snapshot.org/graphql?"
 
-# QUERIES FOR CHOICES AND PROPOSALS INFO
-query_proposal_info = """
+SNAPSHOT_URL = "https://hub.snapshot.org/graphql?"
+
+# queries for choices and proposals info
+QUERY_PROPOSAL_INFO = """
 query ($proposal_id: String) {
   proposal(id: $proposal_id) {
     choices
   }
 }
 """
-# NOTE: add more states to ensure all proposals are included
-query_proposals = """
+
+# `state: "all"` ensures all proposals are included
+QUERY_PROPOSALS = """
 query {
   proposals(first: 100, where: { space: "aurafinance.eth" , state: "all"}) {
     id
@@ -26,18 +28,18 @@ query {
 """
 
 # gauge to bribe in aura
-GAUGE_TARGET = "80/20 BADGER/WBTC"
+AURA_TARGET = "80/20 BADGER/WBTC"  # or "50/50 BADGER/rETH"!
 
 # gauge to bribe in convex
 CONVEX_TARGET = "BADGER+crvFRAX (0x13B8…)"
 
 
 def get_index(proposal_id, target):
-    # grab data from the snap endpoint re proposal choices
+    # grab data from the snapshot endpoint re proposal choices
     response = requests.post(
-        url,
+        SNAPSHOT_URL,
         json={
-            "query": query_proposal_info,
+            "query": QUERY_PROPOSAL_INFO,
             "variables": {"proposal_id": proposal_id},
         },
     )
@@ -45,41 +47,39 @@ def get_index(proposal_id, target):
     choice = choices.index(target)
     return choice
 
-# NOTE: leaving as default the breakdown vote by council temporalily
-def main(
-    badger_bribe_in_aura=8000,
-    badger_bribe_in_balancer=0,
-    badger_bribe_in_votium=8000,
-    aura_proposal_id="0xcd2c48e7a2dc7b5ea333447c4b0b9a0e312329ddbec4cedc64b606e9b0ed6feb",
-    convex_proposal_id="0xee37337fd2b8b5112ac4efd2948d58e4e44f59ee904c70650d26ece60276ed9f",
-):
-    safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
-    badger_bribe_in_aura = int(badger_bribe_in_aura)
-    badger_bribe_in_balancer = int(badger_bribe_in_balancer)
-    badger_bribe_in_convex = int(badger_bribe_in_votium)
 
-    badger = interface.ERC20(r.treasury_tokens.BADGER, owner=safe.account)
+def main(
+    badger_bribe_in_aura=0,
+    badger_bribe_in_balancer=0,
+    badger_bribe_in_votium=0,
+    badger_bribe_in_frax=0,
+    aura_proposal_id=None,
+    convex_proposal_id=None,
+):
+    badger_bribe_in_aura = Decimal(badger_bribe_in_aura)
+    badger_bribe_in_balancer = Decimal(badger_bribe_in_balancer)
+    badger_bribe_in_convex = Decimal(badger_bribe_in_votium)
+    badger_bribe_in_frax = Decimal(badger_bribe_in_frax)
+
+    safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
+    badger = safe.contract(r.treasury_tokens.BADGER)
 
     safe.take_snapshot([badger])
 
-    bribe_vault = interface.IBribeVault(r.hidden_hand.bribe_vault, owner=safe.account)
-
-    balancer_briber = interface.ITokenmakBribe(
-        r.hidden_hand.balancer_briber, owner=safe.account
+    bribe_vault = safe.contract(r.hidden_hand.bribe_vault, interface.IBribeVault)
+    aura_briber = safe.contract(r.hidden_hand.aura_briber, interface.IAuraBribe)
+    balancer_briber = safe.contract(
+        r.hidden_hand.balancer_briber, interface.IBalancerBribe
     )
-
-    aura_briber = interface.IAuraBribe(r.hidden_hand.aura_briber, owner=safe.account)
-
-    votium_bribe = safe.contract(r.votium.bribe)
+    votium_briber = safe.contract(r.votium.bribe, interface.IVotiumBribe)
+    frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IFraxBribe)
 
     if badger_bribe_in_aura > 0:
-        choice = get_index(aura_proposal_id, GAUGE_TARGET)
+        assert aura_proposal_id
+        choice = get_index(aura_proposal_id, AURA_TARGET)
 
         # grab data from proposals to find out the proposal index
-        response = requests.post(
-            url,
-            json={"query": query_proposals},
-        )
+        response = requests.post(SNAPSHOT_URL, json={"query": QUERY_PROPOSALS})
         # reverse the order to have from oldest to newest
         proposals = response.json()["data"]["proposals"][::-1]
         for proposal in proposals:
@@ -92,9 +92,9 @@ def main(
         print("Current total proposal in aura snap: ", len(proposals))
         print("Proposal index:", proposal_index)
         print("Choice:", choice)
-        print("Proposal hash: ",prop.hex())
+        print("Proposal hash:", prop.hex())
 
-        mantissa = int(Decimal(badger_bribe_in_aura) * Decimal(1e18))
+        mantissa = int(badger_bribe_in_aura * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
         aura_briber.depositBribeERC20(
@@ -105,10 +105,7 @@ def main(
 
     if badger_bribe_in_balancer > 0:
         prop = web3.solidityKeccak(["address"], [r.balancer.B_20_BTC_80_BADGER_GAUGE])
-
-        mantissa = int(
-            Decimal(badger_bribe_in_balancer) * Decimal(1e18)
-        )
+        mantissa = int(badger_bribe_in_balancer * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
         balancer_briber.depositBribeERC20(
@@ -118,14 +115,24 @@ def main(
         )
 
     if badger_bribe_in_convex > 0:
+        assert convex_proposal_id
         # https://etherscan.io/address/0x19bbc3463dd8d07f55438014b021fb457ebd4595#code#F7#L30
-        proposal = web3.keccak(hexstr=convex_proposal_id)
-        mantissa = int(
-            Decimal(badger_bribe_in_convex) * Decimal(1e18)
-        )
+        prop = web3.keccak(hexstr=convex_proposal_id)
+        mantissa = int(badger_bribe_in_convex * Decimal(1e18))
         choice = get_index(convex_proposal_id, CONVEX_TARGET)
 
-        badger.approve(votium_bribe, mantissa)
-        votium_bribe.depositBribe(badger, mantissa, proposal, choice)
+        badger.approve(votium_briber, mantissa)
+        votium_briber.depositBribe(badger, mantissa, prop, choice)
+
+    if badger_bribe_in_frax > 0:
+        prop = web3.solidityKeccak(["address"], [r.frax.BADGER_FRAXBP_GAUGE])
+        mantissa = int(badger_bribe_in_frax * Decimal(1e18))
+
+        badger.approve(bribe_vault, mantissa)
+        frax_briber.depositBribeERC20(
+            prop,  # bytes32 proposal
+            badger,  # address token
+            mantissa,  # uint256 amount
+        )
 
     safe.post_safe_tx()
