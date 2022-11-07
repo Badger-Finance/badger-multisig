@@ -458,7 +458,7 @@ ADDRESSES_ETH = {
         "frax": {
             "booster": "0xEe3Ab4e439ed52C7B8668864e2452ed23a9D67e8",
             "pool_registry": "0x41a5881c17185383e19Df6FA4EC158a6F4851A69",
-            "stk_badger_fraxbp": "0xb92e3fD365Fc5E038aa304Afe919FeE158359C88",
+            "wcvx_badger_fraxbp": "0xb92e3fD365Fc5E038aa304Afe919FeE158359C88",
         },
     },
     "votium": {

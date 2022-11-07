@@ -3,12 +3,15 @@ from brownie import interface
 from helpers.addresses import registry
 
 
-class VaultTypes:
-    VAFRAX = 0
-    UNIV2_TEMPLE = 1
-    AFRAX = 2
-    CURVE_LP = 3
-    BADGER_FRAXBP = 35
+# dictionary holding the different frax vault pids
+VAULT_TYPES = {
+    "VAFRAX": 0,
+    "VAFRAX": 0,
+    "UNIV2_TEMPLE": 1,
+    "AFRAX": 2,
+    "CURVE_LP": 3,
+    "BADGER_FRAXBP": 35,
+}
 
 
 class Convex:
@@ -33,6 +36,7 @@ class Convex:
         # frax contract section
         self.frax_booster = safe.contract(registry.eth.convex.frax.booster)
         self.frax_pool_registry = safe.contract(registry.eth.convex.frax.pool_registry)
+        self.VAULT_TYPES = VAULT_TYPES
 
     def get_pool_info(self, underlying):
         # return pool id, cvx_token and gauge address for `underlying`
@@ -65,7 +69,7 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#deposits
         stake = 0
         pool_id = self.get_pool_info(underlying)[0]
-        underlying.approve(self.booster, 2**256 - 1)
+        underlying.approve(self.booster, 2 ** 256 - 1)
         assert self.booster.depositAll(pool_id, stake).return_value == True
         underlying.approve(self.booster, 0)
 
@@ -75,7 +79,7 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#deposits
         stake = 1
         pool_id = self.get_pool_info(underlying)[0]
-        underlying.approve(self.booster, 2**256 - 1)
+        underlying.approve(self.booster, 2 ** 256 - 1)
         assert self.booster.depositAll(pool_id, stake).return_value == True
         underlying.approve(self.booster, 0)
 
@@ -127,7 +131,7 @@ class Convex:
         # stake complete balance of `underlying`'s corresponding convex tokens
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool#stake-deposit-tokens
         _, cvx_token, _, rewards = self.get_pool_info(underlying)
-        self.safe.contract(cvx_token).approve(rewards, 2**256 - 1)
+        self.safe.contract(cvx_token).approve(rewards, 2 ** 256 - 1)
         assert self.safe.contract(rewards).stakeAll().return_value == True
         self.safe.contract(cvx_token).approve(rewards, 0)
 
