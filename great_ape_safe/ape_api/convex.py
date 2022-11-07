@@ -3,16 +3,6 @@ from brownie import interface
 from helpers.addresses import registry
 
 
-# dictionary holding the different frax vault pids
-VAULT_TYPES = {
-    "VAFRAX": 0,
-    "UNIV2_TEMPLE": 1,
-    "AFRAX": 2,
-    "CURVE_LP": 3,
-    "BADGER_FRAXBP": 35,
-}
-
-
 class Convex:
     def __init__(self, safe):
         self.safe = safe
