@@ -197,7 +197,7 @@ class Convex:
         if not pid:
             pid = self.get_pool_pid(staking_token)
 
-        if pid in [VaultTypes.AFRAX, VaultTypes.BADGER_FRAXBP]:
+        if pid in [self.VAULT_TYPES["afrax"], self.VAULT_TYPES["badger_fraxbp"]]:
             staking_proxy = self.safe.contract(self.get_vault(pid))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
             staking_token.approve(staking_proxy, mantissa)
