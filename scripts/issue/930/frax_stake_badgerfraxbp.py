@@ -13,7 +13,7 @@ wcvx_badger_fraxbp = vault.contract(r.convex.frax.wcvx_badger_fraxbp)
 def create_vault():
     vault.init_convex()
     vault.convex.create_vault(
-        wcvx_badger_fraxbp, vault.convex.VAULT_TYPES["BADGER_FRAXBP"]
+        wcvx_badger_fraxbp, vault.convex.VAULT_TYPES["badger_fraxbp"]
     )
 
     vault.post_safe_tx()
@@ -40,7 +40,7 @@ def stake_in_vault():
         wcvx_badger_fraxbp,
         staking_lp_balance,
         MIN_LOCK_TIME,
-        vault.convex.VAULT_TYPES["BADGER_FRAXBP"],
+        vault.convex.VAULT_TYPES["badger_fraxbp"],
     )
 
     vault.post_safe_tx()
