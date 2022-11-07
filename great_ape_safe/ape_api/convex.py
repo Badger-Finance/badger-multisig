@@ -25,7 +25,14 @@ class Convex:
         # frax contract section
         self.frax_booster = safe.contract(registry.eth.convex.frax.booster)
         self.frax_pool_registry = safe.contract(registry.eth.convex.frax.pool_registry)
-        self.VAULT_TYPES = VAULT_TYPES
+        # dictionary holding the different frax vault pids
+        self.VAULT_TYPES = {
+            "vafrax": 0,
+            "univ2_temple": 1,
+            "afrax": 2,
+            "curve_lp": 3,
+            "badger_fraxbp": 35,
+        }
 
     def get_pool_info(self, underlying):
         # return pool id, cvx_token and gauge address for `underlying`
