@@ -3,13 +3,6 @@ from brownie import interface
 from helpers.addresses import registry
 
 
-class VaultTypes:
-    VAFRAX = 0
-    UNIV2_TEMPLE = 1
-    AFRAX = 2
-    CURVE_LP = 3
-
-
 class Convex:
     def __init__(self, safe):
         self.safe = safe
@@ -32,6 +25,14 @@ class Convex:
         # frax contract section
         self.frax_booster = safe.contract(registry.eth.convex.frax.booster)
         self.frax_pool_registry = safe.contract(registry.eth.convex.frax.pool_registry)
+        # dictionary holding the different frax vault pids
+        self.VAULT_TYPES = {
+            "vafrax": 0,
+            "univ2_temple": 1,
+            "afrax": 2,
+            "curve_lp": 3,
+            "badger_fraxbp": 35,
+        }
 
     def get_pool_info(self, underlying):
         # return pool id, cvx_token and gauge address for `underlying`
@@ -64,7 +65,7 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#deposits
         stake = 0
         pool_id = self.get_pool_info(underlying)[0]
-        underlying.approve(self.booster, 2**256 - 1)
+        underlying.approve(self.booster, 2 ** 256 - 1)
         assert self.booster.depositAll(pool_id, stake).return_value == True
         underlying.approve(self.booster, 0)
 
@@ -74,7 +75,7 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#deposits
         stake = 1
         pool_id = self.get_pool_info(underlying)[0]
-        underlying.approve(self.booster, 2**256 - 1)
+        underlying.approve(self.booster, 2 ** 256 - 1)
         assert self.booster.depositAll(pool_id, stake).return_value == True
         underlying.approve(self.booster, 0)
 
@@ -126,7 +127,7 @@ class Convex:
         # stake complete balance of `underlying`'s corresponding convex tokens
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool#stake-deposit-tokens
         _, cvx_token, _, rewards = self.get_pool_info(underlying)
-        self.safe.contract(cvx_token).approve(rewards, 2**256 - 1)
+        self.safe.contract(cvx_token).approve(rewards, 2 ** 256 - 1)
         assert self.safe.contract(rewards).stakeAll().return_value == True
         self.safe.contract(cvx_token).approve(rewards, 0)
 
@@ -177,23 +178,24 @@ class Convex:
             if _staking_token == staking_token:
                 return i
 
-    def get_vault(self, staking_token, owner=None):
+    def get_vault(self, pid, owner=None):
         owner = self.safe.address if not owner else owner
-        pid = self.get_pool_pid(staking_token)
 
         return self.frax_pool_registry.vaultMap(pid, owner)
 
-    def create_vault(self, staking_token):
-        pid = self.get_pool_pid(staking_token)
+    def create_vault(self, staking_token, pid=None):
+        if not pid:
+            pid = self.get_pool_pid(staking_token)
         # internally happens the approval of the staking_token for the staking_address
         # ref: https://github.com/convex-eth/frax-cvx-platform/blob/main/contracts/contracts/StakingProxyERC20.sol#L34
         self.frax_booster.createVault(pid)
 
-    def stake_lock(self, staking_token, mantissa, seconds):
-        pid = self.get_pool_pid(staking_token)
+    def stake_lock(self, staking_token, mantissa, seconds, pid=None):
+        if not pid:
+            pid = self.get_pool_pid(staking_token)
 
-        if pid == VaultTypes.AFRAX:
-            staking_proxy = self.safe.contract(self.get_vault(staking_token))
+        if pid in [self.VAULT_TYPES["afrax"], self.VAULT_TYPES["badger_fraxbp"]]:
+            staking_proxy = self.safe.contract(self.get_vault(pid))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
             staking_token.approve(staking_proxy, mantissa)
 
@@ -214,11 +216,12 @@ class Convex:
                 staking_contract.lockedLiquidityOf(staking_proxy) > initial_locked_liq
             )
 
-    def withdraw_locked(self, staking_token, kek_id):
-        pid = self.get_pool_pid(staking_token)
+    def withdraw_locked(self, staking_token, kek_id, pid=None):
+        if not pid:
+            pid = self.get_pool_pid(staking_token)
 
-        if pid == VaultTypes.AFRAX:
-            staking_proxy = self.safe.contract(self.get_vault(staking_token))
+        if pid in [self.VAULT_TYPES["afrax"], self.VAULT_TYPES["badger_fraxbp"]]:
+            staking_proxy = self.safe.contract(self.get_vault(pid))
             staking_contract = self.safe.contract(staking_proxy.stakingAddress())
 
             rewards = staking_contract.getAllRewardTokens()
