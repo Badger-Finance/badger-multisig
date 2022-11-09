@@ -134,7 +134,7 @@ def sell_weth():
         #  2. Swap WETH directly for GRAVI_AURA
         buy_amount_aura = int(
             SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share, SAFE.address)["quote"][
-                "feeAmount"
+                "buyAmount"
             ]
         )
         buy_amount_aura_in_gravi_aura = (
