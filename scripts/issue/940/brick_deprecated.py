@@ -51,6 +51,8 @@ def main(queue="false", sim="true"):
             proxy_admin = Contract(
                 r.badger_wallets.devProxyAdmin, owner=safe.badger.timelock
             )
+            
+            # simulate vault deposits/withdrawals
             for vault in deprecated:
                 chain.snapshot()
 
