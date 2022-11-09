@@ -69,7 +69,7 @@ def main(queue="false", sim="true"):
                 token.approve(vault, amount)
 
                 # edge case: https://etherscan.io/address/0x4b92d19c11435614CD49Af1b589001b7c08cD4D5#writeProxyContract
-                if vault.address == "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5":
+                if vault.address == r.yearn_vaults.byvWBTC:
                     vault.deposit(amount, [])
                 else:
                     vault.deposit(amount)
