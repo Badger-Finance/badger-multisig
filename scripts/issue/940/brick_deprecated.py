@@ -8,7 +8,8 @@ from eth_abi import encode_abi
 
 console = Console()
 
-NEW_PROXY_ADMIN = "0x0000000000000000000000000000000000000001"
+# https://etherscan.io/address/0x933FDBAc3773514384c6db30Eb196a0be543D617#code
+NEW_PROXY_ADMIN = "0x933FDBAc3773514384c6db30Eb196a0be543D617"
 
 
 def main(queue="false", sim="true"):
