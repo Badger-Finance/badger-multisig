@@ -144,7 +144,7 @@ def sell_weth():
         buy_amount_gravi_aura = int(
             SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share, SAFE.address)[
                 "quote"
-            ]["feeAmount"]
+            ]["buyAmount"]
         )
 
         if buy_amount_aura_in_gravi_aura > buy_amount_gravi_aura:
