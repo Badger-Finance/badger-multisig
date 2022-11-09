@@ -9,7 +9,7 @@ from eth_abi import encode_abi
 console = Console()
 
 # https://etherscan.io/address/0x933FDBAc3773514384c6db30Eb196a0be543D617#code
-NEW_PROXY_ADMIN = "0x933FDBAc3773514384c6db30Eb196a0be543D617"
+NEW_PROXY_ADMIN = r.brickedProxyAdmin
 
 
 def main(queue="false", sim="true"):
