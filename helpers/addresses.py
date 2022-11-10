@@ -64,7 +64,6 @@ ADDRESSES_ETH = {
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
-        "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
         "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
@@ -100,6 +99,7 @@ ADDRESSES_ETH = {
         "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
         "_deprecated": {
             "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
+            "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
             "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
             "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
             "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
