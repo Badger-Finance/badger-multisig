@@ -69,14 +69,17 @@ def main(simulation="false"):
     _, _, min_out, _ = zap.calcRedeemInWbtc(ibbtc_gained)
     tx = zap.redeem(WBTC, ibbtc_gained, 0, 1, min_out)
 
+    C.print("WBTC_OUT", tx.return_value)
+
     # End of cycle
 
-    # 1. Approvals
+    # 5. Approvals
     wbtc.approve(BYVWBTC, 0)
     byvwbtc.approve(YEARN_PEAK, 0)
     ibbtc.approve(WBTC_ZAP, 0)
 
-    # safe.post_safe_tx()
+    if simulation == "false":
+        safe.post_safe_tx()
 
 
 # Turning minting on for YearnPeak and minting off for BadgerPeak
