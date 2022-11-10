@@ -6,6 +6,7 @@ from helpers.addresses import registry
 
 # Tokens
 POOL = registry.eth.crv_pools.crvIbBTC
+SETT = registry.eth.sett_vaults.bcrvRenBTC
 WBTC = registry.eth.treasury_tokens.WBTC
 IBBTC = registry.eth.treasury_tokens.ibBTC
 WIBBTC = registry.eth.treasury_tokens.wibBTC
@@ -19,7 +20,6 @@ YEARN_PEAK = registry.eth.peaks.byvWbtcPeak
 WBTC_ZAP = registry.ibbtc.mint_zap
 
 WBTC_IN = 30e8  # to use to rebalance
-MIN_WBTC_OUT = 29.98e8
 
 C = Console()
 
@@ -31,6 +31,7 @@ def main(simulation="false"):
     # Tokens
     wbtc = safe.contract(WBTC)
     ibbtc = safe.contract(IBBTC)
+    sett = safe.contract(SETT)
     # Peaks
     yearn_peak = Contract.from_explorer(YEARN_PEAK, owner=safe.account)
     # Vaults
@@ -51,25 +52,29 @@ def main(simulation="false"):
     ibbtc.approve(WBTC_ZAP, MaxUint256)
 
     # Loop: Do the following multiple times until fullly rebalanced
+    wbtc_in = WBTC_IN
+    for i in range(0, 18, 1):
+        C.print(f"WBTC_IN{i}", wbtc_in/1e8)
+        C.print(f"SETT TOKENS IN PEAK{i}", sett.balanceOf(BADGER_PEAK)/1e18)
+        # 2. Deposit in byvWBTC
+        byvwbtc_balance_before = byvwbtc.balanceOf(safe.account)
+        tx = byvwbtc.deposit(WBTC_IN, ["0x0"])
+        shares = tx.events["Transfer"][1]["value"]
+        byvwbtc_balance_after = byvwbtc.balanceOf(safe.account)
+        assert shares == byvwbtc_balance_after - byvwbtc_balance_before
 
-    # 2. Deposit in byvWBTC
-    byvwbtc_balance_before = byvwbtc.balanceOf(safe.account)
-    tx = byvwbtc.deposit(WBTC_IN, ["0x0"])
-    shares = tx.events["Transfer"][1]["value"]
-    byvwbtc_balance_after = byvwbtc.balanceOf(safe.account)
-    assert shares == byvwbtc_balance_after - byvwbtc_balance_before
+        # 3. Mint ibBTC with byvWBTC
+        ibbtc_before = ibbtc.balanceOf(safe.account)
+        yearn_peak.mint(shares, ["0x0"])
+        ibbtc_after = ibbtc.balanceOf(safe.account)
+        ibbtc_gained = ibbtc_after - ibbtc_before
 
-    # 3. Mint ibBTC with byvWBTC
-    ibbtc_before = ibbtc.balanceOf(safe.account)
-    yearn_peak.mint(shares, ["0x0"])
-    ibbtc_after = ibbtc.balanceOf(safe.account)
-    ibbtc_gained = ibbtc_after - ibbtc_before
+        # 4. Redeem from renCrv
+        _, _, min_out, _ = zap.calcRedeemInWbtc(ibbtc_gained)
+        tx = zap.redeem(WBTC, ibbtc_gained, 0, 1, min_out)
 
-    # 4. Redeem from renCrv
-    _, _, min_out, _ = zap.calcRedeemInWbtc(ibbtc_gained)
-    tx = zap.redeem(WBTC, ibbtc_gained, 0, 1, min_out)
-
-    C.print("WBTC_OUT", tx.return_value)
+        C.print(f"WBTC_OUT{i}", tx.return_value/1e8)
+        wbtc_in = tx.return_value
 
     # End of cycle
 
