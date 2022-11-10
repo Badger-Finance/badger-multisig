@@ -10,4 +10,8 @@ interface IZap {
     function redeem(address token, uint amount, uint poolId, int128 idx, uint minOut)
         external
         returns(uint out);
+
+    function calcRedeemInWbtc(uint amount)
+        external view
+        returns(uint poolId, uint idx, uint wBTCAmount, uint fee);
 }

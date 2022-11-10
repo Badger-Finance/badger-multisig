@@ -5,6 +5,10 @@ interface ISimpleWrapperGatedUpgradeable {
     event SetTreasury(address treasury);
 
     function affiliate() external view returns (address);
+
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    function deposit(uint256 amount, bytes32[] calldata merkleProof) external;
     
     function guardian() external view returns (address);
 
