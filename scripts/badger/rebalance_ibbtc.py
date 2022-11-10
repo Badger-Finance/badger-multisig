@@ -32,7 +32,6 @@ def main(simulation="false"):
     wbtc = safe.contract(WBTC)
     ibbtc = safe.contract(IBBTC)
     # Peaks
-    badger_peak = safe.contract(BADGER_PEAK)
     yearn_peak = Contract.from_explorer(YEARN_PEAK, owner=safe.account)
     # Vaults
     byvwbtc = interface.ISimpleWrapperGatedUpgradeable(BYVWBTC, owner=safe.account)
@@ -51,7 +50,7 @@ def main(simulation="false"):
     byvwbtc.approve(YEARN_PEAK, MaxUint256)
     ibbtc.approve(WBTC_ZAP, MaxUint256)
 
-    # Loop: Do the following multiple things until fullly rebalanced
+    # Loop: Do the following multiple times until fullly rebalanced
 
     # 2. Deposit in byvWBTC
     byvwbtc_balance_before = byvwbtc.balanceOf(safe.account)
@@ -67,8 +66,8 @@ def main(simulation="false"):
     ibbtc_gained = ibbtc_after - ibbtc_before
 
     # 4. Redeem from renCrv
-    min_out = zap.calcRedeemInWbtc(ibbtc_gained)
-    wbtc_out = zap.redeem(WBTC, ibbtc_gained, 0, 1, min_out)
+    _, _, min_out, _ = zap.calcRedeemInWbtc(ibbtc_gained)
+    tx = zap.redeem(WBTC, ibbtc_gained, 0, 1, min_out)
 
     # End of cycle
 
@@ -76,9 +75,6 @@ def main(simulation="false"):
     wbtc.approve(BYVWBTC, 0)
     byvwbtc.approve(YEARN_PEAK, 0)
     ibbtc.approve(WBTC_ZAP, 0)
-
-
-    C.print("WBTC OUT", wbtc_out)
 
     # safe.post_safe_tx()
 
