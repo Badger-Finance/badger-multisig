@@ -56,10 +56,10 @@ def main(simulation="false"):
     for i in range(0, 18, 1):
         C.print(f"WBTC_IN{i}", wbtc_in/1e8)
         C.print(f"SETT TOKENS IN PEAK{i}", sett.balanceOf(BADGER_PEAK)/1e18)
-        C.print(f"Yearn wBTC TOKENS IN PEAK{i}", byvwbtc.balanceOf(YEARN_PEAK))
+        C.print(f"Yearn wBTC TOKENS IN PEAK{i}", byvwbtc.balanceOf(YEARN_PEAK)/1e8)
         # 2. Deposit in byvWBTC
         byvwbtc_balance_before = byvwbtc.balanceOf(safe.account)
-        tx = byvwbtc.deposit(WBTC_IN, ["0x0"])
+        tx = byvwbtc.deposit(wbtc_in, ["0x0"])
         shares = tx.events["Transfer"][1]["value"]
         byvwbtc_balance_after = byvwbtc.balanceOf(safe.account)
         assert shares == byvwbtc_balance_after - byvwbtc_balance_before
