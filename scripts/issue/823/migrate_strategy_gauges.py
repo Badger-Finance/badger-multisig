@@ -15,6 +15,7 @@ USER = accounts.at("0x53D8EDF6a54239eB785eC72213919Fb6b6B73598", force=True)
 BAURABAL = r.sett_vaults.bauraBal
 GRAVIAURA = r.sett_vaults.graviAURA
 
+
 def main(simulation="false"):
     safe = GreatApeSafe(r.badger_wallets.dev_multisig)
     booster = safe.contract(r.aura.booster)
@@ -40,7 +41,10 @@ def main(simulation="false"):
         strat_balance_before = strat.balanceOfWant()
         total_balance_before = vault.balance()
         ppfs_before = vault.getPricePerFullShare()
-        assert total_balance_before == vault_balance_before + pool_balance_before + strat_balance_before
+        assert (
+            total_balance_before
+            == vault_balance_before + pool_balance_before + strat_balance_before
+        )
 
         # Call withdrawToVault
         vault.withdrawToVault()
@@ -80,7 +84,7 @@ def main(simulation="false"):
         vault.earn()
 
         # Check that assets move properly
-        gauge_balance_after= want.balanceOf(gauge_new)
+        gauge_balance_after = want.balanceOf(gauge_new)
         rewards_d_tkn_balance_after = new_deposit_token.balanceOf(baseRewardPool_new)
         assert available == gauge_balance_after - gauge_balance_before
         assert available == strat.balanceOfPool()
@@ -95,7 +99,7 @@ def main(simulation="false"):
         if simulation == "true":
             # Snapshotting to ensure both simulations run at the same time
             chain.snapshot()
-            chain.sleep(3*24*3600)
+            chain.sleep(3 * 24 * 3600)
 
             # Can properly harvest
             tx = strat.harvest()

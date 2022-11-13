@@ -45,7 +45,7 @@ class UniV3:
         )
 
         # constant helpers
-        self.Q128 = 2**128
+        self.Q128 = 2 ** 128
         self.deadline = 60 * 180
         self.slippage = 0.98
 
@@ -324,8 +324,8 @@ class UniV3:
         decimals_diff = token1.decimals() - token0.decimals()
 
         # params for minting method
-        lower_tick = int(math.log((1 / range1) * 10**decimals_diff, BASE) // 60 * 60)
-        upper_tick = int(math.log((1 / range0) * 10**decimals_diff, BASE) // 60 * 60)
+        lower_tick = int(math.log((1 / range1) * 10 ** decimals_diff, BASE) // 60 * 60)
+        upper_tick = int(math.log((1 / range0) * 10 ** decimals_diff, BASE) // 60 * 60)
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
@@ -458,10 +458,9 @@ class UniV3:
             else:
                 path_encoded += int.to_bytes(item, 3, byteorder="big")
 
-        min_out = self.quoter.quoteExactInput.call(
-            path_encoded,
-            mantissa,
-        ) * (1 - self.slippage)
+        min_out = self.quoter.quoteExactInput.call(path_encoded, mantissa) * (
+            1 - self.slippage
+        )
 
         params = (
             path_encoded,

@@ -3,6 +3,7 @@ from helpers.addresses import r
 
 from brownie import interface
 
+
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_balancer()
@@ -23,7 +24,7 @@ def main():
         aurabal, bal80_20weth, aurabal.balanceOf(vault), pool=stable_pool
     )
 
-    # 3. wd to single asset `weth`
+    # 3. wd to single asset `weth`
     vault.balancer.unstake_and_withdraw_all_single_asset(
         weth, pool=bal80_20weth, unstake=False
     )

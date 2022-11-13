@@ -16,6 +16,5 @@ numpy==1.22.4
 web3==5.24.0
 
 # dev; testing, linting and committing
+black==21.9b0
 brownie-token-tester==0.3.2
-tox==3.25.1
-

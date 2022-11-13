@@ -7,6 +7,7 @@ console = Console()
 
 prod = False
 
+
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_cow(prod=prod)
@@ -15,17 +16,10 @@ def main():
     wbtc = vault.contract(r.treasury_tokens.WBTC)
     weth = vault.contract(r.treasury_tokens.WETH)
 
-    bcrvIbBTC = interface.ISettV4h(
-        r.sett_vaults.bcrvIbBTC, owner=vault.address
-    )
+    bcrvIbBTC = interface.ISettV4h(r.sett_vaults.bcrvIbBTC, owner=vault.address)
     crvIbBTC = vault.contract(r.treasury_tokens.crvIbBTC)
 
-    vault.take_snapshot(
-        tokens=[
-            bcrvIbBTC.address,
-            wbtc
-        ]
-    )
+    vault.take_snapshot(tokens=[bcrvIbBTC.address, wbtc])
 
     bcrvIbBTC.withdrawAll()
 

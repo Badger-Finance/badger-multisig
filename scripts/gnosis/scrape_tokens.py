@@ -61,7 +61,7 @@ def scrape(address, receiver=""):
                 decimals = token.decimals()
             except AttributeError:
                 decimals = Contract.from_explorer(token_addr).decimals()
-            bal_formatted = f"{{:.{decimals}f}}".format(bal / Decimal(10**decimals))
+            bal_formatted = f"{{:.{decimals}f}}".format(bal / Decimal(10 ** decimals))
 
             if bal > 0:
                 token_data["token_type"].append("erc20")

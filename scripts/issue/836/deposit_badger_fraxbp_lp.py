@@ -23,7 +23,7 @@ def main():
     delta = rewards_after - rewards_before
 
     assert delta > 0
-    
+
     console.print(f"{rewards_before=}")
     console.print(f"{rewards_after=}")
     console.print(f"{delta=}")
