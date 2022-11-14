@@ -227,7 +227,7 @@ class Curve:
         asset_in.approve(pool, mantissa)
         i, j = self._get_coin_indices(pool, asset_in, asset_out)
         # L139 docs ref
-        if "exchange_underlying" in pool.signatures:
+        if self._pool_has_wrapped_coins(pool):
             expected = pool.get_dy_underlying(i, j, mantissa) * (
                 1 - self.max_slippage_and_fees
             )
