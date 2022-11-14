@@ -28,10 +28,11 @@ query {
 """
 
 # gauge to bribe in aura
-AURA_TARGET = "80/20 BADGER/WBTC"  # or "50/50 BADGER/rETH"!
+AURA_TARGET = "80/20 BADGER/WBTC"
+AURA_TARGET = "50/50 BADGER/rETH"
 
 # gauge to bribe in convex
-CONVEX_TARGET = "BADGER+crvFRAX (0x13B8…)"
+CONVEX_TARGET = "BADGER+FRAXBP (0x13B8…)"
 
 
 def get_index(proposal_id, target):
