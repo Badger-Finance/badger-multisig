@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: py-actions/py-dependency-install@v4
-      - uses: psf/black@stable
         with:
           python-version: 3.9
+      - uses: psf/black@stable
           version: "21.9b0"
