@@ -6,7 +6,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: py-actions/py-dependency-install@v4
       - uses: psf/black@stable
-        with:
-          version: "21.9b0"
+          with:
+            python-version: 3.9
+            version: "21.9b0"
