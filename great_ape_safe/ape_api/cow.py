@@ -129,7 +129,7 @@ class Cow:
             "sellAmount": str(mantissa_sell - fee_amount),
             "buyAmount": str(buy_amount_after_fee),
             "validTo": deadline,
-            "appData": web3.keccak(text="great_ape_safe").hex(),
+            "appData": "0x2ab7ad46094d32adf4db9196c6a0a1de32cb030485e47bd5cb7a92b7306a7b99",  # https://explorer.cow.fi/appdata?tab=decode
             "feeAmount": str(fee_amount),
             "kind": "sell",
             "partiallyFillable": False,
