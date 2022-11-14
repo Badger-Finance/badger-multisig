@@ -31,6 +31,9 @@ ADDRESSES_ETH = {
         "rembadger_2022_q4": "0x9032618620fEDaC90990d4ba562ab0A86f5abaE7",
         "tree_2022_q4": "0x7b222fBac58680c3456230b2e9f3E196512A9CF3",
     },
+    "safe_modules": {
+        "treasury_voter": "0xC485aFD2f3252cCB69d1c94392701d51013D42eB",
+    },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
