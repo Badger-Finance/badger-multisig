@@ -2,7 +2,6 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 from brownie import interface
 from rich.console import Console
-from eth_abi import encode_abi
 
 
 console = Console()
@@ -32,7 +31,7 @@ def set_new_gov():
     dev.post_safe_tx()
 
 
-def change_new_proxy_admin(proxy_owner, queue="true", sim="false"):
+def change_new_proxy_admin(proxy_owner):
     """
     proxy_owner: msig name of proxy admin owner (dev or ops)
 
@@ -59,48 +58,27 @@ def change_new_proxy_admin(proxy_owner, queue="true", sim="false"):
     )
     new_proxy_admin = r.badger_wallets.devProxyAdmin
 
-    proxy_owners = {
+    proxies = {
         "ops": [r.badger_wallets.badgertree, r.rewardsLogger],
         "dev": [r.guardian, r.GatedMiniMeController],
     }
 
-    if queue == "true":
-        safe = GreatApeSafe(r.badger_wallets.dev_multisig)
-        safe.init_badger()
+    safe = GreatApeSafe(
+        r.badger_wallets.dev_multisig
+        if proxy_owner == "dev"
+        else r.badger_wallets.ops_multisig_old
+    )
 
-        for proxy in proxy_owners[proxy_owner]:
-            console.print(
-                f"Queueing `changeProxyAdmin` for {proxy} from {old_proxy_admin} to {new_proxy_admin}"
-            )
-            safe.badger.queue_timelock(
-                target_addr=old_proxy_admin,
-                signature="changeProxyAdmin(address,address)",
-                data=encode_abi(
-                    ["address", "address"],
-                    [proxy, new_proxy_admin],
-                ),
-                dump_dir=f"data/badger/timelock/changeProxyAdmin_{proxy_owner}/",
-                delay_in_days=4,
-            )
-        safe.post_safe_tx()
-    else:
-        if sim != "true":
-            safe.badger.execute_timelock(
-                f"data/badger/timelock/changeProxyAdmin_{proxy_owner}/"
-            )
-            safe.post_safe_tx()
-        else:
-            safe = GreatApeSafe(
-                r.badger_wallets.dev_multisig
-                if proxy_owner == "dev"
-                else r.badger_wallets.ops_multisig_old
-            )
-            safe.init_badger()
+    old_proxy_admin = safe.contract(
+        r.badger_wallets.devUngatedProxyAdmin
+        if proxy_owner == "dev"
+        else r.badger_wallets.opsProxyAdmin_old
+    )
 
-            old_proxy_admin = safe.contract(old_proxy_admin)
+    for proxy in proxies[proxy_owner]:
+        console.print(
+            f"p`changing proxy admin for {proxy} from {old_proxy_admin} to {new_proxy_admin}"
+        )
+        old_proxy_admin.changeProxyAdmin(proxy, new_proxy_admin)
 
-            for proxy in proxy_owners[proxy_owner]:
-                console.print(
-                    f"simulating `changeProxyAdmin` for {proxy} from {old_proxy_admin} to {new_proxy_admin}"
-                )
-                old_proxy_admin.changeProxyAdmin(proxy, new_proxy_admin)
+    safe.post_safe_tx(skip_preview=True)
