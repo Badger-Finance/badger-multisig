@@ -16,9 +16,10 @@ BVE_OXD_STRAT = r.strategies["native.vestedOXD"]
 # Thu Oct 27 2022 17:42:29 GMT+0000 (To be safe, unlocks on the 26th)
 UNLOCKTIME = 1666892549
 
-# Remaining amount: OXD that has been relocked from harvests ever since earns stopped 
+# Remaining amount: OXD that has been relocked from harvests ever since earns stopped
 # To be unlocked on 	Thu Feb 09 2023 00:00:00 GMT+0000 (1675900800)
 REMAINDER = 144966162970875359338
+
 
 def process_final_locks(simulation="false"):
     safe = GreatApeSafe(DEV)
@@ -36,11 +37,17 @@ def process_final_locks(simulation="false"):
     vault_balance_before = oxd.balanceOf(bveoxd_vault)
     strat_balance_before = oxd.balanceOf(bveoxd_strat)
     pool_balance_before = bveoxd_strat.balanceOfPool()
-    assert total_balance == vault_balance_before + strat_balance_before + pool_balance_before
+    assert (
+        total_balance
+        == vault_balance_before + strat_balance_before + pool_balance_before
+    )
 
     # Processing last lock, all balance should be withdrawn to strat
     bveoxd_strat.prepareWithdrawAll()
-    assert oxd.balanceOf(bveoxd_strat) == strat_balance_before + pool_balance_before - REMAINDER
+    assert (
+        oxd.balanceOf(bveoxd_strat)
+        == strat_balance_before + pool_balance_before - REMAINDER
+    )
     assert bveoxd_strat.balanceOfPool() == REMAINDER
 
     # Send all OXD to vault

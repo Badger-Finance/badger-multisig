@@ -265,7 +265,7 @@ def main():
         r = list(balances.items())
         for idx in range(len(r)):
             # format amount - better visual
-            r[idx] = (r[idx][0], r[idx][1] / (10**18))
+            r[idx] = (r[idx][0], r[idx][1] / (10 ** 18))
 
         r.sort(key=takeSecond, reverse=True)
         array_formatted_distribution = np.array(r)

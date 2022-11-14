@@ -7,7 +7,7 @@ def deposited(compound, USDC):
     to_deposit_usdc = 10_000 * 10 ** USDC.decimals()
     compound.deposit(USDC, to_deposit_usdc)
 
-    to_deposit_eth = 10**18
+    to_deposit_eth = 10 ** 18
     compound.deposit_eth(to_deposit_eth)
 
 
