@@ -15,7 +15,7 @@ SLIPPAGE = 0.995
 COEF = 0.98
 
 
-def main(harvest_uni="false"):
+def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
     vault.init_aura()
