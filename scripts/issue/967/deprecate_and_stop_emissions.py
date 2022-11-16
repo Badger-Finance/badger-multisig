@@ -26,7 +26,9 @@ TREE_BADGER_DEFICIT = Wei(f"{33450.0339164155} ether")
 # Tree bcvxCRV BADGER deficit
 ORIGINAL_SCHEDULE_START = 1667606400
 ORIGINAL_SCHEDULE_END = 1672531200
-ORIGINAL_DURATION_WEEKS = Decimal((ORIGINAL_SCHEDULE_END - ORIGINAL_SCHEDULE_START) / 604800)
+ORIGINAL_DURATION_WEEKS = Decimal(
+    (ORIGINAL_SCHEDULE_END - ORIGINAL_SCHEDULE_START) / 604800
+)
 TOTAL_AMOUNT = 12637714285714284415007
 AMOUNT_PER_WEEK = Wei(f"{1552} ether")
 REMAINING_WEEKS = Decimal((ORIGINAL_SCHEDULE_END - int(time.time())) / 604800)
@@ -47,15 +49,13 @@ def main():
     # Deprecate vaults on registry
     safe.badger.demote_vault(BIBBTCCRV, 0)
     assert (
-        safe.badger.registry_v2.productionVaultInfoByVault(BIBBTCCRV).dict()[
-            "status"
-        ] == 0
+        safe.badger.registry_v2.productionVaultInfoByVault(BIBBTCCRV).dict()["status"]
+        == 0
     )
     safe.badger.demote_vault(BRENCRV, 0)
     assert (
-        safe.badger.registry_v2.productionVaultInfoByVault(BRENCRV).dict()[
-            "status"
-        ] == 0
+        safe.badger.registry_v2.productionVaultInfoByVault(BRENCRV).dict()["status"]
+        == 0
     )
 
     # Stop emissions
@@ -69,13 +69,13 @@ def main():
         int(END),
         DURATION,
     )
-    assert len(rewards_logger.getAllUnlockSchedulesFor(BIBBTCCRV)) == INDEX  + 1 # Modifying the latest schedule
+    assert (
+        len(rewards_logger.getAllUnlockSchedulesFor(BIBBTCCRV)) == INDEX + 1
+    )  # Modifying the latest schedule
     assert rewards_logger.getAllUnlockSchedulesFor(BIBBTCCRV)[INDEX][5] == 0
-
 
     # Cancel dripper upkeep
     safe.chainlink.keeper_registry.cancelUpkeep(UPKEEP_ID_TREE_22Q4)
-
 
     # Claw back BADGER from dripper
     badger = safe.contract(BADGER)
@@ -121,5 +121,3 @@ def withdraw_link(simulation="false"):
     assert balance_before < link.balanceOf(safe)
 
     safe.post_safe_tx()
-
-
