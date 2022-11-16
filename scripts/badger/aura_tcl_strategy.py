@@ -57,7 +57,7 @@ def main():
     # 2.2 send to voter and deposit into aurabal/bauraBAL
     aura.approve(vlAURA, balance_aura)
     vlAURA.lock(voter, balance_aura)
-    
+
     if claim_uni_v3_fees:
         vault.init_uni_v3()
         vault.uni_v3.collect_fees()
