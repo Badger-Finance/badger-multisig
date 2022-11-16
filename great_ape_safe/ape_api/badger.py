@@ -154,7 +154,7 @@ class Badger:
         address = address if address else self.safe.address
         url = self.api_hh_url + address
         r = requests.get(url)
-        if not r.ok: 
+        if not r.ok:
             r.raise_for_status()
         return r.json()["data"]
 

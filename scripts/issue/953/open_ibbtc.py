@@ -12,6 +12,7 @@ BADGER_PEAK = registry.eth.peaks.badgerPeak
 
 C = Console()
 
+
 def main():
     safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
 
@@ -28,5 +29,3 @@ def main():
     bcrvIbBTC_strat.setWithdrawalFee(0)
 
     safe.post_safe_tx()
-
-

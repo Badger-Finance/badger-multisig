@@ -36,7 +36,7 @@ def migrate():
     vault.aura.claim_all_from_booster()
 
     # deposit in graviaura and sent BAL claim to voter
-    aura.approve(graviaura, 2**256 - 1)
+    aura.approve(graviaura, 2 ** 256 - 1)
     graviaura.depositAll()
     aura.approve(graviaura, 0)
     bal.transfer(r.badger_wallets.treasury_voter_multisig, bal.balanceOf(vault))

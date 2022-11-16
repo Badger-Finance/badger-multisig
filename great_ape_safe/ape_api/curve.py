@@ -236,4 +236,3 @@ class Curve:
             expected = pool.get_dy(i, j, mantissa) * (1 - self.max_slippage_and_fees)
             pool.exchange(i, j, mantissa, expected)
         assert asset_out.balanceOf(self.safe) >= initial_asset_out_balance + expected
-

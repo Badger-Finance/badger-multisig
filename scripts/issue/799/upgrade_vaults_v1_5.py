@@ -20,7 +20,7 @@ KEYS = [
     "bBB_a_USD",
     "b33auraBAL_33graviAURA_33WETH",
     "bB_stETH_STABLE",
-    "bB-rETH-STABLE"
+    "bB-rETH-STABLE",
 ]
 
 HODLERS = [
@@ -31,7 +31,7 @@ HODLERS = [
     "0xc3b1f7ab9fabd729cdf9e90ea54ec447f9464269",
     "0x794783dcfcac8c1944727057a3208d8f8bb91506",
     "0xee8b29aa52dd5ff2559da2c50b1887adee257556",
-    "0xee8b29aa52dd5ff2559da2c50b1887adee257556"
+    "0xee8b29aa52dd5ff2559da2c50b1887adee257556",
 ]
 
 
@@ -60,9 +60,9 @@ def main(queue="true", simulation="false"):
                     key,
                     address,
                     simulation,
-                    safe
+                    safe,
                 )
-        
+
     safe.post_safe_tx()
 
 
@@ -95,7 +95,7 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
                         try:
                             attributes[attr] = getattr(vault, attr).call()
                         except:
-                            C.print(f'[red]error storing {attr}[/red]')
+                            C.print(f"[red]error storing {attr}[/red]")
 
                     # Executing upgrade
                     C.print(f"[green]Executing tx with parameters:[/green] {tx}")
@@ -107,7 +107,7 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
                     for attr in vault.signatures:
                         try:
                             assert attributes[attr] == getattr(vault, attr).call()
-                            C.print(f'[green]asserted {attr}[/green]')
+                            C.print(f"[green]asserted {attr}[/green]")
                         except:
                             pass
 
@@ -129,7 +129,7 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
             try:
                 attributes[attr] = getattr(vault, attr).call()
             except:
-                C.print(f'[red]error storing {attr}[/red]')
+                C.print(f"[red]error storing {attr}[/red]")
 
         # Execute upgrade
         dev_proxy.upgrade(vault.address, NEW_LOGIC, {"from": timelock_actor})
@@ -138,7 +138,7 @@ def execute_timelock(timelock, queueTx_dir, key, address, simulation, safe):
         for attr in vault.signatures:
             try:
                 assert attributes[attr] == getattr(vault, attr).call()
-                C.print(f'[green]asserted {attr}[/green]')
+                C.print(f"[green]asserted {attr}[/green]")
             except:
                 pass
 

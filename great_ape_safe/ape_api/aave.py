@@ -46,7 +46,7 @@ class Aave:
         # https://docs.aave.com/developers/the-core-protocol/lendingpool#withdraw
         destination = self.safe.address if not destination else destination
         bal_before = underlying.balanceOf(destination)
-        self.pool.withdraw(underlying, 2**256 - 1, destination)
+        self.pool.withdraw(underlying, 2 ** 256 - 1, destination)
         assert underlying.balanceOf(destination) > bal_before
 
     def claim_all(self, markets=[], destination=None):
@@ -90,10 +90,10 @@ class Aave:
                 return
             elif timestamp <= deadline:
                 bal_before = self.aave.balanceOf(destination)
-                self.stkaave.redeem(destination, 2**256 - 1)
+                self.stkaave.redeem(destination, 2 ** 256 - 1)
                 assert self.aave.balanceOf(destination) > bal_before
                 bal_before = self.aave.balanceOf(destination)
-                self.stkaave.claimRewards(destination, 2**256 - 1)
+                self.stkaave.claimRewards(destination, 2 ** 256 - 1)
                 assert self.aave.balanceOf(destination) > bal_before
                 return
         C.print("no valid window found; calling cooldown now...")
@@ -111,8 +111,8 @@ class Aave:
 
     def repay_all(self, underlying, variable_rate=True):
         mode = 2 if variable_rate else 1
-        underlying.approve(self.pool, 2**256 - 1)
-        self.pool.repay(underlying, 2**256 - 1, mode, self.safe.address)
+        underlying.approve(self.pool, 2 ** 256 - 1)
+        self.pool.repay(underlying, 2 ** 256 - 1, mode, self.safe.address)
         underlying.approve(self.pool, 0)
 
     def _get_debt_in_token(self, token):

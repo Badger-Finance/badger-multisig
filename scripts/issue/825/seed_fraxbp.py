@@ -22,15 +22,19 @@ def main():
 
     vault.take_snapshot(tokens=[badger, usdc, lp.address])
 
-    badger_rate = (
-        cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
-    )
+    badger_rate = cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"][
+        "usd"
+    ]
 
     amount_badger = (AMOUNT_USDC / badger_rate) * 1e18
     amount_usdc = AMOUNT_USDC * 1e6
 
     vault.curve.deposit_zapper(
-        fraxbp_zap, pool, [badger, frax, usdc], [amount_badger, 0, amount_usdc], seeding=True
+        fraxbp_zap,
+        pool,
+        [badger, frax, usdc],
+        [amount_badger, 0, amount_usdc],
+        seeding=True,
     )
 
     vault.print_snapshot()

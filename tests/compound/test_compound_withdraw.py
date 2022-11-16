@@ -6,7 +6,7 @@ def deposited(compound, USDC):
     to_deposit_usdc = 100_000 * 10 ** USDC.decimals()
     compound.deposit(USDC, to_deposit_usdc)
 
-    to_deposit_eth = 10**18
+    to_deposit_eth = 10 ** 18
     compound.deposit_eth(to_deposit_eth)
 
 
@@ -28,7 +28,7 @@ def test_withdraw_eth(safe, compound, cETH):
     before_bal_eth = safe.account.balance()
     before_bal_ceth = cETH.balanceOf(safe)
 
-    to_withdraw = 10**18
+    to_withdraw = 10 ** 18
 
     compound.withdraw_eth(to_withdraw)
 
