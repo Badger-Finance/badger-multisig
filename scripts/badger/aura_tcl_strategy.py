@@ -7,10 +7,12 @@ console = Console()
 
 # flag
 prod = False
+claim_uni_v3_fees = True
+
 
 # slippages
 SLIPPAGE = 0.995
-COEF = 0.9825
+COEF = 0.98
 
 
 def main():
@@ -28,12 +30,14 @@ def main():
     auraBAL = vault.contract(r.treasury_tokens.AURABAL)
     bauraBal = vault.contract(r.sett_vaults.bauraBal)
     graviaura = vault.contract(r.sett_vaults.graviAURA)
+    badger = vault.contract(r.treasury_tokens.BADGER)
+    wbtc = vault.contract(r.treasury_tokens.WBTC)
 
     # contracts
     vlAURA = vault.contract(r.aura.vlAURA)
 
     # snaps
-    tokens = [usdc, bal, weth, aura, auraBAL, bauraBal, graviaura]
+    tokens = [usdc, bal, weth, aura, auraBAL, bauraBal, graviaura, badger, wbtc]
     vault.take_snapshot(tokens)
     voter.take_snapshot(tokens)
 
@@ -53,6 +57,10 @@ def main():
     # 2.2 send to voter and deposit into aurabal/bauraBAL
     aura.approve(vlAURA, balance_aura)
     vlAURA.lock(voter, balance_aura)
+    
+    if claim_uni_v3_fees:
+        vault.init_uni_v3()
+        vault.uni_v3.collect_fees()
 
     voter.print_snapshot()
     vault.post_safe_tx()
