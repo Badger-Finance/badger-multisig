@@ -31,8 +31,6 @@ ORIGINAL_DURATION_WEEKS = Decimal(
 )
 TOTAL_AMOUNT = 12637714285714284415007
 AMOUNT_PER_WEEK = Wei(f"{1552} ether")
-REMAINING_WEEKS = Decimal((ORIGINAL_SCHEDULE_END - int(time.time())) / 604800)
-BCVXCRV_BADGER_DEFICIT = int(Decimal(AMOUNT_PER_WEEK * REMAINING_WEEKS))
 
 
 def main():
@@ -83,16 +81,21 @@ def main():
     safe_balance_before = badger.balanceOf(safe)
     dripper_balance_before = badger.balanceOf(dripper)
 
+    remaining_weeks = Decimal(
+        (ORIGINAL_SCHEDULE_END - dripper.lastTimestamp()) / 604800
+    )
+    bcvxCRV_badger_deficit = int(Decimal(AMOUNT_PER_WEEK * remaining_weeks))
+
     dripper.sweep(badger.address)
     assert badger.balanceOf(safe) == dripper_balance_before + safe_balance_before
 
-    print("BCVXCRV EMISSIONS REMAINING WEEKS", REMAINING_WEEKS)
+    print("BCVXCRV EMISSIONS REMAINING WEEKS", remaining_weeks)
     print("BCVXCRV EMISSIONS WEEKLY AMOUNT", AMOUNT_PER_WEEK)
-    print("BCVXCRV EMISSIONS RAMINING AMOUNT", BCVXCRV_BADGER_DEFICIT)
+    print("BCVXCRV EMISSIONS RAMINING AMOUNT", bcvxCRV_badger_deficit)
     print("TREE EMISSIONS RAMINING AMOUNT", TREE_BADGER_DEFICIT)
 
     # Transfer total deficit to the Tree
-    total_deficit = TREE_BADGER_DEFICIT + BCVXCRV_BADGER_DEFICIT
+    total_deficit = TREE_BADGER_DEFICIT + bcvxCRV_badger_deficit
     print("TOTAL DEFICIT AMOUNT", total_deficit)
     badger.transfer(safe.badger.tree, total_deficit)
 
