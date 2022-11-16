@@ -110,11 +110,11 @@ def main():
 
 def withdraw_link(simulation="false"):
     safe = GreatApeSafe(registry.eth.badger_wallets.techops_multisig)
+    safe.init_chainlink()
     safe.take_snapshot([LINK])
     link = safe.contract(LINK, interface.ILinkToken)
 
     if simulation == "true":
-        safe.init_chainlink()
         safe.chainlink.keeper_registry.cancelUpkeep(UPKEEP_ID_TREE_22Q4)
         chain.sleep(3600)
         chain.mine(50)
