@@ -7,12 +7,13 @@ class Chainlink:
         self.safe = safe
 
         # contracts
-        self.relayer = self.safe.contract(
-            r.chainlink.upkeep_registration_requests,
-            interface.IUpkeepRegistrationRequests,
-        )
         self.link = self.safe.contract(r.treasury_tokens.LINK, interface.ILinkToken)
-        self.keeper_registry = self.safe.contract(r.chainlink.keeper_registry)
+        self.keeper_registry = self.safe.contract(
+            r.chainlink.keeper_registry, interface.IKeeperRegistry
+        )
+        self.keeper_registrar = self.safe.contract(
+            r.chainlink.keeper_registrar, interface.IKeeperRegistrar
+        )
 
     def register_upkeep(
         self, name, contract_addr, gas_limit, link_mantissa, admin_addr=None
@@ -23,7 +24,7 @@ class Chainlink:
 
         admin_addr = self.safe.address if not admin_addr else admin_addr
 
-        data = self.relayer.register.encode_input(
+        data = self.keeper_registrar.register.encode_input(
             name,  # string memory name,
             b"",  # bytes calldata encryptedEmail,
             contract_addr,  # address upkeepContract,
@@ -31,7 +32,8 @@ class Chainlink:
             admin_addr,  # address adminAddress,
             b"",  # bytes calldata checkData,
             link_mantissa,  # uint96 amount,
-            0,  # uint8 source
+            0,  # uint8 source,
+            self.safe.address,  # address sender,
         )
 
-        self.link.transferAndCall(self.relayer, link_mantissa, data)
+        self.link.transferAndCall(self.keeper_registrar, link_mantissa, data)

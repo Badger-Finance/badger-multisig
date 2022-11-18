@@ -573,8 +573,8 @@ ADDRESSES_ETH = {
     },
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
-        "keeper_registry": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
-        "upkeep_registration_requests": "0x09B1de9Ecf6600FD44e1cB1b46DF6B520f33ec6d",
+        "keeper_registry": "0x02777053d6764996e594c3E88AF1D58D5363a2e6",
+        "keeper_registrar": "0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d",
     },
     "across_bridge": {
         "hub_pool": "0x6Bb9910c5529Cb3b32c4f0e13E8bC38F903b2534",
