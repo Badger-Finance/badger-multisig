@@ -37,6 +37,7 @@ WETH_WHALE = "0xF04a5cC80B1E94C69B48f5ee68a08CD2F09A7c3E"
 BADGER_WHALE = "0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e"
 CVX_WHALE = "0xCF50b810E57Ac33B91dCF525C6ddd9881B139332"
 
+
 def step0_1(sim=False):
     bribes_dest = GreatApeSafe(PROCESSOR.address)
     bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
