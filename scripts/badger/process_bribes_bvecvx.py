@@ -1,7 +1,8 @@
-from brownie import interface
+from brownie import interface, accounts
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
+from pycoingecko import CoinGeckoAPI
 
 
 # only set to true when actually ready to post and exec on mainnet
@@ -25,8 +26,16 @@ CVX_FXS = registry.eth.bribe_tokens_claimable.cvxFXS
 
 # percentage of the bribes that is used to buyback $badger
 BADGER_SHARE = 0.275
+CVX_SHARE = 1 - BADGER_SHARE
+
 # percentage of the bribes that are dedicated to the treasury
 OPS_FEE = 0.05
+
+
+# Simulation variables
+WETH_WHALE = "0xF04a5cC80B1E94C69B48f5ee68a08CD2F09A7c3E"
+BADGER_WHALE = "0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e"
+CVX_WHALE = "0xCF50b810E57Ac33B91dCF525C6ddd9881B139332"
 
 
 def step0_1(sim=False):
@@ -112,33 +121,83 @@ def step1():
     SAFE.post_safe_tx(call_trace=True)
 
 
-def step2():
+def step2(sim=False):
+    if sim:
+        weth_whale = accounts.at(WETH_WHALE, force=True)
+        badger_whale = accounts.at(BADGER_WHALE, force=True)
+        cvx_whale = accounts.at(CVX_WHALE, force=True)
+
+        # Modify amounts to transfer to test different cases
+        WETH.transfer(PROCESSOR, 9e18, {"from": weth_whale})
+        BADGER.transfer(PROCESSOR, 0e18, {"from": badger_whale})
+        CVX.transfer(PROCESSOR, 10000e18, {"from": cvx_whale})
+
     weth_total = WETH.balanceOf(PROCESSOR)
-    badger_share = int(WETH.balanceOf(PROCESSOR) * BADGER_SHARE)
-    cvx_share = int(WETH.balanceOf(PROCESSOR) - badger_share)
+    cvx_total = CVX.balanceOf(PROCESSOR)
+    badger_total = BADGER.balanceOf(PROCESSOR)
+
+    ## Estimate the amount of BADGER and CVX to buy
+    # Grab prices from coingecko
+    ids = ["weth", "convex-finance", "badger-dao"]
+    prices = CoinGeckoAPI().get_price(ids, "usd")
+
+    # Estimate total USD value of bribes
+    weth_usd_balance = weth_total / 1e18 * prices["weth"]["usd"]
+    badger_usd_balance = badger_total / 1e18 * prices["badger-dao"]["usd"]
+    cvx_usd_balance = cvx_total / 1e18 * prices["convex-finance"]["usd"]
+    total_bribes_usd_balance = weth_usd_balance + badger_usd_balance + cvx_usd_balance
+
+    # Estimate current percentage of BADGER and CVX
+    badger_percentage = badger_usd_balance / total_bribes_usd_balance
+    cvx_percentage = cvx_usd_balance / total_bribes_usd_balance
+
+    # Estimate BADGER and CVX shares to swap for (NOTE: cvx_split is 1 - badger_split)
+    # If processor contains more BADGER than 27.5% of total bribes, don't get any more
+    if badger_percentage >= BADGER_SHARE:
+        badger_split = 0
+    # If processor contains more CVX than 72.5% of total bribes, don't get any more
+    elif cvx_percentage >= CVX_SHARE:
+        badger_split = 1
+    # Obtain BADGER split considering the current amount sitting on the Processor
+    else:
+        badger_split = (
+            BADGER_SHARE * total_bribes_usd_balance - badger_usd_balance
+        ) / weth_usd_balance
+
+    badger_share = int(weth_total * badger_split)
+    cvx_share = int(weth_total - badger_share)
     assert badger_share + cvx_share == weth_total
 
-    order_payload, order_uid = SAFE.badger.get_order_for_processor(
-        PROCESSOR,
-        sell_token=WETH,
-        mantissa_sell=badger_share,
-        buy_token=BADGER,
-        deadline=DEADLINE,
-        coef=COEF,
-        prod=COW_PROD,
-    )
-    PROCESSOR.swapWethForBadger(order_payload, order_uid)
+    if sim:
+        print(f"BADGER split: {badger_split}")
+        print(f"CVX split: {1 - badger_split}\n")
+        print(f"WETH total: {weth_total}")
+        print(f"WETH to sell for Badger: {badger_share}")
+        print(f"WETH to sell for CVX: {cvx_share}\n")
 
-    order_payload, order_uid = SAFE.badger.get_order_for_processor(
-        PROCESSOR,
-        sell_token=WETH,
-        mantissa_sell=cvx_share,
-        buy_token=CVX,
-        deadline=DEADLINE,
-        coef=COEF,
-        prod=COW_PROD,
-    )
-    PROCESSOR.swapWethForCVX(order_payload, order_uid)
+    if badger_share > 0:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
+            sell_token=WETH,
+            mantissa_sell=badger_share,
+            buy_token=BADGER,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
+        PROCESSOR.swapWethForBadger(order_payload, order_uid)
+
+    if cvx_share > 0:
+        order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
+            sell_token=WETH,
+            mantissa_sell=cvx_share,
+            buy_token=CVX,
+            deadline=DEADLINE,
+            coef=COEF,
+            prod=COW_PROD,
+        )
+        PROCESSOR.swapWethForCVX(order_payload, order_uid)
 
     # since the swapWeth methods each set their own approval, multicalling them
     # will make them replace each other. this performs one more final overwrite
