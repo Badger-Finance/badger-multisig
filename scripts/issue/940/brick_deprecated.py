@@ -38,15 +38,17 @@ def main(queue="false", sim="true"):
                     ["address", "address"],
                     [vault.address, NEW_PROXY_ADMIN],
                 ),
-                dump_dir="data/badger/timelock/changeProxyAdmin/",
-                delay_in_days=4,
+                dump_dir="data/badger/timelock/change_admin_brick_upgradability_deprecated_vaults/",
+                delay_in_days=7,
             )
 
         safe.post_safe_tx()
 
     else:
         if sim != "true":
-            safe.badger.execute_timelock("data/badger/timelock/changeProxyAdmin/")
+            safe.badger.execute_timelock(
+                "data/badger/timelock/change_admin_brick_upgradability_deprecated_vaults/"
+            )
             safe.post_safe_tx()
         else:
             proxy_admin = Contract(
