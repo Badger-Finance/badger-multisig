@@ -5,6 +5,8 @@ from helpers.addresses import r
 
 console = Console()
 
+prod = False
+
 
 def main(symbol_in, symbol_out, amount=None, use_3pool="true"):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
@@ -22,11 +24,11 @@ def main(symbol_in, symbol_out, amount=None, use_3pool="true"):
     vault.take_snapshot(tokens=[token_in, token_out])
 
     if use_3pool == "true":
-        vault.init_curve(prod=False)
+        vault.init_curve()
         vault.curve.swap(token_in, token_out, amount)
 
     else:
-        vault.init_cow()
+        vault.init_cow(prod=prod)
         vault.cow.market_sell(token_in, token_out, amount, 60 * 60 * 4)
 
     vault.print_snapshot()
