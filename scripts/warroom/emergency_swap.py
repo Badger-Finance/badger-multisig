@@ -32,3 +32,4 @@ def main(symbol_in, symbol_out, amount=None, use_3pool="true"):
         vault.cow.market_sell(token_in, token_out, amount, 60 * 60 * 4)
 
     vault.print_snapshot()
+    vault.post_safe_tx()
