@@ -1,5 +1,4 @@
 from rich.console import Console
-from decimal import Decimal
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
