@@ -1,4 +1,5 @@
 from rich.console import Console
+from decimal import Decimal
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -19,7 +20,7 @@ def main(symbol_in, symbol_out, amount=None, use_3pool="true"):
 
     token_in = tokens[symbol_in]
     token_out = tokens[symbol_out]
-    amount = token_in.balanceOf(vault) if not amount else int(amount)
+    amount = token_in.balanceOf(vault) if not amount else int(amount) * 10 ** token_in.decimals()
 
     vault.take_snapshot(tokens=[token_in, token_out])
 
