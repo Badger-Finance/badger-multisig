@@ -9,7 +9,7 @@ def main():
     # deposit 250k usdc and equal amount badger
     script = __import__("scripts.issue.825.seed_fraxbp", fromlist=["seed_fraxbp"])
     vault = script.main()
-    
+
     vault.init_convex()
 
     badger_fraxbp = vault.contract(r.treasury_tokens.badgerFRAXBP_f_lp)
