@@ -37,5 +37,4 @@ def main():
         seeding=True,
     )
 
-    vault.print_snapshot()
-    vault.post_safe_tx()
+    return vault
