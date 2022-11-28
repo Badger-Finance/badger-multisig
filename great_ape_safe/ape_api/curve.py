@@ -101,6 +101,9 @@ class Curve:
         except VirtualMachineError:
             return False
 
+    def _pool_supports_underlying(self, pool):
+        return "exchange_underlying" in pool.signatures.keys()
+
     def deposit(self, lp_token, mantissas, asset=None, seeding=False):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
         # `mantissas` do not need to be balanced in any way
@@ -227,7 +230,7 @@ class Curve:
         asset_in.approve(pool, mantissa)
         i, j = self._get_coin_indices(pool, asset_in, asset_out)
         # L139 docs ref
-        if self._pool_has_wrapped_coins(pool):
+        if self._pool_has_wrapped_coins(pool) and self._pool_supports_underlying(pool):
             expected = pool.get_dy_underlying(i, j, mantissa) * (
                 1 - self.max_slippage_and_fees
             )
