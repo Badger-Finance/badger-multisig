@@ -8,7 +8,7 @@ console = Console()
 # flag
 prod = False
 claim_uni_v3_fees = False
-sweep_bvecvx = True
+sweep_bvecvx = False
 
 # slippages
 SLIPPAGE = 0.995
