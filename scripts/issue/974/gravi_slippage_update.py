@@ -20,6 +20,7 @@ PREV_MIN_OUT_BPS = 9500
 MIN_OUT_BPS = 9000
 ONE_DAY = 86400
 
+
 def main(simulation="false"):
 
     strategy = interface.IVestedAura(GRAVIAURA_STRATEGY, owner=safe.account)
