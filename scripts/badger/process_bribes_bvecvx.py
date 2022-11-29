@@ -1,3 +1,6 @@
+import json
+
+import pandas as pd
 from brownie import interface, accounts
 
 from great_ape_safe import GreatApeSafe
@@ -22,7 +25,6 @@ PROCESSOR = SAFE.badger.cvx_bribes_processor
 WETH = interface.IWETH9(registry.eth.treasury_tokens.WETH, owner=SAFE.account)
 BADGER = interface.ERC20(registry.eth.treasury_tokens.BADGER, owner=SAFE.account)
 CVX = interface.ERC20(registry.eth.treasury_tokens.CVX, owner=SAFE.account)
-CVX_FXS = registry.eth.bribe_tokens_claimable.cvxFXS
 
 # percentage of the bribes that is used to buyback $badger
 BADGER_SHARE = 0.275
@@ -31,16 +33,23 @@ CVX_SHARE = 1 - BADGER_SHARE
 # percentage of the bribes that are dedicated to the treasury
 OPS_FEE = 0.05
 
-
 # Simulation variables
 WETH_WHALE = "0xF04a5cC80B1E94C69B48f5ee68a08CD2F09A7c3E"
 BADGER_WHALE = "0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e"
 CVX_WHALE = "0xCF50b810E57Ac33B91dCF525C6ddd9881B139332"
 
+# get list of tokens currently active on votium market
+with open("data/Votium/merkle/activeTokens.json") as fp:
+    ACTIVE_TOKENS = pd.DataFrame(json.load(fp))["value"].tolist()
+    # add cvxFXS, not to claim as a bribe, but to sweep it
+    ACTIVE_TOKENS.append(registry.eth.treasury_tokens.cvxFXS)
+    # luna wormhole token doesnt adhere to erc20
+    ACTIVE_TOKENS.remove("0xbd31ea8212119f94a611fa969881cba3ea06fa3d")
+
 
 def step0_1(sim=False):
     bribes_dest = GreatApeSafe(PROCESSOR.address)
-    bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
+    bribes_dest.take_snapshot(ACTIVE_TOKENS)
 
     if sim:
         from brownie_tokens import MintableForkToken
@@ -49,8 +58,8 @@ def step0_1(sim=False):
         alcx._mint_for_testing(SAFE.badger.strat_bvecvx, 500e18)
         claimed = {alcx.address: 500e18}
     else:
-        claimed = SAFE.badger.claim_bribes_votium(registry.eth.bribe_tokens_claimable)
-        for token_addr in registry.eth.bribe_tokens_claimable.values():
+        claimed = SAFE.badger.claim_bribes_votium()
+        for token_addr in ACTIVE_TOKENS:
             # handle any non $cvx token present in the strat contract as bribes
             # ref: https://github.com/Badger-Finance/badger-strategies/issues/56
             if token_addr != CVX.address:
@@ -71,7 +80,7 @@ def step0_1(sim=False):
             prod=COW_PROD,
         )
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
-        SAFE.badger.claim_bribes_convex(registry.eth.bribe_tokens_claimable)
+    SAFE.badger.claim_bribes_convex(ACTIVE_TOKENS)
 
     bribes_dest.print_snapshot()
 
@@ -82,7 +91,7 @@ def step0(sim=False):
     """can be skipped if step0_1 was successful"""
 
     bribes_dest = GreatApeSafe(PROCESSOR.address)
-    bribes_dest.take_snapshot(registry.eth.bribe_tokens_claimable.values())
+    bribes_dest.take_snapshot(ACTIVE_TOKENS)
 
     if sim:
         from brownie_tokens import MintableForkToken
@@ -90,9 +99,9 @@ def step0(sim=False):
         alcx = MintableForkToken(registry.eth.treasury_tokens.ALCX)
         alcx._mint_for_testing(SAFE.badger.strat_bvecvx, 500e18)
     else:
-        SAFE.badger.sweep_reward_token(CVX_FXS)
-        SAFE.badger.claim_bribes_votium(registry.eth.bribe_tokens_claimable)
-        SAFE.badger.claim_bribes_convex(registry.eth.bribe_tokens_claimable)
+        SAFE.badger.sweep_reward_token(registry.eth.treaury_tokens.cvxFXS)
+        SAFE.badger.claim_bribes_votium()
+        SAFE.badger.claim_bribes_convex(ACTIVE_TOKENS)
 
     bribes_dest.print_snapshot()
 
@@ -102,7 +111,7 @@ def step0(sim=False):
 def step1():
     """can be skipped if step0_1 was successful"""
 
-    want_to_sell = registry.eth.bribe_tokens_claimable.copy()
+    want_to_sell = ACTIVE_TOKENS
     want_to_sell.pop("CVX")  # SameBuyAndSellToken
     for _, addr in want_to_sell.items():
         token = SAFE.contract(addr)
