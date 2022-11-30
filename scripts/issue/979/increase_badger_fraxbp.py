@@ -31,6 +31,9 @@ def main():
         staking_lp_balance,
         MIN_LOCK_TIME,
         vault.convex.VAULT_TYPES["badger_fraxbp"],
+        # https://etherscan.io/tx/0x74f4492c78385b633fdecb2200efdd99f7377dbf2e0b94468c06682fb78961c1#eventlog (event #214)
+        kek_id="FE2A58EC80B5D297700D8FC6B5ED4A0E258DA0CDC27DA72570E7D43FABB2DC4E",
+        lock_additional=True,
     )
 
     vault.print_snapshot()
