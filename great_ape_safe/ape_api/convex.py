@@ -65,7 +65,7 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#deposits
         stake = 0
         pool_id = self.get_pool_info(underlying)[0]
-        underlying.approve(self.booster, 2**256 - 1)
+        underlying.approve(self.booster, 2 ** 256 - 1)
         assert self.booster.depositAll(pool_id, stake).return_value == True
         underlying.approve(self.booster, 0)
 
@@ -75,7 +75,7 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#deposits
         stake = 1
         pool_id = self.get_pool_info(underlying)[0]
-        underlying.approve(self.booster, 2**256 - 1)
+        underlying.approve(self.booster, 2 ** 256 - 1)
         assert self.booster.depositAll(pool_id, stake).return_value == True
         underlying.approve(self.booster, 0)
 
@@ -127,7 +127,7 @@ class Convex:
         # stake complete balance of `underlying`'s corresponding convex tokens
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool#stake-deposit-tokens
         _, cvx_token, _, rewards = self.get_pool_info(underlying)
-        self.safe.contract(cvx_token).approve(rewards, 2**256 - 1)
+        self.safe.contract(cvx_token).approve(rewards, 2 ** 256 - 1)
         assert self.safe.contract(rewards).stakeAll().return_value == True
         self.safe.contract(cvx_token).approve(rewards, 0)
 
