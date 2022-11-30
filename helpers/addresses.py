@@ -464,6 +464,9 @@ ADDRESSES_ETH = {
             "booster": "0x569f5B842B5006eC17Be02B8b94510BA8e79FbCa",
             "pool_registry": "0x41a5881c17185383e19Df6FA4EC158a6F4851A69",
             "wcvx_badger_fraxbp": "0xb92e3fD365Fc5E038aa304Afe919FeE158359C88",
+            "private_vaults": {
+                "badger_fraxbp": "0xa895B89D74a6BC23a284a0526e123ea776674cF5",
+            },
         },
     },
     "votium": {
