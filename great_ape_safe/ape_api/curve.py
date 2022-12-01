@@ -153,7 +153,9 @@ class Curve:
             if mantissa > 0:
                 asset.approve(zapper, mantissa)
         if not seeding:
-            expected = zapper.calc_token_amount(pool, mantissas)
+            expected = zapper.calc_token_amount(pool, mantissas) * (
+                1 - self.max_slippage_and_fees
+            )
         else:
             expected = 0
         zapper.add_liquidity(pool, mantissas, expected)
