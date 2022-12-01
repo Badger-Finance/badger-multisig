@@ -34,7 +34,7 @@ def main():
         pool,
         [badger, frax, usdc],
         [amount_badger, 0, amount_usdc],
-        seeding=True,
+        seeding=False,
     )
 
     return vault
