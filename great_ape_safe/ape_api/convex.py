@@ -190,7 +190,15 @@ class Convex:
         # ref: https://github.com/convex-eth/frax-cvx-platform/blob/main/contracts/contracts/StakingProxyERC20.sol#L34
         self.frax_booster.createVault(pid)
 
-    def stake_lock(self, staking_token, mantissa, seconds, pid=None):
+    def stake_lock(
+        self,
+        staking_token,
+        mantissa,
+        seconds=None,
+        pid=None,
+        kek_id=None,
+        lock_additional=False,
+    ):
         if not pid:
             pid = self.get_pool_pid(staking_token)
 
@@ -204,13 +212,21 @@ class Convex:
                 staking_contract.lock_time_for_max_multiplier()
             )
 
-            assert seconds >= lock_time_min and seconds <= lock_time_for_max_multiplier
+            if seconds:
+                assert (
+                    seconds >= lock_time_min and seconds <= lock_time_for_max_multiplier
+                )
 
             initial_locked_liq = staking_contract.lockedLiquidityOf(staking_proxy)
 
-            # kek_id is returned: https://etherscan.io/address/0x02577b426f223a6b4f2351315a19ecd6f357d65c#code#L2466
-            # but depends on block.timestamp, so not much value tracking it on the return
-            staking_proxy.stakeLocked(mantissa, seconds)
+            if lock_additional:
+                assert kek_id, "kek_id must be provided"
+                staking_proxy.lockAdditional(kek_id, mantissa)
+            else:
+                # kek_id is returned: https://etherscan.io/address/0x02577b426f223a6b4f2351315a19ecd6f357d65c#code#L2466
+                # but depends on block.timestamp, so not much value tracking it on the return
+                assert seconds, "seconds must be provided"
+                staking_proxy.stakeLocked(mantissa, seconds)
 
             assert (
                 staking_contract.lockedLiquidityOf(staking_proxy) > initial_locked_liq
