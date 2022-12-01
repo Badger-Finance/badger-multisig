@@ -26,10 +26,6 @@ def main():
     tokens = [fxs, crv, cvx]
     vault.take_snapshot(tokens)
 
-    # NOTE: vault contains crv & cvx > 0, to make sure it is only the strat rewards check balances before
-    crv_balance_before = crv.balanceOf(vault)
-    cvx_balance_before = cvx.balanceOf(vault)
-
     # 1. claim rewards
     private_vault.getReward()
 
@@ -40,14 +36,14 @@ def main():
     vault.cow.market_sell(
         crv,
         dai,
-        crv.balanceOf(vault) - crv_balance_before,
+        crv.balanceOf(vault),
         deadline=60 * 60 * 4,
         coef=COEF,
     )
     vault.cow.market_sell(
         cvx,
         dai,
-        cvx.balanceOf(vault) - cvx_balance_before,
+        cvx.balanceOf(vault),
         deadline=60 * 60 * 4,
         coef=COEF,
     )
