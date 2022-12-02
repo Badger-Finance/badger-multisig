@@ -14,28 +14,7 @@ from rich.pretty import pprint
 from tqdm import tqdm
 from web3.exceptions import BadFunctionCallOutput
 
-from great_ape_safe.ape_api.aave import Aave
-from great_ape_safe.ape_api.anyswap import Anyswap
-from great_ape_safe.ape_api.aura import Aura
-from great_ape_safe.ape_api.badger import Badger
-from great_ape_safe.ape_api.balancer import Balancer
-from great_ape_safe.ape_api.chainlink import Chainlink
-from great_ape_safe.ape_api.compound import Compound
-from great_ape_safe.ape_api.convex import Convex
-from great_ape_safe.ape_api.cow import Cow
-from great_ape_safe.ape_api.curve import Curve
-from great_ape_safe.ape_api.curve_v2 import CurveV2
-from great_ape_safe.ape_api.euler import Euler
-from great_ape_safe.ape_api.maker import Maker
-from great_ape_safe.ape_api.opolis import Opolis
-from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
-from great_ape_safe.ape_api.rari import Rari
-from great_ape_safe.ape_api.snapshot import Snapshot
-from great_ape_safe.ape_api.solidly import Solidly
-from great_ape_safe.ape_api.spookyswap import SpookySwap
-from great_ape_safe.ape_api.sushi import Sushi
-from great_ape_safe.ape_api.uni_v2 import UniV2
-from great_ape_safe.ape_api.uni_v3 import UniV3
+from great_ape_safe.ape_api import ape_apis
 from helpers.chaindata import labels
 
 
@@ -57,80 +36,12 @@ class GreatApeSafe(ApeSafe):
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
 
-    def init_all(self):
-        for method in self.__dir__():
-            if method.startswith("init_") and method != "init_all":
-                try:
-                    getattr(self, method)()
-                except exceptions.ContractNotFound:
-                    # different chain
-                    pass
-
-    def init_aave(self):
-        self.aave = Aave(self)
-
-    def init_anyswap(self):
-        self.anyswap = Anyswap(self)
-
-    def init_aura(self):
-        self.aura = Aura(self)
-
-    def init_badger(self):
-        self.badger = Badger(self)
-
-    def init_balancer(self):
-        self.balancer = Balancer(self)
-
-    def init_chainlink(self):
-        self.chainlink = Chainlink(self)
-
-    def init_compound(self):
-        self.compound = Compound(self)
-
-    def init_convex(self):
-        self.convex = Convex(self)
-
-    def init_cow(self, prod=False):
-        self.cow = Cow(self, prod)
-
-    def init_curve(self):
-        self.curve = Curve(self)
-
-    def init_curve_v2(self):
-        self.curve_v2 = CurveV2(self)
-
-    def init_euler(self):
-        self.euler = Euler(self)
-
-    def init_maker(self):
-        self.maker = Maker(self)
-
-    def init_opolis(self):
-        self.opolis = Opolis(self)
-
-    def init_pancakeswap_v2(self):
-        self.pancakeswap_v2 = PancakeswapV2(self)
-
-    def init_rari(self):
-        self.rari = Rari(self)
-
-    def init_snapshot(self, proposal_id):
-        self.snapshot = Snapshot(self, proposal_id)
-
-    def init_solidly(self):
-        self.solidly = Solidly(self)
-
-    def init_spookyswap(self):
-        self.spookyswap = SpookySwap(self)
-
-    def init_sushi(self):
-        self.sushi = Sushi(self)
-
-    def init_uni_v2(self):
-        self.uni_v2 = UniV2(self)
-
-    def init_uni_v3(self):
-        self.uni_v3 = UniV3(self)
+        for class_name, cls in ape_apis.items():
+            setattr(
+                self,
+                f"init_{class_name}",
+                lambda cn=class_name, c=cls: setattr(self, cn, c(self)),
+            )
 
     def take_snapshot(self, tokens):
         C.print(f"snapshotting {self.address}...")
