@@ -9,7 +9,6 @@ from io import StringIO
 import pandas as pd
 from ape_safe import ApeSafe
 from brownie import Contract, network, ETH_ADDRESS, exceptions, web3, chain
-from hexbytes import HexBytes
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
@@ -279,7 +278,7 @@ class GreatApeSafe(ApeSafe):
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
         if gen_tenderly:
-            self._generate_tenderly_simulation(receipt)
+            self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
@@ -337,12 +336,12 @@ class GreatApeSafe(ApeSafe):
         else:
             return Contract(address, owner=self.account)
 
-    def _generate_tenderly_simulation(self, receipt):
+    def _generate_tenderly_simulation(self, receipt, gas):
         """
         docs: https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
         """
-        HEADER = {"X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY")}
-        SIMULATE_URL = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
+        header = {"X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY")}
+        api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
         tx_payload = {
             "network_id": str(chain.id),
             "block_number": chain.height,
@@ -350,23 +349,14 @@ class GreatApeSafe(ApeSafe):
             "from": Contract(self.address).getOwners()[0],
             "to": self.address,
             "input": receipt.input,
-            "gas": 30000000,
-            "gas_price": "0",
-            "value": 0,
+            "gas": gas,
             "save": True,
             "save_if_fails": True,
-            "state_objects": {
-                self.address: {
-                    "storage": {HexBytes("0x04").hex(): HexBytes("0x01").hex()}
-                }
-            },
+            "state_objects": {self.address: {"storage": {"0x04": "0x01"}}},
         }
-        r = requests.post(SIMULATE_URL, headers=HEADER, json=tx_payload)
+        r = requests.post(api_url, headers=header, json=tx_payload)
+        r.raise_for_status()
 
-        if not r.ok:
-            r.raise_for_status()
-
-        print("GENERATING SIM URL....")
         print(
             f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
         )
