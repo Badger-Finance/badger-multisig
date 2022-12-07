@@ -56,6 +56,8 @@ class Snapshot:
                 {"name": "timestamp", "type": "uint64"},
                 {"name": "proposal", "type": "string"},
                 {"name": "choice", "type": "string"},
+                {"name": "reason", "type": "string"},
+                {"name": "app", "type": "string"},
                 {"name": "metadata", "type": "string"},
             ],
         }
@@ -150,7 +152,7 @@ class Snapshot:
                 "primaryType": "Vote",
                 "types": types,
             }
-            
+
             validate_structured_data(payload)
 
         # https://github.com/ApeWorX/eip712/blob/main/eip712/hashing.py#L261
