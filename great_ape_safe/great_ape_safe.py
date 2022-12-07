@@ -1,5 +1,6 @@
 import os
 import re
+import requests
 from contextlib import redirect_stdout
 from datetime import datetime
 from decimal import Decimal
@@ -7,7 +8,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions, web3
+from brownie import ETH_ADDRESS, ZERO_ADDRESS, Contract, exceptions, network, web3
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
@@ -248,6 +249,38 @@ class GreatApeSafe(ApeSafe):
         ) as f:
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
+    def _gen_tenderly(self, receipt, gas):
+        """
+        https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
+        """
+        # build api url
+        api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
+
+        # build payload
+        payload = {
+            "network_id": "1",
+            "from": ZERO_ADDRESS,
+            "to": self.address,
+            "input": receipt.input,
+            "gas": gas,
+            "save": True,
+            "save_if_fails": True,
+            "state_objects": {
+                self.address: {
+                    "storage": {
+                        "0x0000000000000000000000000000000000000000000000000000000000000004": "0x0000000000000000000000000000000000000000000000000000000000000001"
+                    }
+                }
+            },
+        }
+
+        # post to api and get url
+        r = requests.post(
+            api_url, json=payload, headers={"X-Access-Key": os.getenv("TENDERLY_TOKEN")}
+        )
+        r.raise_for_status()
+        return r.json()
+
     def post_safe_tx(
         self,
         skip_preview=False,
@@ -277,7 +310,7 @@ class GreatApeSafe(ApeSafe):
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
         if gen_tenderly:
-            print("url:", receipt)
+            print(self._gen_tenderly(receipt, safe_tx.safe_tx_gas))
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
