@@ -338,6 +338,9 @@ class GreatApeSafe(ApeSafe):
             return Contract(address, owner=self.account)
 
     def _generate_tenderly_simulation(self, receipt):
+        """
+        docs: https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
+        """
         HEADER = {"X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY")}
         SIMULATE_URL = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
         tx_payload = {
@@ -358,9 +361,12 @@ class GreatApeSafe(ApeSafe):
                 }
             },
         }
-        response = requests.post(SIMULATE_URL, headers=HEADER, json=tx_payload)
+        r = requests.post(SIMULATE_URL, headers=HEADER, json=tx_payload)
+
+        if not r.ok:
+            r.raise_for_status()
 
         print("GENERATING SIM URL....")
         print(
-            f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{response.json()['simulation']['id']}"
+            f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
         )
