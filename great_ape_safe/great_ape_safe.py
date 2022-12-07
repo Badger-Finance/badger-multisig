@@ -226,7 +226,7 @@ class GreatApeSafe(ApeSafe):
             safe_tx.safe_tx_gas = 0
         if log_name:
             self._dump_log(safe_tx, receipt, log_name)
-        return safe_tx
+        return safe_tx, receipt
 
     def _dump_log(self, safe_tx, receipt, log_name):
         # logs .preview's events and call traces to log file, plus prettified
@@ -261,6 +261,7 @@ class GreatApeSafe(ApeSafe):
         csv_destination=None,
         gas_coef=1.5,
         safe_tx=None,
+        gen_tenderly=True,
     ):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
@@ -272,9 +273,11 @@ class GreatApeSafe(ApeSafe):
         elif not safe_tx:
             safe_tx = self.multisend_from_receipts()
         if not skip_preview:
-            safe_tx = self._set_safe_tx_gas(
+            safe_tx, receipt = self._set_safe_tx_gas(
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
+        if gen_tenderly:
+            print("url:", receipt)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
