@@ -8,7 +8,8 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import ETH_ADDRESS, ZERO_ADDRESS, Contract, exceptions, network, web3
+from brownie import Contract, network, ETH_ADDRESS, exceptions, web3, chain
+from hexbytes import HexBytes
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
@@ -249,38 +250,6 @@ class GreatApeSafe(ApeSafe):
         ) as f:
             f.write(remove_ansi_escapes(buffer.getvalue()))
 
-    def _gen_tenderly(self, receipt, gas):
-        """
-        https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
-        """
-        # build api url
-        api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
-
-        # build payload
-        payload = {
-            "network_id": "1",
-            "from": ZERO_ADDRESS,
-            "to": self.address,
-            "input": receipt.input,
-            "gas": gas,
-            "save": True,
-            "save_if_fails": True,
-            "state_objects": {
-                self.address: {
-                    "storage": {
-                        "0x0000000000000000000000000000000000000000000000000000000000000004": "0x0000000000000000000000000000000000000000000000000000000000000001"
-                    }
-                }
-            },
-        }
-
-        # post to api and get url
-        r = requests.post(
-            api_url, json=payload, headers={"X-Access-Key": os.getenv("TENDERLY_TOKEN")}
-        )
-        r.raise_for_status()
-        return r.json()
-
     def post_safe_tx(
         self,
         skip_preview=False,
@@ -310,7 +279,7 @@ class GreatApeSafe(ApeSafe):
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
         if gen_tenderly:
-            print(self._gen_tenderly(receipt, safe_tx.safe_tx_gas))
+            self._generate_tenderly_simulation(receipt)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
@@ -367,3 +336,31 @@ class GreatApeSafe(ApeSafe):
             return Contract.from_explorer(address, owner=self.account)
         else:
             return Contract(address, owner=self.account)
+
+    def _generate_tenderly_simulation(self, receipt):
+        HEADER = {"X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY")}
+        SIMULATE_URL = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
+        tx_payload = {
+            "network_id": str(chain.id),
+            "block_number": chain.height,
+            "transaction_index": 0,
+            "from": Contract(self.address).getOwners()[0],
+            "to": self.address,
+            "input": receipt.input,
+            "gas": 30000000,
+            "gas_price": "0",
+            "value": 0,
+            "save": True,
+            "save_if_fails": True,
+            "state_objects": {
+                self.address: {
+                    "storage": {HexBytes("0x04").hex(): HexBytes("0x01").hex()}
+                }
+            },
+        }
+        response = requests.post(SIMULATE_URL, headers=HEADER, json=tx_payload)
+
+        print("GENERATING SIM URL....")
+        print(
+            f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{response.json()['simulation']['id']}"
+        )
