@@ -123,7 +123,7 @@ def main(
             mantissa,  # uint256 amount
         )
 
-    if "," in bribes["balancer"]:
+    if isinstance(bribes["balancer"], str):
         # this allows for passing `main 0 12000,4000` for example to the script
         # in order to bribe both markets at the same time
         bribes_split = bribes["balancer"].split(",")
