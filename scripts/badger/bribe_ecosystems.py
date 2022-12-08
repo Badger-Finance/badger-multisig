@@ -116,7 +116,7 @@ def main(
         mantissa = int(mantissa)
 
         badger.approve(bribe_vault, mantissa)
-        print(gauge, prop, mantissa)
+        print(gauge, prop.hex(), mantissa)
         balancer_briber.depositBribeERC20(
             prop,  # bytes32 proposal
             badger,  # address token
