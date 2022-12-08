@@ -1,5 +1,5 @@
 import requests
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from brownie import web3, interface
 
@@ -57,10 +57,17 @@ def main(
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
-    badger_bribe_in_aura = Decimal(badger_bribe_in_aura)
-    badger_bribe_in_balancer = Decimal(badger_bribe_in_balancer)
-    badger_bribe_in_convex = Decimal(badger_bribe_in_votium)
-    badger_bribe_in_frax = Decimal(badger_bribe_in_frax)
+    bribes = {
+        "aura": badger_bribe_in_aura,
+        "balancer": badger_bribe_in_balancer,
+        "votium": badger_bribe_in_votium,
+        "frax": badger_bribe_in_frax,
+    }
+    for k, v in bribes.items():
+        try:
+            bribes[k] = Decimal(v)
+        except InvalidOperation:
+            pass
 
     safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     badger = safe.contract(r.treasury_tokens.BADGER)
@@ -75,7 +82,7 @@ def main(
     votium_briber = safe.contract(r.votium.bribe, interface.IVotiumBribe)
     frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IFraxBribe)
 
-    if badger_bribe_in_aura > 0:
+    if bribes["aura"] > 0:
         assert aura_proposal_id
         choice = get_index(aura_proposal_id, AURA_TARGET)
 
@@ -95,7 +102,7 @@ def main(
         print("Choice:", choice)
         print("Proposal hash:", prop.hex())
 
-        mantissa = int(badger_bribe_in_aura * Decimal(1e18))
+        mantissa = int(bribes["aura"] * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
         aura_briber.depositBribeERC20(
@@ -104,30 +111,48 @@ def main(
             mantissa,  # uint256 amount
         )
 
-    if badger_bribe_in_balancer > 0:
-        prop = web3.solidityKeccak(["address"], [r.balancer.B_20_BTC_80_BADGER_GAUGE])
-        mantissa = int(badger_bribe_in_balancer * Decimal(1e18))
+    def bribe_balancer(gauge, mantissa):
+        prop = web3.solidityKeccak(["address"], [gauge])
+        mantissa = int(mantissa)
 
         badger.approve(bribe_vault, mantissa)
+        print(gauge, prop.hex(), mantissa)
         balancer_briber.depositBribeERC20(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
         )
 
-    if badger_bribe_in_convex > 0:
+    if isinstance(bribes["balancer"], str):
+        # this allows for passing `main 0 12000,4000` for example to the script
+        # in order to bribe both markets at the same time
+        bribes_split = bribes["balancer"].split(",")
+        bribe_balancer(
+            r.balancer.B_20_BTC_80_BADGER_GAUGE,
+            Decimal(bribes_split[0]) * Decimal(1e18),
+        )
+        bribe_balancer(
+            r.balancer.B_50_BADGER_50_RETH_GAUGE,
+            Decimal(bribes_split[1]) * Decimal(1e18),
+        )
+    elif bribes["balancer"] > 0:
+        bribe_balancer(
+            r.balancer.B_20_BTC_80_BADGER_GAUGE, bribes["balancer"] * Decimal(1e18)
+        )
+
+    if bribes["votium"] > 0:
         assert convex_proposal_id
         # https://etherscan.io/address/0x19bbc3463dd8d07f55438014b021fb457ebd4595#code#F7#L30
         prop = web3.keccak(hexstr=convex_proposal_id)
-        mantissa = int(badger_bribe_in_convex * Decimal(1e18))
+        mantissa = int(bribes["votium"] * Decimal(1e18))
         choice = get_index(convex_proposal_id, CONVEX_TARGET)
 
         badger.approve(votium_briber, mantissa)
         votium_briber.depositBribe(badger, mantissa, prop, choice)
 
-    if badger_bribe_in_frax > 0:
+    if bribes["frax"] > 0:
         prop = web3.solidityKeccak(["address"], [r.frax.BADGER_FRAXBP_GAUGE])
-        mantissa = int(badger_bribe_in_frax * Decimal(1e18))
+        mantissa = int(bribes["frax"] * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
         frax_briber.depositBribeERC20(
