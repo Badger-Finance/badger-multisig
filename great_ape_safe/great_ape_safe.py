@@ -1,5 +1,6 @@
 import os
 import re
+import requests
 from contextlib import redirect_stdout
 from datetime import datetime
 from decimal import Decimal
@@ -7,7 +8,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions, web3
+from brownie import Contract, network, ETH_ADDRESS, exceptions, web3, chain
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
@@ -226,7 +227,7 @@ class GreatApeSafe(ApeSafe):
             safe_tx.safe_tx_gas = 0
         if log_name:
             self._dump_log(safe_tx, receipt, log_name)
-        return safe_tx
+        return safe_tx, receipt
 
     def _dump_log(self, safe_tx, receipt, log_name):
         # logs .preview's events and call traces to log file, plus prettified
@@ -261,6 +262,7 @@ class GreatApeSafe(ApeSafe):
         csv_destination=None,
         gas_coef=1.5,
         safe_tx=None,
+        gen_tenderly=True,
     ):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
@@ -272,9 +274,11 @@ class GreatApeSafe(ApeSafe):
         elif not safe_tx:
             safe_tx = self.multisend_from_receipts()
         if not skip_preview:
-            safe_tx = self._set_safe_tx_gas(
+            safe_tx, receipt = self._set_safe_tx_gas(
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
+        if gen_tenderly:
+            self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
@@ -331,3 +335,28 @@ class GreatApeSafe(ApeSafe):
             return Contract.from_explorer(address, owner=self.account)
         else:
             return Contract(address, owner=self.account)
+
+    def _generate_tenderly_simulation(self, receipt, gas):
+        """
+        docs: https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
+        """
+        header = {"X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY")}
+        api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
+        tx_payload = {
+            "network_id": str(chain.id),
+            "block_number": chain.height,
+            "transaction_index": 0,
+            "from": Contract(self.address).getOwners()[0],
+            "to": self.address,
+            "input": receipt.input,
+            "gas": gas,
+            "save": True,
+            "save_if_fails": True,
+            "state_objects": {self.address: {"storage": {"0x04": "0x01"}}},
+        }
+        r = requests.post(api_url, headers=header, json=tx_payload)
+        r.raise_for_status()
+
+        print(
+            f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
+        )
