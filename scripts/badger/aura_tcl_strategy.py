@@ -52,12 +52,15 @@ def main():
         f"[green] === Claimed rewards {balance_bal/1e18} BAL and {balance_aura/1e18} AURA === [/green]"
     )
 
-    # 2.1 swap rewards for usdc
-    vault.cow.market_sell(bal, usdc, balance_bal, deadline=60 * 60 * 4, coef=COEF)
+    # 2.1 send to voter and deposit into aurabal/bauraBAL
+    aura.approve(vlAURA, balance_aura * 0.7)
+    vlAURA.lock(voter, balance_aura * 0.7)
 
-    # 2.2 send to voter and deposit into aurabal/bauraBAL
-    aura.approve(vlAURA, balance_aura)
-    vlAURA.lock(voter, balance_aura)
+    # 2.2 swap rewards for usdc
+    vault.cow.market_sell(
+        aura, usdc, aura.balanceOf(vault), deadline=60 * 60 * 4, coef=COEF
+    )
+    vault.cow.market_sell(bal, usdc, balance_bal, deadline=60 * 60 * 4, coef=COEF)
 
     if claim_uni_v3_fees:
         vault.init_uni_v3()
