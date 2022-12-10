@@ -46,8 +46,17 @@ def main():
     badgerreth_rewards.withdrawAllAndUnwrap(True)
     wbtcdigggrav_rewards.withdrawAllAndUnwrap(True)
 
-    assert badgerwbtc_bpt_staked_bal == badgerwbtc_bpt.balanceOf(vault) - badgerwbtc_bpt_bal
-    assert badgerreth_bpt_staked_bal == badgerreth_bpt.balanceOf(vault) - badgerreth_bpt_bal
-    assert wbtcdigggrav_bpt_staked_bal == wbtcdigggrav_bpt.balanceOf(vault) - wbtcdigggrav_bpt_bal
+    assert (
+        badgerwbtc_bpt_staked_bal
+        == badgerwbtc_bpt.balanceOf(vault) - badgerwbtc_bpt_bal
+    )
+    assert (
+        badgerreth_bpt_staked_bal
+        == badgerreth_bpt.balanceOf(vault) - badgerreth_bpt_bal
+    )
+    assert (
+        wbtcdigggrav_bpt_staked_bal
+        == wbtcdigggrav_bpt.balanceOf(vault) - wbtcdigggrav_bpt_bal
+    )
 
     vault.post_safe_tx(gen_tenderly=False)
