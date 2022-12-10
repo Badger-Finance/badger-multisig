@@ -20,15 +20,15 @@ def main():
     wbtcdigggrav_bpt = vault.contract(WBTC40DIGG40GRAVI20)
 
     # snaps
-    tokens = [bal, aura, auraBAL]
-    vault.take_snapshot(tokens)
+    # tokens = [bal, aura, auraBAL]
+    # vault.take_snapshot(tokens)
 
     # Claim all accrued rewards
-    vault.aura.claim_all_from_booster()
+    # vault.aura.claim_all_from_booster()
 
     # Withdraw all from positions
-    vault.aura.withdraw_all(badgerwbtc_bpt)
-    vault.aura.withdraw_all(badgerreth_bpt)
-    vault.aura.withdraw_all(wbtcdigggrav_bpt)
+    vault.aura.unstake_all_and_withdraw_all(badgerwbtc_bpt)
+    vault.aura.unstake_all_and_withdraw_all(badgerreth_bpt)
+    vault.aura.unstake_all_and_withdraw_all(wbtcdigggrav_bpt)
 
-    vault.post_safe_tx()
+    vault.post_safe_tx(gen_tenderly=False)
