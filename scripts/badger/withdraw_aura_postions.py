@@ -13,6 +13,14 @@ BADGER80WBTC20_AURA = r.aura.aura_20wbtc80badger
 BADGER50RETH50_AURA = r.aura.aura_50reth50badger
 WBTC40DIGG40GRAVI20_AURA = r.aura.aura_40wbtc40digg20gravi
 
+AURA_VAULTS = [
+    "b80BADGER_20WBTC",
+    "b40WBTC_40DIGG_20graviAURA",
+    "bBB_a_USD",
+    "b33auraBAL_33graviAURA_33WETH",
+    "bB_stETH_STABLE",
+    "bB_rETH_STABLE"
+]
 
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
@@ -60,3 +68,29 @@ def main():
     )
 
     vault.post_safe_tx(gen_tenderly=False)
+
+
+def withdraw_to_vaults():
+    safe = GreatApeSafe(r.badger_wallets.dev_multisig)
+
+    # Withdraw Aura strat's assets to the vaults (earn must be stopped)
+    for vault_id in AURA_VAULTS:
+        vault_address = r.sett_vaults[vault_id]
+        vault = safe.contract(vault_address)
+        strat = Contract.from_explorer(vault.strategy(), owner=safe.account)
+        want = safe.contract(vault.token())
+
+        bal_before = want.balanceOf(vault)
+
+        # Harvest strat
+        strat.harvest()
+
+        strat_bal = strat.balanceOf()
+
+        # withdraw to vault
+        vault.withdrawToVault()
+
+        assert want.balanceOf(vault) == bal_before + strat_bal
+        assert strat.balanceOf() == 0
+
+    safe.post_safe_tx(gen_tenderly=False)
