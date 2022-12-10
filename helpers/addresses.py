@@ -574,7 +574,7 @@ ADDRESSES_ETH = {
         "aura_20wbtc80badger_old": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
         "aura_40wbtc40digg20gravi": "0xe86f0312b06126855810B4a13a43c3E2b1B8DD90",
         "aura_40wbtc40digg20gravi_old": "0x10Ca519614b0F3463890387c24819001AFfC5152",
-        "aura_50reth50badger": "0x685C94e7DA6C8F14Ae58f168C942Fb05bAD73412"
+        "aura_50reth50badger": "0x685C94e7DA6C8F14Ae58f168C942Fb05bAD73412",
     },
     "ens": {
         "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
