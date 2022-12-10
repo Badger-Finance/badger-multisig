@@ -25,16 +25,13 @@ def main():
     badgerreth_bpt = vault.contract(BADGER50RETH50)
     wbtcdigggrav_bpt = vault.contract(WBTC40DIGG40GRAVI20)
 
-    badgerwbtc_rewards = Contract.from_explorer(BADGER80WBTC20_AURA, owner=vault.account)
-    badgerreth_rewards = Contract.from_explorer(BADGER50RETH50_AURA, owner=vault.account)
-    wbtcdigggrav_rewards = Contract.from_explorer(WBTC40DIGG40GRAVI20_AURA, owner=vault.account)
+    badgerwbtc_rewards = vault.contract(BADGER80WBTC20_AURA)
+    badgerreth_rewards = vault.contract(BADGER50RETH50_AURA)
+    wbtcdigggrav_rewards = vault.contract(WBTC40DIGG40GRAVI20_AURA)
 
     # # snaps
-    # tokens = [bal, aura, auraBAL]
-    # vault.take_snapshot(tokens)
-
-    # # Claim all accrued rewards
-    # vault.aura.claim_all_from_booster()
+    tokens = [bal, aura, auraBAL]
+    vault.take_snapshot(tokens)
 
     # Withdraw all from positions
     badgerwbtc_bpt_bal = badgerwbtc_bpt.balanceOf(vault)
@@ -47,7 +44,7 @@ def main():
 
     badgerwbtc_rewards.withdrawAllAndUnwrap(True)
     badgerreth_rewards.withdrawAllAndUnwrap(True)
-    wbtcdigggrav_rewards.withdrawAllAndUnWrap(True)
+    wbtcdigggrav_rewards.withdrawAllAndUnwrap(True)
 
     assert badgerwbtc_bpt_staked_bal == badgerwbtc_bpt.balanceOf(vault) - badgerwbtc_bpt_bal
     assert badgerreth_bpt_staked_bal == badgerreth_bpt.balanceOf(vault) - badgerreth_bpt_bal
