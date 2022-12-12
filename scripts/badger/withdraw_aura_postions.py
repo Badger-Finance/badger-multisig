@@ -19,8 +19,9 @@ AURA_VAULTS = [
     "bBB_a_USD",
     "b33auraBAL_33graviAURA_33WETH",
     "bB_stETH_STABLE",
-    "bB_rETH_STABLE"
+    "bB_rETH_STABLE",
 ]
+
 
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
