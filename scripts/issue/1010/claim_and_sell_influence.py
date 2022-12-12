@@ -3,6 +3,7 @@ from helpers.addresses import r
 
 
 prod = False
+COEF = 0.98
 
 
 def main():
@@ -42,9 +43,9 @@ def main():
     baurabal.withdrawAll()
 
     for token in sell_to_dai:
-        safe.cow.market_sell(token, dai, token.balanceOf(safe), 60 * 60 * 4)
+        safe.cow.market_sell(token, dai, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
 
     for token in sell_to_weth:
-        safe.cow.market_sell(token, weth, token.balanceOf(safe), 60 * 60 * 4)
+        safe.cow.market_sell(token, weth, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
 
     safe.post_safe_tx()
