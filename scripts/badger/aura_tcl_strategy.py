@@ -7,7 +7,7 @@ console = Console()
 
 # flag
 prod = False
-claim_aura_rewards = False
+claim_aura_rewards = True
 claim_uni_v3_fees = False
 sweep_bvecvx = False
 
