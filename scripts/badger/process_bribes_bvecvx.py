@@ -62,7 +62,7 @@ def step0_1(sim=False):
         for token_addr in ACTIVE_TOKENS:
             # handle any non $cvx token present in the strat contract as bribes
             # ref: https://github.com/Badger-Finance/badger-strategies/issues/56
-            if token_addr != CVX.address:
+            if token_addr.lower() != CVX.address.lower():
                 token_amount = SAFE.badger.sweep_reward_token(token_addr)
                 if token_amount > 0:
                     claimed[token_addr] = (
@@ -112,13 +112,15 @@ def step1():
     """can be skipped if step0_1 was successful"""
 
     want_to_sell = ACTIVE_TOKENS
-    want_to_sell.pop("CVX")  # SameBuyAndSellToken
-    for _, addr in want_to_sell.items():
+    want_to_sell.remove("0x4e3fbd56cd56c3e72c1403e103b45db9da5b9d2b")  # CVX
+    want_to_sell.remove("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")  # WETH
+    for addr in want_to_sell:
         token = SAFE.contract(addr)
         balance = token.balanceOf(SAFE.badger.cvx_bribes_processor)
         if balance == 0:
             continue
         order_payload, order_uid = SAFE.badger.get_order_for_processor(
+            PROCESSOR,
             sell_token=token,
             mantissa_sell=balance,
             buy_token=WETH,
