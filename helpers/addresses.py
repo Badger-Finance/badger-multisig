@@ -32,7 +32,10 @@ ADDRESSES_ETH = {
         "tree_2022_q4": "0x7b222fBac58680c3456230b2e9f3E196512A9CF3",
     },
     "safe_modules": {
-        "treasury_voter": "0xC485aFD2f3252cCB69d1c94392701d51013D42eB",
+        "treasury_voter": {
+            "aura_auto_lock": "0xC485aFD2f3252cCB69d1c94392701d51013D42eB",
+            "bvecvx_divest": "0xdA0E386E69bad82C7A18cB03F65a59f001d9DEde",
+        },
     },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
