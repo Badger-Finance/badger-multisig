@@ -10,7 +10,7 @@ def main():
 
     safe.take_snapshot(tokens=[work])
 
-    safe.opolis.stake(safe.balanceOf(work))
+    safe.opolis.stake(work.balanceOf(safe))
 
     safe.print_snapshot()
     safe.post_safe_tx()
