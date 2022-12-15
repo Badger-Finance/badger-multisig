@@ -302,6 +302,12 @@ class Badger:
                 sett.approveContractAccess(candidate_addr)
                 assert sett.approved(candidate_addr)
                 return True
+            elif hasattr(sett, "strategist"):
+                if sett.strategist() == self.safe.address:
+                    C.print(f"whitelisting {candidate_addr} on {sett_addr}...")
+                    sett.approveContractAccess(candidate_addr)
+                    assert sett.approved(candidate_addr)
+                    return True
             elif governor == self.timelock.address:
                 C.print(
                     f"whitelisting {candidate_addr} on {sett_addr} through timelock..."
