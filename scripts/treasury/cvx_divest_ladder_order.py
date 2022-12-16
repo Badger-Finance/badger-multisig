@@ -25,6 +25,7 @@ def rebalance_pool():
         SAFE.init_curve()
         SAFE.curve.deposit(pool, topup, CVX)
     assert BVECVX.balanceOf(pool) == CVX.balanceOf(pool)
+    SAFE.post_safe_tx()
 
 
 def place_orders():
