@@ -569,7 +569,7 @@ ADDRESSES_ETH = {
         "aurabal_rewards": "0x5e5ea2048475854a5702F5B8468A51Ba1296EFcC",
         "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC",
         "merkle_drop": "0x45EB1A004373b1D8457134A2C04a42d69D287724",
-        "booster": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
+        "booster": "0xA57b8d98dAE62B26Ec3bcC4a365338157060B234",
         "claim_zap": "0x623B83755a39B12161A63748f3f595A530917Ab2",
         "extra_rewards_distributor": "0xa3739b206097317c72ef416f0e75bb8f58fbd308",
         "gauge_migrator": "0x7954bcDce86e86BeE7b1dEff48c3a0b9BCCe578B",
