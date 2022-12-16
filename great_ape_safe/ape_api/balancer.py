@@ -114,10 +114,10 @@ class Balancer:
             data = json.load(f)
             return data
 
-    def get_preferential_gauge(self, pool_id):
+    def get_preferential_gauge(self, pool):
         r = requests.post(
             self.gauges_subgraph,
-            json={"query": pool_preferential_gauge, "variables": {"pool_id": pool_id}},
+            json={"query": pool_preferential_gauge, "variables": {"pool_address": str(pool).lower()}},
         )
         r.raise_for_status()
         gauge_address = r.json()["data"]["pool"]["preferentialGauge"]["id"]
