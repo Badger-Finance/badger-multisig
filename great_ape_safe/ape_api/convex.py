@@ -1,4 +1,3 @@
-from logging import shutdown
 from brownie import interface
 
 from helpers.addresses import registry
