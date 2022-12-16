@@ -1,3 +1,4 @@
+from logging import shutdown
 from brownie import interface
 
 from helpers.addresses import registry
@@ -39,8 +40,8 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#pool-info
         n_pools = self.booster.poolLength()
         for n in range(n_pools):
-            lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
-            if lptoken == underlying.address:
+            lptoken, token, gauge, rewards, _, shutdown = self.booster.poolInfo(n)
+            if lptoken == underlying.address and not shutdown:
                 return n, token, gauge, rewards
 
     def deposit(self, underlying, mantissa):
@@ -174,8 +175,8 @@ class Convex:
         len = self.frax_pool_registry.poolLength()
 
         for i in range(len):
-            _, _, staking_token, _, _ = self.frax_pool_registry.poolInfo(i)
-            if _staking_token == staking_token:
+            _, _, staking_token, _, active = self.frax_pool_registry.poolInfo(i)
+            if _staking_token == staking_token and active:
                 return i
 
     def get_vault(self, pid, owner=None):
