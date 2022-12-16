@@ -9,7 +9,10 @@ import eth_abi
 
 from great_ape_safe.ape_api.helpers.balancer.stable_math import StableMath
 from great_ape_safe.ape_api.helpers.balancer.weighted_math import WeightedMath
-from great_ape_safe.ape_api.helpers.balancer.queries import pool_tokens_query
+from great_ape_safe.ape_api.helpers.balancer.queries import (
+    pool_tokens_query,
+    pool_preferential_gauge,
+)
 
 
 class Balancer:
@@ -31,6 +34,9 @@ class Balancer:
         # misc
         self.subgraph = (
             "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2"
+        )
+        self.gauges_subgraph = (
+            "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges"
         )
 
     def get_amount_out(self, asset_in, asset_out, amount_in, pool=None):
@@ -107,6 +113,16 @@ class Balancer:
         with open("great_ape_safe/ape_api/helpers/balancer/pools.json") as f:
             data = json.load(f)
             return data
+
+    def get_preferential_gauge(self, pool_id):
+        r = requests.post(
+            self.gauges_subgraph,
+            json={"query": pool_preferential_gauge, "variables": {"pool_id": pool_id}},
+        )
+        r.raise_for_status()
+        gauge_address = r.json()["data"]["pool"]["preferentialGauge"]["id"]
+
+        return gauge_address
 
     def find_pool_for_underlyings(self, underlyings):
         # find pools with matching underlyings from cached pool data
@@ -274,7 +290,7 @@ class Balancer:
     def stake(self, pool, mantissa, destination=None, dusty=False):
         pool_id = pool.getPoolId()
         destination = self.safe if not destination else destination
-        gauge_address = self.gauge_factory.getPoolGauge(pool)
+        gauge_address = self.get_preferential_gauge(pool.lower())
 
         if gauge_address == ZERO_ADDRESS:
             raise Exception(f"no gauge for {pool_id}")
