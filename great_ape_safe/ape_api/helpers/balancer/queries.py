@@ -12,8 +12,8 @@ pool_tokens_query = """
         }
         """
 pool_preferential_gauge = """
-        query($pool_id: ID!) {
-          pool(id: $pool_id) {
+        query($pool_address: ID!) {
+          pool(id: $pool_address) {
             preferentialGauge {
               id
             }
