@@ -9,7 +9,10 @@ import eth_abi
 
 from great_ape_safe.ape_api.helpers.balancer.stable_math import StableMath
 from great_ape_safe.ape_api.helpers.balancer.weighted_math import WeightedMath
-from great_ape_safe.ape_api.helpers.balancer.queries import pool_tokens_query
+from great_ape_safe.ape_api.helpers.balancer.queries import (
+    pool_tokens_query,
+    pool_preferential_gauge,
+)
 
 
 class Balancer:
@@ -31,6 +34,9 @@ class Balancer:
         # misc
         self.subgraph = (
             "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2"
+        )
+        self.gauges_subgraph = (
+            "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges"
         )
 
     def get_amount_out(self, asset_in, asset_out, amount_in, pool=None):
@@ -107,6 +113,19 @@ class Balancer:
         with open("great_ape_safe/ape_api/helpers/balancer/pools.json") as f:
             data = json.load(f)
             return data
+
+    def get_preferential_gauge(self, pool):
+        r = requests.post(
+            self.gauges_subgraph,
+            json={
+                "query": pool_preferential_gauge,
+                "variables": {"pool_address": str(pool).lower()},
+            },
+        )
+        r.raise_for_status()
+        gauge_address = r.json()["data"]["pool"]["preferentialGauge"]["id"]
+
+        return gauge_address
 
     def find_pool_for_underlyings(self, underlyings):
         # find pools with matching underlyings from cached pool data
@@ -274,7 +293,7 @@ class Balancer:
     def stake(self, pool, mantissa, destination=None, dusty=False):
         pool_id = pool.getPoolId()
         destination = self.safe if not destination else destination
-        gauge_address = self.gauge_factory.getPoolGauge(pool)
+        gauge_address = self.get_preferential_gauge(pool)
 
         if gauge_address == ZERO_ADDRESS:
             raise Exception(f"no gauge for {pool_id}")
@@ -294,13 +313,13 @@ class Balancer:
         self.stake(pool, mantissa, destination, dusty)
 
     def unstake(self, pool, mantissa, claim=True):
-        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        gauge = self.safe.contract(self.get_preferential_gauge(pool))
         bal_pool_before = pool.balanceOf(self.safe)
         gauge.withdraw(mantissa, claim)
         assert pool.balanceOf(self.safe) == bal_pool_before + mantissa
 
     def unstake_all(self, pool, claim=True):
-        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        gauge = self.safe.contract(self.get_preferential_gauge(pool))
         bal_pool_before = pool.balanceOf(self.safe)
         gauge_bal = gauge.balanceOf(self.safe)
         gauge.withdraw(gauge_bal, claim)
@@ -331,7 +350,7 @@ class Balancer:
         amount_in = pool.balanceOf(self.safe)
 
         if unstake:
-            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+            gauge = self.safe.contract(self.get_preferential_gauge(pool))
             amount_in += gauge.balanceOf(self.safe)
 
         data_encoded = eth_abi.encode_abi(["uint256", "uint256"], [1, amount_in])
@@ -384,7 +403,7 @@ class Balancer:
         amount_in = pool.balanceOf(self.safe)
 
         if unstake:
-            gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+            gauge = self.safe.contract(self.get_preferential_gauge(pool))
             amount_in += gauge.balanceOf(self.safe)
 
         underlying_index = underlyings.index(asset.address)
@@ -442,7 +461,7 @@ class Balancer:
             underlyings = self.order_tokens([x.address for x in underlyings])
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
-        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        gauge = self.safe.contract(self.get_preferential_gauge(pool))
         self.minter.mint(gauge)
 
     def claim_all(self, underlyings=None, pool=None):
@@ -452,7 +471,7 @@ class Balancer:
             pool_id = self.find_pool_for_underlyings(underlyings)
             pool = self.safe.contract(self.vault.getPool(pool_id)[0])
 
-        gauge = self.safe.contract(self.gauge_factory.getPoolGauge(pool))
+        gauge = self.safe.contract(self.get_preferential_gauge(pool))
         reward_count = gauge.reward_count()
         assert reward_count > 0
         assert gauge.claimable_tokens.call(self.safe) > 0
