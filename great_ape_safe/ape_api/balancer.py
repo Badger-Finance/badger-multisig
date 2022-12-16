@@ -290,7 +290,7 @@ class Balancer:
     def stake(self, pool, mantissa, destination=None, dusty=False):
         pool_id = pool.getPoolId()
         destination = self.safe if not destination else destination
-        gauge_address = self.get_preferential_gauge(pool.lower())
+        gauge_address = self.get_preferential_gauge(pool)
 
         if gauge_address == ZERO_ADDRESS:
             raise Exception(f"no gauge for {pool_id}")
