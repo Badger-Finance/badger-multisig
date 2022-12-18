@@ -337,15 +337,16 @@ ADDRESSES_ETH = {
         "native.remDigg": "0x4055D395361E73530D43c9D4F18b0668fe4B5b91",
         "native.bcrvBadger": "0x1905FD2D2D09792eE058C2b46a05F11630a1EcA1",
         "native.graviAURA": "0x3c0989eF27e3e3fAb87a2d7C38B35880C90E63b5",
-        "native.bauraBal": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
-        "native.b80BADGER_20WBTC": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
-        "native.b40WBTC_40DIGG_20graviAURA": "0xD87F2cdE238D0122b3865164359CFF6b2431d927",
+        "native.bauraBal": "0xfecb580dd17b54537B3965010335343fB6D8F894",
+        "native.b80BADGER_20WBTC": "0xDF30a25B5DBCb8E19d05973661A729a07C1C65BF",
+        "native.b40WBTC_40DIGG_20graviAURA": "0xC10bf5eC2e0d2A1A91E184ffEF228334B0c06023",
         "native.bB_stETH_STABLE": "0x1cC3731d8f30341EF4527E7da1B6a4DA88ef71DF",
         "native.bB-rETH-STABLE": "0xE6153AdD9913c7D25a6d475acFfACc5Eb570D8bE",
         "_deprecated": {
             "native.bauraBal": {
                 "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
                 "v1.1": "0xED6d51A82065725e283fC035f488213e869FD976",
+                "v1.2": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69"
             },
             "native.pbtcCrv": {
                 "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
@@ -354,6 +355,12 @@ ADDRESSES_ETH = {
             "native.obtcCrv": {
                 "v1": "0x2bb864cdb4856ab2d148c5ca52dd7ccec126d138",
                 "v1.1": "0x50Dd8A61Bdd11Cf5539DAA83Bc8E0F581eD8110a",
+            },
+            "native.b80BADGER_20WBTC": {
+                "v1": "0xe43857fE16D18b6633A663389934d6c64D5E81FD",
+            },
+            "native.b40WBTC_40DIGG_20graviAURA": {
+                "v1": "0xD87F2cdE238D0122b3865164359CFF6b2431d927",
             },
         },
     },
