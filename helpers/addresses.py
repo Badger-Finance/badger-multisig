@@ -346,7 +346,7 @@ ADDRESSES_ETH = {
             "native.bauraBal": {
                 "v1": "0xfB490b5beA343ABAe0E71B61bBdfd4301F5e4df9",
                 "v1.1": "0xED6d51A82065725e283fC035f488213e869FD976",
-                "v1.2": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69"
+                "v1.2": "0x32BdF2B35Bbf8dAca3561C3ADE59c941488E9c69",
             },
             "native.pbtcCrv": {
                 "v1": "0x1C1fD689103bbFD701b3B7D41A3807F12814033D",
