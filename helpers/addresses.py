@@ -593,9 +593,7 @@ ADDRESSES_ETH = {
     "frax": {
         "BADGER_FRAXBP_GAUGE": "0x5a92EF27f4baA7C766aee6d751f754EBdEBd9fae",
     },
-    "wbtc": {
-        "dao_multisig": "0xB33f8879d4608711cEBb623F293F8Da13B8A37c5"
-    }
+    "wbtc": {"dao_multisig": "0xB33f8879d4608711cEBb623F293F8Da13B8A37c5"},
 }
 
 ADDRESSES_IBBTC = {
