@@ -72,3 +72,79 @@ def migrate_badger_and_digg():
         C.log("[green]Migration successful![/green]\n")
 
     safe.post_safe_tx(gen_tenderly=False)
+
+
+def migrate_aurabal():
+    safe = GreatApeSafe(registry.eth.badger_wallets.dev_multisig)
+    baurabal = safe.contract(BAURABAL, Interface=interface.ITheVault)
+    strat_current = safe.contract(
+        baurabal.strategy(), Interface=interface.IAuraBalStaker
+    )
+    strat_new = safe.contract(BAURABAL_STRAT_NEW, Interface=interface.IAuraBalStaker)
+    want = safe.contract(baurabal.token(), Interface=interface.IERC20)
+
+    ## 1. Reduce "minBbaUsdHarvest" threshold on old strategy and Harvest
+    bbausd_current = safe.contract(strat_current.BB_A_USD(), Interface=interface.IERC20)
+    bbausd_current_bal = bbausd_current.balanceOf(strat_current)
+    strat_current.setMinBbaUsdHarvest(bbausd_current_bal - 1)
+    strat_current.harvest()
+    assert bbausd_current.balanceOf(strat_current) == 0
+
+    ##. 2. Sweep new bb_a_USD from old strat
+    bbausd_new = safe.contract(strat_new.BB_A_USD(), Interface=interface.IERC20)
+    new_bbausd_bal_gov = bbausd_new.balanceOf(safe.account)
+    new_bbausd_bal = bbausd_new.balanceOf(strat_current)
+    baurabal.sweepExtraToken(bbausd_new.address)
+    assert bbausd_new.balanceOf(safe) == new_bbausd_bal_gov + new_bbausd_bal
+
+    ## 3. Migrate strategies
+    # Check Integrity
+    assert strat_new.want() == strat_current.want()
+    assert strat_new.vault() == strat_current.vault()
+    assert (
+        strat_new.withdrawalMaxDeviationThreshold()
+        == strat_current.withdrawalMaxDeviationThreshold()
+    )
+    assert strat_new.autoCompoundRatio() == strat_current.autoCompoundRatio()
+    assert (
+        strat_new.claimRewardsOnWithdrawAll()
+        == strat_current.claimRewardsOnWithdrawAll()
+    )
+    assert (
+        strat_new.balEthBptToAuraBalMinOutBps()
+        == strat_current.balEthBptToAuraBalMinOutBps()
+    )
+
+    # Check if var exists
+    assert strat_new.BB_A_USD() != strat_current.BB_A_USD()
+    assert strat_new.minBbaUsdHarvest() == int(1000e18)
+    # Check that threshold is lower than current bb_a_usd balance
+    assert strat_new.minBbaUsdHarvest() < new_bbausd_bal
+
+    # Checkpoint balance
+    balance = baurabal.balance()
+    balance_of_pool = strat_current.balanceOfPool()
+    vault_balance = want.balanceOf(baurabal)
+    assert balance == balance_of_pool + vault_balance
+
+    # Migrate strategy
+    baurabal.withdrawToVault()
+
+    assert strat_current.balanceOf() == 0
+    baurabal.setStrategy(strat_new)
+    assert baurabal.strategy() == strat_new
+
+    baurabal.earn()
+
+    assert strat_new.balanceOf() > 0
+    assert baurabal.balance() == balance
+
+    ## 4. Send new bb_a_usd to strat and harvest
+    bbausd_new.transfer(strat_new, new_bbausd_bal)
+    assert bbausd_new.balanceOf(strat_new) == new_bbausd_bal
+    strat_new.harvest()  # Should we harvest? Maybe sending it to strat and waiting for next harvest is enough.
+    assert bbausd_new.balanceOf(strat_new) == 0
+
+    C.log("[green]Migration successful![/green]\n")
+
+    safe.post_safe_tx(gen_tenderly=False)
