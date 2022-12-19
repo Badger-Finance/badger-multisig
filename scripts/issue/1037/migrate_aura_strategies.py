@@ -139,11 +139,11 @@ def migrate_aurabal():
     assert strat_new.balanceOf() > 0
     assert baurabal.balance() == balance
 
-    ## 4. Send new bb_a_usd to strat and harvest
+    ## 4. Send new bb_a_usd to strat (and harvest?)
     bbausd_new.transfer(strat_new, new_bbausd_bal)
     assert bbausd_new.balanceOf(strat_new) == new_bbausd_bal
-    strat_new.harvest()  # Should we harvest? Maybe sending it to strat and waiting for next harvest is enough.
-    assert bbausd_new.balanceOf(strat_new) == 0
+    # Won't harvest since other rewards are yet to be accumulated
+    # tests show that harvesiting will process new bbausd
 
     C.log("[green]Migration successful![/green]\n")
 
