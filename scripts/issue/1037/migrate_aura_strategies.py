@@ -85,8 +85,8 @@ def migrate_aurabal():
 
     ## 1. Reduce "minBbaUsdHarvest" threshold on old strategy and Harvest
     bbausd_current = safe.contract(strat_current.BB_A_USD(), Interface=interface.IERC20)
-    bbausd_current_bal = bbausd_current.balanceOf(strat_current)
-    strat_current.setMinBbaUsdHarvest(bbausd_current_bal - 1)
+    assert bbausd_current.balanceOf(strat_current) > 0
+    strat_current.setMinBbaUsdHarvest(0)
     strat_current.harvest()
     assert bbausd_current.balanceOf(strat_current) == 0
 
