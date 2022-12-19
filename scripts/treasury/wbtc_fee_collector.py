@@ -1,3 +1,4 @@
+from decimal import Decimal
 from brownie import interface
 
 from great_ape_safe import GreatApeSafe
@@ -81,7 +82,8 @@ def main(top_eth_mantissa=0):
 
     # 3. Top-up gas station
     # NOTE: not added the withdraw from `weth` since it breaks the flow of the scripts by reverting
-    if top_eth_mantissa > 0:
-        trops.account.transfer(r.badger_wallets.gas_station, top_eth_mantissa)
+    cast_eth_mantissa = Decimal(top_eth_mantissa)
+    if cast_eth_mantissa > 0:
+        trops.account.transfer(r.badger_wallets.gas_station, cast_eth_mantissa)
 
     trops.post_safe_tx()
