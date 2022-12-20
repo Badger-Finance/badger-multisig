@@ -162,7 +162,9 @@ class Balancer:
     def order_tokens(self, underlyings, mantissas=None):
         # helper function to order tokens/amounts numerically
         if mantissas:
-            tokens = dict(zip([x.lower() for x in underlyings], mantissas))
+            tokens = dict(
+                zip([x.lower() for x in underlyings], [int(x) for x in mantissas])
+            )
             sorted_tokens = dict(sorted(tokens.items()))
             sorted_underlyings, sorted_mantissas = zip(*sorted_tokens.items())
             underlyings_checksummed = [
