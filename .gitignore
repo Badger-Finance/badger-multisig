@@ -29,3 +29,4 @@ audit_owners_mapper.py
 data/Convex_EPS
 data/Votium
 logs/
+helpers/balancer/pools.json

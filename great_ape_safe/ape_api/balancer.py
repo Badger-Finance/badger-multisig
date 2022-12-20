@@ -18,6 +18,7 @@ from great_ape_safe.ape_api.helpers.balancer.queries import (
 class Balancer:
     def __init__(self, safe):
         self.safe = safe
+
         # contracts
         self.vault = safe.contract(registry.eth.balancer.vault)
         self.gauge_factory = safe.contract(registry.eth.balancer.gauge_factory)
@@ -26,11 +27,13 @@ class Balancer:
         self.minter = safe.contract(
             registry.eth.balancer.minter, interface.IBalancerMinter
         )
+
         # parameters
         self.max_slippage = Decimal(0.02)
         self.pool_query_liquidity_threshold = Decimal(10_000)  # USD
         self.dusty = 0.995
         self.deadline = 60 * 60 * 12
+
         # misc
         self.subgraph = (
             "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2"
@@ -38,6 +41,9 @@ class Balancer:
         self.gauges_subgraph = (
             "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges"
         )
+
+        # update pool data cache
+        self.get_pool_data(True)
 
     def get_amount_out(self, asset_in, asset_out, amount_in, pool=None):
         # https://dev.balancer.fi/references/contracts/apis/the-vault#querybatchswap
