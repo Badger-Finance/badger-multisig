@@ -212,6 +212,7 @@ ADDRESSES_ETH = {
         "ENS": "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
         "RETH": "0xae78736Cd615f374D3085123A210448E74Fc6393",
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
+        "mBTC": "0x945Facb997494CC2570096c74b5F66A3507330a1",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
