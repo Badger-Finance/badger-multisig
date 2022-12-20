@@ -7,6 +7,7 @@ from helpers.addresses import r
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_curve_v2()
+    vault.init_uni_v3()
 
     crvbadger_wbtc = vault.contract(r.treasury_tokens.badgerWBTC_f)
     bcrv_badger_wbtc = interface.ISettV4h(r.sett_vaults.bcrvBadger, owner=vault.account)
@@ -16,8 +17,10 @@ def main():
 
     vault.take_snapshot(tokens=[crvbadger_wbtc, bcrv_badger_wbtc, badger, wbtc])
 
+    vault.uni_v3.collect_fees()
+    vault.print_snapshot()
+
     bcrv_badger_wbtc.withdrawAll()
     vault.curve_v2.withdraw(crvbadger_wbtc, crvbadger_wbtc.balanceOf(vault))
 
-    vault.print_snapshot()
     vault.post_safe_tx()
