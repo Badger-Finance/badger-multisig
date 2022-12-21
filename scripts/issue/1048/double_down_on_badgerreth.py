@@ -1,11 +1,12 @@
-from brownie import ETH_ADDRESS
+from decimal import Decimal
+
+from pycoingecko import CoinGeckoAPI
 from web3 import Web3
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 
-AMNT_BADGER = 491_000e18
 AMNT_ETH = 932.96e18
 SLIPPAGE = 0.98
 
@@ -48,15 +49,19 @@ def main():
     if reth_natively >= reth_needed:
         weth.withdraw(reth_natively)
         rocket_deposit.deposit({"value": reth_natively})
-        swap_out = reth_needed - reth_natively
     else:
-        swap_out = reth_needed
+        treasury.balancer.swap(weth, reth, reth_needed, pool=bpt_wethreth)
 
-    treasury.balancer.swap(weth, reth, swap_out, pool=bpt_wethreth)
+    reth_to_deposit = reth.balanceOf(treasury) * SLIPPAGE
+
+    prices = CoinGeckoAPI().get_price(["rocket-pool-eth", "badger-dao"], "usd")
+    badger_to_deposit = Decimal(reth_to_deposit) * Decimal(
+        prices["rocket-pool-eth"]["usd"] / prices["badger-dao"]["usd"]
+    )
 
     treasury.balancer.deposit_and_stake(
         [badger, reth],
-        [AMNT_BADGER, reth.balanceOf(treasury) * SLIPPAGE],
+        [badger_to_deposit, reth_to_deposit],
         pool=bpt_badgerreth,
         stake=False,
     )
