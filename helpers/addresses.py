@@ -602,6 +602,10 @@ ADDRESSES_ETH = {
         "BADGER_FRAXBP_GAUGE": "0x5a92EF27f4baA7C766aee6d751f754EBdEBd9fae",
     },
     "wbtc": {"dao_multisig": "0xB33f8879d4608711cEBb623F293F8Da13B8A37c5"},
+    "rocket_pool": {
+        "deposit": "0x2cac916b2A963Bf162f076C0a8a4a8200BCFBfb4",
+        "storage": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+    },
 }
 
 ADDRESSES_IBBTC = {
