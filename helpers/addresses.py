@@ -212,6 +212,7 @@ ADDRESSES_ETH = {
         "ENS": "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
         "RETH": "0xae78736Cd615f374D3085123A210448E74Fc6393",
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
+        "mBTC": "0x945Facb997494CC2570096c74b5F66A3507330a1",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -294,7 +295,7 @@ ADDRESSES_ETH = {
         "bveCVX": "0xfd05D3C7fe2924020620A8bE4961bBaA747e6305",
         "bimBTC": "0x599D92B453C010b1050d31C364f6ee17E819f193",
         "bFpMbtcHbtc": "0x26B8efa69603537AC8ab55768b6740b67664D518",
-        "bbveCVX-CVX-f": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
+        "bbveCVX_CVX_f": "0x937B8E917d0F36eDEBBA8E459C5FB16F3b315551",
         "remBADGER": "0x6aF7377b5009d7d154F36FE9e235aE1DA27Aea22",
         "remDIGG": "0x99F39D495C6A5237f43602f3Ab5F49786E46c9B0",
         "bcrvBadger": "0xeC1c717A3b02582A4Aa2275260C583095536b613",
@@ -599,6 +600,11 @@ ADDRESSES_ETH = {
     },
     "frax": {
         "BADGER_FRAXBP_GAUGE": "0x5a92EF27f4baA7C766aee6d751f754EBdEBd9fae",
+    },
+    "wbtc": {"dao_multisig": "0xB33f8879d4608711cEBb623F293F8Da13B8A37c5"},
+    "rocket_pool": {
+        "deposit": "0x2cac916b2A963Bf162f076C0a8a4a8200BCFBfb4",
+        "storage": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
     },
 }
 

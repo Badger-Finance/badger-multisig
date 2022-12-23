@@ -262,7 +262,7 @@ class GreatApeSafe(ApeSafe):
         csv_destination=None,
         gas_coef=1.5,
         safe_tx=None,
-        gen_tenderly=True,
+        tenderly=False,
     ):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
@@ -277,7 +277,7 @@ class GreatApeSafe(ApeSafe):
             safe_tx, receipt = self._set_safe_tx_gas(
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
-        if gen_tenderly:
+        if tenderly:
             self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
