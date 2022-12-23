@@ -547,6 +547,11 @@ ADDRESSES_ETH = {
         "B_50_BADGER_50_RETH": "0xe340EBfcAA544da8bB1Ee9005F1a346D50Ec422e",
         "B_50_BADGER_50_RETH_GAUGE": "0xb32Ae42524d38be7E7eD9E02b5F9330fCEf07f3F",
         "B_50_WETH_50_RETH": "0x1E19CF2D73a72Ef1332C882F20534B6519Be0276",
+        "_deprecated": {
+            "B_20_BTC_80_BADGER_GAUGE": "0xaf50825b010ae4839ac444f6c12d44b96819739b",
+            "B_50_BADGER_50_RETH_GAUGE": "0xcab1921e4fc9f4c26b877b58d9713cd19e9eadd1",
+            "B_40_WBTC_40_DIGG_20_GRAVI_GAUGE": "0x5204f813cf58a4722e481b3b1cdfbba45088fe36",
+        },
     },
     "hidden_hand": {
         "bribe_vault": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
@@ -582,10 +587,15 @@ ADDRESSES_ETH = {
         "extra_rewards_distributor": "0xa3739b206097317c72ef416f0e75bb8f58fbd308",
         "gauge_migrator": "0x7954bcDce86e86BeE7b1dEff48c3a0b9BCCe578B",
         "aura_20wbtc80badger": "0x05df1E87f41F793D9e03d341Cdc315b76595654C",
-        "aura_20wbtc80badger_old": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
+        "aura_20wbtc80badger_gauge": "0x4EFc8DED860Bc472FA8d938dc3fD4946Bc1A0a18",
         "aura_40wbtc40digg20gravi": "0xe86f0312b06126855810B4a13a43c3E2b1B8DD90",
-        "aura_40wbtc40digg20gravi_old": "0x10Ca519614b0F3463890387c24819001AFfC5152",
+        "aura_40wbtc40digg20gravi_gauge": "0xD7c9c6922db15F47EF3131F2830d8E87f7637210",
         "aura_50reth50badger": "0x685C94e7DA6C8F14Ae58f168C942Fb05bAD73412",
+        "aura_50reth50badger_gauge": "0x4E867c6c76173539538B7a9335E89b00434Aec10",
+        "_deprecated": {
+            "aura_20wbtc80badger": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
+            "aura_40wbtc40digg20gravi": "0x10Ca519614b0F3463890387c24819001AFfC5152",
+        },
     },
     "ens": {
         "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
