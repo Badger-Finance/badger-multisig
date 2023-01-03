@@ -51,6 +51,7 @@ def claim_and_sell_for_weth(claim_only=False):
             # $eth. strat will auto convert to $weth
             continue
         addr = web3.toChecksumAddress(addr)
+        # TODO: skip if fee > ~10% total amount
         if addr != BADGER.address and addr != AURA.address:
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
                 PROCESSOR,

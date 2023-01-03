@@ -80,6 +80,8 @@ class Cow:
         # make sure mantissa is an integer
         mantissa_sell = int(mantissa_sell)
 
+        assert mantissa_sell > 0
+
         # get the fee and exact amount to buy after fee
         fee_and_quote = self.get_fee_and_quote(
             sell_token, buy_token, mantissa_sell, origin
@@ -203,6 +205,7 @@ class Cow:
         mantissa_sell is exact and order is submitted at quoted rate
         """
         assert type(chunks) == int
+
         self.allow_relayer(asset_sell, mantissa_sell)
         mantissa_sell = int(Decimal(mantissa_sell) / chunks)
         for n in range(chunks):
