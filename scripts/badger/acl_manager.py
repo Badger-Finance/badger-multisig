@@ -1,9 +1,29 @@
 from helpers.addresses import r
 from great_ape_safe import GreatApeSafe
 from rich.console import Console
-from brownie import Contract
+from brownie import network, interface, web3
+from helpers.constants import AddressZero
+from tabulate import tabulate
+import pandas as pd
 
 C = Console()
+
+ROLES_BY_KEY = {
+    "badgerTree": [
+            "DEFAULT_ADMIN_ROLE",
+            "ROOT_PROPOSER_ROLE",
+            "ROOT_VALIDATOR_ROLE",
+            "PAUSER_ROLE",
+            "UNPAUSER_ROLE",
+        ],
+    "rewardsLogger": ["DEFAULT_ADMIN_ROLE", "MANAGER_ROLE"],
+    "guardian": ["DEFAULT_ADMIN_ROLE", "APPROVED_ACCOUNT_ROLE"],
+    "keeper": ["DEFAULT_ADMIN_ROLE", "EARNER_ROLE", "HARVESTER_ROLE", "TENDER_ROLE"],
+    "registryAccessControl": ["DEFAULT_ADMIN_ROLE", "DEVELOPER_ROLE"]
+}
+DEFAULT_ADMIN_ROLE = (
+    "0x0000000000000000000000000000000000000000000000000000000000000000"
+)
 
 ## Keeper ACL actions
 def remove_from_keeper_acl(account):
@@ -43,3 +63,56 @@ def remove_from_registry_acl(account):
         C.log(f"DEVELOPER role removed for {account}")
 
     safe.post_safe_tx()
+
+
+## ACLs Auditor
+def acl_audit(target_address=AddressZero):
+    C.print("You are using the", network.show_active(), "network")
+    registry = interface.IBadgerRegistryV2(r.registry_v2)
+
+    total_data = []
+
+    for key, roles in ROLES_BY_KEY.items():
+        contract = registry.get(key)
+        C.print(f"\n[blue]{key} - {contract}")
+        if contract == AddressZero:
+            C.print("[red]{key} not found on registry![/red]")
+            continue
+        accessControl = interface.IAccessControl(contract)
+
+        contract_data = []
+
+        for role in roles:
+            hash = get_role_hash(role)
+            role_member_count = accessControl.getRoleMemberCount(hash)
+            for member_number in range(role_member_count):
+                member_address = accessControl.getRoleMember(hash, member_number)
+                contract_data.append(
+                    {
+                        "acl_contract": key,
+                        "role": role,
+                        "member_number": member_number,
+                        "member_address": member_address,
+                        "is_target": (target_address == member_address)
+                    }
+                )
+
+        print(tabulate(contract_data, headers="keys", tablefmt="grid"))
+        total_data += contract_data
+
+    # build dataframe
+    df = pd.DataFrame(total_data)
+    # Dump result
+    df.to_csv(f"data/badger/acl_roles_audit/acl_roles_audit_{network.show_active()}.csv")
+
+    # Printout occurances of target address
+    if target_address != AddressZero:
+        C.print(f"\n[blue]Target {target_address} has the following roles:")
+        print(tabulate(df[df['is_target'] == True], headers="keys", tablefmt="grid"))
+
+
+def get_role_hash(role):
+    if role == "DEFAULT_ADMIN_ROLE":
+        return DEFAULT_ADMIN_ROLE
+    else:
+        return web3.keccak(text=role).hex()
