@@ -45,42 +45,44 @@ def dogfood():
 
 def place_orders(spot_mantissa):
     # sell remaining cvx from previous ladder orders that did not fill
-    SAFE.cow.market_sell(
-        asset_sell=CVX,
-        asset_buy=USDC,
-        mantissa_sell=spot_mantissa,
-        # deadline=, # NOTE: default deadline!
-        coef=0.95,
-        destination=r.badger_wallets.treasury_vault_multisig,
-    )
+    if spot_mantissa > 0:
+        SAFE.cow.market_sell(
+            asset_sell=CVX,
+            asset_buy=USDC,
+            mantissa_sell=spot_mantissa,
+            # deadline=, # NOTE: default deadline!
+            coef=0.95,
+            destination=r.badger_wallets.treasury_vault_multisig,
+        )
 
     # build ladder orders
     leg_amount = (CVX.balanceOf(SAFE) - spot_mantissa) // 3
     deadline = 60 * 60 * 24 * 6  # gives one day to sell at spot before next round
 
-    SAFE.cow.market_sell(
-        asset_sell=CVX,
-        asset_buy=USDC,
-        mantissa_sell=leg_amount,
-        deadline=deadline,
-        coef=1.05,
-        destination=r.badger_wallets.treasury_vault_multisig,
-    )
-    SAFE.cow.market_sell(
-        asset_sell=CVX,
-        asset_buy=USDC,
-        mantissa_sell=leg_amount,
-        deadline=deadline,
-        coef=1.075,
-        destination=r.badger_wallets.treasury_vault_multisig,
-    )
-    SAFE.cow.market_sell(
-        asset_sell=CVX,
-        asset_buy=USDC,
-        mantissa_sell=leg_amount,
-        deadline=deadline,
-        coef=1.1,
-        destination=r.badger_wallets.treasury_vault_multisig,
-    )
+    if leg_amount > 0:
+        SAFE.cow.market_sell(
+            asset_sell=CVX,
+            asset_buy=USDC,
+            mantissa_sell=leg_amount,
+            deadline=deadline,
+            coef=1.05,
+            destination=r.badger_wallets.treasury_vault_multisig,
+        )
+        SAFE.cow.market_sell(
+            asset_sell=CVX,
+            asset_buy=USDC,
+            mantissa_sell=leg_amount,
+            deadline=deadline,
+            coef=1.075,
+            destination=r.badger_wallets.treasury_vault_multisig,
+        )
+        SAFE.cow.market_sell(
+            asset_sell=CVX,
+            asset_buy=USDC,
+            mantissa_sell=leg_amount,
+            deadline=deadline,
+            coef=1.1,
+            destination=r.badger_wallets.treasury_vault_multisig,
+        )
 
     SAFE.post_safe_tx()

@@ -45,13 +45,15 @@ def main(aura_pct_lock="0.7"):
 
     # 1. claim rewards
     if claim_aura_rewards:
+        balance_bal_before = bal.balanceOf(vault)
+        balance_aura_before = aura.balanceOf(vault)
         vault.aura.claim_all_from_booster()
 
         # 2. organised splits for each asset
         balance_bal = bal.balanceOf(vault)
         balance_aura = aura.balanceOf(vault)
         console.print(
-            f"[green] === Claimed rewards {balance_bal/1e18} BAL and {balance_aura/1e18} AURA === [/green]"
+            f"[green] === Claimed rewards {(balance_bal-balance_bal_before)/1e18} BAL and {(balance_aura-balance_aura_before)/1e18} AURA === [/green]"
         )
 
         # 2.1 send to voter and deposit into aurabal/bauraBAL
