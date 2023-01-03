@@ -71,7 +71,6 @@ ADDRESSES_ETH = {
         "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
-        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         # "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",  # can execute from deployer
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         # "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",  # can execute from deployer
@@ -106,6 +105,7 @@ ADDRESSES_ETH = {
             "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
             "ops_deployer6_v2": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+            "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
             "ops_executor4": "0xBB2281cA5B4d07263112604D1F182AD0Ab26a252",
             "ops_executor4_v2": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
             "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
@@ -722,10 +722,10 @@ ADDRESSES_POLYGON = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
-        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+            "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         },
     },
     "treasury_tokens": {
@@ -777,7 +777,6 @@ ADDRESSES_ARBITRUM = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
-        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",
         "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
@@ -789,6 +788,7 @@ ADDRESSES_ARBITRUM = {
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+            "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
             "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
             "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
             "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
@@ -953,7 +953,6 @@ ADDRESSES_FANTOM = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
-        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
@@ -966,6 +965,7 @@ ADDRESSES_FANTOM = {
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+            "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
             "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
             "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
             "ops_executor4": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
@@ -1019,10 +1019,10 @@ ADDRESSES_OPTIMISM = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
-        "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
+            "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
         },
     },
 }
