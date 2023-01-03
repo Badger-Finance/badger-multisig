@@ -10,16 +10,16 @@ C = Console()
 
 ROLES_BY_KEY = {
     "badgerTree": [
-            "DEFAULT_ADMIN_ROLE",
-            "ROOT_PROPOSER_ROLE",
-            "ROOT_VALIDATOR_ROLE",
-            "PAUSER_ROLE",
-            "UNPAUSER_ROLE",
-        ],
+        "DEFAULT_ADMIN_ROLE",
+        "ROOT_PROPOSER_ROLE",
+        "ROOT_VALIDATOR_ROLE",
+        "PAUSER_ROLE",
+        "UNPAUSER_ROLE",
+    ],
     "rewardsLogger": ["DEFAULT_ADMIN_ROLE", "MANAGER_ROLE"],
     "guardian": ["DEFAULT_ADMIN_ROLE", "APPROVED_ACCOUNT_ROLE"],
     "keeper": ["DEFAULT_ADMIN_ROLE", "EARNER_ROLE", "HARVESTER_ROLE", "TENDER_ROLE"],
-    "registryAccessControl": ["DEFAULT_ADMIN_ROLE", "DEVELOPER_ROLE"]
+    "registryAccessControl": ["DEFAULT_ADMIN_ROLE", "DEVELOPER_ROLE"],
 }
 DEFAULT_ADMIN_ROLE = (
     "0x0000000000000000000000000000000000000000000000000000000000000000"
@@ -93,7 +93,7 @@ def acl_audit(target_address=AddressZero):
                         "role": role,
                         "member_number": member_number,
                         "member_address": member_address,
-                        "is_target": (target_address == member_address)
+                        "is_target": (target_address == member_address),
                     }
                 )
 
@@ -103,12 +103,14 @@ def acl_audit(target_address=AddressZero):
     # build dataframe
     df = pd.DataFrame(total_data)
     # Dump result
-    df.to_csv(f"data/badger/acl_roles_audit/acl_roles_audit_{network.show_active()}.csv")
+    df.to_csv(
+        f"data/badger/acl_roles_audit/acl_roles_audit_{network.show_active()}.csv"
+    )
 
     # Printout occurances of target address
     if target_address != AddressZero:
         C.print(f"\n[blue]Target {target_address} has the following roles:")
-        print(tabulate(df[df['is_target'] == True], headers="keys", tablefmt="grid"))
+        print(tabulate(df[df["is_target"] == True], headers="keys", tablefmt="grid"))
 
 
 def get_role_hash(role):
