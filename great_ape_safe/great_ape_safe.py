@@ -40,7 +40,9 @@ class GreatApeSafe(ApeSafe):
             setattr(
                 self,
                 f"init_{class_name}",
-                lambda cn=class_name, c=cls: setattr(self, cn, c(self)),
+                lambda *args, cn=class_name, c=cls, **kwargs: setattr(
+                    self, cn, c(self, *args, **kwargs)
+                ),
             )
 
     def take_snapshot(self, tokens):
