@@ -103,6 +103,7 @@ def acl_audit(target_address=AddressZero):
     # build dataframe
     df = pd.DataFrame(total_data)
     # Dump result
+    os.makedirs("data/badger/acl_roles_audit", exist_ok=True)
     df.to_csv(
         f"data/badger/acl_roles_audit/acl_roles_audit_{network.show_active()}.csv"
     )
