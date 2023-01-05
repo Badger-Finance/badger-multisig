@@ -111,8 +111,13 @@ def acl_audit(target_address=AddressZero):
 
     # Printout occurances of target address
     if target_address != AddressZero:
+        df_target = df[df["is_target"] == True]
         C.print(f"\n[blue]Target {target_address} has the following roles:")
-        print(tabulate(df[df["is_target"] == True], headers="keys", tablefmt="grid"))
+        print(tabulate(df_target, headers="keys", tablefmt="grid"))
+        # Dump result
+        df_target.to_csv(
+            f"data/badger/acl_roles_audit/acl_roles_audit_{network.show_active()}_{target_address}.csv"
+        )
 
 
 def get_role_hash(role):
