@@ -11,6 +11,9 @@ class Chainlink:
         self.keeper_registry = self.safe.contract(
             r.chainlink.keeper_registry, interface.IKeeperRegistry
         )
+        self.keeper_registry_v1_1 = self.safe.contract(
+            r.chainlink.keeper_registry_v1_1, interface.IKeeperRegistry
+        )
         self.keeper_registrar = self.safe.contract(
             r.chainlink.keeper_registrar, interface.IKeeperRegistrar
         )
