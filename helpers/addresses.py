@@ -564,6 +564,7 @@ ADDRESSES_ETH = {
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
         "keeper_registry": "0x02777053d6764996e594c3E88AF1D58D5363a2e6",
+        "keeper_registry_v1_1": "0x7b3EC232b08BD7b4b3305BE0C044D907B2DF960B",
         "keeper_registrar": "0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d",
     },
     "across_bridge": {
