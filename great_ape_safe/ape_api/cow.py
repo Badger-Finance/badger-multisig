@@ -123,6 +123,10 @@ class Cow:
         # add deadline to current block timestamp
         deadline = chain.time() + deadline
 
+        # make sure long standing limit orders dont get tagged as "liquidity order"
+        if coef != 1 or mantissa_buy:
+            fee_amount = 0
+
         # submit order
         order_payload = {
             "sellToken": sell_token.address,
