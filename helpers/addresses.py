@@ -30,6 +30,8 @@ ADDRESSES_ETH = {
         "tree_2022_q3": "0x5495BDB1f4c170e5C1A939382041Cf46d7f14EAd",
         "rembadger_2022_q4": "0x9032618620fEDaC90990d4ba562ab0A86f5abaE7",
         "tree_2022_q4": "0x7b222fBac58680c3456230b2e9f3E196512A9CF3",
+        "rembadger_2023": "0xC0D8fD5c722AF68437E7dFc095a980500dC0961D",
+        "tree_2023": "0xA3Dc099D14722D0e25B3A904427377B4B2ab9fA4",
     },
     "safe_modules": {
         "treasury_voter": {
