@@ -10,7 +10,7 @@ from helpers.addresses import r
 
 LINK_MANTISSA = 80e18
 UPKEEP_ID_REMBADGER_22Q4 = 142  # https://keepers.chain.link/mainnet/142
-
+UPKEEP_ID_BVECVX_MODULE = 14270489937535892760600590423564455802049459622872924518248134412357549386527 # https://automation.chain.link/mainnet/14270489937535892760600590423564455802049459622872924518248134412357549386527
 SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 LINK = SAFE.contract(r.treasury_tokens.LINK, interface.ILinkToken)
 
@@ -29,6 +29,7 @@ def cancel_q4(sim=False):
     # cancel tree dripper q4
     SAFE.take_snapshot([LINK])
     SAFE.chainlink.keeper_registry_v1_1.cancelUpkeep(UPKEEP_ID_REMBADGER_22Q4)
+    SAFE.chainlink.keeper_registry.cancelUpkeep(UPKEEP_ID_BVECVX_MODULE)
     if not sim:
         SAFE.post_safe_tx(call_trace=True)
 
@@ -36,6 +37,7 @@ def cancel_q4(sim=False):
 def register_2023(sim=False):
     # retrieve link
     SAFE.chainlink.keeper_registry_v1_1.withdrawFunds(UPKEEP_ID_REMBADGER_22Q4, SAFE)
+    SAFE.chainlink.keeper_registry.withdrawFunds(UPKEEP_ID_BVECVX_MODULE, SAFE)
 
     # register upkeeps for new drippers
     SAFE.chainlink.register_upkeep(
