@@ -1,0 +1,2 @@
+,acl_contract,role,member_number,member_address,is_target
+26,registryAccessControl,DEVELOPER_ROLE,1,0xeE8b29AA52dD5fF2559da2C50b1887ADee257556,True

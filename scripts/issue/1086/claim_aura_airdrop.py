@@ -102,6 +102,7 @@ def main():
 
     safe.post_safe_tx()
 
+
 # Assert approximate integer
 def approx(actual, expected, percentage_threshold):
     print(actual, expected, percentage_threshold)
