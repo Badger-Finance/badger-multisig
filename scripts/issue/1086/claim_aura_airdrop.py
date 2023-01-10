@@ -100,6 +100,7 @@ def main():
     C.print("Dust:", total_aura_claimed - total_aura_transferred)
     assert approx(total_aura_transferred, total_aura_claimed, 1)
 
+    safe.post_safe_tx()
 
 # Assert approximate integer
 def approx(actual, expected, percentage_threshold):
