@@ -82,6 +82,27 @@ class Snapshot:
         self.proposal_id = proposal_id
         self.proposal_data = self._get_proposal_data(self.proposal_id)
 
+    def post_payload_relayer_api(self, payload):
+        # https://github.com/snapshot-labs/snapshot-relayer/blob/master/src/api.ts#L63
+        r = requests.post(
+            self.vote_relayer,
+            headers=self.headers,
+            data=json.dumps(
+                {
+                    "address": self.safe.address,
+                    "data": payload,
+                    "sig": "0x",
+                },
+                separators=(",", ":"),
+            ),
+        )
+
+        self.handle_response(r)
+
+        msg_hash = r.json()["id"]
+
+        return msg_hash
+
     def handle_response(self, response):
         if not response.ok:
             console.print(f"Error: {response.text}")
@@ -157,9 +178,8 @@ class Snapshot:
 
         # https://github.com/ApeWorX/eip712/blob/main/eip712/hashing.py#L261
         hash = hash_eip712_message(payload)
-        console.print(f"msg hash: {hash.hex()}")
 
-        return hash
+        return hash, payload
 
     def vote_and_post(self, choice, reason="", metadata=None):
         # given a choice, contruct payload, post to vote relayer and post safe tx
@@ -201,7 +221,7 @@ class Snapshot:
         validate_structured_data(payload)
 
         console.print("payload", payload)
-        hash = self.create_payload_hash(payload)
+        hash, _ = self.create_payload_hash(payload)
 
         if is_weighted:
             for label, weight in choice_formatted.items():
@@ -218,24 +238,7 @@ class Snapshot:
         # NOTE: prior to json stringify, convert proposal[bytes -> string]
         payload["message"]["proposal"] = self.proposal_id
 
-        # https://github.com/snapshot-labs/snapshot-relayer/blob/master/src/api.ts#L63
-        r = requests.post(
-            self.vote_relayer,
-            headers=self.headers,
-            data=json.dumps(
-                {
-                    "address": self.safe.address,
-                    "data": payload,
-                    "sig": "0x",
-                },
-                separators=(",", ":"),
-            ),
-        )
-
-        # debugging their `msgHash`
-        print(r.json()["id"])
-
-        self.handle_response(r)
+        self.post_payload_relayer_api(payload)
 
         safe_tx = self.safe.build_multisig_tx(
             to=registry.eth.gnosis.sign_message_lib, value=0, data=tx_data, operation=1
