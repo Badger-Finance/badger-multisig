@@ -62,15 +62,16 @@ def main():
         ## BAL rewards per epoch
         for key, _ in DEPRECATED_STRATS.items():
             try:
-                epoch_claim_amounts[key] = Decimal(
-                    (epoch_reward_amounts[key] * claim_exact_per_epoch)
-                    / epoch_reward_total_amounts
+                epoch_claim_amounts[key] = (
+                    Decimal(epoch_reward_amounts[key])
+                    * Decimal(claim_exact_per_epoch)
+                    / Decimal(epoch_reward_total_amounts)
                 )
                 total_claim_amounts[key] += epoch_claim_amounts[key]
                 epoch_claim_total_amounts += epoch_claim_amounts[key]
             except:
                 C.print(f"No AURA to claim for {key} on {epoch}")
-        assert approx(epoch_claim_total_amounts, claim_exact_per_epoch, 1)
+        assert epoch_claim_total_amounts == claim_exact_per_epoch
 
         ## Claim AURA for current Epoch
         with open(f"scripts/issue/1086/{epoch}/proofs.json") as fp:
@@ -87,27 +88,18 @@ def main():
         total_aura_claimed += claim_exact_per_epoch
 
     C.print("\nTotal Claim Amounts per Strat:", total_claim_amounts)
-    C.print("Total AURA claimed:", total_aura_claimed)
+    C.print("\nTotal AURA claimed:", total_aura_claimed)
 
-    total_aura_transferred = 0
     # Distribute AURA in proportions to each strat
+    total_aura_transferred = 0
     for key, amount in total_claim_amounts.items():
         strat_address = r.strategies[key]
         total_aura_transferred += amount
         C.print(f"Transfering {float(amount) / 1e18} to {key} at {strat_address}")
+        balance_before = aura.balanceOf(strat_address)
         aura.transfer(strat_address, amount)
+        assert int(amount) == aura.balanceOf(strat_address) - balance_before
     C.print("Total AURA transferred:", total_aura_claimed)
-    C.print("Dust:", total_aura_claimed - total_aura_transferred)
-    assert approx(total_aura_transferred, total_aura_claimed, 1)
+    assert total_aura_transferred == total_aura_claimed
 
     safe.post_safe_tx()
-
-
-# Assert approximate integer
-def approx(actual, expected, percentage_threshold):
-    print(actual, expected, percentage_threshold)
-    diff = int(abs(actual - expected))
-    # 0 diff should automtically be a match
-    if diff == 0:
-        return True
-    return diff < (actual * percentage_threshold // 100)
