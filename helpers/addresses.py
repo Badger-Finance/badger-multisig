@@ -583,6 +583,8 @@ ADDRESSES_ETH = {
         "depositor": "0xeAd792B55340Aa20181A80d6a16db6A0ECd1b827",
         "aurabal_staking": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
         "aurabal_rewards": "0x00A7BA8Ae7bca0B10A32Ea1f8e2a1Da980c6CAd2",
+        "aura_merkle_drop_v2_epoch1": "0x69A07d8a45b71E5224bb220aE8933Ae8DCe96B74",
+        "aura_merkle_drop_v2_epoch2": "0x9EFE098edA4f04B9B931002df003c9898b626D87",
         "vlAURA": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC",
         "merkle_drop": "0x45EB1A004373b1D8457134A2C04a42d69D287724",
         "booster": "0xA57b8d98dAE62B26Ec3bcC4a365338157060B234",
