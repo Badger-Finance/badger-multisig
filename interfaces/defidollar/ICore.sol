@@ -3,6 +3,8 @@
 pragma solidity ^0.6.0;
 
 interface ICore {
+    enum PeakState { Extinct, Active, RedeemOnly, MintOnly }
+
     function mint(
         uint256 btc,
         address account,
@@ -18,6 +20,8 @@ interface ICore {
     function pricePerShare() external view returns (uint256);
 
     function setGuestList(address guestlist) external;
+
+    function setPeakStatus(address peak, PeakState state) external;
 
     function collectFee() external;
 

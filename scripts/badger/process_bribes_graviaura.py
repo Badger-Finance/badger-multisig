@@ -20,7 +20,7 @@ AURA_SHARE = 1 - BADGER_SHARE
 SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 SAFE.init_badger()
 SAFE.init_cow(prod=COW_PROD)
-PROCESSOR = SAFE.contract(r.aura_bribes_processor)
+PROCESSOR = SAFE.contract(r.aura_bribes_processor, from_explorer=True)
 
 # tokens involved during processing
 WETH = interface.IWETH9(r.treasury_tokens.WETH, owner=SAFE.account)
@@ -51,6 +51,7 @@ def claim_and_sell_for_weth(claim_only=False):
             # $eth. strat will auto convert to $weth
             continue
         addr = web3.toChecksumAddress(addr)
+        # TODO: skip if fee > ~10% total amount
         if addr != BADGER.address and addr != AURA.address:
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
                 PROCESSOR,
@@ -133,16 +134,18 @@ def sell_weth():
         #  1. Swap WETH for AURA and deposit to GRAVI_AURA
         #  2. Swap WETH directly for GRAVI_AURA
         buy_amount_aura = int(
-            SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share)["buyAmountAfterFee"]
+            SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share, SAFE.address)["quote"][
+                "buyAmount"
+            ]
         )
         buy_amount_aura_in_gravi_aura = (
             buy_amount_aura * GRAVI_AURA.totalSupply() // GRAVI_AURA.balance()
         )
 
         buy_amount_gravi_aura = int(
-            SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)[
-                "buyAmountAfterFee"
-            ]
+            SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share, SAFE.address)[
+                "quote"
+            ]["buyAmount"]
         )
 
         if buy_amount_aura_in_gravi_aura > buy_amount_gravi_aura:

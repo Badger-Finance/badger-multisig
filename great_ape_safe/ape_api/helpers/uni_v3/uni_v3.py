@@ -2,7 +2,7 @@ from math import floor
 from rich.pretty import pprint
 
 
-Q128 = 2**128
+Q128 = 2 ** 128
 
 LABELS = {
     "pool_positions": [

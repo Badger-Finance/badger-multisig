@@ -31,9 +31,9 @@ def complement(a: Decimal) -> Decimal:
 
 def powUp(a: Decimal, b: Decimal) -> Decimal:
     getcontext().rounding = ROUND_UP
-    return a**b
+    return a ** b
 
 
 def powDown(a: Decimal, b: Decimal) -> Decimal:
     getcontext().rounding = ROUND_DOWN
-    return a**b
+    return a ** b

@@ -30,7 +30,11 @@ def label_in_address_book(addr):
         return False
 
 
-def main():
+def find_roles_only():
+    main(extensive=False)
+
+
+def main(extensive=True):
     # loop over multisigs
     data = []
     for chain in ["eth", "bsc", "poly", "arbitrum", "ftm"]:
@@ -59,11 +63,15 @@ def main():
     df = df.set_index(["address", "chain"])
     df = df.explode("owners")
 
-    # map owner to label
-    df["public_label"] = df["owners"].map(label_in_address_book)
+    if extensive == True:
+        # map owner to label
+        df["public_label"] = df["owners"].map(label_in_address_book)
 
     # map owner to role
     df["owner_role"] = df["owners"].map(roles)
+
+    if extensive == False:
+        df = df.dropna()
 
     # print and dump result
     print(df)

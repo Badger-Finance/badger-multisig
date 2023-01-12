@@ -95,6 +95,9 @@ class Curve:
     def _pool_has_wrapped_coins(self, pool):
         return 'exchange_underlying' in pool.signatures.keys()
 
+    def _pool_supports_underlying(self, pool):
+        return "exchange_underlying" in pool.signatures.keys()
+
     def deposit(self, lp_token, mantissas, asset=None, seeding=False):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
         # `mantissas` do not need to be balanced in any way
@@ -149,7 +152,9 @@ class Curve:
             if mantissa > 0:
                 asset.approve(zapper, mantissa)
         if not seeding:
-            expected = zapper.calc_token_amount(pool, mantissas)
+            expected = zapper.calc_token_amount(pool, mantissas) * (
+                1 - self.max_slippage_and_fees
+            )
         else:
             expected = 0
         zapper.add_liquidity(pool, mantissas, expected)
@@ -226,7 +231,7 @@ class Curve:
         asset_in.approve(pool, mantissa)
         i, j = self._get_coin_indices(pool, asset_in, asset_out)
         # L139 docs ref
-        if self._pool_has_wrapped_coins(pool):
+        if self._pool_has_wrapped_coins(pool) and self._pool_supports_underlying(pool):
             expected = pool.get_dy_underlying(i, j, mantissa) * (
                 1 - self.max_slippage_and_fees
             )
@@ -235,4 +240,3 @@ class Curve:
             expected = pool.get_dy(i, j, mantissa) * (1 - self.max_slippage_and_fees)
             pool.exchange(i, j, mantissa, expected)
         assert asset_out.balanceOf(self.safe) >= initial_asset_out_balance + expected
-
