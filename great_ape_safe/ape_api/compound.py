@@ -2,6 +2,7 @@ from helpers.addresses import registry
 
 from brownie import interface
 
+
 class Compound:
     def __init__(self, safe):
         self.safe = safe
@@ -23,7 +24,7 @@ class Compound:
                     underlying.approve(ctoken, mantissa)
                     assert ctoken.mint(mantissa).return_value == 0
                     return
-            except (AttributeError, ValueError):
+            except:
                 # $ceth has no underlying
                 if ctoken.symbol() == "cETH":
                     pass
@@ -55,7 +56,7 @@ class Compound:
                 if ctoken.underlying() == underlying.address:
                     assert ctoken.redeemUnderlying(mantissa).return_value == 0
                     return
-            except (AttributeError, ValueError):
+            except:
                 # $ceth has no underlying
                 if ctoken.symbol() == "cETH":
                     pass
@@ -104,7 +105,7 @@ class Compound:
                     if ctoken.underlying() == underlying.address:
                         ctokens.append(ctoken.address)
                         break
-                except (AttributeError, ValueError):
+                except:
                     if ctoken.symbol() == "cETH":
                         # $ceth has no underlying
                         pass
