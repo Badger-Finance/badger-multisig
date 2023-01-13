@@ -22,9 +22,9 @@ def AAVE(safe):
 
 @pytest.fixture
 def stkAAVE(safe):
-    sktaave = interface.IStakedTokenV2Rev3(registry.eth.treasury_tokens.stkAAVE, owner=safe.account)
-    sktaave_mintable = MintableForkToken(
-        sktaave.address, owner=safe.account
+    sktaave = interface.IStakedTokenV2Rev3(
+        registry.eth.treasury_tokens.stkAAVE, owner=safe.account
     )
-    sktaave_mintable._mint_for_testing(safe, 1000 * 10**sktaave.decimals())
+    sktaave_mintable = MintableForkToken(sktaave.address, owner=safe.account)
+    sktaave_mintable._mint_for_testing(safe, 1000 * 10 ** sktaave.decimals())
     return sktaave

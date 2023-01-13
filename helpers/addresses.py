@@ -1105,6 +1105,7 @@ def get_registry():
     except:
         return registry.eth
 
+
 r = get_registry()
 
 # flatten nested dicts and invert the resulting key <-> value
