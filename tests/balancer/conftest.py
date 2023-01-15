@@ -51,8 +51,7 @@ def badger_bpt(safe):
 
 @pytest.fixture
 def badger_staked_bpt(safe, balancer, badger_bpt):
-    gauge_factory = balancer.gauge_factory
-    return safe.contract(gauge_factory.getPoolGauge(badger_bpt))
+    return safe.contract(balancer.get_preferential_gauge(badger_bpt))
 
 
 @pytest.fixture
