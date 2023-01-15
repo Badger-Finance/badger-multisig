@@ -93,7 +93,7 @@ class Curve:
             return registry.get_n_coins(pool)
 
     def _pool_has_wrapped_coins(self, pool):
-        return 'exchange_underlying' in pool.signatures.keys()
+        return "exchange_underlying" in pool.signatures.keys()
 
     def _pool_supports_underlying(self, pool):
         return "exchange_underlying" in pool.signatures.keys()
@@ -111,7 +111,6 @@ class Curve:
         pool = self._get_pool_from_lp_token(lp_token)
         registry = self._get_registry(pool)
         n_coins = self._get_n_coins(lp_token)
-        
 
         if type(mantissas) is not list and asset is not None:
             mantissa = mantissas

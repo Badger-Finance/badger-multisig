@@ -2,7 +2,7 @@ import pytest
 from brownie import chain
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="class")
 def deposited(safe, balancer, wbtc, badger, badger_bpt, badger_staked_bpt):
     bal_before_staked_bpt = badger_staked_bpt.balanceOf(safe)
     bal_before_wbtc = wbtc.balanceOf(safe)
