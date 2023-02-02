@@ -1,37 +1,36 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
-# flag
+
 prod = False
 
-
-# slippage
 COEF = 0.95
 DEADLINE = 60 * 60 * 12
 
 
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
-    vault.init_cow(prod)
+    vault.init_cow(prod=prod)
 
-    # tokens involved
+    usdc = vault.contract(r.treasury_tokens.USDC)
     dai = vault.contract(r.treasury_tokens.DAI)
-    fxs = vault.contract(r.treasury_tokens.FXS)
+    aura = vault.contract(r.treasury_tokens.AURA)
+    bal = vault.contract(r.treasury_tokens.BAL)
     crv = vault.contract(r.treasury_tokens.CRV)
     cvx = vault.contract(r.treasury_tokens.CVX)
+    fxs = vault.contract(r.treasury_tokens.FXS)
 
-    # contracts
-    private_vault = vault.contract(r.convex.frax.private_vaults.badger_fraxbp)
+    vault.cow.market_sell(
+        aura, usdc, aura.balanceOf(vault), deadline=DEADLINE, coef=COEF
+    )
 
-    # snap
-    tokens = [fxs, crv, cvx]
-    vault.take_snapshot(tokens)
+    vault.cow.market_sell(bal, usdc, bal.balanceOf(vault), deadline=DEADLINE, coef=COEF)
 
-    # 1. claim rewards
-    private_vault.getReward()
-
-    # 2. sell all rewards for DAI via cow
     vault.cow.market_sell(fxs, dai, fxs.balanceOf(vault), deadline=DEADLINE, coef=COEF)
+
+    # https://curve.readthedocs.io/exchange-lp-tokens.html#CurveToken.approve
+    crv.approve(vault.cow.vault_relayer, 0)
+
     vault.cow.market_sell(
         crv,
         dai,
@@ -39,6 +38,7 @@ def main():
         deadline=DEADLINE,
         coef=COEF,
     )
+
     vault.cow.market_sell(
         cvx,
         dai,

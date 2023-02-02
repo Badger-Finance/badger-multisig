@@ -12,8 +12,8 @@ claim_uni_v3_fees = False
 sweep_bvecvx = False
 
 # slippages
-SLIPPAGE = 0.995
-COEF = 0.98
+COEF = 0.95
+DEADLINE = 60 * 60 * 12
 
 
 def main(aura_pct_lock="0.7"):
@@ -63,12 +63,12 @@ def main(aura_pct_lock="0.7"):
     # 2.2 swap rewards for usdc
     if aura.balanceOf(vault) > 0:
         vault.cow.market_sell(
-            aura, usdc, aura.balanceOf(vault), deadline=60 * 60 * 4, coef=COEF
+            aura, usdc, aura.balanceOf(vault), deadline=DEADLINE, coef=COEF
         )
 
     if bal.balanceOf(vault) > 0:
         vault.cow.market_sell(
-            bal, usdc, bal.balanceOf(vault), deadline=60 * 60 * 4, coef=COEF
+            bal, usdc, bal.balanceOf(vault), deadline=DEADLINE, coef=COEF
         )
 
     if claim_uni_v3_fees:
