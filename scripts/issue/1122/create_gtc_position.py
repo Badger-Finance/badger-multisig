@@ -34,7 +34,7 @@ def main():
         range_0,
         range_1,
         weth.balanceOf(vault) * 0.97,
-        gtc.balanceOf(vault) * 0.97,
+        gtc.balanceOf(vault),
     )
 
     vault.print_snapshot()
