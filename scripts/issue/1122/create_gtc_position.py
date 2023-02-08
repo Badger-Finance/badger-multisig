@@ -3,7 +3,7 @@ from helpers.addresses import r
 
 LOWER_RANGE_MULTIPLIER = 0.9
 UPPER_RANGE_MULTIPLIER = 2
-GTC_SELL_PCT = 0.16
+GTC_SELL_PCT = 0.145
 
 
 def main():
@@ -33,8 +33,8 @@ def main():
         r.uniswap.v3pool_eth_gtc,
         range_0,
         range_1,
-        weth.balanceOf(vault),
-        gtc.balanceOf(vault),
+        weth.balanceOf(vault) * 0.98,
+        gtc.balanceOf(vault) * 0.98,
     )
 
     vault.print_snapshot()
