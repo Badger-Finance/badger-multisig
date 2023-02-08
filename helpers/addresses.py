@@ -622,6 +622,7 @@ ADDRESSES_ETH = {
         "deposit": "0x2cac916b2A963Bf162f076C0a8a4a8200BCFBfb4",
         "storage": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
     },
+    "one_inch": {"router": "0x111111125434b319222CdBf8C261674aDB56F3ae"},
 }
 
 ADDRESSES_IBBTC = {
@@ -648,6 +649,7 @@ ADDRESSES_IBBTC = {
     "sett_zap": "0x27Fb47B9Fb32B9cF660C4E0128bE0f4e883f3df1",
     "mint_zap": "0xe8E40093017A3A55B5c2BC3E9CA6a4d208c07734",
     "IbbtcVault_zap": "0x87C3Ef099c6143e4687b060285bad201b9efa493",
+    "peak_zap": "0x4459A591c61CABd905EAb8486Bf628432b15C8b1",
     "logic": {
         "IbbtcVault_zap": "0xc5b45ab3d237b0dfc8f8808df39d49ebde8171fe",
     },
