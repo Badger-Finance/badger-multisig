@@ -83,6 +83,15 @@ class UniV3:
 
         return multihop
 
+    def _encode_path(self, multihop_path):
+        path_encoded = b""
+        for item in multihop_path:
+            if web3.isAddress(item):
+                path_encoded += web3.toBytes(hexstr=item)
+            else:
+                path_encoded += int.to_bytes(item, 3, byteorder="big")
+        return path_encoded
+
     def burn_token_id(self, token_id, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
@@ -446,24 +455,13 @@ class UniV3:
         destination = self.safe.address if not destination else destination
 
         token_in, token_out = path[0], path[-1]
-
         balance_token_out = token_out.balanceOf(self.safe)
 
         multihop_path = self._build_multihop_path(path)
+        path_encoded = self._encode_path(multihop_path)
 
-        path_encoded = b""
-        for item in multihop_path:
-            if web3.isAddress(item):
-                path_encoded += web3.toBytes(hexstr=item)
-            else:
-                path_encoded += int.to_bytes(item, 3, byteorder="big")
-
-        min_out = (
-            self.quoter.quoteExactInput.call(
-                path_encoded,
-                mantissa,
-            )
-            * (1 - self.slippage)
+        min_out = self.quoter.quoteExactInput.call(path_encoded, mantissa) * (
+            1 - self.slippage
         )
 
         params = (
@@ -481,3 +479,16 @@ class UniV3:
         assert token_out.balanceOf(destination) >= balance_token_out + min_out
 
         return tx.return_value
+
+    def get_amount_out(self, path, mantissa_in, multihop_path=None):
+        if not multihop_path:
+            multihop_path = self._build_multihop_path(path)
+
+        path_encoded = self._encode_path(multihop_path)
+
+        out = self.quoter.quoteExactInput.call(
+            path_encoded,
+            mantissa_in,
+        )
+
+        return int(out * 10_000 // (10_000 + ((1 - self.slippage) * 1000)))
