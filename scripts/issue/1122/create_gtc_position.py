@@ -33,8 +33,8 @@ def main():
         r.uniswap.v3pool_eth_gtc,
         range_0,
         range_1,
-        weth.balanceOf(vault) * 0.98,
-        gtc.balanceOf(vault) * 0.98,
+        weth.balanceOf(vault) * 0.97,
+        gtc.balanceOf(vault) * 0.97,
     )
 
     vault.print_snapshot()
