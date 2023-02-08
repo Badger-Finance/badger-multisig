@@ -51,7 +51,7 @@ class Badger:
 
         # misc
         self.api_url = "https://api.badger.com/v2/"
-        self.api_hh_url = f"https://hhand.xyz/reward/{chain.id}/"
+        self.api_hh_url = f"https://api.hiddenhand.finance/reward/{chain.id}/"
 
     def claim_all(self, json_file_path=None):
         """
