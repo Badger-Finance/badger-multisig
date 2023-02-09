@@ -79,16 +79,6 @@ def register_members_in_manager():
 
     for name, upkeep_id in members.items():
         if name == "GasStationExact":
-            (
-                member_address,
-                gas_limit,
-                _,
-                _,
-                _,
-                _,
-                _,
-                _,
-            ) = techops.chainlink.keeper_registry_v1_1.getUpkeep(upkeep_id)
             # NOTE: moving forward makes more sense to have links funds in upkeep manager
             techops.chainlink.keeper_registry_v1_1.withdrawFunds(
                 upkeep_id, upkeep_manager
