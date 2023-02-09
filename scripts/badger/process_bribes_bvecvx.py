@@ -12,7 +12,7 @@ from pycoingecko import CoinGeckoAPI
 COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
-COEF = 0.9825
+COEF = 0.96
 
 # time after which cowswap order expires
 DEADLINE = 60 * 60 * 3

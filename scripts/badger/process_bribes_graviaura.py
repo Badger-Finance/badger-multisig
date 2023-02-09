@@ -1,4 +1,4 @@
-from brownie import interface, web3
+from brownie import Contract, interface, web3
 from pycoingecko import CoinGeckoAPI
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -7,7 +7,7 @@ from helpers.addresses import r
 COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
-COEF = 0.9825
+COEF = 0.96
 
 # time after which cowswap order expires
 DEADLINE = 60 * 60 * 3
@@ -46,13 +46,14 @@ def claim_and_sell_for_weth(claim_only=False):
     # likely these assets will be present in the rounds for processing
     # NOTE: badger is directly emitted by the strat to tree
     # NOTE: aura is sent to processor, but should not be sold for weth
-    for addr, mantissa in claimed.items():
+    for addr in claimed:
         if addr == "0x0":
             # $eth. strat will auto convert to $weth
             continue
         addr = web3.toChecksumAddress(addr)
         # TODO: skip if fee > ~10% total amount
         if addr != BADGER.address and addr != AURA.address:
+            mantissa = str(int(Contract(addr).balanceOf(PROCESSOR)))
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
                 PROCESSOR,
                 sell_token=SAFE.contract(addr),
