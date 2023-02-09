@@ -101,6 +101,7 @@ ADDRESSES_ETH = {
         "badgerHunt": "0x394DCfbCf25C5400fcC147EbD9970eD34A474543",
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
         "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
+        "upkeep_manager": "0x4c02f0160Dc0387b13bCb5e1728C780649E109Ac",
         "_deprecated": {
             "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
             "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",

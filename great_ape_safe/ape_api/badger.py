@@ -419,9 +419,11 @@ class Badger:
         for label, addr in r.badger_wallets.items():
             min_bal = 2e18
             min_top_up = 0.5e18
-            if not label.startswith("ops_") or "multisig" in label:
+            if not label.startswith(tuple(["ops_", "upkeep_"])) or "multisig" in label:
                 continue
             if "executor" in label:
+                min_bal = 1e18
+            if "upkeep" in label:
                 min_bal = 1e18
             if label == "ops_botsquad":
                 min_bal = 5e18
