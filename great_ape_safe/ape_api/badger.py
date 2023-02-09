@@ -423,7 +423,7 @@ class Badger:
                 continue
             if "executor" in label:
                 min_bal = 1e18
-            if "upkeep" in label:
+            if "upkeep_manager" in label:
                 min_bal = 1e18
             if label == "ops_botsquad":
                 min_bal = 5e18

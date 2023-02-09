@@ -3,7 +3,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 """
-UpKeep references:
+Upkeep references:
 gas station: https://automation.chain.link/mainnet/89
 treasury voter: https://automation.chain.link/mainnet/42960818007215227498102337773007812241122867237937589685113781988946396009556
 tree dripper: https://automation.chain.link/mainnet/16015974269903908984725510916384725148630916297368865448620388766630414318319
@@ -13,7 +13,7 @@ members = {
     "RemBadgerDripper2023": 98030557125143332209375009711552185081207413079136145061022651896587613727137,
     "TreeDripper2023": 16015974269903908984725510916384725148630916297368865448620388766630414318319,
     "TreasuryVoterModule": 42960818007215227498102337773007812241122867237937589685113781988946396009556,
-    # TODO: "GasStationExact": 0 Belongs to old registry, should we cancel it in old registry and register it in the new?
+    "GasStationExact": 89,
 }
 
 
