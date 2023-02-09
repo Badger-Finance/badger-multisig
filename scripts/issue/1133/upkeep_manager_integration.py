@@ -48,7 +48,7 @@ def initial_setup():
 
     # NOTE: while testing with foundry, setting up on this figure have not seen any revert
     # on top-up actions or withdrawal of funds from the keepers.
-    # ref: https://github.com/Badger-Finance/badger-avatars/blob/main/test/upkeeps/UpKeepManagerTest.t.sol
+    # ref of gas snap: https://github.com/Badger-Finance/badger-avatars/blob/main/.gas-snapshot#L166-L176
     upkeep_manager.initializeBaseUpkeep(1_000_000)
 
     upkeep_manager_snap.print_snapshot()
