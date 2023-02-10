@@ -175,7 +175,8 @@ class GreatApeSafe(ApeSafe):
         csv_destination=None,
         gas_coef=1.5,
         safe_tx=None,
-        tenderly=False,
+        tenderly=True,
+        debank=False,
     ):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
@@ -192,6 +193,8 @@ class GreatApeSafe(ApeSafe):
             )
         if tenderly:
             self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
+        if debank:
+            self._debank_pre_execution(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
@@ -253,23 +256,63 @@ class GreatApeSafe(ApeSafe):
         """
         docs: https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
         """
-        header = {"X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY")}
+        header = {
+            "Content-Type": "application/json",
+            "X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY"),
+        }
         api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
         tx_payload = {
             "network_id": str(chain.id),
-            "block_number": chain.height,
-            "transaction_index": 0,
-            "from": Contract(self.address).getOwners()[0],
+            "from": receipt.sender.address,
             "to": self.address,
             "input": receipt.input,
-            "gas": gas,
+            "gas": 1_500_000 if gas == 0 else gas,
             "save": True,
             "save_if_fails": True,
+            # storage ref: https://github.com/safe-global/safe-contracts/blob/main/contracts/libraries/SafeStorage.sol
             "state_objects": {self.address: {"storage": {"0x04": "0x01"}}},
         }
         r = requests.post(api_url, headers=header, json=tx_payload)
-        r.raise_for_status()
+        if not r.ok:
+            r.raise_for_status()
 
         print(
             f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
         )
+
+    def _debank_pre_execution(self, receipt, gas):
+        """
+        docs: https://docs.open.debank.com/en/reference/api-pro-reference/wallet#enhanced-transaction-pre-execution
+        TransactionObject format: https://docs.open.debank.com/en/reference/api-models/transactionobject
+        """
+        header = {
+            "content-type": "application/json",
+            "AccessKey": os.getenv("DEBANK_API_KEY"),
+        }
+        api_url = "https://pro-openapi.debank.com/v1/wallet/pre_exec_tx"
+
+        max_gas_fee = hex(int(2.1e10))
+        tx_object = {
+            "tx": {
+                "chainId": chain.id,
+                "from": receipt.sender.address,
+                "to": self.address,
+                "value": hex(receipt.value),
+                "data": receipt.input,
+                "gas": hex(1_500_000 if gas == 0 else gas),
+                "maxFeePerGas": max_gas_fee,
+                "maxPriorityFeePerGas": max_gas_fee,
+                "nonce": hex(receipt.nonce),
+            }
+        }
+        r = requests.post(
+            api_url,
+            headers=header,
+            json=tx_object,
+        )
+        # TODO: it will revert with GS025 have not find a way
+        # to by-pass: https://github.com/safe-global/safe-contracts/blob/main/contracts/Safe.sol#L282
+        # since here the threshold storage variable cannot be override currently
+        if not r.ok:
+            r.raise_for_status()
+        print(r.json())
