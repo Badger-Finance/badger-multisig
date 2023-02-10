@@ -16,7 +16,7 @@ COEF = 0.95
 DEADLINE = 60 * 60 * 12
 
 
-def main(aura_pct_lock="0.7"):
+def main(aura_pct_lock="0."):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
     vault.init_aura()
@@ -57,8 +57,9 @@ def main(aura_pct_lock="0.7"):
         )
 
         # 2.1 send to voter and deposit into aurabal/bauraBAL
-        aura.approve(vlAURA, balance_aura * float(aura_pct_lock))
-        vlAURA.lock(voter, balance_aura * float(aura_pct_lock))
+        if float(aura_pct_lock) > 0:
+            aura.approve(vlAURA, balance_aura * float(aura_pct_lock))
+            vlAURA.lock(voter, balance_aura * float(aura_pct_lock))
 
     # 2.2 swap rewards for usdc
     if aura.balanceOf(vault) > 0:
