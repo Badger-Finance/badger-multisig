@@ -1,3 +1,4 @@
+from argparse import ArgumentError
 import numpy as np
 from helpers.addresses import registry
 from brownie import Contract, ZERO_ADDRESS, interface
@@ -92,14 +93,7 @@ class Curve:
             return registry.get_n_coins(pool)
 
     def _pool_has_wrapped_coins(self, pool):
-        registry = self._get_registry(pool)
-        if registry == self.crypto_registry:
-            return False
-        try:
-            registry.get_underlying_balances(pool)
-            return True
-        except VirtualMachineError:
-            return False
+        return "exchange_underlying" in pool.signatures.keys()
 
     def _pool_supports_underlying(self, pool):
         return "exchange_underlying" in pool.signatures.keys()
@@ -128,6 +122,10 @@ class Curve:
                     break
             # make sure we found the right slot and populated it
             assert (np.array(mantissas) > 0).any()
+
+        elif type(mantissas) is not list and asset is None:
+            raise ValueError("`asset` must be provided with `mantissa` of type int")
+
         assert n_coins == len(mantissas)
 
         if not seeding:
