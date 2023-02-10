@@ -84,16 +84,9 @@ def register_members_in_manager():
                 upkeep_id, upkeep_manager
             )
         else:
-            (
-                member_address,
-                gas_limit,
-                _,
-                _,
-                _,
-                _,
-                _,
-                _,
-            ) = techops.chainlink.keeper_registry.getUpkeep(upkeep_id)
+            member_address, gas_limit = techops.chainlink.keeper_registry.getUpkeep(
+                upkeep_id
+            )[0:2]
             techops.chainlink.keeper_registry.withdrawFunds(upkeep_id, upkeep_manager)
             # https://etherscan.io/address/0x4c02f0160dc0387b13bcb5e1728c780649e109ac#code#F16#L166
             upkeep_manager.addMember(member_address, name, gas_limit, 0)
