@@ -6,6 +6,7 @@ from pprint import pprint
 
 from brownie import Contract, chain, interface, web3
 from rich.prompt import Confirm
+from pycoingecko import CoinGeckoAPI
 
 from helpers.addresses import registry
 
@@ -34,6 +35,11 @@ class Cow:
         chain_label = {1: "mainnet", 4: "rinkeby", 100: "xdai"}
         prefix = "https://api.cow.fi/" if prod else "https://barn.api.cow.fi/"
         self.api_url = f"{prefix}{chain_label[chain.id]}/api/v1/"
+
+        self.cg = CoinGeckoAPI()
+        self.cg_coin_list = {k["symbol"]: k["id"] for k in self.cg.get_coins_list()}
+
+        self.pct_diff_threshold = 0.05
 
     def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell, origin):
         # make sure mantissa is an integer
@@ -95,6 +101,46 @@ class Cow:
             buy_amount_after_fee = mantissa_buy
         else:
             buy_amount_after_fee = int(int(fee_and_quote["quote"]["buyAmount"]) * coef)
+            has_cg_price = True
+            buy_symbol, buy_decimals = buy_token.symbol(), buy_token.decimals()
+            sell_symbol, sell_decimals = sell_token.symbol(), sell_token.decimals()
+
+            try:
+                buy_token_id = self.cg_coin_list[buy_symbol.lower()]
+                sell_token_id = self.cg_coin_list[sell_symbol.lower()]
+            except KeyError:
+                has_cg_price = False
+                cow_sell_rate = (buy_amount_after_fee / 10**buy_decimals) / (
+                    mantissa_sell / 1e18
+                )
+                if not Confirm.ask(
+                    f"No cg rate found. Continue with cow rate of {cow_sell_rate} {sell_symbol}/{buy_symbol}?"
+                ):
+                    raise
+
+            if has_cg_price:
+                prices = self.cg.get_price([buy_token_id, sell_token_id], "usd")
+                buy_token_price = prices[buy_token_id]["usd"]
+                sell_token_price = prices[sell_token_id]["usd"]
+
+                cow_sell_rate = (buy_amount_after_fee / 10**buy_decimals) / (
+                    mantissa_sell / 1e18
+                )
+                cg_sell_rate = (
+                    (((mantissa_sell / 1e18) * sell_token_price) / buy_token_price)
+                    * coef
+                    / (mantissa_sell / 1e18)
+                )
+                pct_diff = (cow_sell_rate - cg_sell_rate) / cg_sell_rate
+
+                if abs(pct_diff) > self.pct_diff_threshold:
+                    print(f"cow rate: {cow_sell_rate} {sell_symbol}/{buy_symbol}")
+                    print(f"cg rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
+                    direction = "lower" if pct_diff < 0 else "higher"
+                    if not Confirm.ask(
+                        f"cow rate is {direction} than cg by {round(abs(pct_diff), 2)}%, continue?"
+                    ):
+                        raise
             try:
                 processor = Contract(origin)
             except ValueError:
@@ -110,8 +156,8 @@ class Cow:
                 if naive_quote[1] > buy_amount_after_fee:
                     # manual sanity check whether onchain quote is acceptable
                     override = Confirm.ask(
-                        f"""cowswap quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {buy_amount_after_fee / 10**buy_token.decimals()} {buy_token.symbol()}
-    {naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {naive_quote[1] / 10**buy_token.decimals()} {buy_token.symbol()}
+                        f"""cowswap quotes:\t{mantissa_sell / 10**sell_decimals} {sell_symbol} for {buy_amount_after_fee / 10**buy_decimals} {buy_symbol}
+    {naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_decimals} {sell_symbol} for {naive_quote[1] / 10**buy_decimals} {buy_symbol}
     pass {naive_quote[0]}'s quote to cowswap instead?"""
                     )
                     if override:
