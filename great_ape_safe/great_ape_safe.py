@@ -273,8 +273,7 @@ class GreatApeSafe(ApeSafe):
             "state_objects": {self.address: {"storage": {"0x04": "0x01"}}},
         }
         r = requests.post(api_url, headers=header, json=tx_payload)
-        if not r.ok:
-            r.raise_for_status()
+        r.raise_for_status()
 
         print(
             f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
@@ -313,6 +312,5 @@ class GreatApeSafe(ApeSafe):
         # TODO: it will revert with GS025 have not find a way
         # to by-pass: https://github.com/safe-global/safe-contracts/blob/main/contracts/Safe.sol#L282
         # since here the threshold storage variable cannot be override currently
-        if not r.ok:
-            r.raise_for_status()
+        r.raise_for_status()
         print(r.json())
