@@ -110,7 +110,7 @@ class Cow:
                 sell_token_id = self.cg_coin_list[sell_symbol.lower()]
             except KeyError:
                 has_cg_price = False
-                cow_sell_rate = (buy_amount_after_fee / 10**buy_decimals) / (
+                cow_sell_rate = (buy_amount_after_fee / 10 ** buy_decimals) / (
                     mantissa_sell / 1e18
                 )
                 if not Confirm.ask(
@@ -123,7 +123,7 @@ class Cow:
                 buy_token_price = prices[buy_token_id]["usd"]
                 sell_token_price = prices[sell_token_id]["usd"]
 
-                cow_sell_rate = (buy_amount_after_fee / 10**buy_decimals) / (
+                cow_sell_rate = (buy_amount_after_fee / 10 ** buy_decimals) / (
                     mantissa_sell / 1e18
                 )
                 cg_sell_rate = (
