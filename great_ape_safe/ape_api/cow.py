@@ -99,18 +99,20 @@ class Cow:
             mantissa_buy = int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
-            buy_amount_after_fee = int(int(fee_and_quote["quote"]["buyAmount"]) * coef)
+            buy_amount = int(fee_and_quote["quote"]["buyAmount"] * coef)
+            buy_amount_after_fee = int(buy_amount * coef)
+
             has_cg_price = True
-            buy_symbol, buy_decimals = buy_token.symbol(), buy_token.decimals()
-            sell_symbol, sell_decimals = sell_token.symbol(), sell_token.decimals()
+            buy_symbol, buy_divisor = buy_token.symbol(), 10 ** buy_token.decimals()
+            sell_symbol, sell_divisor = sell_token.symbol(), 10 ** sell_token.decimals()
 
             try:
                 buy_token_id = self.cg_coin_list[buy_symbol.lower()]
                 sell_token_id = self.cg_coin_list[sell_symbol.lower()]
             except KeyError:
                 has_cg_price = False
-                cow_sell_rate = (buy_amount_after_fee / 10 ** buy_decimals) / (
-                    mantissa_sell / 10 ** sell_decimals
+                cow_sell_rate = (buy_amount / buy_divisor) / (
+                    mantissa_sell / sell_divisor
                 )
                 if not Confirm.ask(
                     f"No cg rate found. Continue with cow rate of {cow_sell_rate} {sell_symbol}/{buy_symbol}?"
@@ -122,22 +124,21 @@ class Cow:
                 buy_token_price = prices[buy_token_id]["usd"]
                 sell_token_price = prices[sell_token_id]["usd"]
 
-                cow_sell_rate = (buy_amount_after_fee / 10 ** buy_decimals) / (
-                    mantissa_sell / 10 ** sell_decimals
+                cow_sell_rate = (buy_amount / buy_divisor) / (
+                    mantissa_sell / sell_divisor
                 )
                 cg_sell_rate = (
-                    (
-                        ((mantissa_sell / 10 ** sell_decimals) * sell_token_price)
-                        / buy_token_price
-                    )
-                    * coef
-                    / (mantissa_sell / 10 ** sell_decimals)
-                )
+                    ((mantissa_sell / sell_divisor) * sell_token_price)
+                    / buy_token_price
+                ) / (mantissa_sell / sell_divisor)
+
                 pct_diff = (cow_sell_rate - cg_sell_rate) / cg_sell_rate
 
                 if abs(pct_diff) > self.pct_diff_threshold:
-                    print(f"cow rate: {cow_sell_rate} {sell_symbol}/{buy_symbol}")
-                    print(f"cg rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
+                    print(
+                        f"cow rate (before slippage): {cow_sell_rate} {sell_symbol}/{buy_symbol}"
+                    )
+                    print(f"coingecko rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
                     direction = "lower" if pct_diff < 0 else "higher"
                     if not Confirm.ask(
                         f"cow rate is {direction} than cg by {round(abs(pct_diff), 2)}%, continue?"
@@ -158,8 +159,8 @@ class Cow:
                 if naive_quote[1] > buy_amount_after_fee:
                     # manual sanity check whether onchain quote is acceptable
                     override = Confirm.ask(
-                        f"""cowswap quotes:\t{mantissa_sell / 10**sell_decimals} {sell_symbol} for {buy_amount_after_fee / 10**buy_decimals} {buy_symbol}
-    {naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_decimals} {sell_symbol} for {naive_quote[1] / 10**buy_decimals} {buy_symbol}
+                        f"""cowswap quotes:\t{mantissa_sell / sell_divisor} {sell_symbol} for {buy_amount_after_fee / buy_divisor} {buy_symbol}
+    {naive_quote[0]} quotes:\t{mantissa_sell / sell_divisor} {sell_symbol} for {naive_quote[1] / buy_divisor} {buy_symbol}
     pass {naive_quote[0]}'s quote to cowswap instead?"""
                     )
                     if override:
