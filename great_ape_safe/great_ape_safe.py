@@ -191,8 +191,6 @@ class GreatApeSafe(ApeSafe):
             safe_tx, receipt = self._set_safe_tx_gas(
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
-        if tenderly:
-            self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if debank:
             self._debank_pre_execution(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
@@ -201,6 +199,8 @@ class GreatApeSafe(ApeSafe):
             pprint(safe_tx.__dict__)
         if hasattr(self, "snapshot"):
             self.print_snapshot(csv_destination)
+        if tenderly:
+            self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if post:
             self.post_transaction(safe_tx)
 
