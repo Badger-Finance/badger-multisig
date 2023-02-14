@@ -127,7 +127,7 @@ class Cow:
                     mantissa_sell / 1e18
                 )
                 cg_sell_rate = (
-                    (((mantissa_sell / 1e18) * sell_token_price) / buy_token_price)
+                    (((mantissa_sell / 10 ** sell_decimals) * sell_token_price) / buy_token_price)
                     * coef
                     / (mantissa_sell / 1e18)
                 )
