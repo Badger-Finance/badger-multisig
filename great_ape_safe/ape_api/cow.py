@@ -33,8 +33,7 @@ class Cow:
 
         # determine api url based on current chain id and `prod` parameter
         chain_label = {1: "mainnet", 4: "rinkeby", 100: "xdai"}
-        prefix = "https://api.cow.fi/" if prod else "https://barn.api.cow.fi/"
-        self.api_url = f"{prefix}{chain_label[chain.id]}/api/v1/"
+        self.api_url = f"https://api.cow.fi/{chain_label[chain.id]}/api/v1/"
 
         self.cg = CoinGeckoAPI()
         self.cg_coin_list = {k["symbol"]: k["id"] for k in self.cg.get_coins_list()}
@@ -137,8 +136,8 @@ class Cow:
                 pct_diff = (cow_sell_rate - cg_sell_rate) / cg_sell_rate
 
                 if abs(pct_diff) > self.pct_diff_threshold:
-                    print(f"cow rate: {cow_sell_rate} {buy_symbol}/{sell_symbol}")
-                    print(f"cg rate: {cg_sell_rate} {buy_symbol}/{sell_symbol}")
+                    print(f"cow rate: {cow_sell_rate} {sell_symbol}/{buy_symbol}")
+                    print(f"cg rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
                     direction = "lower" if pct_diff < 0 else "higher"
                     if not Confirm.ask(
                         f"cow rate is {direction} than cg by {round(abs(pct_diff), 2)}%, continue?"
@@ -205,29 +204,30 @@ class Cow:
             ):
                 raise
 
-        r = requests.post(self.api_url + "orders", json=order_payload)
-        if not r.ok:
-            r.raise_for_status()
+        if self.prod:
+            r = requests.post(self.api_url + "orders", json=order_payload)
+            if not r.ok:
+                r.raise_for_status()
 
-        order_uid = r.json()
-        print("ORDER RESPONSE")
-        pprint(order_uid)
-        print("")
+            order_uid = r.json()
+            print("ORDER RESPONSE")
+            pprint(order_uid)
+            print("")
 
-        # dump order to json and add staging label if necessary
-        path = "logs/trading/prod/" if self.prod else "logs/trading/staging/"
-        os.makedirs(path, exist_ok=True)
-        with open(f"{path}{order_uid}.json", "w+") as f:
-            f.write(json.dumps(order_payload))
+            # dump order to json and add staging label if necessary
+            path = "logs/trading/prod/"
+            os.makedirs(path, exist_ok=True)
+            with open(f"{path}{order_uid}.json", "w+") as f:
+                f.write(json.dumps(order_payload))
 
-        if origin != self.safe.address:
-            # can only sign if origin is safe
-            return order_payload, order_uid
+            if origin != self.safe.address:
+                # can only sign if origin is safe
+                return order_payload, order_uid
 
-        # pre-approve the order on-chain, as set by `signingScheme`: presign
-        # (otherwise signature would go in api order payload)
-        # https://docs.cow.fi/smart-contracts/settlement-contract/signature-schemes
-        self.settlement.setPreSignature(order_uid, True)
+            # pre-approve the order on-chain, as set by `signingScheme`: presign
+            # (otherwise signature would go in api order payload)
+            # https://docs.cow.fi/smart-contracts/settlement-contract/signature-schemes
+            self.settlement.setPreSignature(order_uid, True)
 
     def allow_relayer(self, asset, mantissa):
         """
