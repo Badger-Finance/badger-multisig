@@ -124,7 +124,7 @@ class Cow:
                 sell_token_price = prices[sell_token_id]["usd"]
 
                 cow_sell_rate = (buy_amount_after_fee / 10 ** buy_decimals) / (
-                    mantissa_sell / 1e18
+                    mantissa_sell / 10 ** sell_decimals
                 )
                 cg_sell_rate = (
                     (((mantissa_sell / 10 ** sell_decimals) * sell_token_price) / buy_token_price)
