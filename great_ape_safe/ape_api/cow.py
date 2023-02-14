@@ -99,7 +99,7 @@ class Cow:
             mantissa_buy = int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
-            buy_amount = int(fee_and_quote["quote"]["buyAmount"] * coef)
+            buy_amount = int(fee_and_quote["quote"]["buyAmount"])
             buy_amount_after_fee = int(buy_amount * coef)
 
             has_cg_price = True
