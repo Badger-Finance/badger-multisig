@@ -141,7 +141,7 @@ class Cow:
                     print(f"coingecko rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
                     direction = "lower" if pct_diff < 0 else "higher"
                     if not Confirm.ask(
-                        f"cow rate is {direction} than cg by {round(abs(pct_diff), 2)}%, continue?"
+                        f"cow rate is {direction} than cg by {round(abs(pct_diff * 100), 2)}%, continue?"
                     ):
                         raise
             try:
