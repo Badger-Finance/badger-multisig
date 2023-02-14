@@ -111,7 +111,7 @@ class Cow:
             except KeyError:
                 has_cg_price = False
                 cow_sell_rate = (buy_amount_after_fee / 10 ** buy_decimals) / (
-                    mantissa_sell / 1e18
+                    mantissa_sell / 10 ** sell_decimals
                 )
                 if not Confirm.ask(
                     f"No cg rate found. Continue with cow rate of {cow_sell_rate} {sell_symbol}/{buy_symbol}?"
