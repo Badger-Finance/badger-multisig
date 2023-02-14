@@ -129,13 +129,13 @@ class Cow:
                 cg_sell_rate = (
                     (((mantissa_sell / 10 ** sell_decimals) * sell_token_price) / buy_token_price)
                     * coef
-                    / (mantissa_sell / 1e18)
+                    / (mantissa_sell / 10 ** sell_decimals)
                 )
                 pct_diff = (cow_sell_rate - cg_sell_rate) / cg_sell_rate
 
                 if abs(pct_diff) > self.pct_diff_threshold:
-                    print(f"cow rate: {cow_sell_rate} {sell_symbol}/{buy_symbol}")
-                    print(f"cg rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
+                    print(f"cow rate: {cow_sell_rate} {buy_symbol}/{sell_symbol}")
+                    print(f"cg rate: {cg_sell_rate} {buy_symbol}/{sell_symbol}")
                     direction = "lower" if pct_diff < 0 else "higher"
                     if not Confirm.ask(
                         f"cow rate is {direction} than cg by {round(abs(pct_diff), 2)}%, continue?"
