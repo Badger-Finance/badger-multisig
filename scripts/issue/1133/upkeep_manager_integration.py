@@ -58,8 +58,8 @@ def initial_setup_and_testing(sim=False):
 
     upkeep_manager.addMember(r.drippers.tree_2022_q2, "TreeDripper2022Q2", 400_000, 0)
 
+    upkeep_manager_snap.print_snapshot()
     if not sim:
-        upkeep_manager_snap.print_snapshot()
         techops.post_safe_tx(call_trace=True)
 
 
@@ -100,14 +100,14 @@ def register_members_in_manager(sim=False):
             techops.chainlink.keeper_registry_v1_1.withdrawFunds(
                 upkeep_id, upkeep_manager
             )
-            upkeep_manager.addMember(member_address, name, gas_limit, 0)
         else:
             member_address, gas_limit = techops.chainlink.keeper_registry.getUpkeep(
                 upkeep_id
             )[0:2]
             techops.chainlink.keeper_registry.withdrawFunds(upkeep_id, upkeep_manager)
-            # https://etherscan.io/address/0x4c02f0160dc0387b13bcb5e1728c780649e109ac#code#F16#L166
-            upkeep_manager.addMember(member_address, name, gas_limit, 0)
+
+        # https://etherscan.io/address/0x4c02f0160dc0387b13bcb5e1728c780649e109ac#code#F16#L166
+        upkeep_manager.addMember(member_address, name, gas_limit, 0)
 
     upkeep_manager.setRoundsTopUp(INITIAL_ROUNDS_TOP_UP)
 
