@@ -36,8 +36,11 @@ techops_signers = list(
 # print them in terminal for visibilitys
 C.print(techops_signers)
 
-# NOTE: TBD guardian backups
-GUARDIAN_BACKUPS = [r.badger_wallets.guardian_backups.ops_executor7]
+GUARDIAN_BACKUPS = [
+    r.badger_wallets.guardian_backups.ops_executor7,
+    r.badger_wallets.guardian_backups.defender1,
+    r.badger_wallets.guardian_backups.defender2,
+]
 DEVELOPER_ROLE_MEMBERS = list(techops_signers + GUARDIAN_BACKUPS)
 
 # https://github.com/Badger-Finance/badger-multisig/issues/1139#issue-1584654926
@@ -81,9 +84,6 @@ def sim():
     elif chain_id == 42161:
         # 1. dev_multisig_deprecated -> grant role `ADMIN_ROLE` in guardian to dev_multisig
         deprecated_dev_granting(sim=True)
-    elif chain_id == 137:
-        # 1. eoa -> grant role `ADMIN_ROLE` in guardian to dev_multisig
-        eoa_granting()
     # 2. sim atomic tx
     main("dev.badgerdao.eth", sim=True)
 
@@ -128,17 +128,6 @@ def deprecated_dev_granting(sim=False):
     C.print(
         f"Calldata for granting ADMIN_ROLE to dev_msig=[blue]{calldata_grant_role}[/blue]. Target:[blue]{guardian.address}[/blue]\n"
     )
-
-
-def eoa_granting():
-    dev = accounts.at(r.badger_wallets.ops_deployer, force=True)
-
-    registry = Contract(r.registry_v2)
-    guardian = Contract(registry.get("guardian"))
-    keeper_acl = Contract(registry.get("keeperAccessControl"))
-
-    guardian.grantRole(DEFAULT_ADMIN_ROLE, dev_msig, {"from": dev})
-    keeper_acl.grantRole(DEFAULT_ADMIN_ROLE, dev_msig, {"from": dev})
 
 
 def main(safe_ens, sim=False):

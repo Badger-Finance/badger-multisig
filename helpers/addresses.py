@@ -102,6 +102,8 @@ ADDRESSES_ETH = {
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
         "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
         "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         },
         "_deprecated": {
@@ -736,6 +738,8 @@ ADDRESSES_POLYGON = {
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         },
         "_deprecated": {
@@ -802,6 +806,8 @@ ADDRESSES_ARBITRUM = {
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
         "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         },
         "_deprecated": {
@@ -982,6 +988,8 @@ ADDRESSES_FANTOM = {
         "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
         "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
         "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         },
         "_deprecated": {
@@ -1042,6 +1050,8 @@ ADDRESSES_OPTIMISM = {
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
         },
         "_deprecated": {
