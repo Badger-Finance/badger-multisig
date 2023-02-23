@@ -199,7 +199,7 @@ class GreatApeSafe(ApeSafe):
             pprint(safe_tx.__dict__)
         if hasattr(self, "snapshot"):
             self.print_snapshot(csv_destination)
-        if tenderly:
+        if tenderly and not skip_preview:
             self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if post:
             self.post_transaction(safe_tx)
