@@ -103,6 +103,11 @@ ADDRESSES_ETH = {
         "rewardsEscrow": "0xBE838aE7f6Ba97e7Eb545a3f43eE96FfBb3184DC",
         "gas_station": "0x04C0205b9D900a49597d9a0345aEAD6D73307C3B",
         "upkeep_manager": "0x4c02f0160Dc0387b13bCb5e1728C780649E109Ac",
+        "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
+            "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        },
         "_deprecated": {
             "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
             "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
@@ -736,6 +741,11 @@ ADDRESSES_POLYGON = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
+        "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
+            "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        },
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
@@ -799,6 +809,11 @@ ADDRESSES_ARBITRUM = {
         "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
+        "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
+            "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        },
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
@@ -976,6 +991,11 @@ ADDRESSES_FANTOM = {
         "keeperAccessControl": "0x0680b32b52C5ca8C731490c0C576337058f39337",
         "devProxyAdmin": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF",
         "guardian": "0x576DFDEc454792773dD26a781177CF998aA832E3",
+        "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
+            "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        },
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
@@ -1033,6 +1053,11 @@ ADDRESSES_OPTIMISM = {
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
         "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
         "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
+        "guardian_backups": {
+            "defender1": "0x4666e94300429C6d3340449bC828E4218F360672",
+            "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
+            "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+        },
         "_deprecated": {
             "ops_deployer6": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
