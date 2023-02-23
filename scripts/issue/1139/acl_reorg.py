@@ -33,7 +33,7 @@ DEVELOPER_ROLE = web3.solidityKeccak(["string"], ["DEVELOPER_ROLE"]).hex()
 techops_signers = list(
     interface.IGnosisSafe_v1_3_0(r.badger_wallets.techops_multisig).getOwners()
 )
-# print them in terminal for visibilitys
+# print them in terminal for visibility
 C.print(techops_signers)
 
 GUARDIAN_BACKUPS = [
@@ -41,7 +41,7 @@ GUARDIAN_BACKUPS = [
     r.badger_wallets.guardian_backups.defender1,
     r.badger_wallets.guardian_backups.defender2,
 ]
-DEVELOPER_ROLE_MEMBERS = list(techops_signers + GUARDIAN_BACKUPS)
+APPROVED_ACCOUNT_MEMBERS = set(techops_signers + GUARDIAN_BACKUPS)
 
 # https://github.com/Badger-Finance/badger-multisig/issues/1139#issue-1584654926
 TARGET_CONFIG_DEV_MSIG = {
@@ -58,7 +58,7 @@ TARGET_CONFIG_DEV_MSIG = {
     },
     "guardian": {
         DEFAULT_ADMIN_ROLE: r.badger_wallets.dev_multisig,
-        APPROVED_ACCOUNT_ROLE: DEVELOPER_ROLE_MEMBERS,
+        APPROVED_ACCOUNT_ROLE: APPROVED_ACCOUNT_MEMBERS,
     },
     "keeperAccessControl": {
         DEFAULT_ADMIN_ROLE: r.badger_wallets.dev_multisig,
@@ -131,13 +131,6 @@ def deprecated_dev_granting(sim=False):
 
 
 def main(safe_ens, sim=False):
-    # NOTE: before heading towards configuration, ensure current techops signers are in gas st for `MAINNET`
-    if chain.id == 1:
-        # watchlist in gas st
-        gas_st_watchlist = Contract(r.badger_wallets.gas_station).getWatchList()
-        for signer in techops_signers:
-            assert signer is gas_st_watchlist, f"Signer {signer} not in watchlist!"
-
     target_config, safe = (
         (TARGET_CONFIG_DEV_MSIG, dev_msig)
         if "dev.badgerdao.eth" == safe_ens
@@ -160,14 +153,15 @@ def main(safe_ens, sim=False):
                 with multicall:
                     members = [target.getRoleMember(role, i) for i in range(count)]
 
+                C.print(
+                    f"Role {role} in {contract_name} has {count} members, checking against target config...\n"
+                )
+
                 for addr in expected_addrs_per_setting:
                     if not target.hasRole(role, addr):
                         C.print(f"Grant role {role} in {contract_name} for {addr}\n")
                         target.grantRole(role, addr)
 
-                C.print(
-                    f"Role {role} in {contract_name} has {count} members, checking against target config...\n"
-                )
                 for member in members:
                     if not member is expected_addrs_per_setting:
                         C.print(f"Revoke role {role} in {contract_name} for {member}\n")
@@ -177,15 +171,15 @@ def main(safe_ens, sim=False):
                 with multicall:
                     members = [target.getRoleMember(role, i) for i in range(count)]
 
+                C.print(
+                    f"Role {role} in {contract_name} has {count} members, checking against target config...\n"
+                )
+
                 if not target.hasRole(role, expected_addrs_per_setting):
                     C.print(
                         f"Grant role {role} in {contract_name} for {expected_addrs_per_setting}\n"
                     )
                     target.grantRole(role, expected_addrs_per_setting)
-
-                C.print(
-                    f"Role {role} in {contract_name} has {count} members, checking against target config...\n"
-                )
 
                 for member in members:
                     if member != expected_addrs_per_setting:
