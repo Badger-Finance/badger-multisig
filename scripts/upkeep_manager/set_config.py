@@ -8,7 +8,7 @@ techops = GreatApeSafe(r.badger_wallets.techops_multisig)
 upkeep_manager = techops.contract(r.badger_wallets.upkeep_manager)
 
 
-def cancel_member(targert_member=r.safe_modules.treasury_voter.aura_auto_lock):
+def cancel_member(targert_member=None):
     """
     Cancels a member's Upkeep job
     """
@@ -20,7 +20,7 @@ def cancel_member(targert_member=r.safe_modules.treasury_voter.aura_auto_lock):
     techops.post_safe_tx()
 
 
-def set_min_rounds_topup(rounds=0):
+def set_min_rounds_topup(rounds=None):
     """
     Updates the value of `minRoundsTopUp`, which is used to decide if `UpkeepId` is underfunded
     """
@@ -32,7 +32,7 @@ def set_min_rounds_topup(rounds=0):
     techops.post_safe_tx()
 
 
-def set_rounds_topup(rounds=0):
+def set_rounds_topup(rounds=None):
     """
     Updates the value of `roundsTopUp`, which is used for decided
     how much rounds will be covered at least while topping-up
