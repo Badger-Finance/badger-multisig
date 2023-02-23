@@ -14,7 +14,7 @@ def cancel_member(targert_member=r.safe_modules.treasury_voter.aura_auto_lock):
     """
     members = upkeep_manager.getMembers()
     assert targert_member in members
-    
+
     upkeep_manager.cancelMemberUpkeep(targert_member)
 
     techops.post_safe_tx()
