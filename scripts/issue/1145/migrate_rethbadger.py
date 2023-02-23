@@ -22,9 +22,7 @@ def main():
 
     reth_before, badger_before = reth.balanceOf(vault), badger.balanceOf(vault)
 
-    vault.balancer.unstake_all_and_withdraw_all(
-        [reth, badger], bpt_badgerreth_old, unstake=False
-    )
+    vault.balancer.unstake_all_and_withdraw_all(pool=bpt_badgerreth_old, unstake=False)
     vault.print_snapshot()
 
     reth_to_deposit, badger_to_deposit = (
@@ -40,7 +38,6 @@ def main():
         pool_type="Weighted",
     )
 
-    # aura deposit fails; no aura pool id for new pool
     rewards_contract = vault.contract(vault.aura.get_pool_info(bpt_badgerreth_new)[3])
     bpt_bal = bpt_badgerreth_new.balanceOf(vault)
     vault.aura.deposit_all_and_stake(bpt_badgerreth_new)
