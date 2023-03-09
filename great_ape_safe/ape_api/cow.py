@@ -6,7 +6,6 @@ from pprint import pprint
 
 from brownie import Contract, chain, interface, web3
 from rich.prompt import Confirm
-import requests
 
 from helpers.addresses import registry
 
