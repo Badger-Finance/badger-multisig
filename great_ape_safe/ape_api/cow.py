@@ -6,7 +6,6 @@ from pprint import pprint
 
 from brownie import Contract, chain, interface, web3
 from rich.prompt import Confirm
-from pycoingecko import CoinGeckoAPI
 
 from helpers.addresses import registry
 
@@ -34,11 +33,15 @@ class Cow:
         # determine api url based on current chain id and `prod` parameter
         chain_label = {1: "mainnet", 4: "rinkeby", 100: "xdai"}
         self.api_url = f"https://api.cow.fi/{chain_label[chain.id]}/api/v1/"
-
-        self.cg = CoinGeckoAPI()
-        self.cg_coin_list = {k["symbol"]: k["id"] for k in self.cg.get_coins_list()}
+        self.cg_api_url = "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses={}&vs_currencies=usd"
 
         self.pct_diff_threshold = 0.05
+
+    def get_cg_price(self, address):
+        res = requests.get(self.cg_api_url.format(address))
+        res.raise_for_status()
+
+        return res.json()[address.lower()]["usd"]
 
     def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell, origin):
         # make sure mantissa is an integer
@@ -107,8 +110,8 @@ class Cow:
             sell_symbol, sell_divisor = sell_token.symbol(), 10 ** sell_token.decimals()
 
             try:
-                buy_token_id = self.cg_coin_list[buy_symbol.lower()]
-                sell_token_id = self.cg_coin_list[sell_symbol.lower()]
+                buy_token_price = self.get_cg_price(buy_token.address)
+                sell_token_price = self.get_cg_price(sell_token.address)
             except KeyError:
                 has_cg_price = False
                 cow_sell_rate = (buy_amount / buy_divisor) / (
@@ -120,10 +123,6 @@ class Cow:
                     raise
 
             if has_cg_price:
-                prices = self.cg.get_price([buy_token_id, sell_token_id], "usd")
-                buy_token_price = prices[buy_token_id]["usd"]
-                sell_token_price = prices[sell_token_id]["usd"]
-
                 cow_sell_rate = (buy_amount / buy_divisor) / (
                     mantissa_sell / sell_divisor
                 )
