@@ -39,6 +39,9 @@ ADDRESSES_ETH = {
             "aura_auto_lock": "0xC485aFD2f3252cCB69d1c94392701d51013D42eB",
             "bvecvx_divest": "0xdA0E386E69bad82C7A18cB03F65a59f001d9DEde",
         },
+        "treasury_vault": {
+            "univ3_harvester": "0xF6fA1F20CCD69aD3B7B3a0b8743e6a213521b2E5",
+        },
     },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
