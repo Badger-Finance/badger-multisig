@@ -16,6 +16,26 @@ COEF = 0.95
 DEADLINE = 60 * 60 * 12
 
 
+def wd_unlocked_aura():
+    voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
+    vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
+
+    aura = voter.contract(r.treasury_tokens.AURA)
+    vlAURA = voter.contract(r.aura.vlAURA)
+
+    voter.take_snapshot([aura]), vault.take_snapshot([aura])
+
+    unlockable = vlAURA.lockedBalances(voter)[1]
+    if unlockable > 0:
+        relock = False
+        vlAURA.processExpiredLocks(relock)
+
+        aura.transfer(vault, aura.balanceOf(voter))
+
+        vault.print_snapshot()
+        voter.post_safe_tx()
+
+
 def main(aura_pct_lock="0."):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     voter = GreatApeSafe(r.badger_wallets.treasury_voter_multisig)
