@@ -295,7 +295,7 @@ class UniV3:
         for file in os.listdir(directory):
             file_name = os.fsdecode(file)
 
-            if token_id in file_name:
+            if str(token_id) in file_name:
                 data = open(f"scripts/TCL/positionData/{file_name}")
                 json_file = json.load(data)
                 tx_detail_json = Path(f"scripts/TCL/positionData/{file_name}")
