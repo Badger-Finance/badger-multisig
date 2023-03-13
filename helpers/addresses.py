@@ -634,6 +634,14 @@ ADDRESSES_ETH = {
         "storage": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
     },
     "one_inch": {"router": "0x111111125434b319222CdBf8C261674aDB56F3ae"},
+    "bunni": {
+        "hub": "0xb5087F95643A9a4069471A28d32C569D9bd57fE4",
+        "gauge_factory": "0x822E5828Cb9C0e2aD2DC5035577E6d63B672D0e2",
+        "minter": "0xF087521Ffca0Fa8A43F5C445773aB37C5f574DA0",
+        "LIT": "0xfd0205066521550D7d7AB19DA8F72bb004b4C341",
+        "oLIT": "0x627fee87d0D9D2c55098A06ac805Db8F98B158Aa",
+        "oLIT_oracle": "0x9d43ccb1aD7E0081cC8A8F1fd54D16E54A637E30",
+    },
 }
 
 ADDRESSES_IBBTC = {
