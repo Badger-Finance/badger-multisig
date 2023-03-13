@@ -91,8 +91,7 @@ class Bunni(UniV3):
         bunni_token_addr = self.hub.getBunniToken(self.bunni_key)
 
         if bunni_token_addr == ZERO_ADDRESS:
-            print("Deploying new bunni token...")
-            bunni_token_addr = self.hub.deployBunniToken(self.bunni_key).return_value
+            bunni_token_addr = self.deploy_bunni_token()
 
         bunni_token = interface.IBunniToken(bunni_token_addr)
 
@@ -142,6 +141,9 @@ class Bunni(UniV3):
 
         assert amount0 > 0 and amount1 > 0
 
+    def deploy_bunni_token(self):
+        return self.hub.deployBunniToken(self.bunni_key).return_value
+
     def deploy_gauge(self, relative_weight_cap):
         # https://etherscan.io/address/0x822e5828cb9c0e2ad2dc5035577e6d63b672d0e2#code#L1284
         return self.gauge_factory.create(
@@ -149,7 +151,7 @@ class Bunni(UniV3):
         ).return_value
 
     def stake(self, gauge_addr, mantissa=None, claim=True, destination=None):
-        destination = destination or self.safe
+        destination = destination or self.safe.address
         gauge = self.safe.contract(gauge_addr)
         bunni_token = interface.IBunniToken(gauge.lp_token(), owner=self.safe.account)
 

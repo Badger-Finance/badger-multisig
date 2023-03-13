@@ -54,7 +54,13 @@ def test_stake_and_unstake(safe, bunni):
     assert bunni_token.balanceOf(safe) < before_bunni
     assert gauge.balanceOf(safe) > before_gauge
 
+    before_bunni = bunni_token.balanceOf(safe)
+    before_gauge = gauge.balanceOf(safe)
+
     bunni.unstake(gauge_addr)
+
+    assert gauge.balanceOf(safe) < before_gauge
+    assert bunni_token.balanceOf(safe) > before_bunni
 
 
 def test_compound(bunni, badger, wbtc):
