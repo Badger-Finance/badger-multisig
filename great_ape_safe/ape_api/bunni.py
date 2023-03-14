@@ -116,9 +116,9 @@ class Bunni(UniV3):
         )
 
         if amount0 > 0:
-            token0.approve(self.hub, amount0), token0.approve(self.router, amount0)
+            token0.approve(self.hub, amount0)
         if amount1 > 0:
-            token1.approve(self.hub, amount1), token1.approve(self.router, amount1)
+            token1.approve(self.hub, amount1)
 
         bal_before = bunni_token.balanceOf(destination)
 
