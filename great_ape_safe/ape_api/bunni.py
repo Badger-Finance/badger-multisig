@@ -69,6 +69,7 @@ class Bunni(UniV3):
         )
 
     def ranges_to_ticks(self, pool_addr, range0, range1):
+        # ranges should be in terms of token0/token1
         pool = interface.IUniswapV3Pool(pool_addr)
         token0 = self.safe.contract(pool.token0())
         token1 = self.safe.contract(pool.token1())
@@ -83,6 +84,9 @@ class Bunni(UniV3):
         return lower_tick, upper_tick
 
     def deposit(self, amount0, amount1, destination=None):
+        """
+        deposit `amount0` and `amount1` of token0 and token1 at into its bunni token
+        """
         destination = destination or self.safe.address
         pool = interface.IUniswapV3Pool(self.bunni_key.pool)
         token0 = self.safe.contract(pool.token0())
@@ -123,6 +127,9 @@ class Bunni(UniV3):
         return bunni_token_addr
 
     def withdraw(self, shares=None, destination=None):
+        """
+        withdraw `shares` of bunni_tokens and reeceive the underlying token0 and token1
+        """
         destination = destination or self.safe.address
         bunni_token_addr = self.hub.getBunniToken(self.bunni_key)
         assert bunni_token_addr != ZERO_ADDRESS
@@ -151,6 +158,10 @@ class Bunni(UniV3):
         ).return_value
 
     def stake(self, gauge_addr, mantissa=None, claim=True, destination=None):
+        """
+        stake `mantissa` amount of bunni token into its corresponding
+        `gauge_addr`
+        """
         destination = destination or self.safe.address
         gauge = self.safe.contract(gauge_addr)
         bunni_token = interface.IBunniToken(gauge.lp_token(), owner=self.safe.account)
@@ -168,6 +179,10 @@ class Bunni(UniV3):
         assert gauge.balanceOf(destination) == mantissa + gauge_before
 
     def unstake(self, gauge_addr, mantissa=None, claim=True):
+        """
+        unstake `mantissa` shares from `gauge_addr` and receive the
+        corresponding bunni token
+        """
         gauge = self.safe.contract(gauge_addr)
         bunni_token = interface.IBunniToken(gauge.lp_token(), owner=self.safe.account)
 
@@ -183,6 +198,8 @@ class Bunni(UniV3):
         if discount_pct < self.olit_discount_pct_threshold:
             assert Confirm.ask(f"WARNING: oLIT discount is: {discount_pct}%. Proceed?")
         before_olit = self.olit.balanceOf(self.safe)
+
+        # https://etherscan.io/address/0xF087521Ffca0Fa8A43F5C445773aB37C5f574DA0#code#L452
         self.minter.mint(gauge_addr)
 
         assert self.olit.balanceOf(self.safe) > before_olit
@@ -194,17 +211,25 @@ class Bunni(UniV3):
         init_twap_value = 1e19
         multiplier = self.olit_oracle.multiplier()
         min_price_denom = 10000
-        expected_payment_amount = (
-            mantissa * init_twap_value * multiplier / min_price_denom
-        )
 
-        assert mantissa > 0
-        assert expected_payment_amount > 0
+        # TODO: fix this calc, currently calc is too high
+        # expected_payment_amount = ((mantissa * ((init_twap_value * multiplier) / min_price_denom))/1e18)
+        # assert expected_payment_amount >= payment_token.balanceOf(self.safe)
+        expected_payment_amount = payment_token.balanceOf(self.safe)
+
+        olit_before = self.olit.balanceOf(self.safe)
+        lit_before = self.lit.balanceOf(self.safe)
 
         payment_token.approve(self.olit, expected_payment_amount)
+
         # https://etherscan.io/address/0x627fee87d0D9D2c55098A06ac805Db8F98B158Aa#code#F5#L140
         self.olit.exercise(mantissa, expected_payment_amount, self.safe)
 
+        assert self.olit.balanceOf(self.safe) == olit_before - mantissa
+        assert self.lit.balanceOf(self.safe) == lit_before + mantissa
+
     def compound(self):
         # https://etherscan.io/address/0xb5087F95643A9a4069471A28d32C569D9bd57fE4#code#L2481
-        self.hub.compound(self.bunni_key)
+        added_liq = self.hub.compound(self.bunni_key).return_value[0]
+
+        assert added_liq > 0

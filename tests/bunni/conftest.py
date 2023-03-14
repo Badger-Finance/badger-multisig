@@ -39,14 +39,14 @@ def wbtc(safe):
 @pytest.fixture
 def weth(safe):
     weth = interface.ERC20(r.treasury_tokens.WETH, owner=safe.account)
-    MintableForkToken(weth.address)._mint_for_testing(safe, 10 * 10 ** 18)
+    MintableForkToken(weth.address)._mint_for_testing(safe, 100 * 10 ** 18)
     return weth
 
 
 @pytest.fixture
 def aura(safe):
     aura = interface.ERC20(r.treasury_tokens.AURA, owner=safe.account)
-    MintableForkToken(aura.address)._mint_for_testing(safe, 1000 * 10 ** 18)
+    MintableForkToken(aura.address)._mint_for_testing(safe, 10000 * 10 ** 18)
     return aura
 
 

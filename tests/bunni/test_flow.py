@@ -70,7 +70,4 @@ def test_compound(bunni, badger, wbtc):
     bunni.swap([badger, wbtc], 1000e18)
     bunni.swap([wbtc, badger], 0.1e8)
 
-    compounded = bunni.hub.compound(bunni.bunni_key).events["Compound"]
-
-    assert compounded["amount0"] > 0
-    assert compounded["amount1"] > 0
+    bunni.compound()
