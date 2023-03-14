@@ -46,3 +46,16 @@ pipenv install
 |`treasuryvoter.badgerdao.eth`|Convex voting weight allocated to the treasury as per [BIP 87](https://forum.badger.finance/t/bip-87-bvecvx-restructure-voting-strategy-and-emissions-revised-with-community-feedback/5521)|Mainnet: `0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b` ([Etherscan](https://etherscan.io/address/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b/), [Zapper](https://zapper.fi/account/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [DeBank](https://debank.com/profile/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b))|
 |`payments.badgerdao.eth`|Financial txs such as payments to contractors, contributors, expenses, bounties, advisors, etc.|Mainnet: `0x30a9c1D258F6c2D23005e6450E72bDD42C541105` ([Etherscan](https://etherscan.io/address/0x30a9c1D258F6c2D23005e6450E72bDD42C541105), [Gnosis Safe](https://gnosis-safe.io/app/eth:0x30a9c1D258F6c2D23005e6450E72bDD42C541105/), [Zapper](https://zapper.fi/account/0x30a9c1D258F6c2D23005e6450E72bDD42C541105), [DeBank](https://debank.com/profile/0x30a9c1D258F6c2D23005e6450E72bDD42C541105))|
 |`ibbtc.badgerdao.eth`|Internal wallet which claims yield on behalf of the [ibBTC contract](https://etherscan.io/address/0x41671BA1abcbA387b9b2B752c205e22e916BE6e3), only to redistribute it again as emissions.|Mainnet: `0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8` ([Etherscan](https://etherscan.io/address/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8/), [Zapper](https://zapper.fi/account/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [DeBank](https://debank.com/profile/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8))|
+
+## Treasury Signers
+
+| Multisig | Signer | Address |
+|-|-|-|
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | petrovska | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | Spadaboom | `0x54cF9dF9dCd78E470AB7CB892D7bFbE114c025fc` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | 1500$Badger | `0x66496eBB9d848C6A8F19612a6Dd10E09954532D0` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | [gosuto](https://github.com/gosuto-inzasheru/) | `0x6C6238309f4f36DFF9942e655A678bbd4EA3BC5d` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | po | `0x9c8C8bcD625Ed2903823b0b60DeaB2D70B92aFd9` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | lipp | `0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | dapp | `0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF` |
+| `treasuryvault.badgerdao.eth`</br>`treasuryops.badgerdao.eth`</br>`treasuryvoter.badgerdao.eth` | [saj](https://github.com/sajanrajdev) | `0xD10617AE4Da733d79eF0371aa44cd7fa74C41f6B` |
