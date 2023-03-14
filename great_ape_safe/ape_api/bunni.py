@@ -86,7 +86,7 @@ class Bunni(UniV3):
 
     def deposit(self, amount0, amount1, destination=None):
         """
-        deposit `amount0` and `amount1` of token0 and token1 into its 
+        deposit `amount0` and `amount1` of token0 and token1 into its
         bunni token
         """
         destination = destination or self.safe.address
@@ -230,7 +230,7 @@ class Bunni(UniV3):
         expected_payment_amount = math.ceil(
             (self.olit.balanceOf(self.safe) * price) / 1e18
         )
-        
+
         assert payment_token.balanceOf(self.safe) >= expected_payment_amount
 
         olit_before = self.olit.balanceOf(self.safe)
