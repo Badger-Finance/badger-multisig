@@ -44,6 +44,7 @@ class Bunni(UniV3):
         self.lit = interface.ERC20(r.bunni.LIT, owner=self.safe.account)
         self.olit = interface.IOptionsToken(r.bunni.oLIT, owner=self.safe.account)
         self.olit_oracle = interface.IBalancerOracle(r.bunni.oLIT_oracle)
+        self.lens = interface.IBunniLens(r.bunni.lens)
 
         self.set_bunni_key(bunni_token_addr, pool_addr, range0, range1)
 
@@ -85,7 +86,8 @@ class Bunni(UniV3):
 
     def deposit(self, amount0, amount1, destination=None):
         """
-        deposit `amount0` and `amount1` of token0 and token1 at into its bunni token
+        deposit `amount0` and `amount1` of token0 and token1 into its 
+        bunni token
         """
         destination = destination or self.safe.address
         pool = interface.IUniswapV3Pool(self.bunni_key.pool)
@@ -128,7 +130,8 @@ class Bunni(UniV3):
 
     def withdraw(self, shares=None, destination=None):
         """
-        withdraw `shares` of bunni_tokens and reeceive the underlying token0 and token1
+        withdraw `shares` of bunni_tokens and receive the underlying
+        token0 and token1
         """
         destination = destination or self.safe.address
         bunni_token_addr = self.hub.getBunniToken(self.bunni_key)
@@ -138,9 +141,18 @@ class Bunni(UniV3):
             destination
         )
 
+        ppfs_token0, ppfs_token1 = self.lens.pricePerFullShare(self.bunni_key)[1:]
+        min_amount0 = (shares * ppfs_token0 / 1e18) * self.slippage
+        min_amount1 = (shares * ppfs_token1 / 1e18) * self.slippage
+
         # TODO: calc min amounts
         withdraw_params = WithdrawParams(
-            self.bunni_key, destination, shares, 0, 0, chain.time() + self.deadline
+            self.bunni_key,
+            destination,
+            shares,
+            min_amount0,
+            min_amount1,
+            chain.time() + self.deadline,
         )
 
         # https://etherscan.io/address/0xb5087F95643A9a4069471A28d32C569D9bd57fE4#code#L2409
@@ -194,6 +206,9 @@ class Bunni(UniV3):
         assert bunni_token.balanceOf(self.safe) == bunni_before + mantissa
 
     def claim_rewards(self, gauge_addr):
+        """
+        claim oLIT rewards from `gauge_addr`
+        """
         discount_pct = self.olit_oracle.multiplier() / 100
         if discount_pct < self.olit_discount_pct_threshold:
             assert Confirm.ask(f"WARNING: oLIT discount is: {discount_pct}%. Proceed?")
@@ -205,20 +220,22 @@ class Bunni(UniV3):
         assert self.olit.balanceOf(self.safe) > before_olit
 
     def exercise_olit(self, mantissa=None):
+        """
+        exercise oLIT option and receive LIT
+        """
         payment_token = self.safe.contract(self.olit.paymentToken())
         mantissa = mantissa or self.olit.balanceOf(self.safe)
-        # calc reference: https://github.com/timeless-fi/options-token/blob/c3a50b11fb0387b4f1d3b0dadbd3e6e93d44c686/test/OptionsToken.t.sol#L81
-        init_twap_value = 1e19
-        multiplier = self.olit_oracle.multiplier()
-        min_price_denom = 10000
 
-        # TODO: fix this calc, currently calc is too high
-        # expected_payment_amount = ((mantissa * ((init_twap_value * multiplier) / min_price_denom))/1e18)
-        # assert expected_payment_amount >= payment_token.balanceOf(self.safe)
-        expected_payment_amount = payment_token.balanceOf(self.safe)
+        price = self.olit_oracle.getPrice()
+        expected_payment_amount = math.ceil(
+            (self.olit.balanceOf(self.safe) * price) / 1e18
+        )
+        
+        assert payment_token.balanceOf(self.safe) >= expected_payment_amount
 
         olit_before = self.olit.balanceOf(self.safe)
         lit_before = self.lit.balanceOf(self.safe)
+        weth_before = payment_token.balanceOf(self.safe)
 
         payment_token.approve(self.olit, expected_payment_amount)
 
@@ -227,8 +244,14 @@ class Bunni(UniV3):
 
         assert self.olit.balanceOf(self.safe) == olit_before - mantissa
         assert self.lit.balanceOf(self.safe) == lit_before + mantissa
+        assert (
+            payment_token.balanceOf(self.safe) == weth_before - expected_payment_amount
+        )
 
     def compound(self):
+        """
+        compounds all fees back into the uniswap pool
+        """
         # https://etherscan.io/address/0xb5087F95643A9a4069471A28d32C569D9bd57fE4#code#L2481
         added_liq = self.hub.compound(self.bunni_key).return_value[0]
 

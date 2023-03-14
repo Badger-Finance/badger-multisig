@@ -353,7 +353,7 @@ class UniV3:
             (
                 token0.address,
                 token1.address,
-                3000,
+                pool.fee(),
                 lower_tick,
                 upper_tick,
                 token0_amount,
