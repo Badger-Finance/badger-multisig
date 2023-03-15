@@ -169,7 +169,7 @@ class Balancer:
             underlyings_checksummed = [
                 Web3.toChecksumAddress(x) for x in sorted_underlyings
             ]
-            return underlyings_checksummed, sorted_mantissas
+            return underlyings_checksummed, list(sorted_mantissas)
         else:
             sorted_tokens = sorted([x.lower() for x in underlyings])
             return [Web3.toChecksumAddress(x) for x in sorted_tokens]
@@ -198,6 +198,7 @@ class Balancer:
         is_eth=False,
         destination=None,
         pool_type=None,
+        initial_deposit=False,
     ):
         # given underlyings and their amounts, deposit and stake `underlyings`
 
@@ -206,30 +207,36 @@ class Balancer:
             [x.address for x in underlyings], mantissas=mantissas
         )
 
-        if pool:
-            pool_id = pool.getPoolId()
+        if initial_deposit:
+            # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#encoding-how-do-i-encode
+            data_encoded = eth_abi.encode_abi(["uint256", "uint256[]"], [0, mantissas])
+
         else:
-            pool_id = self.find_pool_for_underlyings(list(underlyings))
-            pool = self.safe.contract(self.vault.getPool(pool_id)[0])
+            if pool:
+                pool_id = pool.getPoolId()
+            else:
+                pool_id = self.find_pool_for_underlyings(list(underlyings))
+                pool = self.safe.contract(self.vault.getPool(pool_id)[0])
 
-        tokens, reserves, _ = self.vault.getPoolTokens(pool_id)
+            _, reserves, _ = self.vault.getPoolTokens(pool_id)
 
-        pool_type = pool_type if pool_type else self.pool_type(pool_id)
+            pool_type = pool_type if pool_type else self.pool_type(pool_id)
 
-        if pool_type == "Stable":
-            raise NotImplementedError(self.deposit_and_stake)
-            bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
-        else:
-            bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(
-                pool, reserves, mantissas
+            if pool_type == "Stable":
+                # wip
+                # bpt_out = StableMath.calcBptOutGivenExactTokensIn(pool, reserves, mantissas)
+                bpt_out = 1
+            else:
+                bpt_out = WeightedMath.calc_bpt_out_given_exact_tokens_in(
+                    pool, reserves, mantissas
+                )
+
+            min_bpt_out = int(bpt_out * (1 - self.max_slippage))
+
+            # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#encoding-how-do-i-encode
+            data_encoded = eth_abi.encode_abi(
+                ["uint256", "uint256[]", "uint256"], [1, mantissas, min_bpt_out]
             )
-
-        min_bpt_out = int(bpt_out * (1 - self.max_slippage))
-
-        # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#encoding-how-do-i-encode
-        data_encoded = eth_abi.encode_abi(
-            ["uint256", "uint256[]", "uint256"], [1, mantissas, min_bpt_out]
-        )
 
         if is_eth:
             underlyings = list(underlyings)
@@ -239,7 +246,8 @@ class Balancer:
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins#arguments-explained
         request = (underlyings, mantissas, data_encoded, False)
 
-        for i, token in enumerate(tokens):
+        # approve underlying tokens for deposit
+        for i, token in enumerate(underlyings):
             if token != ZERO_ADDRESS:
                 token = interface.ERC20(token, owner=self.safe.account)
                 token.approve(self.vault, mantissas[i])
@@ -285,6 +293,7 @@ class Balancer:
 
         pool_recipient = self.safe if stake else destination
         balance_before = pool.balanceOf(pool_recipient)
+        assert len(request[0]) == len(request[1])
 
         # https://dev.balancer.fi/resources/joins-and-exits/pool-joins
         self.vault.joinPool(pool_id, self.safe, pool_recipient, request)
