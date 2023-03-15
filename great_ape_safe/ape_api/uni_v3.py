@@ -45,7 +45,7 @@ class UniV3:
         )
 
         # constant helpers
-        self.Q128 = 2**128
+        self.Q128 = 2 ** 128
         self.deadline = 60 * 180
         self.slippage = 0.98
 
@@ -82,6 +82,15 @@ class UniV3:
             multihop.append(path[i + 1].address)
 
         return multihop
+
+    def _encode_path(self, multihop_path):
+        path_encoded = b""
+        for item in multihop_path:
+            if web3.isAddress(item):
+                path_encoded += web3.toBytes(hexstr=item)
+            else:
+                path_encoded += int.to_bytes(item, 3, byteorder="big")
+        return path_encoded
 
     def burn_token_id(self, token_id, burn_nft=False):
         """
@@ -286,7 +295,7 @@ class UniV3:
         for file in os.listdir(directory):
             file_name = os.fsdecode(file)
 
-            if token_id in file_name:
+            if str(token_id) in file_name:
                 data = open(f"scripts/TCL/positionData/{file_name}")
                 json_file = json.load(data)
                 tx_detail_json = Path(f"scripts/TCL/positionData/{file_name}")
@@ -324,8 +333,8 @@ class UniV3:
         decimals_diff = token1.decimals() - token0.decimals()
 
         # params for minting method
-        lower_tick = int(math.log((1 / range1) * 10**decimals_diff, BASE) // 60 * 60)
-        upper_tick = int(math.log((1 / range0) * 10**decimals_diff, BASE) // 60 * 60)
+        lower_tick = int(math.log((1 / range1) * 10 ** decimals_diff, BASE) // 60 * 60)
+        upper_tick = int(math.log((1 / range0) * 10 ** decimals_diff, BASE) // 60 * 60)
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
@@ -446,22 +455,14 @@ class UniV3:
         destination = self.safe.address if not destination else destination
 
         token_in, token_out = path[0], path[-1]
-
         balance_token_out = token_out.balanceOf(self.safe)
 
         multihop_path = self._build_multihop_path(path)
+        path_encoded = self._encode_path(multihop_path)
 
-        path_encoded = b""
-        for item in multihop_path:
-            if web3.isAddress(item):
-                path_encoded += web3.toBytes(hexstr=item)
-            else:
-                path_encoded += int.to_bytes(item, 3, byteorder="big")
-
-        min_out = self.quoter.quoteExactInput.call(
-            path_encoded,
-            mantissa,
-        ) * (1 - self.slippage)
+        min_out = self.quoter.quoteExactInput.call(path_encoded, mantissa) * (
+            1 - self.slippage
+        )
 
         params = (
             path_encoded,
@@ -478,3 +479,16 @@ class UniV3:
         assert token_out.balanceOf(destination) >= balance_token_out + min_out
 
         return tx.return_value
+
+    def get_amount_out(self, path, mantissa_in, multihop_path=None):
+        if not multihop_path:
+            multihop_path = self._build_multihop_path(path)
+
+        path_encoded = self._encode_path(multihop_path)
+
+        out = self.quoter.quoteExactInput.call(
+            path_encoded,
+            mantissa_in,
+        )
+
+        return int(out * 10_000 // (10_000 + ((1 - self.slippage) * 1000)))

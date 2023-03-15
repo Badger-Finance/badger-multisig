@@ -51,7 +51,7 @@ class Badger:
 
         # misc
         self.api_url = "https://api.badger.com/v2/"
-        self.api_hh_url = f"https://hhand.xyz/reward/{chain.id}/"
+        self.api_hh_url = f"https://api.hiddenhand.finance/reward/{chain.id}/"
 
     def claim_all(self, json_file_path=None):
         """
@@ -91,31 +91,34 @@ class Badger:
             amounts_claimable,
         )
 
-    def claim_bribes_votium(self, eligible_claims):
+    def claim_bribes_votium(self):
         """
         accepts a dict with `keys` being equal to the directory names used in
         the official votium repo (https://github.com/oo-00/Votium) and its
         `values` being the respective token's address.
         """
-        merkle_stash = interface.IMultiMerkleStash(
-            r.votium.multiMerkleStash, owner=self.safe.account
+        merkle_stash = self.safe.contract(
+            r.votium.multiMerkleStash, interface.IMultiMerkleStash
         )
         aggregate = {"tokens": [], "indexes": [], "amounts": [], "proofs": []}
-        for symbol, token_addr in eligible_claims.items():
+
+        with open("data/Votium/merkle/activeTokens.json") as fp:
+            active_tokens = json.load(fp)
+        for token in active_tokens:
             directory = "data/Votium/merkle/"
             try:
-                last_json = sorted(os.listdir(directory + symbol))[-1]
+                last_json = sorted(os.listdir(directory + token["symbol"]))[-1]
             except FileNotFoundError:
                 # given token is not a votium reward
                 continue
-            with open(directory + symbol + f"/{last_json}") as f:
+            with open(directory + token["symbol"] + f"/{last_json}") as f:
                 try:
                     leaf = json.load(f)["claims"][self.strat_bvecvx.address]
                 except KeyError:
                     # no claimables for the strat for this particular token
                     continue
-                if not merkle_stash.isClaimed(token_addr, leaf["index"]):
-                    aggregate["tokens"].append(token_addr)
+                if not merkle_stash.isClaimed(token["value"], leaf["index"]):
+                    aggregate["tokens"].append(token["value"])
                     aggregate["indexes"].append(leaf["index"])
                     aggregate["amounts"].append(int(leaf["amount"], 0))
                     aggregate["proofs"].append(leaf["proof"])
@@ -138,7 +141,7 @@ class Badger:
         """
         self.safe.init_convex()
         claimables = []
-        for token_addr in eligible_claims.values():
+        for token_addr in eligible_claims:
             claimable = self.safe.convex.cvx_extra_rewards.claimableRewards(
                 self.strat_bvecvx.address, token_addr
             )
@@ -154,7 +157,7 @@ class Badger:
         address = address if address else self.safe.address
         url = self.api_hh_url + address
         r = requests.get(url)
-        if not r.ok: 
+        if not r.ok:
             r.raise_for_status()
         return r.json()["data"]
 
@@ -299,6 +302,12 @@ class Badger:
                 sett.approveContractAccess(candidate_addr)
                 assert sett.approved(candidate_addr)
                 return True
+            elif hasattr(sett, "strategist"):
+                if sett.strategist() == self.safe.address:
+                    C.print(f"whitelisting {candidate_addr} on {sett_addr}...")
+                    sett.approveContractAccess(candidate_addr)
+                    assert sett.approved(candidate_addr)
+                    return True
             elif governor == self.timelock.address:
                 C.print(
                     f"whitelisting {candidate_addr} on {sett_addr} through timelock..."
@@ -410,9 +419,11 @@ class Badger:
         for label, addr in r.badger_wallets.items():
             min_bal = 2e18
             min_top_up = 0.5e18
-            if not label.startswith("ops_") or "multisig" in label:
+            if not label.startswith(tuple(["ops_", "upkeep_"])) or "multisig" in label:
                 continue
             if "executor" in label:
+                min_bal = 1e18
+            if label == "upkeep_manager":
                 min_bal = 1e18
             if label == "ops_botsquad":
                 min_bal = 5e18

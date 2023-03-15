@@ -50,13 +50,13 @@ def dogfood_curve_convex():
     if CRV.balanceOf(SAFE) > 0:
         SAFE.curve.swap(CRV, CVXCRV, CRV.balanceOf(SAFE))
     if CVXCRV.balanceOf(SAFE) > 0:
-        CVXCRV.approve(BCVXCRV, 2**256 - 1)
+        CVXCRV.approve(BCVXCRV, 2 ** 256 - 1)
         BCVXCRV.depositAll()
         CVXCRV.approve(BCVXCRV, 0)
     if BCVX.balanceOf(SAFE) > 0:
         BCVX.withdraw(BCVX.balanceOf(SAFE))
     if CVX.balanceOf(SAFE) > 0:
-        CVX.approve(BVECVX, 2**256 - 1)
+        CVX.approve(BVECVX, 2 ** 256 - 1)
         BVECVX.depositAll()
         CVX.approve(BVECVX, 0)
 

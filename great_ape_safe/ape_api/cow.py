@@ -32,10 +32,18 @@ class Cow:
 
         # determine api url based on current chain id and `prod` parameter
         chain_label = {1: "mainnet", 4: "rinkeby", 100: "xdai"}
-        prefix = "https://api.cow.fi/" if prod else "https://barn.api.cow.fi/"
-        self.api_url = f"{prefix}{chain_label[chain.id]}/api/v1/"
+        self.api_url = f"https://api.cow.fi/{chain_label[chain.id]}/api/v1/"
+        self.cg_api_url = "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses={}&vs_currencies=usd"
 
-    def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell):
+        self.pct_diff_threshold = 0.05
+
+    def get_cg_price(self, address):
+        res = requests.get(self.cg_api_url.format(address))
+        res.raise_for_status()
+
+        return res.json()[address.lower()]["usd"]
+
+    def get_fee_and_quote(self, sell_token, buy_token, mantissa_sell, origin):
         # make sure mantissa is an integer
         mantissa_sell = int(mantissa_sell)
 
@@ -43,19 +51,21 @@ class Cow:
         fee_and_quote_payload = {
             "sellToken": sell_token.address,
             "buyToken": buy_token.address,
-            "sellAmountBeforeFee": mantissa_sell,
+            "sellAmountBeforeFee": str(mantissa_sell),
+            "kind": "sell",
+            "from": origin,
         }
         print("FEE AND QUOTE PAYLOAD:")
         pprint(fee_and_quote_payload)
         print("")
 
-        r = requests.get(
-            self.api_url + "feeAndQuote/sell", params=fee_and_quote_payload
-        )
+        r = requests.post(self.api_url + "quote", json=fee_and_quote_payload)
+        if not r.ok:
+            r.raise_for_status()
+
         print("FEE AND QUOTE RESPONSE:")
         pprint(r.json())
         print("")
-        assert r.ok and r.status_code == 200
 
         return r.json()
 
@@ -78,17 +88,61 @@ class Cow:
         # make sure mantissa is an integer
         mantissa_sell = int(mantissa_sell)
 
+        assert mantissa_sell > 0
+
         # get the fee and exact amount to buy after fee
-        fee_and_quote = self.get_fee_and_quote(sell_token, buy_token, mantissa_sell)
+        fee_and_quote = self.get_fee_and_quote(
+            sell_token, buy_token, mantissa_sell, origin
+        )
 
         # grab values needed to post the order to the api
-        fee_amount = int(fee_and_quote["fee"]["amount"])
+        fee_amount = int(fee_and_quote["quote"]["feeAmount"])
         if mantissa_buy:
             # overwrite quote in case order has a limit
             mantissa_buy = int(mantissa_buy)
             buy_amount_after_fee = mantissa_buy
         else:
-            buy_amount_after_fee = int(int(fee_and_quote["buyAmountAfterFee"]) * coef)
+            buy_amount = int(fee_and_quote["quote"]["buyAmount"])
+            buy_amount_after_fee = int(buy_amount * coef)
+
+            has_cg_price = True
+            buy_symbol, buy_divisor = buy_token.symbol(), 10 ** buy_token.decimals()
+            sell_symbol, sell_divisor = sell_token.symbol(), 10 ** sell_token.decimals()
+
+            try:
+                buy_token_price = self.get_cg_price(buy_token.address)
+                sell_token_price = self.get_cg_price(sell_token.address)
+            except KeyError:
+                has_cg_price = False
+                cow_sell_rate = (buy_amount / buy_divisor) / (
+                    mantissa_sell / sell_divisor
+                )
+                if not Confirm.ask(
+                    f"No cg rate found. Continue with cow rate of {cow_sell_rate} {sell_symbol}/{buy_symbol}?"
+                ):
+                    raise
+
+            if has_cg_price:
+                cow_sell_rate = (buy_amount / buy_divisor) / (
+                    mantissa_sell / sell_divisor
+                )
+                cg_sell_rate = (
+                    ((mantissa_sell / sell_divisor) * sell_token_price)
+                    / buy_token_price
+                ) / (mantissa_sell / sell_divisor)
+
+                pct_diff = (cow_sell_rate - cg_sell_rate) / cg_sell_rate
+
+                if abs(pct_diff) > self.pct_diff_threshold:
+                    print(
+                        f"cow rate (before slippage): {cow_sell_rate} {sell_symbol}/{buy_symbol}"
+                    )
+                    print(f"coingecko rate: {cg_sell_rate} {sell_symbol}/{buy_symbol}")
+                    direction = "lower" if pct_diff < 0 else "higher"
+                    if not Confirm.ask(
+                        f"cow rate is {direction} than cg by {round(abs(pct_diff * 100), 2)}%, continue?"
+                    ):
+                        raise
             try:
                 processor = Contract(origin)
             except ValueError:
@@ -104,8 +158,8 @@ class Cow:
                 if naive_quote[1] > buy_amount_after_fee:
                     # manual sanity check whether onchain quote is acceptable
                     override = Confirm.ask(
-                        f"""cowswap quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {buy_amount_after_fee / 10**buy_token.decimals()} {buy_token.symbol()}
-    {naive_quote[0]} quotes:\t{mantissa_sell / 10**sell_token.decimals()} {sell_token.symbol()} for {naive_quote[1] / 10**buy_token.decimals()} {buy_token.symbol()}
+                        f"""cowswap quotes:\t{mantissa_sell / sell_divisor} {sell_symbol} for {buy_amount_after_fee / buy_divisor} {buy_symbol}
+    {naive_quote[0]} quotes:\t{mantissa_sell / sell_divisor} {sell_symbol} for {naive_quote[1] / buy_divisor} {buy_symbol}
     pass {naive_quote[0]}'s quote to cowswap instead?"""
                     )
                     if override:
@@ -117,6 +171,10 @@ class Cow:
         # add deadline to current block timestamp
         deadline = chain.time() + deadline
 
+        # make sure long standing limit orders dont get tagged as "liquidity order"
+        if coef != 1 or mantissa_buy:
+            fee_amount = 0
+
         # submit order
         order_payload = {
             "sellToken": sell_token.address,
@@ -125,7 +183,7 @@ class Cow:
             "sellAmount": str(mantissa_sell - fee_amount),
             "buyAmount": str(buy_amount_after_fee),
             "validTo": deadline,
-            "appData": web3.keccak(text="great_ape_safe").hex(),
+            "appData": "0x2ab7ad46094d32adf4db9196c6a0a1de32cb030485e47bd5cb7a92b7306a7b99",  # https://explorer.cow.fi/appdata?tab=decode
             "feeAmount": str(fee_amount),
             "kind": "sell",
             "partiallyFillable": False,
@@ -146,27 +204,30 @@ class Cow:
             ):
                 raise
 
-        r = requests.post(f"{self.api_url}orders", json=order_payload)
-        order_uid = r.json()
-        print("ORDER RESPONSE")
-        pprint(order_uid)
-        print("")
-        assert r.ok and r.status_code == 201
+        if self.prod:
+            r = requests.post(self.api_url + "orders", json=order_payload)
+            if not r.ok:
+                r.raise_for_status()
 
-        # dump order to json and add staging label if necessary
-        path = "logs/trading/prod/" if self.prod else "logs/trading/staging/"
-        os.makedirs(path, exist_ok=True)
-        with open(f"{path}{order_uid}.json", "w+") as f:
-            f.write(json.dumps(order_payload))
+            order_uid = r.json()
+            print("ORDER RESPONSE")
+            pprint(order_uid)
+            print("")
 
-        if origin != self.safe.address:
-            # can only sign if origin is safe
-            return order_payload, order_uid
+            # dump order to json and add staging label if necessary
+            path = "logs/trading/prod/"
+            os.makedirs(path, exist_ok=True)
+            with open(f"{path}{order_uid}.json", "w+") as f:
+                f.write(json.dumps(order_payload))
 
-        # pre-approve the order on-chain, as set by `signingScheme`: presign
-        # (otherwise signature would go in api order payload)
-        # https://docs.cow.fi/smart-contracts/settlement-contract/signature-schemes
-        self.settlement.setPreSignature(order_uid, True)
+            if origin != self.safe.address:
+                # can only sign if origin is safe
+                return order_payload, order_uid
+
+            # pre-approve the order on-chain, as set by `signingScheme`: presign
+            # (otherwise signature would go in api order payload)
+            # https://docs.cow.fi/smart-contracts/settlement-contract/signature-schemes
+            self.settlement.setPreSignature(order_uid, True)
 
     def allow_relayer(self, asset, mantissa):
         """
@@ -197,6 +258,7 @@ class Cow:
         mantissa_sell is exact and order is submitted at quoted rate
         """
         assert type(chunks) == int
+
         self.allow_relayer(asset_sell, mantissa_sell)
         mantissa_sell = int(Decimal(mantissa_sell) / chunks)
         for n in range(chunks):

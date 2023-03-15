@@ -81,4 +81,5 @@ interface IBadgerRegistryV2 {
           uint8 status,
           string memory metadata
     );
+  function versions(uint256) external view returns (string memory);
 }

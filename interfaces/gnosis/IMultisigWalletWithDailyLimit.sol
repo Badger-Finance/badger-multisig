@@ -32,4 +32,6 @@ interface IMultisigWalletWithDailyLimit {
             bytes memory,
             bool
         );
+
+    function transactionCount() external view returns (uint256);
 }

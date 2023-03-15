@@ -1,20 +1,14 @@
 import pytest
 from brownie import chain
 
+
 # Set up gives each test Convex LP tokens
 @pytest.fixture(scope="function", autouse=True)
 def deposited(safe, curve, convex, threepool_lp, USDC):
-    amount = 10000 * 10 ** USDC.decimals()
+    amount = 50000 * 10 ** USDC.decimals()
     curve.deposit(threepool_lp, amount, USDC)
     amount = threepool_lp.balanceOf(safe)
     convex.deposit(threepool_lp, amount)
-
-
-def test_claim_all(safe, convex, convex_threepool_reward):
-    before_bal_rewards = convex_threepool_reward.balanceOf(safe)
-    convex.claim_all()
-
-    assert convex_threepool_reward.balanceOf(safe) > before_bal_rewards
 
 
 def test_stake(safe, convex, convex_rewards, threepool_lp, convex_threepool_lp):
@@ -33,6 +27,15 @@ def test_stake_all(safe, convex, convex_rewards, threepool_lp, convex_threepool_
 
     assert convex_threepool_lp.balanceOf(safe) == 0
     assert convex_rewards.balanceOf(safe) > before_bal_rewards
+
+
+def test_claim_all(safe, convex, convex_threepool_reward):
+    chain.sleep(100)
+    chain.mine()
+    before_bal_rewards = convex_threepool_reward.balanceOf(safe)
+    convex.claim_all()
+
+    assert convex_threepool_reward.balanceOf(safe) > before_bal_rewards
 
 
 def test_unstake(

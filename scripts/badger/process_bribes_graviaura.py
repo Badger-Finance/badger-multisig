@@ -1,4 +1,4 @@
-from brownie import interface, web3
+from brownie import Contract, interface, web3
 from pycoingecko import CoinGeckoAPI
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -7,7 +7,7 @@ from helpers.addresses import r
 COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
-COEF = 0.9825
+COEF = 0.96
 
 # time after which cowswap order expires
 DEADLINE = 60 * 60 * 3
@@ -20,7 +20,7 @@ AURA_SHARE = 1 - BADGER_SHARE
 SAFE = GreatApeSafe(r.badger_wallets.techops_multisig)
 SAFE.init_badger()
 SAFE.init_cow(prod=COW_PROD)
-PROCESSOR = SAFE.contract(r.aura_bribes_processor)
+PROCESSOR = SAFE.contract(r.aura_bribes_processor, from_explorer=True)
 
 # tokens involved during processing
 WETH = interface.IWETH9(r.treasury_tokens.WETH, owner=SAFE.account)
@@ -46,12 +46,14 @@ def claim_and_sell_for_weth(claim_only=False):
     # likely these assets will be present in the rounds for processing
     # NOTE: badger is directly emitted by the strat to tree
     # NOTE: aura is sent to processor, but should not be sold for weth
-    for addr, mantissa in claimed.items():
+    for addr in claimed:
         if addr == "0x0":
             # $eth. strat will auto convert to $weth
             continue
         addr = web3.toChecksumAddress(addr)
+        # TODO: skip if fee > ~10% total amount
         if addr != BADGER.address and addr != AURA.address:
+            mantissa = str(int(Contract(addr).balanceOf(PROCESSOR)))
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
                 PROCESSOR,
                 sell_token=SAFE.contract(addr),
@@ -133,16 +135,18 @@ def sell_weth():
         #  1. Swap WETH for AURA and deposit to GRAVI_AURA
         #  2. Swap WETH directly for GRAVI_AURA
         buy_amount_aura = int(
-            SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share)["buyAmountAfterFee"]
+            SAFE.cow.get_fee_and_quote(WETH, AURA, aura_share, SAFE.address)["quote"][
+                "buyAmount"
+            ]
         )
         buy_amount_aura_in_gravi_aura = (
             buy_amount_aura * GRAVI_AURA.totalSupply() // GRAVI_AURA.balance()
         )
 
         buy_amount_gravi_aura = int(
-            SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share)[
-                "buyAmountAfterFee"
-            ]
+            SAFE.cow.get_fee_and_quote(WETH, GRAVI_AURA, aura_share, SAFE.address)[
+                "quote"
+            ]["buyAmount"]
         )
 
         if buy_amount_aura_in_gravi_aura > buy_amount_gravi_aura:

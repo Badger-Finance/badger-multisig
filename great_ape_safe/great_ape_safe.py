@@ -1,5 +1,6 @@
 import os
 import re
+import requests
 from contextlib import redirect_stdout
 from datetime import datetime
 from decimal import Decimal
@@ -7,35 +8,14 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions, web3
+from brownie import Contract, network, ETH_ADDRESS, exceptions, web3, chain
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
 from tqdm import tqdm
 from web3.exceptions import BadFunctionCallOutput
 
-from great_ape_safe.ape_api.aave import Aave
-from great_ape_safe.ape_api.anyswap import Anyswap
-from great_ape_safe.ape_api.aura import Aura
-from great_ape_safe.ape_api.badger import Badger
-from great_ape_safe.ape_api.balancer import Balancer
-from great_ape_safe.ape_api.chainlink import Chainlink
-from great_ape_safe.ape_api.compound import Compound
-from great_ape_safe.ape_api.convex import Convex
-from great_ape_safe.ape_api.cow import Cow
-from great_ape_safe.ape_api.curve import Curve
-from great_ape_safe.ape_api.curve_v2 import CurveV2
-from great_ape_safe.ape_api.euler import Euler
-from great_ape_safe.ape_api.maker import Maker
-from great_ape_safe.ape_api.opolis import Opolis
-from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
-from great_ape_safe.ape_api.rari import Rari
-from great_ape_safe.ape_api.snapshot import Snapshot
-from great_ape_safe.ape_api.solidly import Solidly
-from great_ape_safe.ape_api.spookyswap import SpookySwap
-from great_ape_safe.ape_api.sushi import Sushi
-from great_ape_safe.ape_api.uni_v2 import UniV2
-from great_ape_safe.ape_api.uni_v3 import UniV3
+from great_ape_safe.ape_api import ape_apis
 from helpers.chaindata import labels
 
 
@@ -57,80 +37,14 @@ class GreatApeSafe(ApeSafe):
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
 
-    def init_all(self):
-        for method in self.__dir__():
-            if method.startswith("init_") and method != "init_all":
-                try:
-                    getattr(self, method)()
-                except exceptions.ContractNotFound:
-                    # different chain
-                    pass
-
-    def init_aave(self):
-        self.aave = Aave(self)
-
-    def init_anyswap(self):
-        self.anyswap = Anyswap(self)
-
-    def init_aura(self):
-        self.aura = Aura(self)
-
-    def init_badger(self):
-        self.badger = Badger(self)
-
-    def init_balancer(self):
-        self.balancer = Balancer(self)
-
-    def init_chainlink(self):
-        self.chainlink = Chainlink(self)
-
-    def init_compound(self):
-        self.compound = Compound(self)
-
-    def init_convex(self):
-        self.convex = Convex(self)
-
-    def init_cow(self, prod=False):
-        self.cow = Cow(self, prod)
-
-    def init_curve(self):
-        self.curve = Curve(self)
-
-    def init_curve_v2(self):
-        self.curve_v2 = CurveV2(self)
-
-    def init_euler(self):
-        self.euler = Euler(self)
-
-    def init_maker(self):
-        self.maker = Maker(self)
-
-    def init_opolis(self):
-        self.opolis = Opolis(self)
-
-    def init_pancakeswap_v2(self):
-        self.pancakeswap_v2 = PancakeswapV2(self)
-
-    def init_rari(self):
-        self.rari = Rari(self)
-
-    def init_snapshot(self, proposal_id):
-        self.snapshot = Snapshot(self, proposal_id)
-
-    def init_solidly(self):
-        self.solidly = Solidly(self)
-
-    def init_spookyswap(self):
-        self.spookyswap = SpookySwap(self)
-
-    def init_sushi(self):
-        self.sushi = Sushi(self)
-
-    def init_uni_v2(self):
-        self.uni_v2 = UniV2(self)
-
-    def init_uni_v3(self):
-        self.uni_v3 = UniV3(self)
+        for class_name, cls in ape_apis.items():
+            setattr(
+                self,
+                f"init_{class_name}",
+                lambda *args, cn=class_name, c=cls, **kwargs: setattr(
+                    self, cn, c(self, *args, **kwargs)
+                ),
+            )
 
     def take_snapshot(self, tokens):
         C.print(f"snapshotting {self.address}...")
@@ -226,7 +140,7 @@ class GreatApeSafe(ApeSafe):
             safe_tx.safe_tx_gas = 0
         if log_name:
             self._dump_log(safe_tx, receipt, log_name)
-        return safe_tx
+        return safe_tx, receipt
 
     def _dump_log(self, safe_tx, receipt, log_name):
         # logs .preview's events and call traces to log file, plus prettified
@@ -261,6 +175,8 @@ class GreatApeSafe(ApeSafe):
         csv_destination=None,
         gas_coef=1.5,
         safe_tx=None,
+        tenderly=True,
+        debank=False,
     ):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
@@ -272,15 +188,19 @@ class GreatApeSafe(ApeSafe):
         elif not safe_tx:
             safe_tx = self.multisend_from_receipts()
         if not skip_preview:
-            safe_tx = self._set_safe_tx_gas(
+            safe_tx, receipt = self._set_safe_tx_gas(
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
+        if debank:
+            self._debank_pre_execution(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
             pprint(safe_tx.__dict__)
         if hasattr(self, "snapshot"):
             self.print_snapshot(csv_destination)
+        if tenderly and not skip_preview:
+            self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if post:
             self.post_transaction(safe_tx)
 
@@ -331,3 +251,66 @@ class GreatApeSafe(ApeSafe):
             return Contract.from_explorer(address, owner=self.account)
         else:
             return Contract(address, owner=self.account)
+
+    def _generate_tenderly_simulation(self, receipt, gas):
+        """
+        docs: https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
+        """
+        header = {
+            "Content-Type": "application/json",
+            "X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY"),
+        }
+        api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
+        tx_payload = {
+            "network_id": str(chain.id),
+            "from": receipt.sender.address,
+            "to": self.address,
+            "input": receipt.input,
+            "gas": 1_500_000 if gas == 0 else gas,
+            "save": True,
+            "save_if_fails": True,
+            # storage ref: https://github.com/safe-global/safe-contracts/blob/main/contracts/libraries/SafeStorage.sol
+            "state_objects": {self.address: {"storage": {"0x04": "0x01"}}},
+        }
+        r = requests.post(api_url, headers=header, json=tx_payload)
+        r.raise_for_status()
+
+        print(
+            f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
+        )
+
+    def _debank_pre_execution(self, receipt, gas):
+        """
+        docs: https://docs.open.debank.com/en/reference/api-pro-reference/wallet#enhanced-transaction-pre-execution
+        TransactionObject format: https://docs.open.debank.com/en/reference/api-models/transactionobject
+        """
+        header = {
+            "content-type": "application/json",
+            "AccessKey": os.getenv("DEBANK_API_KEY"),
+        }
+        api_url = "https://pro-openapi.debank.com/v1/wallet/pre_exec_tx"
+
+        max_gas_fee = hex(int(2.1e10))
+        tx_object = {
+            "tx": {
+                "chainId": chain.id,
+                "from": receipt.sender.address,
+                "to": self.address,
+                "value": hex(receipt.value),
+                "data": receipt.input,
+                "gas": hex(1_500_000 if gas == 0 else gas),
+                "maxFeePerGas": max_gas_fee,
+                "maxPriorityFeePerGas": max_gas_fee,
+                "nonce": hex(receipt.nonce),
+            }
+        }
+        r = requests.post(
+            api_url,
+            headers=header,
+            json=tx_object,
+        )
+        # TODO: it will revert with GS025 have not find a way
+        # to by-pass: https://github.com/safe-global/safe-contracts/blob/main/contracts/Safe.sol#L282
+        # since here the threshold storage variable cannot be override currently
+        r.raise_for_status()
+        print(r.json())

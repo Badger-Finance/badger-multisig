@@ -28,4 +28,6 @@ node_modules
 audit_owners_mapper.py
 data/Convex_EPS
 data/Votium
+data/badger/acl_roles_audit
 logs/
+great_ape_safe/ape_api/helpers/balancer/pools.json
