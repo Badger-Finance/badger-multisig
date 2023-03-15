@@ -92,6 +92,42 @@ class UniV3:
                 path_encoded += int.to_bytes(item, 3, byteorder="big")
         return path_encoded
 
+    def calc_min_amounts(
+        self, pool, token0_amount, token1_amount, lower_tick, upper_tick
+    ):
+        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
+        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
+        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
+
+        amount0Min = 0
+        amount1Min = 0
+
+        liquidity = maxLiquidityForAmounts(
+            sqrtRatioX96,
+            sqrtRatio_lower_tick,
+            sqrtRatio_upper_tick,
+            token0_amount,
+            token1_amount,
+        )
+
+        if currentTick < lower_tick:
+            # calc amount0Min
+            amount0Min = getAmount0Delta(
+                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+            )
+            amount1Min = 0
+        elif currentTick < upper_tick:
+            # calc both
+            amount0Min = getAmount0Delta(sqrtRatioX96, sqrtRatio_upper_tick, liquidity)
+            amount1Min = getAmount1Delta(sqrtRatio_lower_tick, sqrtRatioX96, liquidity)
+        else:
+            # calculate amount1Min
+            amount0Min = 0
+            amount1Min = getAmount1Delta(
+                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+            )
+        return amount0Min, amount1Min
+
     def burn_token_id(self, token_id, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
@@ -221,42 +257,13 @@ class UniV3:
 
         # calcs for min amounts
         # for now leave it just for our wbtc/badger pool "hardcoded" as for sometime doubt we will operate other univ3 pool
-        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
-        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
-        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
-
-        amount0Min = 0
-        amount1Min = 0
-
-        liquidity = maxLiquidityForAmounts(
-            sqrtRatioX96,
-            sqrtRatio_lower_tick,
-            sqrtRatio_upper_tick,
-            token0_amount_topup,
-            token1_amount_topup,
+        amount0Min, amount1Min = self.calc_min_amounts(
+            pool, token0_amount_topup, token1_amount_topup, lower_tick, upper_tick
         )
-
-        if currentTick < lower_tick:
-            # calc amount0Min
-            amount0Min = getAmount0Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
-            amount1Min = 0
-        elif currentTick < upper_tick:
-            # calc both
-            amount0Min = getAmount0Delta(sqrtRatioX96, sqrtRatio_upper_tick, liquidity)
-            amount1Min = getAmount1Delta(sqrtRatio_lower_tick, sqrtRatioX96, liquidity)
-        else:
-            # calculate amount1Min
-            amount0Min = 0
-            amount1Min = getAmount1Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
 
         # printout before increasing
         print(f"Token ID: {token_id} status position prior to increase liquidity...")
         position_before = print_position(self.nonfungible_position_manager, token_id)
-        print(f" ===== Current tick: {currentTick} ===== ")
         print(
             f" ===== amount0Min={amount0Min/10**token0.decimals()}, amount1Min={amount1Min/10**token1.decimals()} ===== \n"
         )
@@ -338,44 +345,15 @@ class UniV3:
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
-        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
-        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
-        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
-
-        amount0Min = 0
-        amount1Min = 0
-
-        liquidity = maxLiquidityForAmounts(
-            sqrtRatioX96,
-            sqrtRatio_lower_tick,
-            sqrtRatio_upper_tick,
-            token0_amount,
-            token1_amount,
+        amount0Min, amount1Min = self.calc_min_amounts(
+            pool, token0_amount, token1_amount, lower_tick, upper_tick
         )
-
-        if currentTick < lower_tick:
-            # calc amount0Min
-            amount0Min = getAmount0Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
-            amount1Min = 0
-        elif currentTick < upper_tick:
-            # calc both
-            amount0Min = getAmount0Delta(sqrtRatioX96, sqrtRatio_upper_tick, liquidity)
-            amount1Min = getAmount1Delta(sqrtRatio_lower_tick, sqrtRatioX96, liquidity)
-        else:
-            # calculate amount1Min
-            amount0Min = 0
-            amount1Min = getAmount1Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
-
         # MintParams: https://docs.uniswap.org/protocol/reference/periphery/interfaces/INonfungiblePositionManager#mintparams
         tx = self.nonfungible_position_manager.mint(
             (
                 token0.address,
                 token1.address,
-                3000,
+                pool.fee(),
                 lower_tick,
                 upper_tick,
                 token0_amount,
