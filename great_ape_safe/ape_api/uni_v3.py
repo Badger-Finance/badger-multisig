@@ -128,6 +128,20 @@ class UniV3:
             )
         return amount0Min, amount1Min
 
+    def get_amounts_for_liquidity(self, pool_addr, lower_tick, upper_tick):
+        pool = interface.IUniswapV3Pool(pool_addr)
+        liquidity = pool.liquidity()
+
+        sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
+        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
+        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
+
+        amount0, amount1 = getAmountsForLiquidity(
+            sqrtRatioX96, sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+        )
+
+        return liquidity, amount0, amount1
+
     def burn_token_id(self, token_id, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
@@ -139,13 +153,8 @@ class UniV3:
 
         pool = self._get_pool(position)
 
-        liquidity = position["liquidity"]
-        sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
-        sqrtRatio_lower_tick = getSqrtRatioAtTick(position["tickLower"])
-        sqrtRatio_upper_tick = getSqrtRatioAtTick(position["tickUpper"])
-
-        amount0Min, amount1Min = getAmountsForLiquidity(
-            sqrtRatioX96, sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+        liquidity, amount0Min, amount1Min = self.get_amounts_for_liquidity(
+            pool.address, position["tickLower"], position["tickUpper"]
         )
 
         # requires to remove all liquidity first
