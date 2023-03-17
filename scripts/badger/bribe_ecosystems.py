@@ -54,6 +54,7 @@ def main(
     badger_bribe_in_balancer=0,
     badger_bribe_in_votium=0,
     badger_bribe_in_frax=0,
+    badger_bribe_in_bunni=0,
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -62,6 +63,7 @@ def main(
         "balancer": badger_bribe_in_balancer,
         "votium": badger_bribe_in_votium,
         "frax": badger_bribe_in_frax,
+        "bunni": badger_bribe_in_bunni,
     }
     for k, v in bribes.items():
         try:
@@ -81,6 +83,7 @@ def main(
     )
     votium_briber = safe.contract(r.votium.bribe, interface.IVotiumBribe)
     frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IFraxBribe)
+    bunni_briber = safe.contract(r.hidden_hand.bunni_briber, interface.IBunniBribe)
 
     if bribes["aura"] > 0:
         assert aura_proposal_id
@@ -160,5 +163,12 @@ def main(
             badger,  # address token
             mantissa,  # uint256 amount
         )
+
+    if bribes["bunni"] > 0:
+        prop = web3.solidityKeccak(["address"], [r.bunni.badger_wbtc_bunni_gauge])
+        mantissa = int(bribes["bunni"] * Decimal(1e18))
+
+        badger.approve(bribe_vault, mantissa)
+        bunni_briber.depositBribeERC20(prop, badger, mantissa)
 
     safe.post_safe_tx()

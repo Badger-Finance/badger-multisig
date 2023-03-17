@@ -577,6 +577,7 @@ ADDRESSES_ETH = {
         "rewards_distributor": "0x0b139682D5C9Df3e735063f46Fb98c689540Cf3A",
         "aura_briber": "0x642c59937A62cf7dc92F70Fd78A13cEe0aa2Bd9c",
         "frax_briber": "0x123683885310851Ca29e83AE3FF3e2490D4420Cd",
+        "bunni_briber": "0x78C45fBDB71E7c0FbDfe49bDEFdACDcc4764336f",
     },
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
