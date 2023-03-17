@@ -54,10 +54,10 @@ The following is a list of all Treasury Council members and therefore the signer
 | Signer | Profiles | Address |
 |-|-|-|
 | petrovska | [GitHub](https://github.com/petrovska-petro) | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
-| Spadaboom | | `0x54cF9dF9dCd78E470AB7CB892D7bFbE114c025fc` |
-| 1500$Badger | | `0x66496eBB9d848C6A8F19612a6Dd10E09954532D0` |
+| Spadaboom | [Twitter](https://twitter.com/spadaboom1) | `0x54cF9dF9dCd78E470AB7CB892D7bFbE114c025fc` |
+| 1500$Badger | [Twitter](https://twitter.com/haal69k) | `0x66496eBB9d848C6A8F19612a6Dd10E09954532D0` |
 | gosuto | [GitHub](https://github.com/gosuto-inzasheru/) | `0x6C6238309f4f36DFF9942e655A678bbd4EA3BC5d` |
 | Po | | `0x9c8C8bcD625Ed2903823b0b60DeaB2D70B92aFd9` |
-| lipp | | `0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16` |
+| lipp | [Twitter](https://twitter.com/lipp_brian) | `0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16` |
 | dapp-whisperer | [GitHub](https://github.com/dapp-whisperer/) | `0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF` |
 | saj | [GitHub](https://github.com/sajanrajdev) | `0xD10617AE4Da733d79eF0371aa44cd7fa74C41f6B` |
