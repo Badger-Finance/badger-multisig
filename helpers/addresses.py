@@ -577,6 +577,7 @@ ADDRESSES_ETH = {
         "rewards_distributor": "0x0b139682D5C9Df3e735063f46Fb98c689540Cf3A",
         "aura_briber": "0x642c59937A62cf7dc92F70Fd78A13cEe0aa2Bd9c",
         "frax_briber": "0x123683885310851Ca29e83AE3FF3e2490D4420Cd",
+        "bunni_briber": "0x78C45fBDB71E7c0FbDfe49bDEFdACDcc4764336f",
     },
     "chainlink": {
         "feed_registry": "0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf",
@@ -645,6 +646,8 @@ ADDRESSES_ETH = {
         "oLIT": "0x627fee87d0D9D2c55098A06ac805Db8F98B158Aa",
         "oLIT_oracle": "0x9d43ccb1aD7E0081cC8A8F1fd54D16E54A637E30",
         "lens": "0xb73F303472C4fD4FF3B9f59ce0F9b13E47fbfD19",
+        "badger_wbtc_bunni_token": "0x6fd44d263B6b284e3383dD9Ba53D816024E82ADF",
+        "badger_wbtc_bunni_gauge": "0xFf780599310ccd337Da4D4804fE31A75c2a66a81",
     },
 }
 
