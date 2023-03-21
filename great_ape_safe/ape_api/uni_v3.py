@@ -183,8 +183,10 @@ class UniV3:
             self.collect_fee(token_id)
 
             # check that increase the balance off-chain
-            assert token0.balanceOf(self.safe.address) > token0_bal_init
-            assert token1.balanceOf(self.safe.address) > token1_bal_init
+            if position["tokensOwed0"] > 0:
+                assert token0.balanceOf(self.safe.address) > token0_bal_init
+            if position["tokensOwed1"] > 0:
+                assert token1.balanceOf(self.safe.address) > token1_bal_init
 
         # usually we do not burn the nft, as it is more efficient to leave it empty and fill it up as needed
         if burn_nft:
