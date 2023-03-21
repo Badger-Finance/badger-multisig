@@ -21,9 +21,10 @@ def wd_unlocked_aura():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
 
     aura = voter.contract(r.treasury_tokens.AURA)
+    badger = voter.contract(r.treasury_tokens.BADGER)
     vlAURA = voter.contract(r.aura.vlAURA)
 
-    voter.take_snapshot([aura]), vault.take_snapshot([aura])
+    voter.take_snapshot([aura, badger]), vault.take_snapshot([aura, badger])
 
     unlockable = vlAURA.lockedBalances(voter)[1]
     if unlockable > 0:
@@ -32,8 +33,11 @@ def wd_unlocked_aura():
 
         aura.transfer(vault, aura.balanceOf(voter))
 
-        vault.print_snapshot()
-        voter.post_safe_tx()
+    if badger.balanceOf(voter) > 0:
+        badger.transfer(vault, badger.balanceOf(voter))
+
+    vault.print_snapshot()
+    voter.post_safe_tx()
 
 
 def main(aura_pct_lock="0."):
