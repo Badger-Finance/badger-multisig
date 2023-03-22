@@ -128,9 +128,11 @@ class UniV3:
             )
         return amount0Min, amount1Min
 
-    def get_amounts_for_liquidity(self, pool_addr, lower_tick, upper_tick):
+    def get_amounts_for_liquidity(
+        self, pool_addr, lower_tick, upper_tick, liquidity=None
+    ):
         pool = interface.IUniswapV3Pool(pool_addr)
-        liquidity = pool.liquidity()
+        liquidity = liquidity or pool.liquidity()
 
         sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
         sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
@@ -154,7 +156,10 @@ class UniV3:
         pool = self._get_pool(position)
 
         liquidity, amount0Min, amount1Min = self.get_amounts_for_liquidity(
-            pool.address, position["tickLower"], position["tickUpper"]
+            pool.address,
+            position["tickLower"],
+            position["tickUpper"],
+            liquidity=position["liquidity"],
         )
 
         # requires to remove all liquidity first
