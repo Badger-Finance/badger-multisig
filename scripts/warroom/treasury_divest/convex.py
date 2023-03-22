@@ -2,9 +2,6 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 
-POOL_ID = 35
-
-
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_convex()
@@ -21,7 +18,8 @@ def main():
 
     vault.take_snapshot(tokens=[badger, fxs, usdc, frax])
 
-    private_vault = vault.convex.frax_pool_registry.vaultMap(POOL_ID, vault)
+    pool_id = vault.convex.get_pool_pid(wcvx_badger_fraxbp)
+    private_vault = vault.convex.frax_pool_registry.vaultMap(pool_id, vault)
     badger_frax_kek_id = vault.contract(r.frax.BADGER_FRAXBP_GAUGE).lockedStakes(
         private_vault, 0
     )[0]
