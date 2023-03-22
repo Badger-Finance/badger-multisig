@@ -1,6 +1,4 @@
 import pytest
-from brownie import Contract
-from brownie_tokens import MintableForkToken
 from helpers.addresses import registry as registry_addr
 
 

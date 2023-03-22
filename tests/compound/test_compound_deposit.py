@@ -15,7 +15,7 @@ def test_deposit_eth(safe, compound, cETH):
     before_bal_ceth = cETH.balanceOf(safe)
     before_bal_eth = safe.account.balance()
 
-    to_deposit = 10**18
+    to_deposit = 1e18
 
     compound.deposit_eth(to_deposit)
 

@@ -1,5 +1,5 @@
 import pytest
-from brownie import Contract
+from brownie import accounts, interface
 from brownie_tokens import MintableForkToken
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
@@ -12,7 +12,7 @@ def shared_setup(module_isolation):
 
 @pytest.fixture
 def safe():
-    return GreatApeSafe(registry.eth.badger_wallets.ops_multisig)
+    return GreatApeSafe(accounts[9].address)
 
 
 @pytest.fixture
@@ -37,15 +37,17 @@ def ibbtc_msig():
 
 @pytest.fixture
 def USDC(safe):
-    Contract.from_explorer(registry.eth.treasury_tokens.USDC)
-    usdc = MintableForkToken(registry.eth.treasury_tokens.USDC, owner=safe.account)
-    usdc._mint_for_testing(safe, 100_000 * 10 ** usdc.decimals())
-    return Contract(registry.eth.treasury_tokens.USDC, owner=safe.account)
+    usdc = interface.IFiatTokenV2_1(
+        registry.eth.treasury_tokens.USDC, owner=safe.account
+    )
+    usdc_mintable = MintableForkToken(usdc.address, owner=safe.account)
+    usdc_mintable._mint_for_testing(safe, 1_000_000 * 10 ** usdc.decimals())
+    return usdc
 
 
 @pytest.fixture
-def dai(dev):
-    Contract.from_explorer(registry.eth.treasury_tokens.DAI)
-    dai = MintableForkToken(registry.eth.treasury_tokens.DAI, owner=dev.account)
-    dai._mint_for_testing(dev, 10_000 * 10 ** dai.decimals())
-    return Contract(registry.eth.treasury_tokens.DAI, owner=dev.account)
+def dai(safe):
+    dai = interface.IDai(registry.eth.treasury_tokens.DAI, owner=safe.account)
+    dai_mintable = MintableForkToken(dai.address, owner=safe.account)
+    dai_mintable._mint_for_testing(safe, 1_000_000 * 10 ** dai.decimals())
+    return dai

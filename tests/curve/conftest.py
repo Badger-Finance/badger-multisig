@@ -1,5 +1,5 @@
 import pytest
-from brownie import Contract
+from brownie import interface
 from brownie_tokens import MintableForkToken
 from helpers.addresses import registry as registry_addr
 
@@ -18,12 +18,12 @@ def registry(safe):
 
 @pytest.fixture
 def threepool_lptoken(safe):
-    Contract.from_explorer(registry_addr.eth.treasury_tokens.crv3pool)
-    threepool = MintableForkToken(
+    threepool = interface.ICurveLP(
         registry_addr.eth.treasury_tokens.crv3pool, owner=safe.account
     )
-    threepool._mint_for_testing(safe, 100_000 * 10 ** threepool.decimals())
-    return Contract(registry_addr.eth.treasury_tokens.crv3pool, owner=safe.account)
+    threepool_mintable = MintableForkToken(threepool.address, owner=safe.account)
+    threepool_mintable._mint_for_testing(safe, 100_000 * 10 ** threepool.decimals())
+    return threepool
 
 
 @pytest.fixture
@@ -33,17 +33,15 @@ def threepool_lp(safe):
 
 @pytest.fixture
 def CRV(safe):
-    Contract.from_explorer(registry_addr.eth.treasury_tokens.CRV)
-    crv = MintableForkToken(registry_addr.eth.treasury_tokens.CRV, owner=safe.account)
-    crv._mint_for_testing(safe, 100 * 10 ** crv.decimals())
-    return Contract(registry_addr.eth.treasury_tokens.CRV, owner=safe.account)
+    crv = interface.ERC20(registry_addr.eth.treasury_tokens.CRV, owner=safe.account)
+    crv_mintable = MintableForkToken(crv.address, owner=safe.account)
+    crv_mintable._mint_for_testing(safe, 100 * 10 ** crv.decimals())
+    return crv
 
 
 @pytest.fixture
 def cvxCRV(safe):
-    Contract.from_explorer(registry_addr.eth.treasury_tokens.cvxCRV)
-    cvxcrv = MintableForkToken(
-        registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account
-    )
-    cvxcrv._mint_for_testing(safe, 100 * 10 ** cvxcrv.decimals())
-    return Contract(registry_addr.eth.treasury_tokens.cvxCRV, owner=safe.account)
+    cvxcrv = interface.ICurveLP(registry_addr.eth.treasury_tokens.cvxCRV)
+    cvxcrv_mintable = MintableForkToken(cvxcrv.address, owner=safe.account)
+    cvxcrv_mintable._mint_for_testing(safe, 100 * 10 ** cvxcrv.decimals())
+    return cvxcrv

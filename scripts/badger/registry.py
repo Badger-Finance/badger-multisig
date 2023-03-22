@@ -26,9 +26,7 @@ VAULTS_STATUS = {
 }
 
 # Add your keys and addresses to add to the registry in a batch
-KEYS_ADDRESSES = {
-    "test_key": "0x0000000000000000000000000000000000000000"
-}
+KEYS_ADDRESSES = {"test_key": "0x0000000000000000000000000000000000000000"}
 
 # promote or demote a batch of vaults given their addresses and new status
 def update_vault_status():
@@ -104,12 +102,12 @@ def set_key(key, target_addr):
 
 def set_keys():
     """
-    For each entry on the dictionary "KEYS_ADDRESSES", sets the input target 
+    For each entry on the dictionary "KEYS_ADDRESSES", sets the input target
     address on the registry under the specified 'key'
     """
     for key, target_addr in KEYS_ADDRESSES.items():
         SAFE.badger.set_key_on_registry(key, target_addr)
-    
+
     SAFE.post_safe_tx()
 
 

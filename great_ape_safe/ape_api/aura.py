@@ -43,8 +43,9 @@ class Aura(Convex):
                     pending_rewards.append(rewards)
             assert len(pending_rewards) > 0
             # in AURA the contracts has 8 arguments
-            # https://etherscan.io/address/0x623b83755a39b12161a63748f3f595a530917ab2#code#F1#L118
-            self.zap.claimRewards(pending_rewards, [], [], [], 0, 0, 0, option)
+            # https://etherscan.io/address/0x2E307704EfaE244c4aae6B63B601ee8DA69E92A9#code#F1#L122
+            self.zap.claimRewards(pending_rewards, [], [], [], (0, 0, 0, 0), option)
+
             for rewards in pending_rewards:
                 reward_token = self.safe.contract(rewards).rewardToken()
                 # this assert is a bit weak, but no starting balance is known since

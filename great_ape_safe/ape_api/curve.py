@@ -1,3 +1,4 @@
+from argparse import ArgumentError
 import numpy as np
 from helpers.addresses import registry
 from brownie import Contract, ZERO_ADDRESS, interface
@@ -92,14 +93,10 @@ class Curve:
             return registry.get_n_coins(pool)
 
     def _pool_has_wrapped_coins(self, pool):
-        registry = self._get_registry(pool)
-        if registry == self.crypto_registry:
-            return False
-        try:
-            registry.get_underlying_balances(pool)
-            return True
-        except VirtualMachineError:
-            return False
+        return "exchange_underlying" in pool.signatures.keys()
+
+    def _pool_supports_underlying(self, pool):
+        return "exchange_underlying" in pool.signatures.keys()
 
     def deposit(self, lp_token, mantissas, asset=None, seeding=False):
         # wrap `mantissas` of underlying tokens into a curve `lp_token`
@@ -125,6 +122,10 @@ class Curve:
                     break
             # make sure we found the right slot and populated it
             assert (np.array(mantissas) > 0).any()
+
+        elif type(mantissas) is not list and asset is None:
+            raise ValueError("`asset` must be provided with `mantissa` of type int")
+
         assert n_coins == len(mantissas)
 
         if not seeding:
@@ -150,7 +151,9 @@ class Curve:
             if mantissa > 0:
                 asset.approve(zapper, mantissa)
         if not seeding:
-            expected = zapper.calc_token_amount(pool, mantissas)
+            expected = zapper.calc_token_amount(pool, mantissas) * (
+                1 - self.max_slippage_and_fees
+            )
         else:
             expected = 0
         zapper.add_liquidity(pool, mantissas, expected)
@@ -227,7 +230,7 @@ class Curve:
         asset_in.approve(pool, mantissa)
         i, j = self._get_coin_indices(pool, asset_in, asset_out)
         # L139 docs ref
-        if self._pool_has_wrapped_coins(pool):
+        if self._pool_has_wrapped_coins(pool) and self._pool_supports_underlying(pool):
             expected = pool.get_dy_underlying(i, j, mantissa) * (
                 1 - self.max_slippage_and_fees
             )
@@ -236,4 +239,3 @@ class Curve:
             expected = pool.get_dy(i, j, mantissa) * (1 - self.max_slippage_and_fees)
             pool.exchange(i, j, mantissa, expected)
         assert asset_out.balanceOf(self.safe) >= initial_asset_out_balance + expected
-

@@ -45,7 +45,7 @@ class UniV3:
         )
 
         # constant helpers
-        self.Q128 = 2**128
+        self.Q128 = 2 ** 128
         self.deadline = 60 * 180
         self.slippage = 0.98
 
@@ -83,6 +83,65 @@ class UniV3:
 
         return multihop
 
+    def _encode_path(self, multihop_path):
+        path_encoded = b""
+        for item in multihop_path:
+            if web3.isAddress(item):
+                path_encoded += web3.toBytes(hexstr=item)
+            else:
+                path_encoded += int.to_bytes(item, 3, byteorder="big")
+        return path_encoded
+
+    def calc_min_amounts(
+        self, pool, token0_amount, token1_amount, lower_tick, upper_tick
+    ):
+        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
+        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
+        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
+
+        amount0Min = 0
+        amount1Min = 0
+
+        liquidity = maxLiquidityForAmounts(
+            sqrtRatioX96,
+            sqrtRatio_lower_tick,
+            sqrtRatio_upper_tick,
+            token0_amount,
+            token1_amount,
+        )
+
+        if currentTick < lower_tick:
+            # calc amount0Min
+            amount0Min = getAmount0Delta(
+                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+            )
+            amount1Min = 0
+        elif currentTick < upper_tick:
+            # calc both
+            amount0Min = getAmount0Delta(sqrtRatioX96, sqrtRatio_upper_tick, liquidity)
+            amount1Min = getAmount1Delta(sqrtRatio_lower_tick, sqrtRatioX96, liquidity)
+        else:
+            # calculate amount1Min
+            amount0Min = 0
+            amount1Min = getAmount1Delta(
+                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+            )
+        return amount0Min, amount1Min
+
+    def get_amounts_for_liquidity(self, pool_addr, lower_tick, upper_tick):
+        pool = interface.IUniswapV3Pool(pool_addr)
+        liquidity = pool.liquidity()
+
+        sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
+        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
+        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
+
+        amount0, amount1 = getAmountsForLiquidity(
+            sqrtRatioX96, sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+        )
+
+        return liquidity, amount0, amount1
+
     def burn_token_id(self, token_id, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
@@ -94,13 +153,8 @@ class UniV3:
 
         pool = self._get_pool(position)
 
-        liquidity = position["liquidity"]
-        sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
-        sqrtRatio_lower_tick = getSqrtRatioAtTick(position["tickLower"])
-        sqrtRatio_upper_tick = getSqrtRatioAtTick(position["tickUpper"])
-
-        amount0Min, amount1Min = getAmountsForLiquidity(
-            sqrtRatioX96, sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
+        liquidity, amount0Min, amount1Min = self.get_amounts_for_liquidity(
+            pool.address, position["tickLower"], position["tickUpper"]
         )
 
         # requires to remove all liquidity first
@@ -212,42 +266,13 @@ class UniV3:
 
         # calcs for min amounts
         # for now leave it just for our wbtc/badger pool "hardcoded" as for sometime doubt we will operate other univ3 pool
-        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
-        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
-        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
-
-        amount0Min = 0
-        amount1Min = 0
-
-        liquidity = maxLiquidityForAmounts(
-            sqrtRatioX96,
-            sqrtRatio_lower_tick,
-            sqrtRatio_upper_tick,
-            token0_amount_topup,
-            token1_amount_topup,
+        amount0Min, amount1Min = self.calc_min_amounts(
+            pool, token0_amount_topup, token1_amount_topup, lower_tick, upper_tick
         )
-
-        if currentTick < lower_tick:
-            # calc amount0Min
-            amount0Min = getAmount0Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
-            amount1Min = 0
-        elif currentTick < upper_tick:
-            # calc both
-            amount0Min = getAmount0Delta(sqrtRatioX96, sqrtRatio_upper_tick, liquidity)
-            amount1Min = getAmount1Delta(sqrtRatio_lower_tick, sqrtRatioX96, liquidity)
-        else:
-            # calculate amount1Min
-            amount0Min = 0
-            amount1Min = getAmount1Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
 
         # printout before increasing
         print(f"Token ID: {token_id} status position prior to increase liquidity...")
         position_before = print_position(self.nonfungible_position_manager, token_id)
-        print(f" ===== Current tick: {currentTick} ===== ")
         print(
             f" ===== amount0Min={amount0Min/10**token0.decimals()}, amount1Min={amount1Min/10**token1.decimals()} ===== \n"
         )
@@ -286,7 +311,7 @@ class UniV3:
         for file in os.listdir(directory):
             file_name = os.fsdecode(file)
 
-            if token_id in file_name:
+            if str(token_id) in file_name:
                 data = open(f"scripts/TCL/positionData/{file_name}")
                 json_file = json.load(data)
                 tx_detail_json = Path(f"scripts/TCL/positionData/{file_name}")
@@ -324,49 +349,20 @@ class UniV3:
         decimals_diff = token1.decimals() - token0.decimals()
 
         # params for minting method
-        lower_tick = int(math.log((1 / range1) * 10**decimals_diff, BASE) // 60 * 60)
-        upper_tick = int(math.log((1 / range0) * 10**decimals_diff, BASE) // 60 * 60)
+        lower_tick = int(math.log((1 / range1) * 10 ** decimals_diff, BASE) // 60 * 60)
+        upper_tick = int(math.log((1 / range0) * 10 ** decimals_diff, BASE) // 60 * 60)
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
-        sqrtRatioX96, currentTick, _, _, _, _, _ = pool.slot0()
-        sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
-        sqrtRatio_upper_tick = getSqrtRatioAtTick(upper_tick)
-
-        amount0Min = 0
-        amount1Min = 0
-
-        liquidity = maxLiquidityForAmounts(
-            sqrtRatioX96,
-            sqrtRatio_lower_tick,
-            sqrtRatio_upper_tick,
-            token0_amount,
-            token1_amount,
+        amount0Min, amount1Min = self.calc_min_amounts(
+            pool, token0_amount, token1_amount, lower_tick, upper_tick
         )
-
-        if currentTick < lower_tick:
-            # calc amount0Min
-            amount0Min = getAmount0Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
-            amount1Min = 0
-        elif currentTick < upper_tick:
-            # calc both
-            amount0Min = getAmount0Delta(sqrtRatioX96, sqrtRatio_upper_tick, liquidity)
-            amount1Min = getAmount1Delta(sqrtRatio_lower_tick, sqrtRatioX96, liquidity)
-        else:
-            # calculate amount1Min
-            amount0Min = 0
-            amount1Min = getAmount1Delta(
-                sqrtRatio_lower_tick, sqrtRatio_upper_tick, liquidity
-            )
-
         # MintParams: https://docs.uniswap.org/protocol/reference/periphery/interfaces/INonfungiblePositionManager#mintparams
         tx = self.nonfungible_position_manager.mint(
             (
                 token0.address,
                 token1.address,
-                3000,
+                pool.fee(),
                 lower_tick,
                 upper_tick,
                 token0_amount,
@@ -446,22 +442,14 @@ class UniV3:
         destination = self.safe.address if not destination else destination
 
         token_in, token_out = path[0], path[-1]
-
         balance_token_out = token_out.balanceOf(self.safe)
 
         multihop_path = self._build_multihop_path(path)
+        path_encoded = self._encode_path(multihop_path)
 
-        path_encoded = b""
-        for item in multihop_path:
-            if web3.isAddress(item):
-                path_encoded += web3.toBytes(hexstr=item)
-            else:
-                path_encoded += int.to_bytes(item, 3, byteorder="big")
-
-        min_out = self.quoter.quoteExactInput.call(
-            path_encoded,
-            mantissa,
-        ) * (1 - self.slippage)
+        min_out = self.quoter.quoteExactInput.call(path_encoded, mantissa) * (
+            1 - self.slippage
+        )
 
         params = (
             path_encoded,
@@ -478,3 +466,16 @@ class UniV3:
         assert token_out.balanceOf(destination) >= balance_token_out + min_out
 
         return tx.return_value
+
+    def get_amount_out(self, path, mantissa_in, multihop_path=None):
+        if not multihop_path:
+            multihop_path = self._build_multihop_path(path)
+
+        path_encoded = self._encode_path(multihop_path)
+
+        out = self.quoter.quoteExactInput.call(
+            path_encoded,
+            mantissa_in,
+        )
+
+        return int(out * 10_000 // (10_000 + ((1 - self.slippage) * 1000)))
