@@ -8,7 +8,7 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, ETH_ADDRESS, chain, exceptions, interface, network, web3
+from brownie import Contract, ETH_ADDRESS, chain, interface, network, web3
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
 from rich.pretty import pprint
@@ -257,11 +257,18 @@ class GreatApeSafe(ApeSafe):
 
     def post_safe_tx_manually(self):
         safe_tx = self.post_safe_tx(events=False, silent=True, post=False)
-        signature = C.input(
-            "paste signature from previous signer (or leave empty if first signer): "
+        partial_signature = C.input(
+            "paste the partial signature from previous signer (or press enter if first signer): "
         )
-        safe_tx.signatures = bytes.fromhex(signature)
+
+        safe_tx.signatures = bytes.fromhex(partial_signature)
+
+        C.print("signature so far: ", safe_tx.signatures.hex())
+        C.print("list of signers so far (ordered): ", safe_tx.signers)
+
         self.sign_with_frame(safe_tx)
+
+        # TODO: determine if safe_tx.signatures is complete. if so; post.
 
         # tx_hash = interface.IGnosisSafe_v1_3_0(self.address).getTransactionHash(
         #     safe_tx.to, # address to,
@@ -284,7 +291,9 @@ class GreatApeSafe(ApeSafe):
         #         {'from': safe_tx.signers[-1]}
         #     )
         # except:
-        C.print("copy this signature to the next signer:", safe_tx.signatures.hex())
+        C.print(
+            "copy this partial signature to the next signer:", safe_tx.signatures.hex()
+        )
         #     sys.exit()
 
         calldata = interface.IGnosisSafe_v1_3_0(
