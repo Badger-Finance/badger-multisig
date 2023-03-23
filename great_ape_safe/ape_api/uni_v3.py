@@ -128,9 +128,11 @@ class UniV3:
             )
         return amount0Min, amount1Min
 
-    def get_amounts_for_liquidity(self, pool_addr, lower_tick, upper_tick):
+    def get_amounts_for_liquidity(
+        self, pool_addr, lower_tick, upper_tick, liquidity=None
+    ):
         pool = interface.IUniswapV3Pool(pool_addr)
-        liquidity = pool.liquidity()
+        liquidity = liquidity or pool.liquidity()
 
         sqrtRatioX96, _, _, _, _, _, _ = pool.slot0()
         sqrtRatio_lower_tick = getSqrtRatioAtTick(lower_tick)
@@ -154,7 +156,10 @@ class UniV3:
         pool = self._get_pool(position)
 
         liquidity, amount0Min, amount1Min = self.get_amounts_for_liquidity(
-            pool.address, position["tickLower"], position["tickUpper"]
+            pool.address,
+            position["tickLower"],
+            position["tickUpper"],
+            liquidity=position["liquidity"],
         )
 
         # requires to remove all liquidity first
@@ -183,8 +188,10 @@ class UniV3:
             self.collect_fee(token_id)
 
             # check that increase the balance off-chain
-            assert token0.balanceOf(self.safe.address) > token0_bal_init
-            assert token1.balanceOf(self.safe.address) > token1_bal_init
+            if position["tokensOwed0"] > 0:
+                assert token0.balanceOf(self.safe.address) > token0_bal_init
+            if position["tokensOwed1"] > 0:
+                assert token1.balanceOf(self.safe.address) > token1_bal_init
 
         # usually we do not burn the nft, as it is more efficient to leave it empty and fill it up as needed
         if burn_nft:
