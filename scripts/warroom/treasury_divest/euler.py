@@ -3,12 +3,6 @@ from brownie import interface
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
-# flag
-max_out_wd = False
-
-# NOTE: amount avail may differ from posting till exec
-EXEC_SLIPPAGE = 0.95
-
 
 def main():
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
@@ -29,21 +23,13 @@ def main():
     utilisation_rate = dbadger.totalSupply() / ebadger_total_supply
     market_ownership_rate = ebadger_vault_balance / ebadger_total_supply
 
+    # NOTE: general market info to be aware in the cli prompt in emerg. situation
     print(
         f"Market utilisation: {utilisation_rate:2%}. Market ownership: {market_ownership_rate:.2%}"
     )
 
-    if max_out_wd:
-        # NOTE: this represents a max out of whichever amount is idle in the market to wd
-        # https://etherscan.io/token/0x3472A5A71965499acd81997a54BBA8D852C6E53d?a=0x27182842E098f60e3D576794A5bFFb0777E025d3
-        badger_wd_amt = min(
-            badger_total_bal_market * EXEC_SLIPPAGE, ebadger_vault_balance
-        )
-    else:
-        # NOTE: this represents a softer wd approach consider our percetange of market ownership and utilisation rate
-        badger_wd_amt = (
-            ebadger_total_supply * (1 - utilisation_rate) * (1 - market_ownership_rate)
-        )
+    # https://etherscan.io/token/0x3472A5A71965499acd81997a54BBA8D852C6E53d?a=0x27182842E098f60e3D576794A5bFFb0777E025d3
+    badger_wd_amt = min(badger_total_bal_market, ebadger_vault_balance)
 
     vault.euler.withdraw(badger, badger_wd_amt)
 
