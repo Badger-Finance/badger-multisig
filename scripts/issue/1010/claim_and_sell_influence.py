@@ -34,7 +34,6 @@ def main():
     baurabal.withdrawAll()
 
     for token in sell_to_usdc:
-        assert token.balanceOf(safe) > 0, f"no {token.name()} to sell"
         safe.cow.market_sell(token, usdc, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
 
     safe.post_safe_tx()
