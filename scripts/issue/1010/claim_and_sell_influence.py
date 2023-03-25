@@ -19,19 +19,10 @@ def main():
     aura = safe.contract(r.treasury_tokens.AURA)
     aurabal = safe.contract(r.treasury_tokens.AURABAL)
     baurabal = safe.contract(r.sett_vaults.bauraBal)
+    xsushi = safe.contract(r.treasury_tokens.xSUSHI)
+    usdc = safe.contract(r.treasury_tokens.USDC)
 
-    alcx = safe.contract(r.treasury_tokens.ALCX)
-    spell = safe.contract(r.treasury_tokens.SPELL)
-    ldo = safe.contract(r.bribe_tokens_claimable_graviaura.LDO)
-    angle = safe.contract(r.treasury_tokens.ANGLE)
-    bal = safe.contract(r.treasury_tokens.BAL)
-    fxs = safe.contract(r.treasury_tokens.FXS)
-
-    dai = safe.contract(r.treasury_tokens.DAI)
-    weth = safe.contract(r.treasury_tokens.WETH)
-
-    sell_to_dai = [cvx, cvxcrv, aura, aurabal]
-    sell_to_weth = [alcx, spell, ldo, angle, bal, fxs]
+    sell_to_usdc = [cvx, cvxcrv, aura, aurabal, xsushi]
 
     safe.take_snapshot(tokens=[gravi, bcvxcrv, bvecvx, baurabal])
 
@@ -42,10 +33,8 @@ def main():
     bcvxcrv.withdrawAll()
     baurabal.withdrawAll()
 
-    for token in sell_to_dai:
-        safe.cow.market_sell(token, dai, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
-
-    for token in sell_to_weth:
-        safe.cow.market_sell(token, weth, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
+    for token in sell_to_usdc:
+        assert token.balanceOf(safe) > 0, f"no {token.name()} to sell"
+        safe.cow.market_sell(token, usdc, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
 
     safe.post_safe_tx()
