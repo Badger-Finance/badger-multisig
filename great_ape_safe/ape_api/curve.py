@@ -1,8 +1,9 @@
-from argparse import ArgumentError
-import numpy as np
-from helpers.addresses import registry
 from brownie import Contract, ZERO_ADDRESS, interface
 from brownie.exceptions import VirtualMachineError
+import numpy as np
+
+from great_ape_safe.ape_api.helpers.coingecko import get_cg_price
+from helpers.addresses import registry
 
 
 class Curve:
@@ -24,8 +25,9 @@ class Curve:
     def _get_coins(self, lp_token):
         # get coin addresses from registry for a specific `lp_token`
         pool = self._get_pool_from_lp_token(lp_token)
-        true_length = self.registry.get_n_coins(pool)[0]
-        return [pool.coins(i) for i in range(true_length)]
+        # true_length = self.registry.get_n_coins(pool)[0]
+        length = self._get_n_coins(lp_token)
+        return [pool.coins(i) for i in range(length)]
 
     def _get_registry(self, pool):
         # get corresponding registry of lp token, either the 'normal' one,
@@ -163,10 +165,20 @@ class Curve:
         # (in same ratio as pool is currently in)
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity
         pool = self._get_pool_from_lp_token(lp_token)
+        coins = self._get_coins(lp_token)
 
-        n_coins = self._get_n_coins(lp_token)
-        # TODO: slippage and stuff
-        minima = list(np.zeros(n_coins))
+        pool_usd_values = [
+            get_cg_price(x)
+            * (pool.balances(i) / 10 ** self.safe.contract(x).decimals())
+            for i, x in enumerate(coins)
+        ]
+        pool_ratios = [x / sum(pool_usd_values) for x in pool_usd_values]
+
+        minima = [
+            pool.calc_withdraw_one_coin(mantissa * x, i)
+            * (1 - self.max_slippage_and_fees)
+            for i, x in enumerate(pool_ratios)
+        ]
 
         receivables = pool.remove_liquidity(mantissa, minima).return_value
         # some pools (eg 3pool) do not return `receivables` as per the standard api

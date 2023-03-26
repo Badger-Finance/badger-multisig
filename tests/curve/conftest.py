@@ -32,6 +32,21 @@ def threepool_lp(safe):
 
 
 @pytest.fixture
+def tricrypto_lp(safe):
+    return safe.contract(registry_addr.eth.treasury_tokens.crvTricrypto2)
+
+
+@pytest.fixture
+def tricrypto_lptoken(safe):
+    tricrypto = interface.ICurveLP(
+        registry_addr.eth.treasury_tokens.crvTricrypto2, owner=safe.account
+    )
+    tricrypto_mintable = MintableForkToken(tricrypto.address, owner=safe.account)
+    tricrypto_mintable._mint_for_testing(safe, 100_000 * 10 ** tricrypto.decimals())
+    return tricrypto
+
+
+@pytest.fixture
 def CRV(safe):
     crv = interface.ERC20(registry_addr.eth.treasury_tokens.CRV, owner=safe.account)
     crv_mintable = MintableForkToken(crv.address, owner=safe.account)
