@@ -25,9 +25,8 @@ class Curve:
     def _get_coins(self, lp_token):
         # get coin addresses from registry for a specific `lp_token`
         pool = self._get_pool_from_lp_token(lp_token)
-        # true_length = self.registry.get_n_coins(pool)[0]
-        length = self._get_n_coins(lp_token)
-        return [pool.coins(i) for i in range(length)]
+        true_length = self._get_n_coins(lp_token)
+        return [pool.coins(i) for i in range(true_length)]
 
     def _get_registry(self, pool):
         # get corresponding registry of lp token, either the 'normal' one,
