@@ -32,11 +32,6 @@ def threepool_lp(safe):
 
 
 @pytest.fixture
-def tricrypto_lp(safe):
-    return safe.contract(registry_addr.eth.treasury_tokens.crvTricrypto2)
-
-
-@pytest.fixture
 def tricrypto_lptoken(safe):
     tricrypto = interface.ICurveLP(
         registry_addr.eth.treasury_tokens.crvTricrypto2, owner=safe.account

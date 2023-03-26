@@ -29,7 +29,6 @@ def test_withdraw(safe, curve, registry, threepool_lptoken):
 
 
 def test_withdraw_tricrypto(safe, curve, tricrypto_lptoken):
-    pool_addr = curve._get_pool_from_lp_token(tricrypto_lptoken)
     coins = curve._get_coins(tricrypto_lptoken)
 
     before_coin_balances = [safe.contract(coin).balanceOf(safe) for coin in coins]
