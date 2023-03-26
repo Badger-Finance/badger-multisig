@@ -2,7 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 
-def main():
+def main(unwrap="true"):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_bunni(r.bunni.badger_wbtc_bunni_token)
 
@@ -12,6 +12,8 @@ def main():
     vault.take_snapshot(tokens=[r.bunni.badger_wbtc_bunni_gauge, wbtc, badger])
 
     vault.bunni.unstake(r.bunni.badger_wbtc_bunni_gauge)
-    vault.bunni.withdraw()
+
+    if unwrap == "true":
+        vault.bunni.withdraw()
 
     vault.post_safe_tx()
