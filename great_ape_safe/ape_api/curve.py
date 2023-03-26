@@ -166,6 +166,7 @@ class Curve:
         pool = self._get_pool_from_lp_token(lp_token)
         coins = self._get_coins(lp_token)
 
+        # get ratio of usd value of coins in pool then use that to calc expected minima
         pool_usd_values = [
             get_cg_price(x)
             * (pool.balances(i) / 10 ** self.safe.contract(x).decimals())
