@@ -15,14 +15,14 @@ from rich.pretty import pprint
 from tqdm import tqdm
 from web3.exceptions import BadFunctionCallOutput
 
-from great_ape_safe.ape_api import ape_apis
+from great_ape_safe.ape_api import ApeApis
 from helpers.chaindata import labels
 
 
 C = Console()
 
 
-class GreatApeSafe(ApeSafe):
+class GreatApeSafe(ApeSafe, ApeApis):
     """
     Child of ApeSafe object, with added functionalities:
     - contains a limited library of functions needed to ape in and out of known
@@ -36,15 +36,6 @@ class GreatApeSafe(ApeSafe):
 
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
-
-        for class_name, cls in ape_apis.items():
-            setattr(
-                self,
-                f"init_{class_name}",
-                lambda *args, cn=class_name, c=cls, **kwargs: setattr(
-                    self, cn, c(self, *args, **kwargs)
-                ),
-            )
 
     def take_snapshot(self, tokens):
         C.print(f"snapshotting {self.address}...")
