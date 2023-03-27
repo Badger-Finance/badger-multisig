@@ -4,7 +4,7 @@ import requests
 from decimal import Decimal
 from pprint import pprint
 
-from brownie import Contract, chain, interface, web3
+from brownie import Contract, chain, interface
 from rich.prompt import Confirm
 
 from helpers.addresses import registry
@@ -33,12 +33,22 @@ class Cow:
         # determine api url based on current chain id and `prod` parameter
         chain_label = {1: "mainnet", 4: "rinkeby", 100: "xdai"}
         self.api_url = f"https://api.cow.fi/{chain_label[chain.id]}/api/v1/"
-        self.cg_api_url = "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses={}&vs_currencies=usd"
+
+        # try setting coingecko api to pro, otherwise revert to free plan
+        try:
+            self.headers = {"x-cg-pro-api-key": os.getenv("COINGECKO_API_KEY")}
+            self.cg_api_url = "https://pro-api.coingecko.com/api/v3/"
+        except:
+            self.cg_api_url = "https://api.coingecko.com/api/v3/"
 
         self.pct_diff_threshold = 0.05
 
     def get_cg_price(self, address):
-        res = requests.get(self.cg_api_url.format(address))
+        res = requests.get(
+            self.cg_api_url + "simple/token_price/ethereum",
+            headers=self.headers,
+            params={"contract_addresses": address, "vs_currencies": "usd"},
+        )
         res.raise_for_status()
 
         return res.json()[address.lower()]["usd"]
