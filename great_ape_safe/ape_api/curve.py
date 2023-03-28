@@ -166,19 +166,25 @@ class Curve:
         pool = self._get_pool_from_lp_token(lp_token)
         coins = self._get_coins(lp_token)
 
-        # get ratio of usd value of coins in pool then use that to calc expected minima
-        pool_usd_values = [
-            get_cg_price(x)
-            * (pool.balances(i) / 10 ** self.safe.contract(x).decimals())
-            for i, x in enumerate(coins)
-        ]
-        pool_ratios = [x / sum(pool_usd_values) for x in pool_usd_values]
-
         minima = [
-            pool.calc_withdraw_one_coin(mantissa * x, i)
-            * (1 - self.max_slippage_and_fees)
-            for i, x in enumerate(pool_ratios)
+            x * (1 - self.max_slippage_and_fees)
+            for x in pool.remove_liquidity.call(mantissa, list(np.zeros(len(coins))))
         ]
+
+        if len(minima) == 0:
+            # get ratio of usd value of coins in pool then use that to calc expected minima
+            pool_usd_values = [
+                get_cg_price(x)
+                * (pool.balances(i) / 10 ** self.safe.contract(x).decimals())
+                for i, x in enumerate(coins)
+            ]
+            pool_ratios = [x / sum(pool_usd_values) for x in pool_usd_values]
+
+            minima = [
+                pool.calc_withdraw_one_coin(mantissa * x, i)
+                * (1 - self.max_slippage_and_fees)
+                for i, x in enumerate(pool_ratios)
+            ]
 
         receivables = pool.remove_liquidity(mantissa, minima).return_value
         # some pools (eg 3pool) do not return `receivables` as per the standard api
