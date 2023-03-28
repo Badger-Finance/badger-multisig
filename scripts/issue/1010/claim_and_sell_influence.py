@@ -32,6 +32,7 @@ def main():
     gravi.withdrawAll()
     bcvxcrv.withdrawAll()
     baurabal.withdrawAll()
+    bvecvx.withdrawAll()
 
     for token in sell_to_usdc:
         safe.cow.market_sell(token, usdc, token.balanceOf(safe), 60 * 60 * 4, coef=COEF)
