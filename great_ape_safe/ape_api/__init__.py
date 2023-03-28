@@ -39,7 +39,9 @@ class ApeApis:
     def init_balancer(self):
         self.balancer = Balancer(self)
 
-    def init_bunni(self, bunni_token_addr=None, pool_addr=None, range0=None, range1=None):
+    def init_bunni(
+        self, bunni_token_addr=None, pool_addr=None, range0=None, range1=None
+    ):
         self.bunni = Bunni(self, bunni_token_addr, pool_addr, range0, range1)
 
     def init_chainlink(self):
