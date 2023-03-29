@@ -1,6 +1,7 @@
 import os
 import re
 import requests
+import sys
 from contextlib import redirect_stdout
 from datetime import datetime
 from decimal import Decimal
@@ -9,9 +10,12 @@ from io import StringIO
 import pandas as pd
 from ape_safe import ApeSafe
 from brownie import Contract, ETH_ADDRESS, chain, interface, network, web3
+from brownie.exceptions import VirtualMachineError
+from eth_account import Account
+from eth_account.messages import encode_defunct
 from eth_utils import is_address, to_checksum_address
+from gnosis.safe.signatures import signature_split
 from rich.console import Console
-from rich.pretty import pprint
 from tqdm import tqdm
 from web3 import Web3
 from web3.exceptions import BadFunctionCallOutput
@@ -263,62 +267,93 @@ class GreatApeSafe(ApeSafe):
 
         safe_tx.signatures = bytes.fromhex(partial_signature)
 
-        C.print("signature so far: ", safe_tx.signatures.hex())
-        C.print("list of signers so far (ordered): ", safe_tx.signers)
+        def encode_exec_tx_with_frame():
+            calldata = interface.IGnosisSafe_v1_3_0(
+                self.address
+            ).execTransaction.encode_input(
+                safe_tx.to,  # address to
+                safe_tx.value,  # uint256 value
+                safe_tx.data.hex(),  # bytes memory data
+                safe_tx.operation,  # uint8 operation
+                safe_tx.safe_tx_gas,  # uint256 safeTxGas
+                safe_tx.base_gas,  # uint256 baseGas
+                safe_tx.gas_price,  # uint256 gasPrice
+                safe_tx.gas_token,  # address gasToken
+                safe_tx.refund_receiver,  # address refundReceiver
+                safe_tx.signatures.hex(),  # bytes memory signatures
+            )
 
-        self.sign_with_frame(safe_tx)
+            C.print("sending tx:", {"to": self.address, "value": 0, "data": calldata})
 
-        # TODO: determine if safe_tx.signatures is complete. if so; post.
+            frame_rpc = "http://127.0.0.1:1248"
+            frame = Web3(Web3.HTTPProvider(frame_rpc, {"timeout": 600}))
+            if chain.id == 4:
+                # https://web3py.readthedocs.io/en/stable/middleware.html#geth-style-proof-of-authority
+                frame.middleware_onion.inject(geth_poa_middleware, layer=0)
+            frame.eth.send_transaction(
+                {"to": self.address, "value": 0, "data": calldata}
+            )
 
-        # tx_hash = interface.IGnosisSafe_v1_3_0(self.address).getTransactionHash(
-        #     safe_tx.to, # address to,
-        #     safe_tx.value, # uint256 value,
-        #     safe_tx.data.hex(), # bytes calldata data,
-        #     safe_tx.operation, # Enum.Operation operation,
-        #     safe_tx.safe_tx_gas, # uint256 safeTxGas,
-        #     safe_tx.base_gas, # uint256 baseGas,
-        #     safe_tx.gas_price, # uint256 gasPrice,
-        #     safe_tx.gas_token, # address gasToken,
-        #     safe_tx.refund_receiver, # address refundReceiver,
-        #     interface.IGnosisSafe_v1_3_0(self.address).nonce(), # uint256 _nonce
-        #     {'from': safe_tx.signers[-1]}
-        # )
-        # try:
-        #     interface.IGnosisSafe_v1_3_0(self.address).checkSignatures.call(
-        #         tx_hash, # bytes32 dataHash,
-        #         safe_tx.data.hex(), # bytes memory data,
-        #         safe_tx.signatures.hex(), # bytes memory signatures
-        #         {'from': safe_tx.signers[-1]}
-        #     )
-        # except:
-        C.print(
-            "copy this partial signature to the next signer:", safe_tx.signatures.hex()
+        # determine if safe_tx.signatures is complete. if so; exec tx to chain
+        if self._check_sig_valid(safe_tx):
+            encode_exec_tx_with_frame()
+        else:
+            # sig is incomplete; needs more sigs
+            self.sign_with_frame(safe_tx)
+
+        C.print("safe_tx:", safe_tx.__dict__)
+
+        # maybe signer just added the last missing sig; check again
+        if self._check_sig_valid(safe_tx):
+            encode_exec_tx_with_frame()
+        else:
+            # needs more sigs
+            sys.exit()
+
+    def _check_sig_valid(self, safe_tx):
+        if len(safe_tx.signers) == 0:
+            return False
+        # naive, because cant get checkSignatures to work locally
+        if (
+            len(safe_tx.signatures)
+            == interface.IGnosisSafe_v1_3_0(self.address).getThreshold() * 65
+        ):
+            return True
+        return False
+
+        tx_hash = interface.IGnosisSafe_v1_3_0(self.address).getTransactionHash.call(
+            safe_tx.to,  # address to,
+            safe_tx.value,  # uint256 value,
+            safe_tx.data.hex(),  # bytes calldata data,
+            safe_tx.operation,  # Enum.Operation operation,
+            safe_tx.safe_tx_gas,  # uint256 safeTxGas,
+            safe_tx.base_gas,  # uint256 baseGas,
+            safe_tx.gas_price,  # uint256 gasPrice,
+            safe_tx.gas_token,  # address gasToken,
+            safe_tx.refund_receiver,  # address refundReceiver,
+            interface.IGnosisSafe_v1_3_0(self.address).nonce(),  # uint256 _nonce
         )
-        #     sys.exit()
 
-        calldata = interface.IGnosisSafe_v1_3_0(
-            self.address
-        ).execTransaction.encode_input(
-            safe_tx.to,  # address to
-            safe_tx.value,  # uint256 value
-            safe_tx.data.hex(),  # bytes memory data
-            safe_tx.operation,  # uint8 operation
-            safe_tx.safe_tx_gas,  # uint256 safeTxGas
-            safe_tx.base_gas,  # uint256 baseGas
-            safe_tx.gas_price,  # uint256 gasPrice
-            safe_tx.gas_token,  # address gasToken
-            safe_tx.refund_receiver,  # address refundReceiver
-            safe_tx.signatures.hex(),  # bytes memory signatures
-        )
+        sig_complete = True
+        try:
+            interface.IGnosisSafe_v1_3_0(self.address).checkSignatures.call(
+                tx_hash,  # bytes32 dataHash,
+                safe_tx.data.hex(),  # bytes memory data,
+                safe_tx.signatures.hex(),  # bytes memory signatures
+            )
+        except VirtualMachineError:
+            # BUG: always reverts because of https://github.com/safe-global/safe-contracts/blob/f9088d81f8ad72dbf8d9ffb32b10ccaa71739991/contracts/Safe.sol#L331
+            # somehow locally compiled tx hash is not correct and ecrecover does not
+            # derive the correct address (`currentOwner`) from it
+            current_owner = Account.recover_message(
+                encode_defunct(tx_hash), vrs=signature_split(safe_tx.signatures)
+            )
+            print(current_owner)
+            sig_complete = False
+            raise
 
-        pprint({"destination": self.address, "hex data": calldata})
-
-        frame_rpc = "http://127.0.0.1:1248"
-        frame = Web3(Web3.HTTPProvider(frame_rpc, {"timeout": 600}))
-        if chain.id == 4:
-            # https://web3py.readthedocs.io/en/stable/middleware.html#geth-style-proof-of-authority
-            frame.middleware_onion.inject(geth_poa_middleware, layer=0)
-        frame.eth.send_transaction({"to": self.address, "value": 0, "data": calldata})
+        C.print("sig complete?", sig_complete)
+        return sig_complete
 
     def _generate_tenderly_simulation(self, receipt, gas):
         """
