@@ -2,7 +2,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 
-def main():
+def main(unwrap="true"):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_aura()
     vault.init_balancer()
@@ -26,6 +26,7 @@ def main():
 
     for bpt in aura_bpts:
         vault.aura.unstake_all_and_withdraw_all(bpt)
-        vault.balancer.unstake_all_and_withdraw_all(pool=bpt, unstake=False)
+        if unwrap == "true":
+            vault.balancer.unstake_all_and_withdraw_all(pool=bpt, unstake=False)
 
     vault.post_safe_tx()

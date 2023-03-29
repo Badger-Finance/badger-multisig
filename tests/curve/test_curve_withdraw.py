@@ -28,6 +28,19 @@ def test_withdraw(safe, curve, registry, threepool_lptoken):
     assert sum(after_coin_balances) > sum(before_coin_balances)
 
 
+def test_withdraw_tricrypto(safe, curve, tricrypto_lptoken):
+    coins = curve._get_coins(tricrypto_lptoken)
+
+    before_coin_balances = [safe.contract(coin).balanceOf(safe) for coin in coins]
+    amount = tricrypto_lptoken.balanceOf(safe)
+
+    curve.withdraw(tricrypto_lptoken, amount)
+
+    after_coin_balances = [safe.contract(coin).balanceOf(safe) for coin in coins]
+
+    assert sum(after_coin_balances) > sum(before_coin_balances)
+
+
 def test_withdraw_one_coin(safe, curve, threepool_lptoken, USDC):
     before_bal_usdc = USDC.balanceOf(safe)
 
