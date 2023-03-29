@@ -44,6 +44,7 @@ def enable_module():
 
 def add_member():
     techops = GreatApeSafe(r.badger_wallets.techops_multisig)
+    techops.init_badger()
     upkeep_manager = techops.contract(r.badger_wallets.upkeep_manager)
 
     upkeep_manager.addMember(
@@ -53,5 +54,8 @@ def add_member():
         2_000_000,
         0,
     )
+
+    # NOTE: tackles increasing thresholds in gas st for mngr.
+    techops.badger.set_gas_station_watchlist()
 
     techops.post_safe_tx()
