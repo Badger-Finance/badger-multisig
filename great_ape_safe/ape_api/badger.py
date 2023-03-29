@@ -424,8 +424,8 @@ class Badger:
             if "executor" in label:
                 min_bal = 1e18
             if label == "upkeep_manager":
-                min_bal = 3e18
-                min_top_up = 2e18
+                min_bal = 5e18
+                min_top_up = 4e18
             if label == "ops_botsquad":
                 min_bal = 5e18
             if label == "ops_deployer":
