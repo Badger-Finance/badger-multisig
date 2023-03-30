@@ -145,7 +145,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
         with redirect_stdout(StringIO()) as buffer:
             receipt.info()
             receipt.call_trace(True)
-            pprint(safe_tx.__dict__)
+            C.print(safe_tx.__dict__)
             if hasattr(self, "snapshot"):
                 self.print_snapshot()
 
@@ -193,7 +193,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
-            pprint(safe_tx.__dict__)
+            C.print(safe_tx.__dict__)
         if hasattr(self, "snapshot"):
             self.print_snapshot(csv_destination)
         if tenderly and not skip_preview:
@@ -217,7 +217,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
         else:
             safe_tx = self.pending_transactions[0]
-        pprint(safe_tx.__dict__)
+        C.print(safe_tx.__dict__)
         signature = self.sign_with_frame(safe_tx)
         self.post_signature(safe_tx, signature)
 
@@ -227,7 +227,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
         else:
             safe_tx = self.pending_transactions[0]
-        pprint(safe_tx.__dict__)
+        C.print(safe_tx.__dict__)
         self.execute_transaction_with_frame(safe_tx)
 
     def contract(self, address, Interface=None, from_explorer=False):
