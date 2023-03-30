@@ -1,8 +1,11 @@
+import os
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 from pycoingecko import CoinGeckoAPI
 
-cg = CoinGeckoAPI()
+
+cg = CoinGeckoAPI(os.getenv("COINGECKO_API_KEY"))
 
 # dollar denominated
 FUNDS_PER_POSITION = 20_000
