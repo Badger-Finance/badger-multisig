@@ -103,14 +103,14 @@ def seed():
 
     bpt_badgerwbtc_balance = bpt_badgerwbtc.balanceOf(trops)
     bpt_badgerreth_balance = bpt_badgerreth.balanceOf(trops)
-    bpt_wbtcdigggravi_balancer = bpt_wbtcdigggravi.balanceOf(trops)
+    bpt_wbtcdigggravi_balance = bpt_wbtcdigggravi.balanceOf(trops)
 
     bpt_badgerwbtc.approve(aura_avatar, bpt_badgerwbtc_balance)
     bpt_badgerreth.approve(aura_avatar, bpt_badgerreth_balance)
-    bpt_wbtcdigggravi.approve(aura_avatar, bpt_wbtcdigggravi_balancer)
+    bpt_wbtcdigggravi.approve(aura_avatar, bpt_wbtcdigggravi_balance)
     aura_avatar.deposit(
         aura_avatar.getPids(),
-        [bpt_badgerwbtc_balance, bpt_wbtcdigggravi_balancer, bpt_badgerreth_balance],
+        [bpt_badgerwbtc_balance, bpt_wbtcdigggravi_balance, bpt_badgerreth_balance],
     )
 
     # convex avatar deposit
