@@ -1,7 +1,7 @@
 ape-safe==0.5.0
 eth-brownie==1.17.0
 pandas==1.4.3
-pycoingecko==2.2.0
+pycoingecko==3.1.0
 rich==12.4.4
 tqdm==4.62.3
 dotmap==1.3.8
