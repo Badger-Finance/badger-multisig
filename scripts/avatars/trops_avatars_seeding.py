@@ -10,6 +10,8 @@ cg = CoinGeckoAPI(os.getenv("COINGECKO_API_KEY"))
 # dollar denominated
 FUNDS_PER_POSITION = 20_000
 
+DUSTY = 0.98
+
 
 def bpt_ratios_amounts(bpt, token0_rate, token1_rate, token0_decimals, token1_decimals):
     weights = bpt.getNormalizedWeights()
@@ -108,9 +110,15 @@ def seed():
     bpt_badgerwbtc.approve(aura_avatar, bpt_badgerwbtc_balance)
     bpt_badgerreth.approve(aura_avatar, bpt_badgerreth_balance)
     bpt_wbtcdigggravi.approve(aura_avatar, bpt_wbtcdigggravi_balance)
+
+    bpts_balances = [
+        bpt_badgerwbtc_balance,
+        bpt_wbtcdigggravi_balance,
+        bpt_badgerreth_balance,
+    ]
     aura_avatar.deposit(
         aura_avatar.getPids(),
-        [bpt_badgerwbtc_balance, bpt_wbtcdigggravi_balance, bpt_badgerreth_balance],
+        [balance * DUSTY for balance in bpts_balances],
     )
 
     # convex avatar deposit
@@ -125,7 +133,7 @@ def seed():
         ],
     )
 
-    lp_balance = badger_fraxbp.balanceOf(trops)
+    lp_balance = badger_fraxbp.balanceOf(trops) * DUSTY
     badger_fraxbp.approve(wcvx_badger_fraxbp, lp_balance)
     wcvx_badger_fraxbp.deposit(lp_balance, trops)
 
