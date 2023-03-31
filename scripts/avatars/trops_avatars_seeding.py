@@ -1,5 +1,7 @@
 import os
 
+from brownie import accounts
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 from pycoingecko import CoinGeckoAPI
@@ -148,10 +150,14 @@ def seed():
     trops.post_safe_tx()
 
 
-def add_members():
+def add_members(sim=False):
     techops = GreatApeSafe(r.badger_wallets.techops_multisig)
 
     upkeep_manager = techops.contract(r.badger_wallets.upkeep_manager)
+
+    if sim:
+        eth_wallet = accounts.at(r.badger_wallets.treasury_ops_multisig, force=True)
+        eth_wallet.transfer(upkeep_manager, "10 ether")
 
     upkeep_manager.addMember(
         r.avatars.aura,
@@ -165,8 +171,11 @@ def add_members():
         r.avatars.convex,
         "ConvexAvatar",
         # gas figure ref: https://github.com/Badger-Finance/badger-multisig/issues/1207#issuecomment-1490226452
-        5_007_000,
+        5_000_000,  # registration CL gas limitation: https://etherscan.io/address/0x02777053d6764996e594c3E88AF1D58D5363a2e6#code#F1#L732
         0,
     )
 
-    techops.post_safe_tx()
+    if not sim:
+        techops.post_safe_tx()
+    else:
+        techops.post_safe_tx(skip_preview=True)
