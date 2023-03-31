@@ -83,7 +83,7 @@ def seed():
         stake=False,
     )
 
-    weth_mantissa = int(((FUNDS_PER_POSITION // 2) / weth_rate) * 1e18 / 0.98)
+    weth_mantissa = int(((FUNDS_PER_POSITION / 2) / weth_rate) * 1e18 / 0.98)
     trops.balancer.swap(weth, reth, weth_mantissa, pool=bpt_wethreth)
     trops.balancer.deposit_and_stake(
         [badger, reth],
@@ -127,9 +127,9 @@ def seed():
         pool_fraxbp,
         [badger, frax, usdc],
         [
-            ((FUNDS_PER_POSITION // 2) / badger_rate) * 1e18,
+            ((FUNDS_PER_POSITION / 2) / badger_rate) * 1e18,
             0,
-            (FUNDS_PER_POSITION // 2) * 1e6,
+            (FUNDS_PER_POSITION / 2) * 1e6,
         ],
     )
 
