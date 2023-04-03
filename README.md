@@ -24,6 +24,10 @@ Enter `poetry`'s virtual environment through `poetry shell`. You should now be a
 
 Alternatively, you could use the `requirements.txt` (or `requirements-dev.txt` if you want to include testing packages) via `pip`: `pip install -r requirements.txt`.
 
+### OpenSSL Deprecation (macOS)
+
+Installing Vyper might run into some OpenSSL issues (`fatal error: openssl/aes.h: No such file or directory`). Please see [the note on OpenSSL in the Vyper docs](https://docs.vyperlang.org/en/v0.1.0-beta.17/installing-vyper.html#installation) or [this related issue](https://github.com/ethereum/pyethereum/issues/292) in order to fix.
+
 ### Arm Chipset Architecture (M1/M2)
 MacBooks with arm chipsets have some additional challenges [[source]](https://github.com/psf/black/issues/2524).
 
@@ -37,10 +41,6 @@ You can ignore the following warning:
 ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
 eth-brownie 1.17.0 requires regex==2021.10.8, but you have regex 2021.10.21 which is incompatible.
 ```
-
-### OpenSSL Deprecation (macOS)
-
-Installing Vyper might run into some OpenSSL issues. Please see [the note on OpenSSL in the Vyper docs](https://docs.vyperlang.org/en/v0.1.0-beta.17/installing-vyper.html#installation) in order to fix.
 
 ## Uninstall
 
