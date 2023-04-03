@@ -23,8 +23,12 @@ def wd_unlocked_aura():
     aura = voter.contract(r.treasury_tokens.AURA)
     badger = voter.contract(r.treasury_tokens.BADGER)
     vlAURA = voter.contract(r.aura.vlAURA)
+    graviaura = voter.contract(r.sett_vaults.graviAURA)
 
-    voter.take_snapshot([aura, badger]), vault.take_snapshot([aura, badger])
+    voter.take_snapshot([aura, badger, graviaura]), vault.take_snapshot([aura, badger])
+
+    if graviaura.balanceOf(voter) > 0:
+        graviaura.withdrawAll()
 
     unlockable = vlAURA.lockedBalances(voter)[1]
     if unlockable > 0:
