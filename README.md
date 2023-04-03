@@ -38,6 +38,17 @@ ERROR: pip's dependency resolver does not currently take into account all the pa
 eth-brownie 1.17.0 requires regex==2021.10.8, but you have regex 2021.10.21 which is incompatible.
 ```
 
+### OpenSSL Deprecation (macOS)
+
+Installing Vyper might run into some OpenSSL issues. Please see [the note on OpenSSL in the Vyper docs](https://docs.vyperlang.org/en/v0.1.0-beta.17/installing-vyper.html#installation) in order to fix.
+
+## Uninstall
+
+Delete the virtual environment as such:
+```
+rm -rf `poetry env info -p`
+```
+
 ## Multisig Addresses
 
 | Label | Description | Address (Links) |
