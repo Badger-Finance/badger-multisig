@@ -13,15 +13,30 @@ Read more about the Badger DAO and its community at https://badger.com/dao-and-c
 
 ## Installation
 
-The recommended version of Python for this repository is 3.9
-
+The recommended installation tool for this repository is [`poetry`](https://python-poetry.org/docs/):
 ```
-pip install pipenv
-pipenv --python 3.9
-pipenv install
+poetry install
 ```
 
-**Note**: Ubuntu users may need to remove pipenv installed via apt.
+In case of missing python versions, and depending on your setup, you might want to have a look at [`pyenv`](https://github.com/pyenv/pyenv).
+
+Enter `poetry`'s virtual environment through `poetry shell`. You should now be able to run `brownie` from within this virtual environment. Type `exit` or ctrl-D to leave the environment.
+
+Alternatively, you could use the `requirements.txt` (or `requirements-dev.txt` if you want to include testing packages) via `pip`: `pip install -r requirements.txt`.
+
+### Arm Chipset Architecture (M1/M2)
+MacBooks with arm chipsets have some additional challenges [[source]](https://github.com/psf/black/issues/2524).
+
+In our case, since `eth-brownie` locks on this borked `regex==2021.10.8` [[source]](https://github.com/eth-brownie/brownie/blob/1eeb5b3a42509f14cdd2d269c5629cfeaf850fcc/requirements.txt#L193), we have to override `regex` after `poetry`'s lock. Go into the virtual environment created by `poetry` and install the next version of `regex`:
+```
+poetry shell
+pip install regex==2021.10.21
+```
+You can ignore the following warning:
+```
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+eth-brownie 1.17.0 requires regex==2021.10.8, but you have regex 2021.10.21 which is incompatible.
+```
 
 ## Multisig Addresses
 
