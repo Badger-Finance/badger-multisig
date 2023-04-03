@@ -7,6 +7,17 @@ from helpers.addresses import r
 def main(sim=False):
     techops = GreatApeSafe(r.badger_wallets.techops_multisig)
 
+    # trops snap
+    trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
+    trops.take_snapshot(
+        [
+            r.balancer.B_20_BTC_80_BADGER,
+            r.balancer.B_50_BADGER_50_RETH,
+            r.balancer.bpt_40wbtc_40digg_20graviaura,
+            r.treasury_tokens.badgerFRAXBP_f_lp,
+        ]
+    )
+
     # avatars
     aura_avatar = techops.contract(r.avatars.aura)
     convex_avatar = techops.contract(r.avatars.convex)
@@ -29,6 +40,7 @@ def main(sim=False):
     if len(vanilla_convex_pids) > 0:
         convex_avatar.withdrawAll()
 
+    trops.print_snapshot()
     if not sim:
         techops.post_safe_tx()
     else:
