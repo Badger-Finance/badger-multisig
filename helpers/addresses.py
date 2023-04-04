@@ -616,7 +616,8 @@ ADDRESSES_ETH = {
         "aura_40wbtc40digg20gravi": "0xe86f0312b06126855810B4a13a43c3E2b1B8DD90",
         "aura_40wbtc40digg20gravi_gauge": "0xD7c9c6922db15F47EF3131F2830d8E87f7637210",
         "aura_50reth50badger": "0x685C94e7DA6C8F14Ae58f168C942Fb05bAD73412",
-        "aura_50reth50badger_gauge": "0x4E867c6c76173539538B7a9335E89b00434Aec10",
+        "aura_50badger50reth_gauge": "0x4E867c6c76173539538B7a9335E89b00434Aec10",
+        "aura_50reth50badger_gauge": "0xAAd4eE162Dbc9C25cCa26bA4340B36E3eF7C1A80",
         "_deprecated": {
             "aura_20wbtc80badger": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
             "aura_40wbtc40digg20gravi": "0x10Ca519614b0F3463890387c24819001AFfC5152",

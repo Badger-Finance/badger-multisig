@@ -23,24 +23,24 @@ class Aura(Convex):
     def _alert_not_relevant():
         print(" ==== NOT RELEVANT METHOD IN AURA CLASS ==== \n")
 
-    def claim_all_from_booster(self):
-        self.claim_all(1)
+    def claim_all_from_booster(self, pending_rewards=None):
+        self.claim_all(1, pending_rewards)
 
     def claim_all_from_locker(self):
         self.claim_all(2)
 
-    def claim_all(self, option=1):
+    def claim_all(self, option=1, pending_rewards=None):
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool
         # https://github.com/convex-eth/platform/blob/main/contracts/contracts/ClaimZap.sol#L103-L133
         # options param: https://etherscan.io/address/0x623b83755a39b12161a63748f3f595a530917ab2#code#F1#L42
-        pending_rewards = []
-        n_pools = self.booster.poolLength()
-
         if option == 1:
-            for n in range(n_pools):
-                _, _, _, rewards, _, _ = self.booster.poolInfo(n)
-                if self.safe.contract(rewards).earned(self.safe) > 0:
-                    pending_rewards.append(rewards)
+            if not pending_rewards:
+                pending_rewards = []
+                n_pools = self.booster.poolLength()
+                for n in range(n_pools):
+                    _, _, _, rewards, _, _ = self.booster.poolInfo(n)
+                    if self.safe.contract(rewards).earned(self.safe) > 0:
+                        pending_rewards.append(rewards)
             assert len(pending_rewards) > 0
             # in AURA the contracts has 8 arguments
             # https://etherscan.io/address/0x2E307704EfaE244c4aae6B63B601ee8DA69E92A9#code#F1#L122
@@ -52,6 +52,7 @@ class Aura(Convex):
                 # we cannot know for which reward tokens contracts to check in the
                 # beginning
                 assert self.safe.contract(reward_token).balanceOf(self.safe) > 0
+
         elif option == 2:
             self.zap.claimRewards([], [], [], [], 0, 0, 0, option)
 
