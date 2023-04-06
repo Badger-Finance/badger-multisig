@@ -13,15 +13,50 @@ Read more about the Badger DAO and its community at https://badger.com/dao-and-c
 
 ## Installation
 
-The recommended version of Python for this repository is 3.9
-
+The recommended installation tool for this repository is [`poetry`](https://python-poetry.org/docs/):
 ```
-pip install pipenv
-pipenv --python 3.9
-pipenv install
+poetry install
 ```
 
-**Note**: Ubuntu users may need to remove pipenv installed via apt.
+In case of missing python versions, and depending on your setup, you might want to have a look at [`pyenv`](https://github.com/pyenv/pyenv).
+
+Enter `poetry`'s virtual environment through `poetry shell`. You should now be able to run `brownie` from within this virtual environment. Type `exit` or ctrl-D to leave the environment.
+
+Alternatively, you could use the `requirements.txt` (or `requirements-dev.txt` if you want to include testing packages) via `pip`: `pip install -r requirements.txt`.
+
+### OpenSSL Deprecation (macOS)
+
+The installation process might run into some OpenSSL issues (`fatal error: openssl/aes.h: No such file or directory`). Please see [the note on OpenSSL in the Vyper docs](https://docs.vyperlang.org/en/v0.1.0-beta.17/installing-vyper.html#installation) or [this related issue](https://github.com/ethereum/pyethereum/issues/292) in order to fix it.
+
+### Arm Chipset Architecture (M1/M2)
+MacBooks with arm chipsets have some additional challenges [[source]](https://github.com/psf/black/issues/2524).
+
+In our case, since `eth-brownie` locks on this borked `regex==2021.10.8` [[source]](https://github.com/eth-brownie/brownie/blob/1eeb5b3a42509f14cdd2d269c5629cfeaf850fcc/requirements.txt#L193), we have to override `regex` after `poetry`'s lock. Go into the virtual environment created by `poetry` and install the next version of `regex`:
+```
+poetry shell
+pip install regex==2021.10.21
+```
+You can ignore the following warning:
+```
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+eth-brownie 1.17.0 requires regex==2021.10.8, but you have regex 2021.10.21 which is incompatible.
+```
+
+Another corner case you may encountered while trying to run `brownie console` or scripts is `AttributeError: module 'rlp' has no attribute 'Serializable'`. Solution can be found [here](https://lightrun.com/answers/apeworx-ape-docker-startup-error-attributeerror-module-rlp-has-no-attribute-serializable).
+
+```
+poetry shell
+pip uninstall rlp --yes && pip install rlp==3.0.0
+```
+
+Warning can be ignored regarding pip's dependency resolver conflicts.
+
+## Uninstall
+
+Delete the virtual environment as such:
+```
+rm -rf `poetry env info -p`
+```
 
 ## Multisig Addresses
 
@@ -46,6 +81,20 @@ pipenv install
 |`treasuryvoter.badgerdao.eth`|Convex voting weight allocated to the treasury as per [BIP 87](https://forum.badger.finance/t/bip-87-bvecvx-restructure-voting-strategy-and-emissions-revised-with-community-feedback/5521)|Mainnet: `0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b` ([Etherscan](https://etherscan.io/address/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b/), [Zapper](https://zapper.fi/account/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [DeBank](https://debank.com/profile/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b))|
 |`payments.badgerdao.eth`|Financial txs such as payments to contractors, contributors, expenses, bounties, advisors, etc.|Mainnet: `0x30a9c1D258F6c2D23005e6450E72bDD42C541105` ([Etherscan](https://etherscan.io/address/0x30a9c1D258F6c2D23005e6450E72bDD42C541105), [Gnosis Safe](https://gnosis-safe.io/app/eth:0x30a9c1D258F6c2D23005e6450E72bDD42C541105/), [Zapper](https://zapper.fi/account/0x30a9c1D258F6c2D23005e6450E72bDD42C541105), [DeBank](https://debank.com/profile/0x30a9c1D258F6c2D23005e6450E72bDD42C541105))|
 |`ibbtc.badgerdao.eth`|Internal wallet which claims yield on behalf of the [ibBTC contract](https://etherscan.io/address/0x41671BA1abcbA387b9b2B752c205e22e916BE6e3), only to redistribute it again as emissions.|Mainnet: `0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8` ([Etherscan](https://etherscan.io/address/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8/), [Zapper](https://zapper.fi/account/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [DeBank](https://debank.com/profile/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8))|
+
+## Techops Signers
+
+The following is a list of all signers on `techops.badgerdao.eth`:
+
+| Signer | Profiles | Address |
+|-|-|-|
+| petrovska | [GitHub](https://github.com/petrovska-petro) | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
+| dapp-whisperer | [GitHub](https://github.com/dapp-whisperer/) | `0x8938bf50d1a3736bdA413510688834540858dAEA` |
+| SHAKOTN | [GitHub](https://github.com/SHAKOTN) | `0x95c1D2014909c04202fa73820B894b45F054F25e` |
+| gosuto | [GitHub](https://github.com/gosuto-inzasheru/) | `0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4` |
+| lipp | [Twitter](https://twitter.com/lipp_brian) | `0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16` |
+| mrbasado | [GitHub](https://github.com/mrbasado) | `0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e` |
+| saj | [GitHub](https://github.com/sajanrajdev) | `0xfA5bb45895Cb3C0aE5B1583Fe068f009A48F0187` |
 
 ## Treasury Signers
 
