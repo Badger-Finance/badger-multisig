@@ -46,7 +46,9 @@ class Bunni(UniV3):
         self.olit_oracle = interface.IBalancerOracle(r.bunni.oLIT_oracle)
         self.lens = interface.IBunniLens(r.bunni.lens)
 
-        self.set_bunni_key(bunni_token_addr, pool_addr, range0, range1)
+        # NOTE: not always that we use bunni we need to invoke this L
+        if bunni_token_addr or None not in (pool_addr, range0, range1):
+            self.set_bunni_key(bunni_token_addr, pool_addr, range0, range1)
 
         self.slippage = 0.97
         self.deadline = 60 * 60 * 12
