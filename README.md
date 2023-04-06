@@ -42,6 +42,15 @@ ERROR: pip's dependency resolver does not currently take into account all the pa
 eth-brownie 1.17.0 requires regex==2021.10.8, but you have regex 2021.10.21 which is incompatible.
 ```
 
+Another corner case you may encountered while trying to run `brownie console` or scripts is `AttributeError: module 'rlp' has no attribute 'Serializable'`. Solution can be found [here](https://lightrun.com/answers/apeworx-ape-docker-startup-error-attributeerror-module-rlp-has-no-attribute-serializable).
+
+```
+poetry shell
+pip uninstall rlp --yes && pip install rlp==3.0.0
+```
+
+Warning can be ignored regarding pip's dependency resolver conflicts.
+
 ## Uninstall
 
 Delete the virtual environment as such:
