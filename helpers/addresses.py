@@ -230,6 +230,7 @@ ADDRESSES_ETH = {
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
         "mBTC": "0x945Facb997494CC2570096c74b5F66A3507330a1",
         "crvFRAXUSDC": "0x3175df0976dfa876431c2e9ee6bc45b65d3473cc",
+        "GRT": "0xc944E90C64B2c07662A292be6244BDf05Cda44a7",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
