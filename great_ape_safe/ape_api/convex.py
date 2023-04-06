@@ -91,15 +91,16 @@ class Convex:
         pool_id = self.get_pool_info(underlying)[0]
         assert self.booster.withdrawAll(pool_id).return_value == True
 
-    def claim_all(self):
+    def claim_all(self, pending_rewards=None):
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool
         # https://github.com/convex-eth/platform/blob/main/contracts/contracts/ClaimZap.sol#L103-L133
-        pending_rewards = []
-        n_pools = self.booster.poolLength()
-        for n in range(n_pools):
-            lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
-            if interface.IBaseRewardPool(rewards).earned(self.safe) > 0:
-                pending_rewards.append(rewards)
+        if not pending_rewards:
+            pending_rewards = []
+            n_pools = self.booster.poolLength()
+            for n in range(n_pools):
+                lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
+                if interface.IBaseRewardPool(rewards).earned(self.safe) > 0:
+                    pending_rewards.append(rewards)
         assert len(pending_rewards) > 0
         self.zap.claimRewards(pending_rewards, [], [], [], 0, 0, 0, 0, 0)
         for rewards in pending_rewards:
