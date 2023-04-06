@@ -236,7 +236,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
                 return Interface(address, owner=self.account)
             if from_explorer:
                 return Contract.from_explorer(address, owner=self.account)
-        return self.contract(address)
+        return super().contract(address)
 
     def _generate_tenderly_simulation(self, receipt, gas):
         """
