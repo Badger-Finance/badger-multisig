@@ -8,12 +8,10 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions, web3, chain
+from brownie import Contract, network, ETH_ADDRESS, web3, chain
 from eth_utils import is_address, to_checksum_address
 from rich.console import Console
-from rich.pretty import pprint
 from tqdm import tqdm
-from web3.exceptions import BadFunctionCallOutput
 
 from great_ape_safe.ape_api import ApeApis
 from helpers.chaindata import labels
@@ -139,7 +137,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
         with redirect_stdout(StringIO()) as buffer:
             receipt.info()
             receipt.call_trace(True)
-            pprint(safe_tx.__dict__)
+            C.print(safe_tx.__dict__)
             if hasattr(self, "snapshot"):
                 self.print_snapshot()
 
@@ -187,7 +185,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
-            pprint(safe_tx.__dict__)
+            C.print(safe_tx.__dict__)
         if hasattr(self, "snapshot"):
             self.print_snapshot(csv_destination)
         if tenderly and not skip_preview:
@@ -210,7 +208,7 @@ class GreatApeSafe(ApeSafe, ApeApis):
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
         else:
             safe_tx = self.pending_transactions[0]
-        pprint(safe_tx.__dict__)
+        C.print(safe_tx.__dict__)
         signature = self.sign_with_frame(safe_tx)
         self.post_signature(safe_tx, signature)
 
@@ -220,28 +218,25 @@ class GreatApeSafe(ApeSafe, ApeApis):
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
         else:
             safe_tx = self.pending_transactions[0]
-        pprint(safe_tx.__dict__)
+        C.print(safe_tx.__dict__)
         self.execute_transaction_with_frame(safe_tx)
 
-    def contract(self, address, Interface=None, from_explorer=False):
-        # instantiate a brownie contract, either from an interface, the
-        # explorer or locally saved contract object. if address is somehow
-        # invalid, return None.
-        if is_address(address):
-            address = to_checksum_address(address)
-        else:
-            try:
-                address = web3.ens.resolve(address)
-            except BadFunctionCallOutput:
-                return None
-        if not is_address(address):
-            return None
-        if Interface:
-            return Interface(address, owner=self.account)
-        elif from_explorer:
-            return Contract.from_explorer(address, owner=self.account)
-        else:
-            return Contract(address, owner=self.account)
+    def contract(self, address=None, Interface=None, from_explorer=False):
+        """
+        Add the possibilty to instantiate a contract from a given interface or
+        from the explorer. Else revert to ApeSafe's default behaviour.
+        """
+        if address:
+            address = (
+                to_checksum_address(address)
+                if is_address(address)
+                else web3.ens.resolve(address)
+            )
+            if Interface:
+                return Interface(address, owner=self.account)
+            if from_explorer:
+                return Contract.from_explorer(address, owner=self.account)
+        return super().contract(address)
 
     def _generate_tenderly_simulation(self, receipt, gas):
         """

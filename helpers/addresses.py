@@ -46,6 +46,10 @@ ADDRESSES_ETH = {
             "fee_collector": "0x24a6108D1985B44130f68550C9c43d556720CF17",
         },
     },
+    "avatars": {
+        "aura": "0x1aB341F6b71721a25AC092Fd41480299843be7fA",
+        "convex": "0x21A940194BdFEA81C7802Da85e5FCb56Dffe0739",
+    },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
@@ -230,6 +234,7 @@ ADDRESSES_ETH = {
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
         "mBTC": "0x945Facb997494CC2570096c74b5F66A3507330a1",
         "crvFRAXUSDC": "0x3175df0976dfa876431c2e9ee6bc45b65d3473cc",
+        "GRT": "0xc944E90C64B2c07662A292be6244BDf05Cda44a7",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings

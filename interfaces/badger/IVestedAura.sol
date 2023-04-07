@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity >=0.6.12;
 pragma experimental ABIEncoderV2;
 
 interface IVestedAura {
@@ -75,10 +75,9 @@ interface IVestedAura {
 
     function bribesRedirectionPaths(address) external view returns (address);
 
-    function checkUpkeep(bytes calldata checkData)
-        external
-        view
-        returns (bool upkeepNeeded, bytes memory performData);
+    function checkUpkeep(
+        bytes calldata checkData
+    ) external view returns (bool upkeepNeeded, bytes memory performData);
 
     function claimBribesFromHiddenHand(
         address hiddenHandDistributor,
