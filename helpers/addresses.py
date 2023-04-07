@@ -46,6 +46,10 @@ ADDRESSES_ETH = {
             "fee_collector": "0x24a6108D1985B44130f68550C9c43d556720CF17",
         },
     },
+    "avatars": {
+        "aura": "0x1aB341F6b71721a25AC092Fd41480299843be7fA",
+        "convex": "0x21A940194BdFEA81C7802Da85e5FCb56Dffe0739",
+    },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
     "digg_monetary_policy": "0x327a78D13eA74145cc0C63E6133D516ad3E974c3",
