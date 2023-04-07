@@ -246,9 +246,9 @@ class Bunni(UniV3):
 
         assert self.olit.balanceOf(self.safe) == olit_before - mantissa
         assert self.lit.balanceOf(self.safe) == lit_before + mantissa
-        # assert (
-        #     payment_token.balanceOf(self.safe) >= weth_before - expected_payment_amount
-        # )
+        assert (
+            payment_token.balanceOf(self.safe) >= weth_before - expected_payment_amount
+        )
 
     def compound(self):
         """
