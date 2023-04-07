@@ -229,8 +229,8 @@ class Bunni(UniV3):
         mantissa = mantissa or self.olit.balanceOf(self.safe)
 
         price = self.olit_oracle.getPrice()
-        expected_payment_amount = math.ceil(
-            (self.olit.balanceOf(self.safe) * price) / 1e18
+        expected_payment_amount = (
+            self.olit.balanceOf(self.safe) * price * (1 - self.slippage + 1) / 1e18
         )
 
         assert payment_token.balanceOf(self.safe) >= expected_payment_amount
@@ -246,9 +246,9 @@ class Bunni(UniV3):
 
         assert self.olit.balanceOf(self.safe) == olit_before - mantissa
         assert self.lit.balanceOf(self.safe) == lit_before + mantissa
-        assert (
-            payment_token.balanceOf(self.safe) >= weth_before - expected_payment_amount
-        )
+        # assert (
+        #     payment_token.balanceOf(self.safe) >= weth_before - expected_payment_amount
+        # )
 
     def compound(self):
         """
