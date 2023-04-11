@@ -23,8 +23,12 @@ def wd_unlocked_aura():
     aura = voter.contract(r.treasury_tokens.AURA)
     badger = voter.contract(r.treasury_tokens.BADGER)
     vlAURA = voter.contract(r.aura.vlAURA)
+    graviaura = voter.contract(r.sett_vaults.graviAURA)
 
-    voter.take_snapshot([aura, badger]), vault.take_snapshot([aura, badger])
+    voter.take_snapshot([aura, badger, graviaura]), vault.take_snapshot([aura, badger])
+
+    if graviaura.balanceOf(voter) > 0:
+        graviaura.withdrawAll()
 
     unlockable = vlAURA.lockedBalances(voter)[1]
     if unlockable > 0:
@@ -67,11 +71,17 @@ def main(aura_pct_lock="0."):
     vault.take_snapshot(tokens)
     voter.take_snapshot(tokens)
 
+    rewards = [
+        r.aura.aura_20wbtc80badger_gauge,
+        r.aura.aura_40wbtc40digg20gravi_gauge,
+        r.aura.aura_50reth50badger_gauge,
+    ]
+
     # 1. claim rewards
     if claim_aura_rewards:
         balance_bal_before = bal.balanceOf(vault)
         balance_aura_before = aura.balanceOf(vault)
-        vault.aura.claim_all_from_booster()
+        vault.aura.claim_all_from_booster(rewards)
 
         # 2. organised splits for each asset
         balance_bal = bal.balanceOf(vault)

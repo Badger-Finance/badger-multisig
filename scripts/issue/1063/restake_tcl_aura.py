@@ -20,7 +20,7 @@ def main():
     new_aura_gauges = [
         vault.contract(r.aura.aura_20wbtc80badger_gauge),
         vault.contract(r.aura.aura_40wbtc40digg20gravi_gauge),
-        vault.contract(r.aura.aura_50reth50badger_gauge),
+        vault.contract(r.aura.aura_50badger50reth_gauge),
     ]
 
     vault.take_snapshot(bpts + new_aura_gauges)

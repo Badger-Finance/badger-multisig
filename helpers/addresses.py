@@ -42,6 +42,13 @@ ADDRESSES_ETH = {
         "treasury_vault": {
             "univ3_harvester": "0xF6fA1F20CCD69aD3B7B3a0b8743e6a213521b2E5",
         },
+        "treasury_ops_multisig": {
+            "fee_collector": "0x24a6108D1985B44130f68550C9c43d556720CF17",
+        },
+    },
+    "avatars": {
+        "aura": "0x1aB341F6b71721a25AC092Fd41480299843be7fA",
+        "convex": "0x21A940194BdFEA81C7802Da85e5FCb56Dffe0739",
     },
     "cvx_bribes_processor": "0xb2Bf1d48F2C2132913278672e6924efda3385de2",
     "aura_bribes_processor": "0x8ABD28E4D69bD3953b96dd9ED63533765AdB9965",
@@ -226,6 +233,8 @@ ADDRESSES_ETH = {
         "RETH": "0xae78736Cd615f374D3085123A210448E74Fc6393",
         "cvxFXS": "0xFEEf77d3f69374f66429C91d732A244f074bdf74",
         "mBTC": "0x945Facb997494CC2570096c74b5F66A3507330a1",
+        "crvFRAXUSDC": "0x3175df0976dfa876431c2e9ee6bc45b65d3473cc",
+        "GRT": "0xc944E90C64B2c07662A292be6244BDf05Cda44a7",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -509,6 +518,7 @@ ADDRESSES_ETH = {
         "LDO": "0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32",
         "BAL": "0xba100000625a3754423978a60c9317c58a424e3D",
         "STG": "0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6",
+        "SYN": "0x0f2D719407FdBeFF09D87557AbB7232601FD9F29",
     },
     "uniswap": {
         "factoryV3": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
@@ -562,6 +572,7 @@ ADDRESSES_ETH = {
         "B_50_BADGER_50_RETH": "0x1ee442b5326009Bb18F2F472d3e0061513d1A0fF",
         "B_50_BADGER_50_RETH_GAUGE": "0x87012b0C3257423fD74a5986F81a0f1954C17a1d",
         "B_50_WETH_50_RETH": "0x1E19CF2D73a72Ef1332C882F20534B6519Be0276",
+        "B_80LIT_20_WETH": "0x9232a548DD9E81BaC65500b5e0d918F8Ba93675C",
         "_deprecated": {
             "B_20_BTC_80_BADGER_GAUGE": "0xaf50825b010ae4839ac444f6c12d44b96819739b",
             "B_50_BADGER_50_RETH_GAUGE": "0xcab1921e4fc9f4c26b877b58d9713cd19e9eadd1",
@@ -612,7 +623,8 @@ ADDRESSES_ETH = {
         "aura_40wbtc40digg20gravi": "0xe86f0312b06126855810B4a13a43c3E2b1B8DD90",
         "aura_40wbtc40digg20gravi_gauge": "0xD7c9c6922db15F47EF3131F2830d8E87f7637210",
         "aura_50reth50badger": "0x685C94e7DA6C8F14Ae58f168C942Fb05bAD73412",
-        "aura_50reth50badger_gauge": "0x4E867c6c76173539538B7a9335E89b00434Aec10",
+        "aura_50badger50reth_gauge": "0x4E867c6c76173539538B7a9335E89b00434Aec10",
+        "aura_50reth50badger_gauge": "0xAAd4eE162Dbc9C25cCa26bA4340B36E3eF7C1A80",
         "_deprecated": {
             "aura_20wbtc80badger": "0xCea3aa5b2a50e39c7C7755EbFF1e9E1e1516D3f5",
             "aura_40wbtc40digg20gravi": "0x10Ca519614b0F3463890387c24819001AFfC5152",
