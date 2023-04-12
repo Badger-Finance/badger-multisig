@@ -1,3 +1,4 @@
+import ast
 import os
 import re
 import requests
@@ -18,7 +19,6 @@ from gnosis.safe.signatures import signature_split
 from rich.console import Console
 from tqdm import tqdm
 from web3 import Web3
-from web3.exceptions import BadFunctionCallOutput
 from web3.middleware import geth_poa_middleware
 
 from great_ape_safe.ape_api import ApeApis
@@ -250,10 +250,12 @@ class GreatApeSafe(ApeSafe, ApeApis):
     def post_safe_tx_manually(self):
         safe_tx = self.post_safe_tx(events=False, silent=True, post=False)
         partial_signature = C.input(
-            "paste the partial signature from previous signer (or press enter if first signer): "
+            "paste the partial signature in bytes (b'\\x...') from previous signer (or press enter if first signer): "
         )
 
-        safe_tx.signatures = bytes.fromhex(partial_signature)
+        safe_tx.signatures = ast.literal_eval(
+            partial_signature
+        )  # bytes.fromhex(partial_signature) if already in hex
 
         def encode_exec_tx_with_frame():
             calldata = interface.IGnosisSafe_v1_3_0(
