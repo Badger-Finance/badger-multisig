@@ -16,6 +16,7 @@ Read more about the Badger DAO and its community at https://badger.com/dao-and-c
 The recommended installation tool for this repository is [`poetry`](https://python-poetry.org/docs/):
 ```
 poetry install
+git submodule update --init --recursive
 ```
 
 In case of missing python versions, and depending on your setup, you might want to have a look at [`pyenv`](https://github.com/pyenv/pyenv).
@@ -42,6 +43,7 @@ ERROR: pip's dependency resolver does not currently take into account all the pa
 eth-brownie 1.17.0 requires regex==2021.10.8, but you have regex 2021.10.21 which is incompatible.
 ```
 
+### module 'rlp' has no attribute 'Serializable'
 Another corner case you may encountered while trying to run `brownie console` or scripts is `AttributeError: module 'rlp' has no attribute 'Serializable'`. Solution can be found [here](https://lightrun.com/answers/apeworx-ape-docker-startup-error-attributeerror-module-rlp-has-no-attribute-serializable).
 
 ```
