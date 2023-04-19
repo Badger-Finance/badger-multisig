@@ -16,7 +16,7 @@ Read more about the Badger DAO and its community at https://badger.com/dao-and-c
 The recommended installation tool for this repository is [`poetry`](https://python-poetry.org/docs/):
 ```
 poetry install
-git submodule update --init --recursive
+git submodule update --init --recursive --progress
 ```
 
 In case of missing python versions, and depending on your setup, you might want to have a look at [`pyenv`](https://github.com/pyenv/pyenv).
