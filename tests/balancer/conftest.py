@@ -89,7 +89,7 @@ def badger(safe):
 
 @pytest.fixture
 def usdt(safe):
-    usdt = interface.ERC20(registry.eth.treasury_tokens.USDT, owner=safe.account)
+    usdt = interface.ITetherToken(registry.eth.treasury_tokens.USDT, owner=safe.account)
     usdt_mintable = MintableForkToken(usdt.address, owner=safe.account)
     usdt_mintable._mint_for_testing(safe, 1000 * 10 ** usdt.decimals())
     return usdt
