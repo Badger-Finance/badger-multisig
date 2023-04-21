@@ -13,6 +13,7 @@ from great_ape_safe.ape_api.helpers.balancer.queries import (
     pool_tokens_query,
     pool_preferential_gauge,
 )
+from great_ape_safe.ape_api.helpers.coingecko import get_cg_price
 
 
 class Balancer:
@@ -98,6 +99,23 @@ class Balancer:
             )
 
         return bpt_out
+
+    # external helper method to calc deposit amoounts based on pool weights
+    def bpt_ratio_amounts(self, bpt, underlyings, usd_amount):
+        pool_type = self.pool_type(bpt.getPoolId())
+        underlyings = self.order_tokens([x.address for x in underlyings])
+        prices = [get_cg_price(x) for x in underlyings]
+        if pool_type == "Weighted":
+            weights = bpt.getNormalizedWeights()
+            ratios = [w / 1e18 for w in weights]
+        else:
+            # each token has the same weight
+            ratios = [1 / len(underlyings)] * len(underlyings)
+        amounts = [
+            int((usd_amount * ratio / price) * 10 ** Contract(token).decimals())
+            for ratio, price, token in zip(ratios, prices, underlyings)
+        ]
+        return amounts
 
     def get_pool_data(self, update_cache=False):
         # no on-chain registry, so pool data is cached locally
