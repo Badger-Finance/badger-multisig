@@ -7,7 +7,7 @@ from helpers.addresses import r
 COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
-COEF = 0.96
+COEF = 0.98
 
 # time after which cowswap order expires
 DEADLINE = 60 * 60 * 3
