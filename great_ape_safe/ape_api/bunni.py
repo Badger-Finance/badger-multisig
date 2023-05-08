@@ -46,7 +46,9 @@ class Bunni(UniV3):
         self.olit_oracle = interface.IBalancerOracle(r.bunni.oLIT_oracle)
         self.lens = interface.IBunniLens(r.bunni.lens)
 
-        self.set_bunni_key(bunni_token_addr, pool_addr, range0, range1)
+        # NOTE: not always that we use bunni we need to invoke this L
+        if bunni_token_addr or None not in (pool_addr, range0, range1):
+            self.set_bunni_key(bunni_token_addr, pool_addr, range0, range1)
 
         self.slippage = 0.97
         self.deadline = 60 * 60 * 12
@@ -227,8 +229,8 @@ class Bunni(UniV3):
         mantissa = mantissa or self.olit.balanceOf(self.safe)
 
         price = self.olit_oracle.getPrice()
-        expected_payment_amount = math.ceil(
-            (self.olit.balanceOf(self.safe) * price) / 1e18
+        expected_payment_amount = (
+            self.olit.balanceOf(self.safe) * price * (1 - self.slippage + 1) / 1e18
         )
 
         assert payment_token.balanceOf(self.safe) >= expected_payment_amount
@@ -245,7 +247,7 @@ class Bunni(UniV3):
         assert self.olit.balanceOf(self.safe) == olit_before - mantissa
         assert self.lit.balanceOf(self.safe) == lit_before + mantissa
         assert (
-            payment_token.balanceOf(self.safe) == weth_before - expected_payment_amount
+            payment_token.balanceOf(self.safe) >= weth_before - expected_payment_amount
         )
 
     def compound(self):

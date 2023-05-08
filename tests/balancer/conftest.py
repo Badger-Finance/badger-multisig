@@ -85,3 +85,11 @@ def badger(safe):
     badger_mintable = MintableForkToken(badger.address)
     badger_mintable._mint_for_testing(safe, 100_000 * 10 ** badger.decimals())
     return badger
+
+
+@pytest.fixture
+def usdt(safe):
+    usdt = interface.ITetherToken(registry.eth.treasury_tokens.USDT, owner=safe.account)
+    usdt_mintable = MintableForkToken(usdt.address, owner=safe.account)
+    usdt_mintable._mint_for_testing(safe, 1000 * 10 ** usdt.decimals())
+    return usdt

@@ -1,3 +1,4 @@
+import os
 import requests
 from decimal import Decimal, InvalidOperation
 
@@ -5,7 +6,7 @@ from brownie import web3, interface
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
-
+from pycoingecko import CoinGeckoAPI
 
 SNAPSHOT_URL = "https://hub.snapshot.org/graphql?"
 
@@ -54,7 +55,7 @@ def main(
     badger_bribe_in_balancer=0,
     badger_bribe_in_votium=0,
     badger_bribe_in_frax=0,
-    badger_bribe_in_bunni=0,
+    badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -165,8 +166,15 @@ def main(
         )
 
     if bribes["bunni"] > 0:
+        # NOTE: Treasury decision is expressed in dollars
+        cg = CoinGeckoAPI(os.getenv("COINGECKO_API_KEY"))
+        badger_rate = Decimal(
+            cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
+        )
+
         prop = web3.solidityKeccak(["address"], [r.bunni.badger_wbtc_bunni_gauge])
-        mantissa = int(bribes["bunni"] * Decimal(1e18))
+        print("prop", prop.hex())
+        mantissa = int(bribes["bunni"] / badger_rate * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
         bunni_briber.depositBribeERC20(prop, badger, mantissa)
