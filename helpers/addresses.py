@@ -21,6 +21,7 @@ ADDRESSES_ETH = {
     "GlobalAccessControl": "0x9c58B0D88578cd75154Bdb7C8B013f7157bae35a",
     "harvest_forwarder": "0xA84B663837D94ec41B0f99903f37e1d69af9Ed3E",
     "badger_geyser": "0xBD9c69654B8F3E5978DFd138B00cB0Be29F28cCf",
+    "slp_geyser": "0xd34C1d3853214bf049B760Ef48A580bfa7A9c8a1",
     "aragon_voting": "0xDc344bFB12522bF3fa58EF0d6b9a41256fc79A1b",
     "badger_voting_shares": "0x49fa0D0619BdeD9aAc4106974E34CeB516bdeAeF",
     "brickedProxyAdmin": "0x933FDBAc3773514384c6db30Eb196a0be543D617",
