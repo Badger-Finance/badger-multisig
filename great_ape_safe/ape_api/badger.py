@@ -428,8 +428,6 @@ class Badger:
                 min_top_up = 4e18
             if label == "ops_botsquad":
                 min_bal = 5e18
-            if label == "ops_deployer":
-                min_bal = 5e18
             labels.append(label)
             addrs.append(addr)
             min_bals.append(min_bal)
