@@ -406,6 +406,10 @@ ADDRESSES_ETH = {
         "uFragments": "0x020eb84309243Ed4B8E6C197AF145125dDE4AFDa",  # V1.1
         "SimpleWrapperGatedUpgradeable": "0x021ea7548Ee9B40d57f47706A605043B05C6c92C",
         "TheVault": "0x60c796ACb2E0949178086294f03A44C450511784",  # V1.5.2.a
+        "slp_geyser": "0xc765F078139BF16953Ec9Eb4ad45FC43C2910e53",  # sweepable badger token
+        "_deprecated": {
+            "slp_geyser": "0x752F5C9e91721dc7a7513106fbf249C46439A5EE",  # protected badger token
+        },
     },
     "guestlists": {
         "bimBTC": "0x7feCCc72aE222e0483cBDE212F5F88De62132546",
