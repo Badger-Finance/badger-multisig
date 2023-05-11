@@ -25,14 +25,13 @@ def main(queue=False, sim=False, recover=False):
     trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     badger = safe.contract(r.treasury_tokens.BADGER)
     geyser = StakingRewardsSignalOnly.at(r.slp_geyser, owner=safe.account)
-    geyser_proxy = interface.IAdminUpgradeabilityProxy(r.slp_geyser, owner=safe.account)
+    geyser_proxy_address = r.slp_geyser
     dev_proxy_admin_address = r.badger_wallets.devProxyAdmin
 
     safe.init_badger()
     trops.take_snapshot([badger])
 
-    # TODO: still need to deploy to mainnet
-    geyser_new_logic = StakingRewardsSignalOnly.deploy({"from": safe.account})
+    geyser_new_logic_address = r.logic.slp_geyser
 
     if queue:
         # queue up upgrade to timelock
@@ -41,7 +40,7 @@ def main(queue=False, sim=False, recover=False):
             signature="upgrade(address,address)",
             data=encode_abi(
                 ["address", "address"],
-                [geyser_proxy.address, geyser_new_logic.address],
+                [geyser_proxy_address, geyser_new_logic_address],
             ),
             dump_dir="data/badger/timelock/upgrade_slp_geyser/",
             delay_in_days=4,
@@ -51,7 +50,7 @@ def main(queue=False, sim=False, recover=False):
     if sim:
         timelock = accounts.at(safe.badger.timelock, force=True)
         proxyAdmin = interface.IProxyAdmin(dev_proxy_admin_address, owner=timelock)
-        proxyAdmin.upgrade(geyser_proxy.address, geyser_new_logic)
+        proxyAdmin.upgrade(geyser_proxy_address, geyser_new_logic_address)
     else:
         safe.badger.execute_timelock("data/badger/timelock/upgrade_slp_geyser/")
 
