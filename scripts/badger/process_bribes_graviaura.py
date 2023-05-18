@@ -1,5 +1,6 @@
 from brownie import Contract, interface, web3
 from pycoingecko import CoinGeckoAPI
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
