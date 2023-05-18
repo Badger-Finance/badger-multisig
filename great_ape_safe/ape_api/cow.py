@@ -2,9 +2,9 @@ import json
 import os
 import requests
 from decimal import Decimal
-from pprint import pprint
 
-from brownie import Contract, chain, interface, web3
+from brownie import Contract, chain, interface
+from rich.pretty import pprint
 from rich.prompt import Confirm
 
 from great_ape_safe.ape_api.helpers.coingecko import get_cg_price
@@ -55,7 +55,7 @@ class Cow:
 
         r = requests.post(self.api_url + "quote", json=fee_and_quote_payload)
         print("FEE AND QUOTE RESPONSE:")
-        print(r.json())
+        pprint(r.json())
         print("")
 
         r.raise_for_status()
