@@ -172,30 +172,28 @@ def sell_weth():
     SAFE.post_safe_tx()
 
 
-def buy_aura(usdc_mantissa):
-    usdc_mantissa = int(usdc_mantissa)
+def buy_aura_or_badger(erc20_addr, mantissa=None, badger=False):
+    erc20_to_sell = VAULT.contract(erc20_addr)
+    if badger:
+        erc20_to_buy = VAULT.contract(r.treasury_tokens.BADGER)
+    else:
+        erc20_to_buy = VAULT.contract(r.treasury_tokens.AURA)
 
-    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=VAULT.account)
-    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=VAULT.account)
-    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=VAULT.account)
-    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=VAULT.account)
-
-    proc = GreatApeSafe(PROCESSOR.address)
-    proc.take_snapshot([USDC, BADGER, AURA, GRAVI_AURA])
+    if mantissa:
+        mantissa = int(mantissa)
+    else:
+        mantissa = erc20_to_sell.balanceOf(PROCESSOR)
 
     VAULT.init_cow(prod=COW_PROD)
-    VAULT.cow.allow_relayer(USDC, usdc_mantissa)
+    VAULT.cow.allow_relayer(erc20_to_sell, mantissa)
     VAULT.cow.market_sell(
-        USDC,
-        AURA,
-        usdc_mantissa,
+        erc20_to_sell,
+        erc20_to_buy,
+        mantissa,
         deadline=DEADLINE,
         coef=COEF,
         destination=PROCESSOR.address,
     )
-
-    proc.print_snapshot()
-
     VAULT.post_safe_tx()
 
 
