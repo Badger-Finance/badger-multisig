@@ -4,7 +4,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 # only set to true when actually ready to post and exec on mainnet
-COW_PROD = False
+COW_PROD = True
 
 # artificially create slippage on the quoted price from cowswap
 COEF = 0.98
@@ -173,28 +173,32 @@ def sell_weth():
 
 
 def buy_aura_or_badger(erc20_addr, mantissa=None, badger=False):
-    erc20_to_sell = VAULT.contract(erc20_addr)
+    erc20_to_sell = SAFE.contract(erc20_addr)
     if badger:
-        erc20_to_buy = VAULT.contract(r.treasury_tokens.BADGER)
+        erc20_to_buy = SAFE.contract(r.treasury_tokens.BADGER)
     else:
-        erc20_to_buy = VAULT.contract(r.treasury_tokens.AURA)
+        erc20_to_buy = SAFE.contract(r.treasury_tokens.AURA)
 
     if mantissa:
         mantissa = int(mantissa)
     else:
         mantissa = erc20_to_sell.balanceOf(PROCESSOR)
 
-    VAULT.init_cow(prod=COW_PROD)
-    VAULT.cow.allow_relayer(erc20_to_sell, mantissa)
-    VAULT.cow.market_sell(
-        erc20_to_sell,
-        erc20_to_buy,
-        mantissa,
+    order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
+        sell_token=erc20_to_sell,
+        mantissa_sell=mantissa,
+        buy_token=erc20_to_buy,
         deadline=DEADLINE,
         coef=COEF,
-        destination=PROCESSOR.address,
+        prod=COW_PROD,
     )
-    VAULT.post_safe_tx()
+    if badger:
+        PROCESSOR.swapWethForBadger(order_payload, order_uid)
+    else:
+        PROCESSOR.swapWethForAURA(order_payload, order_uid)
+
+    SAFE.post_safe_tx()
 
 
 def emit_tokens():
