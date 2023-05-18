@@ -1,5 +1,6 @@
 from brownie import Contract, interface, web3
 from pycoingecko import CoinGeckoAPI
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -172,31 +173,33 @@ def sell_weth():
     SAFE.post_safe_tx()
 
 
-def buy_aura(usdc_mantissa):
-    usdc_mantissa = int(usdc_mantissa)
+def buy_aura_or_badger(erc20_addr, mantissa=None, badger=False):
+    erc20_to_sell = SAFE.contract(erc20_addr)
+    if badger:
+        erc20_to_buy = SAFE.contract(r.treasury_tokens.BADGER)
+    else:
+        erc20_to_buy = SAFE.contract(r.treasury_tokens.AURA)
 
-    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=VAULT.account)
-    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=VAULT.account)
-    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=VAULT.account)
-    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=VAULT.account)
+    if mantissa:
+        mantissa = int(mantissa)
+    else:
+        mantissa = erc20_to_sell.balanceOf(PROCESSOR)
 
-    proc = GreatApeSafe(PROCESSOR.address)
-    proc.take_snapshot([USDC, BADGER, AURA, GRAVI_AURA])
-
-    VAULT.init_cow(prod=COW_PROD)
-    VAULT.cow.allow_relayer(USDC, usdc_mantissa)
-    VAULT.cow.market_sell(
-        USDC,
-        AURA,
-        usdc_mantissa,
+    order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
+        sell_token=erc20_to_sell,
+        mantissa_sell=mantissa,
+        buy_token=erc20_to_buy,
         deadline=DEADLINE,
         coef=COEF,
-        destination=PROCESSOR.address,
+        prod=COW_PROD,
     )
+    if badger:
+        PROCESSOR.swapWethForBadger(order_payload, order_uid)
+    else:
+        PROCESSOR.swapWethForAURA(order_payload, order_uid)
 
-    proc.print_snapshot()
-
-    VAULT.post_safe_tx()
+    SAFE.post_safe_tx()
 
 
 def emit_tokens():

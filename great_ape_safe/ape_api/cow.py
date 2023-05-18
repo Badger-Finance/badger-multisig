@@ -2,9 +2,9 @@ import json
 import os
 import requests
 from decimal import Decimal
-from pprint import pprint
 
-from brownie import Contract, chain, interface, web3
+from brownie import Contract, chain, interface
+from rich.pretty import pprint
 from rich.prompt import Confirm
 
 from great_ape_safe.ape_api.helpers.coingecko import get_cg_price
@@ -54,12 +54,11 @@ class Cow:
         print("")
 
         r = requests.post(self.api_url + "quote", json=fee_and_quote_payload)
-        if not r.ok:
-            r.raise_for_status()
-
         print("FEE AND QUOTE RESPONSE:")
         pprint(r.json())
         print("")
+
+        r.raise_for_status()
 
         return r.json()
 
@@ -200,13 +199,12 @@ class Cow:
 
         if self.prod:
             r = requests.post(self.api_url + "orders", json=order_payload)
-            if not r.ok:
-                r.raise_for_status()
-
             order_uid = r.json()
             print("ORDER RESPONSE")
             pprint(order_uid)
             print("")
+
+            r.raise_for_status()
 
             # dump order to json and add staging label if necessary
             path = "logs/trading/prod/"
