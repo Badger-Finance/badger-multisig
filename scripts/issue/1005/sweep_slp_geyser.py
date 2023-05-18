@@ -17,7 +17,7 @@ def sim():
 
 
 def recover():
-    main(False, False, False)
+    main(False, False, True)
 
 
 def main(queue=False, sim=False, recover=False):
@@ -51,11 +51,10 @@ def main(queue=False, sim=False, recover=False):
         timelock = accounts.at(safe.badger.timelock, force=True)
         proxyAdmin = interface.IProxyAdmin(dev_proxy_admin_address, owner=timelock)
         proxyAdmin.upgrade(geyser_proxy_address, geyser_new_logic_address)
-    else:
-        safe.badger.execute_timelock("data/badger/timelock/upgrade_slp_geyser/")
 
+    # recover badger from geyser and forward from dev msig to trops
     if recover:
-        # recover badger from geyser and forward from dev msig to trops
+        safe.badger.execute_timelock("data/badger/timelock/upgrade_slp_geyser/")
         geyser.recoverERC20(badger.address, badger.balanceOf(geyser))
         badger.transfer(trops, badger.balanceOf(safe))
 
