@@ -4,7 +4,7 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 # only set to true when actually ready to post and exec on mainnet
-COW_PROD = True
+COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
 COEF = 0.98
