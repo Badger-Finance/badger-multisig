@@ -54,7 +54,8 @@ def main(queue=False, sim=False, recover=False):
 
     # recover badger from geyser and forward from dev msig to trops
     if recover:
-        safe.badger.execute_timelock("data/badger/timelock/upgrade_slp_geyser/")
+        if not sim:
+            safe.badger.execute_timelock("data/badger/timelock/upgrade_slp_geyser/")
         geyser.recoverERC20(badger.address, badger.balanceOf(geyser))
         badger.transfer(trops, badger.balanceOf(safe))
 
