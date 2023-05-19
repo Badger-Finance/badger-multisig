@@ -173,8 +173,11 @@ def sell_weth():
     SAFE.post_safe_tx()
 
 
-def buy_aura_or_badger(erc20_addr, mantissa=None, badger=False):
-    erc20_to_sell = SAFE.contract(erc20_addr)
+def sell_weth_one_sided(mantissa=None, badger=False):
+    """
+    sell weth for either badger or aura
+    this is useful in case one of the two orders from sell_weth fails
+    """
     if badger:
         erc20_to_buy = SAFE.contract(r.treasury_tokens.BADGER)
     else:
@@ -183,11 +186,11 @@ def buy_aura_or_badger(erc20_addr, mantissa=None, badger=False):
     if mantissa:
         mantissa = int(mantissa)
     else:
-        mantissa = erc20_to_sell.balanceOf(PROCESSOR)
+        mantissa = WETH.balanceOf(PROCESSOR)
 
     order_payload, order_uid = SAFE.badger.get_order_for_processor(
         PROCESSOR,
-        sell_token=erc20_to_sell,
+        sell_token=WETH,
         mantissa_sell=mantissa,
         buy_token=erc20_to_buy,
         deadline=DEADLINE,
