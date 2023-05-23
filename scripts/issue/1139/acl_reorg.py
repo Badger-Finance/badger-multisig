@@ -163,7 +163,7 @@ def main(safe_ens, sim=False):
                         target.grantRole(role, addr)
 
                 for member in members:
-                    if not member is expected_addrs_per_setting:
+                    if not member in expected_addrs_per_setting:
                         C.print(f"Revoke role {role} in {contract_name} for {member}\n")
                         target.revokeRole(role, member)
             else:
