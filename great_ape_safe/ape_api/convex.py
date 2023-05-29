@@ -39,8 +39,8 @@ class Convex:
         # https://docs.convexfinance.com/convexfinanceintegration/booster#pool-info
         n_pools = self.booster.poolLength()
         for n in range(n_pools):
-            lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
-            if lptoken == underlying.address:
+            lptoken, token, gauge, rewards, _, shutdown = self.booster.poolInfo(n)
+            if lptoken == underlying.address and not shutdown:
                 return n, token, gauge, rewards
 
     def deposit(self, underlying, mantissa):
@@ -91,19 +91,20 @@ class Convex:
         pool_id = self.get_pool_info(underlying)[0]
         assert self.booster.withdrawAll(pool_id).return_value == True
 
-    def claim_all(self):
+    def claim_all(self, pending_rewards=None):
         # https://docs.convexfinance.com/convexfinanceintegration/baserewardpool
         # https://github.com/convex-eth/platform/blob/main/contracts/contracts/ClaimZap.sol#L103-L133
-        pending_rewards = []
-        n_pools = self.booster.poolLength()
-        for n in range(n_pools):
-            lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
-            if self.safe.contract(rewards).earned(self.safe) > 0:
-                pending_rewards.append(rewards)
+        if not pending_rewards:
+            pending_rewards = []
+            n_pools = self.booster.poolLength()
+            for n in range(n_pools):
+                lptoken, token, gauge, rewards, _, _ = self.booster.poolInfo(n)
+                if interface.IBaseRewardPool(rewards).earned(self.safe) > 0:
+                    pending_rewards.append(rewards)
         assert len(pending_rewards) > 0
         self.zap.claimRewards(pending_rewards, [], [], [], 0, 0, 0, 0, 0)
         for rewards in pending_rewards:
-            reward_token = self.safe.contract(rewards).rewardToken()
+            reward_token = interface.IBaseRewardPool(rewards).rewardToken()
             # this assert is a bit weak, but no starting balance is known since
             # we cannot know for which reward tokens contracts to check in the
             # beginning
@@ -174,8 +175,8 @@ class Convex:
         len = self.frax_pool_registry.poolLength()
 
         for i in range(len):
-            _, _, staking_token, _, _ = self.frax_pool_registry.poolInfo(i)
-            if _staking_token == staking_token:
+            _, _, staking_token, _, active = self.frax_pool_registry.poolInfo(i)
+            if _staking_token == staking_token and active:
                 return i
 
     def get_vault(self, pid, owner=None):

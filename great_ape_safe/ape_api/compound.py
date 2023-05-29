@@ -1,5 +1,7 @@
 from helpers.addresses import registry
 
+from brownie import interface
+
 
 class Compound:
     def __init__(self, safe):
@@ -13,7 +15,7 @@ class Compound:
         # deposit `mantissa` amount of `underlying` into its respective compound's ctoken
         # https://compound.finance/docs/ctokens#mint
         for ctoken in self.comptroller.getAllMarkets():
-            ctoken = self.safe.contract(ctoken)
+            ctoken = interface.ICErc20Delegate(ctoken, owner=self.safe.account)
             try:
                 if ctoken.underlying() == underlying.address:
                     if self.comptroller.mintGuardianPaused(ctoken):
@@ -22,7 +24,7 @@ class Compound:
                     underlying.approve(ctoken, mantissa)
                     assert ctoken.mint(mantissa).return_value == 0
                     return
-            except AttributeError:
+            except:
                 # $ceth has no underlying
                 if ctoken.symbol() == "cETH":
                     pass
@@ -36,7 +38,7 @@ class Compound:
         # deposit `mantissa` amount of $eth into its respective compound's ctoken
         # https://compound.finance/docs/ctokens#mint
         for ctoken in self.comptroller.getAllMarkets():
-            ctoken = self.safe.contract(ctoken)
+            ctoken = interface.ICErc20Delegate(ctoken, owner=self.safe.account)
             if ctoken.symbol() == "cETH":
                 bal_before = ctoken.balanceOf(self.safe)
                 ctoken.mint({"from": self.safe.address, "value": mantissa})
@@ -49,12 +51,12 @@ class Compound:
         # withdraw `mantissa` amount of `underlying` from its corresponding ctoken
         # https://compound.finance/docs/ctokens#redeem-underlying
         for ctoken in self.comptroller.getAllMarkets():
-            ctoken = self.safe.contract(ctoken)
+            ctoken = interface.ICErc20Delegate(ctoken, owner=self.safe.account)
             try:
                 if ctoken.underlying() == underlying.address:
                     assert ctoken.redeemUnderlying(mantissa).return_value == 0
                     return
-            except AttributeError:
+            except:
                 # $ceth has no underlying
                 if ctoken.symbol() == "cETH":
                     pass
@@ -68,7 +70,7 @@ class Compound:
         # withdraw `mantissa` amount of $eth from its corresponding ctoken
         # https://compound.finance/docs/ctokens#redeem-underlying
         for ctoken in self.comptroller.getAllMarkets():
-            ctoken = self.safe.contract(ctoken)
+            ctoken = interface.ICErc20Delegate(ctoken, owner=self.safe.account)
             if ctoken.symbol() == "cETH":
                 assert ctoken.redeemUnderlying(mantissa).return_value == 0
                 return
@@ -98,12 +100,12 @@ class Compound:
         ctokens = []
         for underlying in underlyings:
             for ctoken in self.comptroller.getAllMarkets():
-                ctoken = self.safe.contract(ctoken)
+                ctoken = interface.ICErc20Delegate(ctoken, owner=self.safe.account)
                 try:
                     if ctoken.underlying() == underlying.address:
                         ctokens.append(ctoken.address)
                         break
-                except AttributeError:
+                except:
                     if ctoken.symbol() == "cETH":
                         # $ceth has no underlying
                         pass

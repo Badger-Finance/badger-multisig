@@ -1,5 +1,6 @@
-from brownie import interface, web3
+from brownie import Contract, interface, web3
 from pycoingecko import CoinGeckoAPI
+
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
@@ -7,7 +8,7 @@ from helpers.addresses import r
 COW_PROD = False
 
 # artificially create slippage on the quoted price from cowswap
-COEF = 0.9825
+COEF = 0.98
 
 # time after which cowswap order expires
 DEADLINE = 60 * 60 * 3
@@ -46,12 +47,14 @@ def claim_and_sell_for_weth(claim_only=False):
     # likely these assets will be present in the rounds for processing
     # NOTE: badger is directly emitted by the strat to tree
     # NOTE: aura is sent to processor, but should not be sold for weth
-    for addr, mantissa in claimed.items():
+    for addr in claimed:
         if addr == "0x0":
             # $eth. strat will auto convert to $weth
             continue
         addr = web3.toChecksumAddress(addr)
+        # TODO: skip if fee > ~10% total amount
         if addr != BADGER.address and addr != AURA.address:
+            mantissa = str(int(Contract(addr).balanceOf(PROCESSOR)))
             order_payload, order_uid = SAFE.badger.get_order_for_processor(
                 PROCESSOR,
                 sell_token=SAFE.contract(addr),
@@ -170,31 +173,36 @@ def sell_weth():
     SAFE.post_safe_tx()
 
 
-def buy_aura(usdc_mantissa):
-    usdc_mantissa = int(usdc_mantissa)
+def sell_weth_one_sided(mantissa=None, badger=False):
+    """
+    sell weth for either badger or aura
+    this is useful in case one of the two orders from sell_weth fails
+    """
+    if badger:
+        erc20_to_buy = SAFE.contract(r.treasury_tokens.BADGER)
+    else:
+        erc20_to_buy = SAFE.contract(r.treasury_tokens.AURA)
 
-    USDC = interface.ERC20(r.treasury_tokens.USDC, owner=VAULT.account)
-    BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=VAULT.account)
-    AURA = interface.ERC20(r.treasury_tokens.AURA, owner=VAULT.account)
-    GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=VAULT.account)
+    if mantissa:
+        mantissa = int(mantissa)
+    else:
+        mantissa = WETH.balanceOf(PROCESSOR)
 
-    proc = GreatApeSafe(PROCESSOR.address)
-    proc.take_snapshot([USDC, BADGER, AURA, GRAVI_AURA])
-
-    VAULT.init_cow(prod=COW_PROD)
-    VAULT.cow.allow_relayer(USDC, usdc_mantissa)
-    VAULT.cow.market_sell(
-        USDC,
-        AURA,
-        usdc_mantissa,
+    order_payload, order_uid = SAFE.badger.get_order_for_processor(
+        PROCESSOR,
+        sell_token=WETH,
+        mantissa_sell=mantissa,
+        buy_token=erc20_to_buy,
         deadline=DEADLINE,
         coef=COEF,
-        destination=PROCESSOR.address,
+        prod=COW_PROD,
     )
+    if badger:
+        PROCESSOR.swapWethForBadger(order_payload, order_uid)
+    else:
+        PROCESSOR.swapWethForAURA(order_payload, order_uid)
 
-    proc.print_snapshot()
-
-    VAULT.post_safe_tx()
+    SAFE.post_safe_tx()
 
 
 def emit_tokens():

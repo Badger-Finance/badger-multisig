@@ -1,7 +1,4 @@
-import pytest
-from brownie import chain
-
-
+# SC has to be whitelisted to lock
 def test_lock(vault, bal):
     vault.init_balancer()
 

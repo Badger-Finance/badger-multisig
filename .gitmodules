@@ -1,0 +1,3 @@
+[submodule "data/Votium"]
+	path = data/Votium
+	url = https://github.com/oo-00/Votium.git

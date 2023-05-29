@@ -1,5 +1,8 @@
+import ast
 import os
 import re
+import requests
+import sys
 from contextlib import redirect_stdout
 from datetime import datetime
 from decimal import Decimal
@@ -7,42 +10,25 @@ from io import StringIO
 
 import pandas as pd
 from ape_safe import ApeSafe
-from brownie import Contract, network, ETH_ADDRESS, exceptions, web3
+from brownie import Contract, ETH_ADDRESS, chain, interface, network, web3
+from brownie.exceptions import VirtualMachineError
+from eth_account import Account
+from eth_account.messages import encode_defunct
 from eth_utils import is_address, to_checksum_address
+from gnosis.safe.signatures import signature_split
 from rich.console import Console
-from rich.pretty import pprint
 from tqdm import tqdm
-from web3.exceptions import BadFunctionCallOutput
+from web3 import Web3
+from web3.middleware import geth_poa_middleware
 
-from great_ape_safe.ape_api.aave import Aave
-from great_ape_safe.ape_api.anyswap import Anyswap
-from great_ape_safe.ape_api.aura import Aura
-from great_ape_safe.ape_api.badger import Badger
-from great_ape_safe.ape_api.balancer import Balancer
-from great_ape_safe.ape_api.chainlink import Chainlink
-from great_ape_safe.ape_api.compound import Compound
-from great_ape_safe.ape_api.convex import Convex
-from great_ape_safe.ape_api.cow import Cow
-from great_ape_safe.ape_api.curve import Curve
-from great_ape_safe.ape_api.curve_v2 import CurveV2
-from great_ape_safe.ape_api.euler import Euler
-from great_ape_safe.ape_api.maker import Maker
-from great_ape_safe.ape_api.opolis import Opolis
-from great_ape_safe.ape_api.pancakeswap_v2 import PancakeswapV2
-from great_ape_safe.ape_api.rari import Rari
-from great_ape_safe.ape_api.snapshot import Snapshot
-from great_ape_safe.ape_api.solidly import Solidly
-from great_ape_safe.ape_api.spookyswap import SpookySwap
-from great_ape_safe.ape_api.sushi import Sushi
-from great_ape_safe.ape_api.uni_v2 import UniV2
-from great_ape_safe.ape_api.uni_v3 import UniV3
+from great_ape_safe.ape_api import ApeApis
 from helpers.chaindata import labels
 
 
 C = Console()
 
 
-class GreatApeSafe(ApeSafe):
+class GreatApeSafe(ApeSafe, ApeApis):
     """
     Child of ApeSafe object, with added functionalities:
     - contains a limited library of functions needed to ape in and out of known
@@ -56,81 +42,6 @@ class GreatApeSafe(ApeSafe):
 
     def __init__(self, address, base_url=None, multisend=None):
         super().__init__(address, base_url, multisend)
-
-    def init_all(self):
-        for method in self.__dir__():
-            if method.startswith("init_") and method != "init_all":
-                try:
-                    getattr(self, method)()
-                except exceptions.ContractNotFound:
-                    # different chain
-                    pass
-
-    def init_aave(self):
-        self.aave = Aave(self)
-
-    def init_anyswap(self):
-        self.anyswap = Anyswap(self)
-
-    def init_aura(self):
-        self.aura = Aura(self)
-
-    def init_badger(self):
-        self.badger = Badger(self)
-
-    def init_balancer(self):
-        self.balancer = Balancer(self)
-
-    def init_chainlink(self):
-        self.chainlink = Chainlink(self)
-
-    def init_compound(self):
-        self.compound = Compound(self)
-
-    def init_convex(self):
-        self.convex = Convex(self)
-
-    def init_cow(self, prod=False):
-        self.cow = Cow(self, prod)
-
-    def init_curve(self):
-        self.curve = Curve(self)
-
-    def init_curve_v2(self):
-        self.curve_v2 = CurveV2(self)
-
-    def init_euler(self):
-        self.euler = Euler(self)
-
-    def init_maker(self):
-        self.maker = Maker(self)
-
-    def init_opolis(self):
-        self.opolis = Opolis(self)
-
-    def init_pancakeswap_v2(self):
-        self.pancakeswap_v2 = PancakeswapV2(self)
-
-    def init_rari(self):
-        self.rari = Rari(self)
-
-    def init_snapshot(self, proposal_id):
-        self.snapshot = Snapshot(self, proposal_id)
-
-    def init_solidly(self):
-        self.solidly = Solidly(self)
-
-    def init_spookyswap(self):
-        self.spookyswap = SpookySwap(self)
-
-    def init_sushi(self):
-        self.sushi = Sushi(self)
-
-    def init_uni_v2(self):
-        self.uni_v2 = UniV2(self)
-
-    def init_uni_v3(self):
-        self.uni_v3 = UniV3(self)
 
     def take_snapshot(self, tokens):
         C.print(f"snapshotting {self.address}...")
@@ -226,7 +137,7 @@ class GreatApeSafe(ApeSafe):
             safe_tx.safe_tx_gas = 0
         if log_name:
             self._dump_log(safe_tx, receipt, log_name)
-        return safe_tx
+        return safe_tx, receipt
 
     def _dump_log(self, safe_tx, receipt, log_name):
         # logs .preview's events and call traces to log file, plus prettified
@@ -234,7 +145,7 @@ class GreatApeSafe(ApeSafe):
         with redirect_stdout(StringIO()) as buffer:
             receipt.info()
             receipt.call_trace(True)
-            pprint(safe_tx.__dict__)
+            C.print(safe_tx.__dict__)
             if hasattr(self, "snapshot"):
                 self.print_snapshot()
 
@@ -261,6 +172,8 @@ class GreatApeSafe(ApeSafe):
         csv_destination=None,
         gas_coef=1.5,
         safe_tx=None,
+        tenderly=True,
+        debank=False,
     ):
         # build a gnosis-py SafeTx object which can then be posted
         # skip_preview=True: skip preview **and with that also setting the gas**
@@ -272,17 +185,22 @@ class GreatApeSafe(ApeSafe):
         elif not safe_tx:
             safe_tx = self.multisend_from_receipts()
         if not skip_preview:
-            safe_tx = self._set_safe_tx_gas(
+            safe_tx, receipt = self._set_safe_tx_gas(
                 safe_tx, events, call_trace, reset, log_name, gas_coef
             )
+        if debank:
+            self._debank_pre_execution(receipt, safe_tx.safe_tx_gas)
         if replace_nonce:
             safe_tx._safe_nonce = replace_nonce
         if not silent:
-            pprint(safe_tx.__dict__)
+            C.print(safe_tx.__dict__)
         if hasattr(self, "snapshot"):
             self.print_snapshot(csv_destination)
+        if tenderly and not skip_preview:
+            self._generate_tenderly_simulation(receipt, safe_tx.safe_tx_gas)
         if post:
             self.post_transaction(safe_tx)
+        return safe_tx
 
     def _get_safe_tx_by_nonce(self, safe_nonce):
         # retrieve SafeTx obj from pending transactions based on nonce
@@ -299,7 +217,7 @@ class GreatApeSafe(ApeSafe):
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
         else:
             safe_tx = self.pending_transactions[0]
-        pprint(safe_tx.__dict__)
+        C.print(safe_tx.__dict__)
         signature = self.sign_with_frame(safe_tx)
         self.post_signature(safe_tx, signature)
 
@@ -309,25 +227,183 @@ class GreatApeSafe(ApeSafe):
             safe_tx = self._get_safe_tx_by_nonce(safe_tx_nonce)
         else:
             safe_tx = self.pending_transactions[0]
-        pprint(safe_tx.__dict__)
+        C.print(safe_tx.__dict__)
         self.execute_transaction_with_frame(safe_tx)
 
-    def contract(self, address, Interface=None, from_explorer=False):
-        # instantiate a brownie contract, either from an interface, the
-        # explorer or locally saved contract object. if address is somehow
-        # invalid, return None.
-        if is_address(address):
-            address = to_checksum_address(address)
+    def contract(self, address=None, Interface=None, from_explorer=False):
+        """
+        Add the possibilty to instantiate a contract from a given interface or
+        from the explorer. Else revert to ApeSafe's default behaviour.
+        """
+        if address:
+            address = (
+                to_checksum_address(address)
+                if is_address(address)
+                else web3.ens.resolve(address)
+            )
+            if Interface:
+                return Interface(address, owner=self.account)
+            if from_explorer:
+                return Contract.from_explorer(address, owner=self.account)
+        return super().contract(address)
+
+    def post_safe_tx_manually(self):
+        safe_tx = self.post_safe_tx(events=False, silent=True, post=False)
+        partial_signature = C.input(
+            "paste the partial signature in bytes (b'\\x...') from previous signer (or press enter if first signer): "
+        )
+
+        safe_tx.signatures = ast.literal_eval(
+            partial_signature
+        )  # bytes.fromhex(partial_signature) if already in hex
+
+        def encode_exec_tx_with_frame():
+            calldata = interface.IGnosisSafe_v1_3_0(
+                self.address
+            ).execTransaction.encode_input(
+                safe_tx.to,  # address to
+                safe_tx.value,  # uint256 value
+                safe_tx.data.hex(),  # bytes memory data
+                safe_tx.operation,  # uint8 operation
+                safe_tx.safe_tx_gas,  # uint256 safeTxGas
+                safe_tx.base_gas,  # uint256 baseGas
+                safe_tx.gas_price,  # uint256 gasPrice
+                safe_tx.gas_token,  # address gasToken
+                safe_tx.refund_receiver,  # address refundReceiver
+                safe_tx.signatures.hex(),  # bytes memory signatures
+            )
+
+            C.print("sending tx:", {"to": self.address, "value": 0, "data": calldata})
+
+            frame_rpc = "http://127.0.0.1:1248"
+            frame = Web3(Web3.HTTPProvider(frame_rpc, {"timeout": 600}))
+            if chain.id == 4:
+                # https://web3py.readthedocs.io/en/stable/middleware.html#geth-style-proof-of-authority
+                frame.middleware_onion.inject(geth_poa_middleware, layer=0)
+            frame.eth.send_transaction(
+                {"to": self.address, "value": 0, "data": calldata}
+            )
+
+        # determine if safe_tx.signatures is complete. if so; exec tx to chain
+        if self._check_sig_valid(safe_tx):
+            encode_exec_tx_with_frame()
         else:
-            try:
-                address = web3.ens.resolve(address)
-            except BadFunctionCallOutput:
-                return None
-        if not is_address(address):
-            return None
-        if Interface:
-            return Interface(address, owner=self.account)
-        elif from_explorer:
-            return Contract.from_explorer(address, owner=self.account)
+            # sig is incomplete; needs more sigs
+            self.sign_with_frame(safe_tx)
+
+        C.print("safe_tx:", safe_tx.__dict__)
+
+        # maybe signer just added the last missing sig; check again
+        if self._check_sig_valid(safe_tx):
+            encode_exec_tx_with_frame()
         else:
-            return Contract(address, owner=self.account)
+            # needs more sigs
+            sys.exit()
+
+    def _check_sig_valid(self, safe_tx):
+        if len(safe_tx.signers) == 0:
+            return False
+        # naive, because cant get checkSignatures to work locally
+        if (
+            len(safe_tx.signatures)
+            == interface.IGnosisSafe_v1_3_0(self.address).getThreshold() * 65
+        ):
+            return True
+        return False
+
+        tx_hash = interface.IGnosisSafe_v1_3_0(self.address).getTransactionHash.call(
+            safe_tx.to,  # address to,
+            safe_tx.value,  # uint256 value,
+            safe_tx.data.hex(),  # bytes calldata data,
+            safe_tx.operation,  # Enum.Operation operation,
+            safe_tx.safe_tx_gas,  # uint256 safeTxGas,
+            safe_tx.base_gas,  # uint256 baseGas,
+            safe_tx.gas_price,  # uint256 gasPrice,
+            safe_tx.gas_token,  # address gasToken,
+            safe_tx.refund_receiver,  # address refundReceiver,
+            interface.IGnosisSafe_v1_3_0(self.address).nonce(),  # uint256 _nonce
+        )
+
+        sig_complete = True
+        try:
+            interface.IGnosisSafe_v1_3_0(self.address).checkSignatures.call(
+                tx_hash,  # bytes32 dataHash,
+                safe_tx.data.hex(),  # bytes memory data,
+                safe_tx.signatures.hex(),  # bytes memory signatures
+            )
+        except VirtualMachineError:
+            # BUG: always reverts because of https://github.com/safe-global/safe-contracts/blob/f9088d81f8ad72dbf8d9ffb32b10ccaa71739991/contracts/Safe.sol#L331
+            # somehow locally compiled tx hash is not correct and ecrecover does not
+            # derive the correct address (`currentOwner`) from it
+            current_owner = Account.recover_message(
+                encode_defunct(tx_hash), vrs=signature_split(safe_tx.signatures)
+            )
+            print(current_owner)
+            sig_complete = False
+            raise
+
+        C.print("sig complete?", sig_complete)
+        return sig_complete
+
+    def _generate_tenderly_simulation(self, receipt, gas):
+        """
+        docs: https://www.notion.so/Simulate-API-Documentation-6f7009fe6d1a48c999ffeb7941efc104
+        """
+        header = {
+            "Content-Type": "application/json",
+            "X-Access-Key": os.getenv("TENDERLY_ACCESS_KEY"),
+        }
+        api_url = f'https://api.tenderly.co/api/v1/account/{os.getenv("TENDERLY_USER")}/project/{os.getenv("TENDERLY_PROJECT")}/simulate'
+        tx_payload = {
+            "network_id": str(chain.id),
+            "from": receipt.sender.address,
+            "to": self.address,
+            "input": receipt.input,
+            "gas": 1_500_000 if gas == 0 else gas,
+            "save": True,
+            "save_if_fails": True,
+            # storage ref: https://github.com/safe-global/safe-contracts/blob/main/contracts/libraries/SafeStorage.sol
+            "state_objects": {self.address: {"storage": {"0x04": "0x01"}}},
+        }
+        r = requests.post(api_url, headers=header, json=tx_payload)
+        r.raise_for_status()
+
+        print(
+            f"https://dashboard.tenderly.co/{os.getenv('TENDERLY_USER')}/{os.getenv('TENDERLY_PROJECT')}/simulator/{r.json()['simulation']['id']}"
+        )
+
+    def _debank_pre_execution(self, receipt, gas):
+        """
+        docs: https://docs.open.debank.com/en/reference/api-pro-reference/wallet#enhanced-transaction-pre-execution
+        TransactionObject format: https://docs.open.debank.com/en/reference/api-models/transactionobject
+        """
+        header = {
+            "content-type": "application/json",
+            "AccessKey": os.getenv("DEBANK_API_KEY"),
+        }
+        api_url = "https://pro-openapi.debank.com/v1/wallet/pre_exec_tx"
+
+        max_gas_fee = hex(int(2.1e10))
+        tx_object = {
+            "tx": {
+                "chainId": chain.id,
+                "from": receipt.sender.address,
+                "to": self.address,
+                "value": hex(receipt.value),
+                "data": receipt.input,
+                "gas": hex(1_500_000 if gas == 0 else gas),
+                "maxFeePerGas": max_gas_fee,
+                "maxPriorityFeePerGas": max_gas_fee,
+                "nonce": hex(receipt.nonce),
+            }
+        }
+        r = requests.post(
+            api_url,
+            headers=header,
+            json=tx_object,
+        )
+        # TODO: it will revert with GS025 have not find a way
+        # to by-pass: https://github.com/safe-global/safe-contracts/blob/main/contracts/Safe.sol#L282
+        # since here the threshold storage variable cannot be override currently
+        r.raise_for_status()
+        print(r.json())

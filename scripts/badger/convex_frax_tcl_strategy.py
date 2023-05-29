@@ -6,7 +6,8 @@ prod = False
 
 
 # slippage
-COEF = 0.98
+COEF = 0.95
+DEADLINE = 60 * 60 * 12
 
 
 def main():
@@ -30,21 +31,19 @@ def main():
     private_vault.getReward()
 
     # 2. sell all rewards for DAI via cow
-    vault.cow.market_sell(
-        fxs, dai, fxs.balanceOf(vault), deadline=60 * 60 * 4, coef=COEF
-    )
+    vault.cow.market_sell(fxs, dai, fxs.balanceOf(vault), deadline=DEADLINE, coef=COEF)
     vault.cow.market_sell(
         crv,
         dai,
         crv.balanceOf(vault),
-        deadline=60 * 60 * 4,
+        deadline=DEADLINE,
         coef=COEF,
     )
     vault.cow.market_sell(
         cvx,
         dai,
         cvx.balanceOf(vault),
-        deadline=60 * 60 * 4,
+        deadline=DEADLINE,
         coef=COEF,
     )
 

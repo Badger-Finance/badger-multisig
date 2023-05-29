@@ -51,7 +51,7 @@ class Badger:
 
         # misc
         self.api_url = "https://api.badger.com/v2/"
-        self.api_hh_url = f"https://hhand.xyz/reward/{chain.id}/"
+        self.api_hh_url = f"https://api.hiddenhand.finance/reward/{chain.id}/"
 
     def claim_all(self, json_file_path=None):
         """
@@ -302,6 +302,12 @@ class Badger:
                 sett.approveContractAccess(candidate_addr)
                 assert sett.approved(candidate_addr)
                 return True
+            elif hasattr(sett, "strategist"):
+                if sett.strategist() == self.safe.address:
+                    C.print(f"whitelisting {candidate_addr} on {sett_addr}...")
+                    sett.approveContractAccess(candidate_addr)
+                    assert sett.approved(candidate_addr)
+                    return True
             elif governor == self.timelock.address:
                 C.print(
                     f"whitelisting {candidate_addr} on {sett_addr} through timelock..."
@@ -413,13 +419,14 @@ class Badger:
         for label, addr in r.badger_wallets.items():
             min_bal = 2e18
             min_top_up = 0.5e18
-            if not label.startswith("ops_") or "multisig" in label:
+            if not label.startswith(tuple(["ops_", "upkeep_"])) or "multisig" in label:
                 continue
             if "executor" in label:
                 min_bal = 1e18
-            if label == "ops_botsquad":
+            if label == "upkeep_manager":
                 min_bal = 5e18
-            if label == "ops_deployer":
+                min_top_up = 4e18
+            if label == "ops_botsquad":
                 min_bal = 5e18
             labels.append(label)
             addrs.append(addr)

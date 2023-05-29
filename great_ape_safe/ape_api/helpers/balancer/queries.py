@@ -11,3 +11,12 @@ pool_tokens_query = """
           }
         }
         """
+pool_preferential_gauge = """
+        query($pool_address: ID!) {
+          pool(id: $pool_address) {
+            preferentialGauge {
+              id
+            }
+          }
+        }
+        """

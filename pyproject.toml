@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "badger-multisig"
+version = "0.1.0"
+description = "Badger DAO's EVM multisig operations."
+authors = ["Gosuto Inzasheru <mail@gosuto.ai>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+ape-safe = "*"
+dotmap = "*"
+eth-brownie = "1.17.0"
+pandas = "*"
+pycoingecko = "^3.1.0"
+rich = "*"
+sympy = "*"
+tabulate = "*"
+tqdm = "*"
+
+[tool.poetry.group.dev.dependencies]
+black = "21.9b0"
+brownie-token-tester = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

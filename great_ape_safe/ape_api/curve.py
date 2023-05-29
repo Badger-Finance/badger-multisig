@@ -1,7 +1,9 @@
-import numpy as np
-from helpers.addresses import registry
 from brownie import Contract, ZERO_ADDRESS, interface
 from brownie.exceptions import VirtualMachineError
+import numpy as np
+
+from great_ape_safe.ape_api.helpers.coingecko import get_cg_price
+from helpers.addresses import registry
 
 
 class Curve:
@@ -23,7 +25,7 @@ class Curve:
     def _get_coins(self, lp_token):
         # get coin addresses from registry for a specific `lp_token`
         pool = self._get_pool_from_lp_token(lp_token)
-        true_length = self.registry.get_n_coins(pool)[0]
+        true_length = self._get_n_coins(lp_token)
         return [pool.coins(i) for i in range(true_length)]
 
     def _get_registry(self, pool):
@@ -92,14 +94,7 @@ class Curve:
             return registry.get_n_coins(pool)
 
     def _pool_has_wrapped_coins(self, pool):
-        registry = self._get_registry(pool)
-        if registry == self.crypto_registry:
-            return False
-        try:
-            registry.get_underlying_balances(pool)
-            return True
-        except VirtualMachineError:
-            return False
+        return "exchange_underlying" in pool.signatures.keys()
 
     def _pool_supports_underlying(self, pool):
         return "exchange_underlying" in pool.signatures.keys()
@@ -128,6 +123,10 @@ class Curve:
                     break
             # make sure we found the right slot and populated it
             assert (np.array(mantissas) > 0).any()
+
+        elif type(mantissas) is not list and asset is None:
+            raise ValueError("`asset` must be provided with `mantissa` of type int")
+
         assert n_coins == len(mantissas)
 
         if not seeding:
@@ -165,10 +164,27 @@ class Curve:
         # (in same ratio as pool is currently in)
         # https://curve.readthedocs.io/exchange-pools.html#StableSwap.remove_liquidity
         pool = self._get_pool_from_lp_token(lp_token)
+        coins = self._get_coins(lp_token)
 
-        n_coins = self._get_n_coins(lp_token)
-        # TODO: slippage and stuff
-        minima = list(np.zeros(n_coins))
+        minima = [
+            x * (1 - self.max_slippage_and_fees)
+            for x in pool.remove_liquidity.call(mantissa, list(np.zeros(len(coins))))
+        ]
+
+        if len(minima) == 0:
+            # get ratio of usd value of coins in pool then use that to calc expected minima
+            pool_usd_values = [
+                get_cg_price(x)
+                * (pool.balances(i) / 10 ** self.safe.contract(x).decimals())
+                for i, x in enumerate(coins)
+            ]
+            pool_ratios = [x / sum(pool_usd_values) for x in pool_usd_values]
+
+            minima = [
+                pool.calc_withdraw_one_coin(mantissa * x, i)
+                * (1 - self.max_slippage_and_fees)
+                for i, x in enumerate(pool_ratios)
+            ]
 
         receivables = pool.remove_liquidity(mantissa, minima).return_value
         # some pools (eg 3pool) do not return `receivables` as per the standard api
