@@ -425,7 +425,6 @@ ADDRESSES_ETH = {
         "restitution": "0x3F61344BA56df00dad9bBcA05d98CA2AeC43Ba0B",
         "bcrvBadger": "0xa54d8a596B4022CC4436b692C8ea0E342405eB6e",
         "dummy": "0xEC4bc89F35A7bf9ffe0375Fd67940Ded1e2253BF",
-        "minting": "0xebA06639750BADcDf5EE100D72F3C93f2D1918A7",
     },
     "yearn_vaults": {"byvWBTC": "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5"},
     "peaks": {

@@ -6,7 +6,7 @@ def main():
     safe = GreatApeSafe(r.badger_wallets.dev_multisig)
 
     # contracts
-    controller = safe.contract(r.controllers.minting)
+    controller = safe.contract(r.GatedMiniMeController)
 
     controller.transferOwnership(r.governance_timelock)
 
