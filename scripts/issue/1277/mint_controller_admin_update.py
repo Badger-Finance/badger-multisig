@@ -7,7 +7,11 @@ def main():
 
     # contracts
     controller = safe.contract(r.GatedMiniMeController)
+    timelock_gov = safe.contract(r.governance_timelock)
 
-    controller.transferOwnership(r.governance_timelock)
+    controller.transferOwnership(timelock_gov)
+
+    # guardian setup
+    timelock_gov.setGuardian(r.badger_wallets.techops_multisig)
 
     safe.post_safe_tx()
