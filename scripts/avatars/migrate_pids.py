@@ -31,6 +31,13 @@ def main(aura_migration=True, convex_migration=True, treasury_wd=True):
     # boosters
     aura_booster = vault.contract(r.aura.booster)
 
+    # aura rewards contracts
+    rewards_aura_20wbtc80badger_gauge = vault.contract(r.aura.aura_20wbtc80badger_gauge)
+    rewards_aura_40wbtc40digg20gravi_gauge = vault.contract(
+        r.aura.aura_40wbtc40digg20gravi_gauge
+    )
+    rewards_aura_50reth50badger_gauge = vault.contract(r.aura.aura_50reth50badger_gauge)
+
     # avatars
     aura_avatar = vault.contract(r.avatars.aura)
     convex_avatar = vault.contract(r.avatars.convex)
@@ -53,9 +60,9 @@ def main(aura_migration=True, convex_migration=True, treasury_wd=True):
 
     if treasury_wd:
         # aura wds
-        vault.aura.unstake_all_and_withdraw_all(bpt_badgerwbtc, claim=0)
-        vault.aura.unstake_all_and_withdraw_all(bpt_badgerreth, claim=0)
-        vault.aura.unstake_all_and_withdraw_all(bpt_wbtcdigggravi, claim=0)
+        rewards_aura_20wbtc80badger_gauge.withdrawAllAndUnwrap(0)
+        rewards_aura_40wbtc40digg20gravi_gauge.withdrawAllAndUnwrap(0)
+        rewards_aura_50reth50badger_gauge.withdrawAllAndUnwrap(0)
 
         # convex private wds
         staking_contract = vault.contract(private_vault.stakingAddress())
