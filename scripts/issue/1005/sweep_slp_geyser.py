@@ -24,12 +24,16 @@ def main(queue=False, sim=False, recover=False):
     safe = GreatApeSafe(r.badger_wallets.dev_multisig)
     trops = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     badger = safe.contract(r.treasury_tokens.BADGER)
+    rpl = safe.contract(r.bribe_tokens_claimable_graviaura.RPL)
+    dai = safe.contract(r.bribe_tokens_claimable_graviaura.DAI)
+    stg = safe.contract(r.bribe_tokens_claimable_graviaura.STG)
+    bal = safe.contract(r.bribe_tokens_claimable_graviaura.BAL)
     geyser = StakingRewardsSignalOnly.at(r.slp_geyser, owner=safe.account)
     geyser_proxy_address = r.slp_geyser
     dev_proxy_admin_address = r.badger_wallets.devProxyAdmin
 
     safe.init_badger()
-    trops.take_snapshot([badger])
+    trops.take_snapshot([badger, rpl, dai, stg, bal])
 
     geyser_new_logic_address = r.logic.slp_geyser
 
@@ -58,6 +62,10 @@ def main(queue=False, sim=False, recover=False):
             safe.badger.execute_timelock("data/badger/timelock/upgrade_slp_geyser/")
         geyser.recoverERC20(badger.address, badger.balanceOf(geyser))
         badger.transfer(trops, badger.balanceOf(safe))
+
+        # also sweep ragequited tokens from aura processor
+        for token in [rpl, dai, stg, bal]:
+            token.transfer(trops, token.balanceOf(safe))
 
     trops.print_snapshot()
 
