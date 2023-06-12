@@ -2,12 +2,12 @@ from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
 # Here are exceptions that may exist during migration
-PID_AURA_EXCEPTION = 67
-PID_CONVEX_EXCEPTION = 0
+PID_AURA_MIGRATION_EXCLUDE = 67
+PID_CONVEX_MIGRATION_EXCLUDE = 0
 
 # New pids
-AURA_NEW_PID_WBTC_BADGER = 0  # TBD
-AURA_NEW_PID_WBTC_DIGG_GRAVI = 0  # TBD
+AURA_NEW_PID_WBTC_BADGER = 111  # https://app.aura.finance/#/pool/111
+AURA_NEW_PID_WBTC_DIGG_GRAVI = 112  # https://app.aura.finance/#/pool/112
 
 
 def sim():
@@ -27,6 +27,9 @@ def sim():
 def main(aura_migration=True, convex_migration=True, treasury_wd=True):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_aura()
+
+    # boosters
+    aura_booster = vault.contract(r.aura.booster)
 
     # avatars
     aura_avatar = vault.contract(r.avatars.aura)
@@ -65,14 +68,18 @@ def main(aura_migration=True, convex_migration=True, treasury_wd=True):
         total_assets = list(aura_avatar.totalAssets())
 
         pids = list(aura_avatar.getPids())
-        if PID_AURA_EXCEPTION != 0:
-            exception_pid_idx = pids.index(PID_AURA_EXCEPTION)
-            pids.pop(exception_pid_idx)
-            total_assets.pop(exception_pid_idx)
+        if PID_AURA_MIGRATION_EXCLUDE != 0:
+            is_shutdown = aura_booster.poolInfo(PID_AURA_MIGRATION_EXCLUDE)[5]
+            if not is_shutdown:
+                exception_pid_idx = pids.index(PID_AURA_MIGRATION_EXCLUDE)
+                pids.pop(exception_pid_idx)
+                total_assets.pop(exception_pid_idx)
 
         aura_avatar.withdraw(pids, total_assets)
         for pid in pids:
-            aura_avatar.removeBptPositionInfo(pid)
+            is_shutdown = aura_booster.poolInfo(pid)[5]
+            if is_shutdown:
+                aura_avatar.removeBptPositionInfo(pid)
 
         for new_pid in [AURA_NEW_PID_WBTC_BADGER, AURA_NEW_PID_WBTC_DIGG_GRAVI]:
             aura_avatar.addBptPositionInfo(new_pid)
@@ -93,10 +100,10 @@ def main(aura_migration=True, convex_migration=True, treasury_wd=True):
         pids = [
             AURA_NEW_PID_WBTC_BADGER,
             AURA_NEW_PID_WBTC_DIGG_GRAVI,
-            PID_AURA_EXCEPTION,
+            PID_AURA_MIGRATION_EXCLUDE,
         ]
 
-        # aura_avatar.deposit(pids, bpts_balances)
+        aura_avatar.deposit(pids, bpts_balances)
 
     if convex_migration:
         staking_lp_balance = wcvx_badger_fraxbp.balanceOf(vault)
