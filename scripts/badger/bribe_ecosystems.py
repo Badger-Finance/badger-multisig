@@ -22,7 +22,7 @@ query ($proposal_id: String) {
 # `state: "all"` ensures all proposals are included
 QUERY_PROPOSALS = """
 query {
-  proposals(first: 100, where: { space: "aurafinance.eth" , state: "all"}) {
+  proposals(first: 100, where: { space: "gauges.aurafinance.eth" , state: "all"}) {
     id
   }
 }
@@ -34,6 +34,9 @@ AURA_TARGET = "50/50 BADGER/rETH"
 
 # gauge to bribe in convex
 CONVEX_TARGET = "BADGER+FRAXBP (0x13B8…)"
+
+# snapshot differentiator after moving into `gauges.aurafinance.eth` space
+AURA_SNAP_DIFF_FACTOR = 1000000
 
 
 def get_index(proposal_id, target):
@@ -96,7 +99,7 @@ def main(
         proposals = response.json()["data"]["proposals"][::-1]
         for proposal in proposals:
             if aura_proposal_id == proposal["id"]:
-                proposal_index = proposals.index(proposal)
+                proposal_index = proposals.index(proposal) + AURA_SNAP_DIFF_FACTOR
                 break
         prop = web3.solidityKeccak(["uint256", "uint256"], [proposal_index, choice])
 
