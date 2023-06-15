@@ -1,6 +1,7 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 
+
 def main(vault_address):
     """
     Pauses deposits on a given Vault V1.5 governed by the Dev Multisig

@@ -457,9 +457,7 @@ class Badger:
         C.print(f"[green]New total cap: {cap}[/green]")
 
     def pause_deposits(self, vault):
-        vault = interface.ITheVault(
-            vault, owner=self.safe.account
-        )
+        vault = interface.ITheVault(vault, owner=self.safe.account)
         assert vault.pausedDeposit() == False
         vault.pauseDeposits()
         assert vault.pausedDeposit()
