@@ -109,7 +109,7 @@ def acl_audit(target_address=AddressZero):
         f"data/badger/acl_roles_audit/acl_roles_audit_{network.show_active()}.csv"
     )
 
-    # Printout occurances of target address
+    # Printout occurrences of target address
     if target_address != AddressZero:
         df_target = df[df["is_target"] == True]
         C.print(f"\n[blue]Target {target_address} has the following roles:")
