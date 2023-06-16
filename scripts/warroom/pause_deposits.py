@@ -4,6 +4,7 @@ from helpers.addresses import r
 # Add the vaults' addresses that you wish to pause deposits on
 VAULTS_ARRAY = []
 
+
 def main():
     """
     Pauses deposits on a given Vault V1.5 governed by the Dev Multisig
