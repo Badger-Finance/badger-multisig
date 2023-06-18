@@ -455,3 +455,10 @@ class Badger:
         guestlist.setTotalDepositCap(cap)
         assert guestlist.totalDepositCap() == cap
         C.print(f"[green]New total cap: {cap}[/green]")
+
+    def pause_deposits(self, vault):
+        vault = interface.ITheVault(vault, owner=self.safe.account)
+        assert vault.pausedDeposit() == False
+        vault.pauseDeposits()
+        assert vault.pausedDeposit()
+        C.print(f"[green]Deposits paused for {vault.name()}[/green]")
