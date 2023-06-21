@@ -637,6 +637,7 @@ ADDRESSES_ETH = {
             "aura_40wbtc40digg20gravi": "0x10Ca519614b0F3463890387c24819001AFfC5152",
             "aura_20wbtc80badger_2nd_migration": "0x4EFc8DED860Bc472FA8d938dc3fD4946Bc1A0a18",
             "aura_40wbtc40digg20gravi_gauge_2nd_migration": "0xD7c9c6922db15F47EF3131F2830d8E87f7637210",
+            "gauge_migrator": "0x7954bcDce86e86BeE7b1dEff48c3a0b9BCCe578B",
         },
     },
     "ens": {
