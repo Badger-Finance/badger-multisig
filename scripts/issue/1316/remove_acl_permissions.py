@@ -3,6 +3,7 @@ from great_ape_safe import GreatApeSafe
 from brownie import interface, web3
 from tabulate import tabulate
 from rich.console import Console
+from scripts.badger.acl_manager import get_role_hash
 
 C = Console()
 
@@ -54,13 +55,6 @@ def remove_registry_acl_roles():
     get_and_print_acl_roles_members(registry_acl, REGISTRY_ROLES)
 
     safe.post_safe_tx()
-
-
-def get_role_hash(role):
-    if role == "DEFAULT_ADMIN_ROLE":
-        return DEFAULT_ADMIN_ROLE
-    else:
-        return web3.keccak(text=role).hex()
 
 
 def get_and_print_acl_roles_members(acl_contract, roles):
