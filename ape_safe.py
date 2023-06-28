@@ -96,9 +96,7 @@ class ApeSafe(Safe):
         url = urljoin(
             self.base_url, f"/api/v1/safes/{self.address}/multisig-transactions/"
         )
-        print(url)
         results = requests.get(url).json()["results"]
-        print(results)
         return results[0]["nonce"] + 1 if results else 0
 
     def tx_from_receipt(
