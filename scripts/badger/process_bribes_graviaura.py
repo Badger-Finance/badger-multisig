@@ -24,9 +24,9 @@ SAFE.init_cow(prod=COW_PROD)
 PROCESSOR = SAFE.contract(r.aura_bribes_processor, from_explorer=True)
 
 # tokens involved during processing
-WETH = interface.IWETH9(r.treasury_tokens.WETH, owner=SAFE.account)
-BADGER = interface.ERC20(r.treasury_tokens.BADGER, owner=SAFE.account)
-AURA = interface.ERC20(r.treasury_tokens.AURA, owner=SAFE.account)
+WETH = interface.IWETH9(r.bribe_tokens_claimable_graviaura.WETH, owner=SAFE.account)
+BADGER = interface.ERC20(r.bribe_tokens_claimable_graviaura.BADGER, owner=SAFE.account)
+AURA = interface.ERC20(r.bribe_tokens_claimable_graviaura.AURA, owner=SAFE.account)
 GRAVI_AURA = interface.ITheVault(r.sett_vaults.graviAURA, owner=SAFE.account)
 DEV = GreatApeSafe(r.badger_wallets.dev_multisig)
 VAULT = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
