@@ -134,14 +134,16 @@ def main(
         # this allows for passing `main 0 12000,4000` for example to the script
         # in order to bribe both markets at the same time
         bribes_split = bribes["balancer"].split(",")
-        bribe_balancer(
-            r.balancer.B_20_BTC_80_BADGER_GAUGE,
-            Decimal(bribes_split[0]) * Decimal(1e18),
-        )
-        bribe_balancer(
-            r.balancer.B_50_BADGER_50_RETH_GAUGE,
-            Decimal(bribes_split[1]) * Decimal(1e18),
-        )
+        if int(bribes_split[0]) > 0:
+            bribe_balancer(
+                r.balancer.B_20_BTC_80_BADGER_GAUGE,
+                Decimal(bribes_split[0]) * Decimal(1e18),
+            )
+        if int(bribes_split[1]) > 0:
+            bribe_balancer(
+                r.balancer.B_50_BADGER_50_RETH_GAUGE,
+                Decimal(bribes_split[1]) * Decimal(1e18),
+            )
     elif bribes["balancer"] > 0:
         bribe_balancer(
             r.balancer.B_20_BTC_80_BADGER_GAUGE, bribes["balancer"] * Decimal(1e18)
