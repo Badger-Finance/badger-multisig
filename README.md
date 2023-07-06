@@ -92,7 +92,7 @@ The following is a list of all signers on `techops.badgerdao.eth`:
 |-|-|-|
 | petrovska | [GitHub](https://github.com/petrovska-petro) | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
 | dapp-whisperer | [GitHub](https://github.com/dapp-whisperer/) | `0x8938bf50d1a3736bdA413510688834540858dAEA` |
-| SHAKOTN | [GitHub](https://github.com/SHAKOTN) | `0x95c1D2014909c04202fa73820B894b45F054F25e` |
+| ICEITH | [GitHub](https://github.com/ICEBADGER) | `0x5F0D1a3355a75C47324c857280043DdE27797bC0 ` |
 | gosuto | [GitHub](https://github.com/gosuto-inzasheru/) | `0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4` |
 | lipp | [Twitter](https://twitter.com/lipp_brian) | `0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16` |
 | mrbasado | [GitHub](https://github.com/mrbasado) | `0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e` |
