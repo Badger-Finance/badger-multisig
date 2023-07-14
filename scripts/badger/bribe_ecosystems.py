@@ -58,7 +58,7 @@ def main(
     badger_bribe_in_balancer=0,
     badger_bribe_in_votium=0,
     badger_bribe_in_frax=0,
-    badger_bribe_in_bunni=3000,  # NOTE: dollar denominated. Badger calculation is done internaly
+    badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
