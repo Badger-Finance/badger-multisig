@@ -116,8 +116,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,          # uint256 _maxTokensPerVote,
-            1            #  uint256 _periods
+            0,  # uint256 _maxTokensPerVote,
+            1,  #  uint256 _periods
         )
 
     def bribe_balancer(gauge, mantissa):
@@ -130,8 +130,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,          # uint256 _maxTokensPerVote,
-            1            #  uint256 _periods
+            0,  # uint256 _maxTokensPerVote,
+            1,  #  uint256 _periods
         )
 
     if isinstance(bribes["balancer"], str):
@@ -170,8 +170,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,          # uint256 _maxTokensPerVote,
-            1            #  uint256 _periods
+            0,  # uint256 _maxTokensPerVote,
+            1,  #  uint256 _periods
         )
 
     if bribes["bunni"] > 0:
@@ -190,8 +190,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,          # uint256 _maxTokensPerVote,
-            1            #  uint256 _periods
+            0,  # uint256 _maxTokensPerVote,
+            1,  #  uint256 _periods
         )
 
     safe.post_safe_tx()
