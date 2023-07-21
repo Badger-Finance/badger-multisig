@@ -10,7 +10,7 @@ C = Console()
 
 # Contracts
 STRAT_PROXY = registry.eth.strategies["native.graviAURA"]
-NEW_LOGIC = registry.eth.logic["native.graviAURA"] # TODO: Under review
+NEW_LOGIC = registry.eth.logic["native.graviAURA"]  # TODO: Under review
 
 # Actors
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
@@ -26,6 +26,7 @@ FILENAME = "bribes_claim_data"
 BRIBE_TOKENS = registry.eth.bribe_tokens_claimable_graviaura.values()
 
 # STEP 1: Upgrade and claim bribes into processor
+
 
 def upgrade_and_claim(queue="true", simulation="false"):
     safe = GreatApeSafe(DEV)
@@ -98,7 +99,7 @@ def upgrade_and_claim(queue="true", simulation="false"):
             json.dump(claimed, f, indent=4, sort_keys=True)
 
         ## Unfortunately, processor.rageQuit() is only calleable from the manager (TechOps)
-        
+
         processor.print_snapshot()
 
     safe.post_safe_tx(post=(simulation != "true"))
@@ -110,7 +111,7 @@ def upgrade_and_claim(queue="true", simulation="false"):
 def transfer_bribes_to_trops():
     safe = GreatApeSafe(DEV)
     trops = GreatApeSafe(TROPS)
-    safe.take_snapshot(BRIBE_TOKENS)    
+    safe.take_snapshot(BRIBE_TOKENS)
     trops.take_snapshot(BRIBE_TOKENS)
 
     with open(f"{DUMP_DIR}{FILENAME}.json", "r") as f:
