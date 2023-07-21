@@ -160,7 +160,8 @@ class Bunni(UniV3):
         # https://etherscan.io/address/0xb5087F95643A9a4069471A28d32C569D9bd57fE4#code#L2409
         amount0, amount1 = self.hub.withdraw(withdraw_params).return_value[1:]
 
-        assert amount0 > 0 and amount1 > 0
+        # lp may be become 100% one shape either token0 or token1
+        assert amount0 > 0 or amount1 > 0
 
     def deploy_bunni_token(self):
         return self.hub.deployBunniToken(self.bunni_key).return_value
