@@ -59,6 +59,8 @@ def main(
     badger_bribe_in_votium=0,
     badger_bribe_in_frax=0,
     badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
+    max_tokens_per_vote=0, # Maximum amount of incentives to be used per round (Hidden Hands V2)
+    periods=1, # Rounds to be covered by the incentives deposited (Hidden Hands V2)
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -116,8 +118,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,  # uint256 _maxTokensPerVote,
-            1,  #  uint256 _periods
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     def bribe_balancer(gauge, mantissa):
@@ -130,8 +132,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,  # uint256 _maxTokensPerVote,
-            1,  #  uint256 _periods
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     if isinstance(bribes["balancer"], str):
@@ -172,8 +174,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,  # uint256 _maxTokensPerVote,
-            1,  #  uint256 _periods
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     if bribes["bunni"] > 0:
@@ -192,8 +194,8 @@ def main(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
-            0,  # uint256 _maxTokensPerVote,
-            1,  #  uint256 _periods
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     safe.post_safe_tx()
