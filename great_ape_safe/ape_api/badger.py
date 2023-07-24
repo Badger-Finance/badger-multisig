@@ -167,10 +167,7 @@ class Badger:
         loop it thru them and returning the list of addresses
         and mantissas for latter processing.
         """
-        address = (
-            self.strat_graviaura.address if claim_from_strat else self.safe.address
-        )
-        data = self.get_hh_data(address)
+        data = self.get_hh_data(self.strat_graviaura.address)
 
         def transform_claimable(amount_string, n_decimals):
             # if the last number is a zero it gets omitted by the api,
