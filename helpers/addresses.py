@@ -676,8 +676,10 @@ ADDRESSES_ETH = {
         "oLIT": "0x627fee87d0D9D2c55098A06ac805Db8F98B158Aa",
         "oLIT_oracle": "0x9d43ccb1aD7E0081cC8A8F1fd54D16E54A637E30",
         "lens": "0xb73F303472C4fD4FF3B9f59ce0F9b13E47fbfD19",
-        "badger_wbtc_bunni_token": "0x6fd44d263B6b284e3383dD9Ba53D816024E82ADF",
-        "badger_wbtc_bunni_gauge": "0xFf780599310ccd337Da4D4804fE31A75c2a66a81",
+        "badger_wbtc_bunni_token_309720_325620": "0x6fd44d263B6b284e3383dD9Ba53D816024E82ADF",
+        "badger_wbtc_bunni_gauge_309720_325620": "0xFf780599310ccd337Da4D4804fE31A75c2a66a81",
+        "badger_wbtc_bunni_token_309720_332580": "0x849535B729768321ADeD4EdE1aCEfa03a5f96FDE",
+        "badger_wbtc_bunni_gauge_309720_332580": "0xd614e32088C5f5Dc389014Ec5727E03a0811b8c8",
     },
 }
 
