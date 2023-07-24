@@ -10,6 +10,7 @@ PROCESSOR = SAFE.contract(r.aura_bribes_processor, from_explorer=True)
 USDC = SAFE.contract(r.treasury_tokens.USDC)
 LOAN_AMOUNT = 4607936029
 
+
 def main():
     dev = GreatApeSafe(r.badger_wallets.dev_multisig)
     dev.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
@@ -40,7 +41,7 @@ def transfer_USDC_to_trops():
 
     USDC.transfer(trops.accunt, LOAN_AMOUNT, {"from": dev.account})
 
-    assert USDC.balanceOf(trops) - initial_balance == LOAN_AMOUNT 
+    assert USDC.balanceOf(trops) - initial_balance == LOAN_AMOUNT
 
     trops.print_snapshot()
     dev.post_safe_tx()
