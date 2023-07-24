@@ -240,7 +240,9 @@ def claim_from_techops_and_sell_for_weth():
     bribes_dest = GreatApeSafe(PROCESSOR.address)
     bribes_dest.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
 
-    claimed = SAFE.badger.claim_bribes_hidden_hands(claim_from_strat=False)
+    claimed = SAFE.badger.claim_bribes_hidden_hands(
+        claim_from_strat=False, claim_for_strat=True
+    )
 
     # Sweep the total balance of each one of the claimed rewards into the processor
     checksummed = []

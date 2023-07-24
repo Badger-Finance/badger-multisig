@@ -161,13 +161,22 @@ class Badger:
             r.raise_for_status()
         return r.json()["data"]
 
-    def claim_bribes_hidden_hands(self, claim_from_strat=True) -> dict:
+    def claim_bribes_hidden_hands(
+        self, claim_from_strat=True, claim_for_strat=False
+    ) -> dict:
         """
         grabs the available claimable tokens from HH endpoint,
         loop it thru them and returning the list of addresses
         and mantissas for latter processing.
         """
-        data = self.get_hh_data(self.strat_graviaura.address)
+        # address = (
+        #     self.strat_graviaura.address if claim_from_strat else self.safe.address
+        # )
+        if claim_from_strat or claim_for_strat:
+            address = self.strat_graviaura.address
+        else:
+            address = self.safe.address
+        data = self.get_hh_data(address)
 
         def transform_claimable(amount_string, n_decimals):
             # if the last number is a zero it gets omitted by the api,

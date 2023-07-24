@@ -16,7 +16,9 @@ def main():
     dev.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
     initial_balance = USDC.balanceOf(dev)
 
-    claimed = SAFE.badger.claim_bribes_hidden_hands(claim_from_strat=False)
+    claimed = SAFE.badger.claim_bribes_hidden_hands(
+        claim_from_strat=False, claim_for_strat=True
+    )
     # If more than one reward, this should fail
     for token, value in claimed.items():
         assert web3.toChecksumAddress(token) == USDC
