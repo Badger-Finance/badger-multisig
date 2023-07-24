@@ -41,7 +41,7 @@ def transfer_USDC_to_trops():
     trops.take_snapshot([USDC])
     initial_balance = USDC.balanceOf(trops)
 
-    USDC.transfer(trops.accunt, LOAN_AMOUNT, {"from": dev.account})
+    USDC.transfer(trops.account, LOAN_AMOUNT, {"from": dev.account})
 
     assert USDC.balanceOf(trops) - initial_balance == LOAN_AMOUNT
 
