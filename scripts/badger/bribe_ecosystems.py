@@ -59,8 +59,8 @@ def main(
     badger_bribe_in_votium=0,
     badger_bribe_in_frax=0,
     badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
-    max_tokens_per_vote=0, # Maximum amount of incentives to be used per round (Hidden Hands V2)
-    periods=1, # Rounds to be covered by the incentives deposited (Hidden Hands V2)
+    max_tokens_per_vote=0,  # Maximum amount of incentives to be used per round (Hidden Hands V2)
+    periods=1,  # Rounds to be covered by the incentives deposited (Hidden Hands V2)
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
