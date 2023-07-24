@@ -169,9 +169,7 @@ class Badger:
         loop it thru them and returning the list of addresses
         and mantissas for latter processing.
         """
-        # address = (
-        #     self.strat_graviaura.address if claim_from_strat else self.safe.address
-        # )
+
         if claim_from_strat or claim_for_strat:
             address = self.strat_graviaura.address
         else:
