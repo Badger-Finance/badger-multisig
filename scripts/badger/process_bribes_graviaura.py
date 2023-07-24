@@ -251,10 +251,7 @@ def claim_from_techops_and_sell_for_weth():
         checksummed.append(web3.toChecksumAddress(addr))
     SAFE.badger.strat_graviaura.sweepRewards(checksummed)
 
-    # do not introduce orders if we claim badger or aura bribes
-    # likely these assets will be present in the rounds for processing
-    # NOTE: badger is directly emitted by the strat to tree
-    # NOTE: aura is sent to processor, but should not be sold for weth
+
     for addr in claimed:
         if addr == "0x0":
             # $eth. strat will auto convert to $weth
