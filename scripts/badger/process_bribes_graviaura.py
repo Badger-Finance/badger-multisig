@@ -251,7 +251,6 @@ def claim_from_techops_and_sell_for_weth():
         checksummed.append(web3.toChecksumAddress(addr))
     SAFE.badger.strat_graviaura.sweepRewards(checksummed)
 
-
     for addr in claimed:
         if addr == "0x0":
             # $eth. strat will auto convert to $weth
