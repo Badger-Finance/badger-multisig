@@ -234,3 +234,43 @@ def custom_sell_for_weth(addr=None):
         PROCESSOR.sellBribeForWeth(order_payload, order_uid)
 
     SAFE.post_safe_tx()
+
+
+def claim_from_techops_and_sell_for_weth():
+    bribes_dest = GreatApeSafe(PROCESSOR.address)
+    bribes_dest.take_snapshot(r.bribe_tokens_claimable_graviaura.values())
+
+    claimed = SAFE.badger.claim_bribes_hidden_hands(
+        claim_from_strat=False, claim_for_strat=True
+    )
+
+    # Sweep the total balance of each one of the claimed rewards into the processor
+    checksummed = []
+    for addr in claimed:
+        if addr == "0x0":
+            # $eth. strat will auto convert to $weth
+            continue
+        checksummed.append(web3.toChecksumAddress(addr))
+    SAFE.badger.strat_graviaura.sweepRewards(checksummed)
+
+    for addr in claimed:
+        if addr == "0x0":
+            # $eth. strat will auto convert to $weth
+            continue
+        addr = web3.toChecksumAddress(addr)
+        # TODO: skip if fee > ~10% total amount
+        if addr != BADGER.address and addr != AURA.address:
+            mantissa = str(int(Contract(addr).balanceOf(PROCESSOR)))
+            order_payload, order_uid = SAFE.badger.get_order_for_processor(
+                PROCESSOR,
+                sell_token=SAFE.contract(addr),
+                mantissa_sell=mantissa,
+                buy_token=WETH,
+                deadline=DEADLINE,
+                coef=COEF,
+                prod=COW_PROD,
+            )
+            PROCESSOR.sellBribeForWeth(order_payload, order_uid)
+
+    bribes_dest.print_snapshot()
+    SAFE.post_safe_tx()
