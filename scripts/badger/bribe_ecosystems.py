@@ -59,6 +59,8 @@ def main(
     badger_bribe_in_votium=0,
     badger_bribe_in_frax=0,
     badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
+    max_tokens_per_vote=0,  # Maximum amount of incentives to be used per round (Hidden Hands V2)
+    periods=1,  # Rounds to be covered by the incentives deposited (Hidden Hands V2)
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -81,13 +83,13 @@ def main(
     safe.take_snapshot([badger])
 
     bribe_vault = safe.contract(r.hidden_hand.bribe_vault, interface.IBribeVault)
-    aura_briber = safe.contract(r.hidden_hand.aura_briber, interface.IAuraBribe)
+    aura_briber = safe.contract(r.hidden_hand.aura_briber, interface.IBribeMarket)
     balancer_briber = safe.contract(
-        r.hidden_hand.balancer_briber, interface.IBalancerBribe
+        r.hidden_hand.balancer_briber, interface.IBribeMarket
     )
     votium_briber = safe.contract(r.votium.bribe, interface.IVotiumBribe)
-    frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IFraxBribe)
-    bunni_briber = safe.contract(r.hidden_hand.bunni_briber, interface.IBunniBribe)
+    frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IBribeMarket)
+    bunni_briber = safe.contract(r.hidden_hand.bunni_briber, interface.IBribeMarket)
 
     if bribes["aura"] > 0:
         assert aura_proposal_id
@@ -112,10 +114,12 @@ def main(
         mantissa = int(bribes["aura"] * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
-        aura_briber.depositBribeERC20(
+        aura_briber.depositBribe(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     def bribe_balancer(gauge, mantissa):
@@ -124,24 +128,28 @@ def main(
 
         badger.approve(bribe_vault, mantissa)
         print(gauge, prop.hex(), mantissa)
-        balancer_briber.depositBribeERC20(
+        balancer_briber.depositBribe(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     if isinstance(bribes["balancer"], str):
         # this allows for passing `main 0 12000,4000` for example to the script
         # in order to bribe both markets at the same time
         bribes_split = bribes["balancer"].split(",")
-        bribe_balancer(
-            r.balancer.B_20_BTC_80_BADGER_GAUGE,
-            Decimal(bribes_split[0]) * Decimal(1e18),
-        )
-        bribe_balancer(
-            r.balancer.B_50_BADGER_50_RETH_GAUGE,
-            Decimal(bribes_split[1]) * Decimal(1e18),
-        )
+        if Decimal(bribes_split[0]) > 0:
+            bribe_balancer(
+                r.balancer.B_20_BTC_80_BADGER_GAUGE,
+                Decimal(bribes_split[0]) * Decimal(1e18),
+            )
+        if Decimal(bribes_split[1]) > 0:
+            bribe_balancer(
+                r.balancer.B_50_BADGER_50_RETH_GAUGE,
+                Decimal(bribes_split[1]) * Decimal(1e18),
+            )
     elif bribes["balancer"] > 0:
         bribe_balancer(
             r.balancer.B_20_BTC_80_BADGER_GAUGE, bribes["balancer"] * Decimal(1e18)
@@ -162,10 +170,12 @@ def main(
         mantissa = int(bribes["frax"] * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
-        frax_briber.depositBribeERC20(
+        frax_briber.depositBribe(
             prop,  # bytes32 proposal
             badger,  # address token
             mantissa,  # uint256 amount
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
         )
 
     if bribes["bunni"] > 0:
@@ -180,6 +190,12 @@ def main(
         mantissa = int(bribes["bunni"] / badger_rate * Decimal(1e18))
 
         badger.approve(bribe_vault, mantissa)
-        bunni_briber.depositBribeERC20(prop, badger, mantissa)
+        bunni_briber.depositBribe(
+            prop,  # bytes32 proposal
+            badger,  # address token
+            mantissa,  # uint256 amount
+            max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+            periods,  #  uint256 _periods
+        )
 
     safe.post_safe_tx()
