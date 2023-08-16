@@ -28,12 +28,13 @@ def main(queue=False, sim=False, recover=False):
     dai = safe.contract(r.bribe_tokens_claimable_graviaura.DAI)
     stg = safe.contract(r.bribe_tokens_claimable_graviaura.STG)
     bal = safe.contract(r.bribe_tokens_claimable_graviaura.BAL)
+    usdc = safe.contract(r.bribe_tokens_claimable_graviaura.USDC)
     geyser = StakingRewardsSignalOnly.at(r.slp_geyser, owner=safe.account)
     geyser_proxy_address = r.slp_geyser
     dev_proxy_admin_address = r.badger_wallets.devProxyAdmin
 
     safe.init_badger()
-    trops.take_snapshot([badger, rpl, dai, stg, bal])
+    trops.take_snapshot([badger, rpl, dai, stg, bal, usdc])
 
     geyser_new_logic_address = r.logic.slp_geyser
 
@@ -64,7 +65,7 @@ def main(queue=False, sim=False, recover=False):
         badger.transfer(trops, badger.balanceOf(safe))
 
         # also sweep ragequited tokens from aura processor
-        for token in [rpl, dai, stg, bal]:
+        for token in [rpl, dai, stg, bal, usdc]:
             token.transfer(trops, token.balanceOf(safe))
 
     trops.print_snapshot()
