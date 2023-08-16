@@ -152,7 +152,7 @@ def main(
             )
     elif bribes["balancer"] > 0:
         bribe_balancer(
-            r.balancer.B_20_BTC_80_BADGER_GAUGE, bribes["balancer"] * Decimal(1e18)
+            r.balancer.B_50_BADGER_50_RETH_GAUGE, bribes["balancer"] * Decimal(1e18)
         )
 
     if bribes["votium"] > 0:
@@ -185,7 +185,9 @@ def main(
             cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
         )
 
-        prop = web3.solidityKeccak(["address"], [r.bunni.badger_wbtc_bunni_gauge])
+        prop = web3.solidityKeccak(
+            ["address"], [r.bunni.badger_wbtc_bunni_gauge_309720_332580]
+        )
         print("prop", prop.hex())
         mantissa = int(bribes["bunni"] / badger_rate * Decimal(1e18))
 
