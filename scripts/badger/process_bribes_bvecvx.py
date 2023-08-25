@@ -45,6 +45,8 @@ with open("data/Votium/merkle/activeTokens.json") as fp:
     ACTIVE_TOKENS.append(registry.eth.treasury_tokens.cvxFXS)
     # luna wormhole token doesnt adhere to erc20
     ACTIVE_TOKENS.remove("0xbd31ea8212119f94a611fa969881cba3ea06fa3d")
+    # GRAI token doesn't adhere to ERC20
+    ACTIVE_TOKENS.remove("0x15f74458aE0bFdAA1a96CA1aa779D715Cc1Eefe4")
 
 
 def step0_1(sim=False):
