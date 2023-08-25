@@ -9,7 +9,9 @@ def main(unwrap="true"):
     wbtc = vault.contract(r.treasury_tokens.WBTC)
     badger = vault.contract(r.treasury_tokens.BADGER)
 
-    vault.take_snapshot(tokens=[r.bunni.badger_wbtc_bunni_gauge_309720_332580, wbtc, badger])
+    vault.take_snapshot(
+        tokens=[r.bunni.badger_wbtc_bunni_gauge_309720_332580, wbtc, badger]
+    )
 
     vault.bunni.unstake(r.bunni.badger_wbtc_bunni_gauge_309720_332580)
 
