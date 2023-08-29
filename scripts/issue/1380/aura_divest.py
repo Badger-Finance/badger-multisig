@@ -17,7 +17,7 @@ DEADLINE = 60 * 60 * 3
 
 
 def main():
-    SAFE.init_cow()
+    SAFE.init_cow(prod=True)
 
     # Get current unlockable balance
     unlockable = LOCKER.lockedBalances(SAFE.account)[1]
