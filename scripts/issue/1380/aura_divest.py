@@ -23,7 +23,7 @@ COEF = 0.98
 DEADLINE = 60 * 60 * 3
 
 
-def main(claim_rewards=True):
+def main(claim_rewards=False):
     SAFE.init_cow(prod=True)
 
     # Since the upKeep was shutdown, rewards must be manually claimed
