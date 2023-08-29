@@ -34,17 +34,18 @@ def main(claim_rewards=False):
 
         # Transfer rewards to Trops
         AURABAL.transfer(TROPS, aurabal_balance)
-        C.print(f"[green]{aurabal_balance/1e18} AURABAL were claimed and transfered to trops[/green]")
+        C.print(
+            f"[green]{aurabal_balance/1e18} AURABAL were claimed and transfered to trops[/green]"
+        )
 
         # Since the upKeep was shutdown, graviAURA must be manually withdrawn
         # Only doing every once in a while to clean-up along with the rewards
         if GRAVIAURA.balanceOf(SAFE.account) > 0:
             GRAVIAURA.withdrawAll()
 
- 
     # Get current unlockable balance
     unlockable = LOCKER.lockedBalances(SAFE.account)[1]
-    current_aura_balance = AURA.balanceOf(SAFE.account)   
+    current_aura_balance = AURA.balanceOf(SAFE.account)
 
     if unlockable > 0:
         # Process expired locks without relocking
@@ -58,7 +59,9 @@ def main(claim_rewards=False):
             AURA, WETH, aura_balance, deadline=DEADLINE, coef=COEF, destination=VAULT
         )
 
-        C.print(f"[green]{aura_balance/1e18} AURA were claimed and sold for wETH[/green]")
+        C.print(
+            f"[green]{aura_balance/1e18} AURA were claimed and sold for wETH[/green]"
+        )
 
         # Only execute when unlockable available - rewards can wait until next epoch
         SAFE.post_safe_tx()
