@@ -68,7 +68,7 @@ class ApeApis:
 
     def init_liquis(self):
         self.liquis = Liquis(self)
-        
+
     def init_maker(self):
         self.maker = Maker(self)
 
