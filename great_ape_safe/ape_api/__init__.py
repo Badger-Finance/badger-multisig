@@ -11,6 +11,7 @@ from .cow import Cow
 from .curve_v2 import CurveV2
 from .curve import Curve
 from .euler import Euler
+from .liquis import Liquis
 from .maker import Maker
 from .opolis import Opolis
 from .pancakeswap_v2 import PancakeswapV2
@@ -65,6 +66,9 @@ class ApeApis:
     def init_euler(self):
         self.euler = Euler(self)
 
+    def init_liquis(self):
+        self.liquis = Liquis(self)
+        
     def init_maker(self):
         self.maker = Maker(self)
 

@@ -236,6 +236,8 @@ ADDRESSES_ETH = {
         "mBTC": "0x945Facb997494CC2570096c74b5F66A3507330a1",
         "crvFRAXUSDC": "0x3175df0976dfa876431c2e9ee6bc45b65d3473cc",
         "GRT": "0xc944E90C64B2c07662A292be6244BDf05Cda44a7",
+        "LIQ": "0xD82fd4D6D62f89A1E50b1db69AD19932314aa408",
+        "LIQLIT": "0x03C6F0Ca0363652398abfb08d154F114e61c4Ad8",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -680,6 +682,13 @@ ADDRESSES_ETH = {
         "badger_wbtc_bunni_gauge_309720_325620": "0xFf780599310ccd337Da4D4804fE31A75c2a66a81",
         "badger_wbtc_bunni_token_309720_332580": "0x849535B729768321ADeD4EdE1aCEfa03a5f96FDE",
         "badger_wbtc_bunni_gauge_309720_332580": "0xd614e32088C5f5Dc389014Ec5727E03a0811b8c8",
+    },
+    "liquis": {
+        "booster": "0x631e58246A88c3957763e1469cb52f93BC1dDCF2",
+        "liquislit_staking": "0xB96Bce10480d2a8eb2995Ee4f04a70d48997856a",
+        "vlLIQ": "0x748A0F458B9E71061ca0aC543B984473F203E1CB",
+        "claim_zap": "0xad161b8bEb5bf2Af9cDA30E3988B13F62E70431B",
+        "liq_vested_escrow": "0xf97964749b52c55d64E971571E1370b2618B718f",
     },
 }
 
