@@ -29,12 +29,14 @@ def main(queue=False, sim=False, recover=False):
     stg = safe.contract(r.bribe_tokens_claimable_graviaura.STG)
     bal = safe.contract(r.bribe_tokens_claimable_graviaura.BAL)
     usdc = safe.contract(r.bribe_tokens_claimable_graviaura.USDC)
+    ldo = safe.contract(r.bribe_tokens_claimable_graviaura.LDO)
+    syn = safe.contract(r.bribe_tokens_claimable_graviaura.SYN)
     geyser = StakingRewardsSignalOnly.at(r.slp_geyser, owner=safe.account)
     geyser_proxy_address = r.slp_geyser
     dev_proxy_admin_address = r.badger_wallets.devProxyAdmin
 
     safe.init_badger()
-    trops.take_snapshot([badger, rpl, dai, stg, bal, usdc])
+    trops.take_snapshot([badger, rpl, dai, stg, bal, usdc, ldo, syn])
 
     geyser_new_logic_address = r.logic.slp_geyser
 
