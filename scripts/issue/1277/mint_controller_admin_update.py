@@ -1,4 +1,6 @@
-from brownie import accounts
+from brownie import accounts, chain
+
+from eth_abi import encode_abi
 
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
@@ -24,6 +26,26 @@ def main(verify_future_state=True):
         controller.mint(100e18, {"from": tl_gov})
 
         assert badger.balanceOf(tl_gov) == 100e18
+
+        # ensure tokens can be move from tl
+        badgerBalBefore = badger.balanceOf(safe)
+
+        calldata = encode_abi(
+            ["address", "uint256"],
+            [safe.address, int(100e18)],
+        )
+        eta = chain.time() + int(3 * 60 * 60 * 24)
+
+        timelock_gov.queueTransaction(
+            badger, 0, "transfer(address,uint256)", calldata, eta
+        )
+
+        chain.mine(timestamp=eta + 1)
+        timelock_gov.executeTransaction(
+            badger, 0, "transfer(address,uint256)", calldata, eta
+        )
+
+        assert badger.balanceOf(safe) == badgerBalBefore + 100e18
 
         # claim tokens
         bal_in_minime = dai.balanceOf(badger)
@@ -57,4 +79,7 @@ def main(verify_future_state=True):
         assert badger.balanceOf(holder_two) == holder_two_bal_before + 5e18
         assert badger.balanceOf(holder_one) == holder_one_bal_before - 5e18
 
-    safe.post_safe_tx()
+    if not verify_future_state:
+        safe.post_safe_tx()
+    else:
+        safe.post_safe_tx(skip_preview=True)
