@@ -220,26 +220,26 @@ def main(
 
         mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
 
-        platform_fee = (mantissa * palading_quest_board_veliq.platformFee()) / MAX_BPS
+        platform_fee = int((Decimal(mantissa) * palading_quest_board_veliq.platformFee()) / MAX_BPS)
 
         min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
             badger
         )
 
-        objective = mantissa / reward_per_vote_liquis
-        reward_per_vote_liquis = Decimal(reward_per_vote_liquis) * Decimal(1e18)
+        reward_per_vote_liquis = reward_per_vote_liquis * 1e18
+        objective = (Decimal(mantissa) * Decimal(1e18)) / Decimal(reward_per_vote_liquis)
 
         assert reward_per_vote_liquis > min_reward_per_vote
         assert objective > palading_quest_board_veliq.minObjective()
         assert duration_paladin_quest >= 1
 
-        badger.approve(palading_quest_board_veliq, mantissa)
+        badger.approve(palading_quest_board_veliq, mantissa + platform_fee)
         palading_quest_board_veliq.createQuest(
             r.bunni.badger_wbtc_bunni_gauge_309720_332580,  # address gauge
             badger.address,  # address rewardToken
             duration_paladin_quest,  # uint48 duration
             objective,  # uint256 objective
-            min_reward_per_vote,  # uint256 rewardPerVote
+            reward_per_vote_liquis,  # uint256 rewardPerVote
             mantissa,  # uint256 totalRewardAmount
             platform_fee,  # uint256 feeAmount
         )
