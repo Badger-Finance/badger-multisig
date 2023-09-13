@@ -65,7 +65,7 @@ def main(
     periods=1,  # Rounds to be covered by the incentives deposited (Hidden Hands V2)
     badger_bribe_in_liquis=0,  # NOTE: the incentive gets process via Paladin
     duration_paladin_quest=1,  # Duration (in number of periods) of the Quest
-    reward_per_vote_liquis=0,  # Amount of reward per veLIT/vlLIQ (in wei)
+    reward_per_vote_liquis=0,  # Amount of reward per vlLIQ
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
