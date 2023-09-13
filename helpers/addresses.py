@@ -690,6 +690,9 @@ ADDRESSES_ETH = {
         "claim_zap": "0xad161b8bEb5bf2Af9cDA30E3988B13F62E70431B",
         "liq_vested_escrow": "0xf97964749b52c55d64E971571E1370b2618B718f",
     },
+    "paladin": {
+        "quest_board_velit": "0x602E94D90F34126f31444D001732a1974378D9FC",
+    },
 }
 
 ADDRESSES_IBBTC = {

@@ -38,6 +38,8 @@ CONVEX_TARGET = "BADGER+FRAXBP (0x13B8…)"
 # snapshot differentiator after moving into `gauges.aurafinance.eth` space
 AURA_SNAP_DIFF_FACTOR = 1000000
 
+MAX_BPS = 10_000
+
 
 def get_index(proposal_id, target):
     # grab data from the snapshot endpoint re proposal choices
@@ -61,6 +63,9 @@ def main(
     badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
     max_tokens_per_vote=0,  # Maximum amount of incentives to be used per round (Hidden Hands V2)
     periods=1,  # Rounds to be covered by the incentives deposited (Hidden Hands V2)
+    badger_bribe_in_liquis=0,  # NOTE: the incentive gets process via Paladin
+    duration_paladin_quest=1,  # Duration (in number of periods) of the Quest
+    reward_per_vote_liquis=0,  # Amount of reward per veLIT/vlLIQ (in wei)
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -70,6 +75,7 @@ def main(
         "votium": badger_bribe_in_votium,
         "frax": badger_bribe_in_frax,
         "bunni": badger_bribe_in_bunni,
+        "liquis": badger_bribe_in_liquis,
     }
     for k, v in bribes.items():
         try:
@@ -90,6 +96,10 @@ def main(
     votium_briber = safe.contract(r.votium.bribe, interface.IVotiumBribe)
     frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IBribeMarket)
     bunni_briber = safe.contract(r.hidden_hand.bunni_briber, interface.IBribeMarket)
+
+    palading_quest_board_velit = safe.contract(
+        r.paladin.quest_board_velit, interface.IQuestBoard
+    )
 
     if bribes["aura"] > 0:
         assert aura_proposal_id
@@ -152,7 +162,7 @@ def main(
             )
     elif bribes["balancer"] > 0:
         bribe_balancer(
-            r.balancer.B_20_BTC_80_BADGER_GAUGE, bribes["balancer"] * Decimal(1e18)
+            r.balancer.B_50_BADGER_50_RETH_GAUGE, bribes["balancer"] * Decimal(1e18)
         )
 
     if bribes["votium"] > 0:
@@ -185,7 +195,9 @@ def main(
             cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
         )
 
-        prop = web3.solidityKeccak(["address"], [r.bunni.badger_wbtc_bunni_gauge])
+        prop = web3.solidityKeccak(
+            ["address"], [r.bunni.badger_wbtc_bunni_gauge_309720_332580]
+        )
         print("prop", prop.hex())
         mantissa = int(bribes["bunni"] / badger_rate * Decimal(1e18))
 
@@ -196,6 +208,40 @@ def main(
             mantissa,  # uint256 amount
             max_tokens_per_vote,  # uint256 _maxTokensPerVote,
             periods,  #  uint256 _periods
+        )
+
+    if bribes["liquis"] > 0:
+        # NOTE: Treasury decision is expressed in dollars
+        # ref: https://forum.badger.finance/t/34-liquis-partner-engagement/6029
+        cg = CoinGeckoAPI(os.getenv("COINGECKO_API_KEY"))
+        badger_rate = Decimal(
+            cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
+        )
+
+        mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
+
+        platform_fee = (mantissa * palading_quest_board_velit.platformFee()) / MAX_BPS
+
+        min_reward_per_vote = palading_quest_board_velit.minRewardPerVotePerToken(
+            badger
+        )
+
+        objective = mantissa / reward_per_vote_liquis
+        reward_per_vote_liquis = Decimal(reward_per_vote_liquis) * Decimal(1e18)
+
+        assert reward_per_vote_liquis > min_reward_per_vote
+        assert objective > palading_quest_board_velit.minObjective()
+        assert duration_paladin_quest >= 1
+
+        badger.approve(palading_quest_board_velit, mantissa)
+        palading_quest_board_velit.createQuest(
+            r.bunni.badger_wbtc_bunni_gauge_309720_332580,  # address gauge
+            badger.address,  # address rewardToken
+            duration_paladin_quest,  # uint48 duration
+            objective,  # uint256 objective
+            min_reward_per_vote,  # uint256 rewardPerVote
+            mantissa,  # uint256 totalRewardAmount
+            platform_fee,  # uint256 feeAmount
         )
 
     safe.post_safe_tx()
