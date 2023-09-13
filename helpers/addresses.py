@@ -691,7 +691,7 @@ ADDRESSES_ETH = {
         "liq_vested_escrow": "0xf97964749b52c55d64E971571E1370b2618B718f",
     },
     "paladin": {
-        "quest_board_velit": "0x602E94D90F34126f31444D001732a1974378D9FC",
+        "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
     },
 }
 

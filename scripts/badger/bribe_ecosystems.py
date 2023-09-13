@@ -97,8 +97,8 @@ def main(
     frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IBribeMarket)
     bunni_briber = safe.contract(r.hidden_hand.bunni_briber, interface.IBribeMarket)
 
-    palading_quest_board_velit = safe.contract(
-        r.paladin.quest_board_velit, interface.IQuestBoard
+    palading_quest_board_veliq = safe.contract(
+        r.paladin.quest_board_veliq, interface.IQuestBoard
     )
 
     if bribes["aura"] > 0:
@@ -220,9 +220,9 @@ def main(
 
         mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
 
-        platform_fee = (mantissa * palading_quest_board_velit.platformFee()) / MAX_BPS
+        platform_fee = (mantissa * palading_quest_board_veliq.platformFee()) / MAX_BPS
 
-        min_reward_per_vote = palading_quest_board_velit.minRewardPerVotePerToken(
+        min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
             badger
         )
 
@@ -230,11 +230,11 @@ def main(
         reward_per_vote_liquis = Decimal(reward_per_vote_liquis) * Decimal(1e18)
 
         assert reward_per_vote_liquis > min_reward_per_vote
-        assert objective > palading_quest_board_velit.minObjective()
+        assert objective > palading_quest_board_veliq.minObjective()
         assert duration_paladin_quest >= 1
 
-        badger.approve(palading_quest_board_velit, mantissa)
-        palading_quest_board_velit.createQuest(
+        badger.approve(palading_quest_board_veliq, mantissa)
+        palading_quest_board_veliq.createQuest(
             r.bunni.badger_wbtc_bunni_gauge_309720_332580,  # address gauge
             badger.address,  # address rewardToken
             duration_paladin_quest,  # uint48 duration
