@@ -63,7 +63,7 @@ def main(
     badger_bribe_in_bunni=0,  # NOTE: dollar denominated. Badger calculation is done internaly
     max_tokens_per_vote=0,  # Maximum amount of incentives to be used per round (Hidden Hands V2)
     periods=1,  # Rounds to be covered by the incentives deposited (Hidden Hands V2)
-    badger_bribe_in_liquis=0,  # NOTE: the incentive gets process via Paladin
+    badger_bribe_in_liquis=0,  # NOTE: dollar denominated. Badger calculation is done internaly, the incentive gets process via Paladin
     duration_paladin_quest=1,  # Duration (in number of periods) of the Quest
     reward_per_vote_liquis=0,  # Amount of reward per vlLIQ
     aura_proposal_id=None,
