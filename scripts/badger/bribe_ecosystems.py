@@ -220,14 +220,18 @@ def main(
 
         mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
 
-        platform_fee = int((Decimal(mantissa) * palading_quest_board_veliq.platformFee()) / MAX_BPS)
+        platform_fee = int(
+            (Decimal(mantissa) * palading_quest_board_veliq.platformFee()) / MAX_BPS
+        )
 
         min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
             badger
         )
 
         reward_per_vote_liquis = reward_per_vote_liquis * 1e18
-        objective = (Decimal(mantissa) * Decimal(1e18)) / Decimal(reward_per_vote_liquis)
+        objective = (Decimal(mantissa) * Decimal(1e18)) / Decimal(
+            reward_per_vote_liquis
+        )
 
         assert reward_per_vote_liquis > min_reward_per_vote
         assert objective > palading_quest_board_veliq.minObjective()
