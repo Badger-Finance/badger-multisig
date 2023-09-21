@@ -17,7 +17,7 @@ def main():
     # snap
     vault.take_snapshot(tokens=[weth, vault.bunni.olit, lit])
 
-    vault.bunni.claim_rewards(r.bunni.badger_wbtc_bunni_gauge)
+    vault.bunni.claim_rewards(r.bunni.badger_wbtc_bunni_gauge_309720_332580)
     # NOTE: explore olit rewards claim
     vault.print_snapshot()
 
