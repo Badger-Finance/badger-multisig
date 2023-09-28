@@ -689,6 +689,7 @@ ADDRESSES_ETH = {
         "vlLIQ": "0x748A0F458B9E71061ca0aC543B984473F203E1CB",
         "claim_zap": "0xad161b8bEb5bf2Af9cDA30E3988B13F62E70431B",
         "liq_vested_escrow": "0xf97964749b52c55d64E971571E1370b2618B718f",
+        "rewards_pool_309720_332580": "0xB99ca33d35Ea7B520EC779F001C0C0b971aAb395",
     },
     "paladin": {
         "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
