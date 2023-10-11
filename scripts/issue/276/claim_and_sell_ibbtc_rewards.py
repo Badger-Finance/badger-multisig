@@ -1,8 +1,5 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
-from rich.console import Console
-
-C = Console()
 
 # slippages
 COEF = 0.93
