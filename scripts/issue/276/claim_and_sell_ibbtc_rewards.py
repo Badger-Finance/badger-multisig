@@ -44,4 +44,4 @@ def main():
         safe.cow.market_sell(cvxCrv, weth, cvxCrv_balance, deadline=DEADLINE, coef=COEF)
 
     safe.print_snapshot()
-    safe.post_safe_tx()
+    safe.post_safe_tx(skip_preview=True)
