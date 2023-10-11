@@ -7,10 +7,13 @@ C = Console()
 
 SENTINEL_OWNERS = "0x0000000000000000000000000000000000000001"
 
+
 def main():
     safe = GreatApeSafe(r.badger_wallets.ibbtc_multisig)
     ibbtc_multisig = interface.IGnosisSafe_v1_3_0(safe.address, owner=safe.account)
-    trops_multisig = interface.IGnosisSafe_v1_3_0(r.badger_wallets.treasury_ops_multisig)
+    trops_multisig = interface.IGnosisSafe_v1_3_0(
+        r.badger_wallets.treasury_ops_multisig
+    )
 
     trops_owners = trops_multisig.getOwners()
     ibbtc_owners = ibbtc_multisig.getOwners()
@@ -40,8 +43,8 @@ def main():
     assert len(ibbtc_multisig.getOwners()) == len(trops_owners)
 
     C.print(f"\nNew Owners at ibbtc_multisig Multisig:")
-    C.print(f"[green]{ibbtc_multisig.getOwners()}[/green]\n") 
-    
+    C.print(f"[green]{ibbtc_multisig.getOwners()}[/green]\n")
+
     safe.post_safe_tx()
 
 
