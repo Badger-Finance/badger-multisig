@@ -8,6 +8,7 @@ C = Console()
 COEF = 0.93
 DEADLINE = 60 * 60 * 24
 
+
 def main():
     safe = GreatApeSafe(r.badger_wallets.ibbtc_multisig)
     safe.init_badger()
@@ -39,15 +40,11 @@ def main():
     # Sell all CVX and cvxCRV
     cvx_balance = cvx.balanceOf(safe)
     if cvx_balance > 0:
-        safe.cow.market_sell(
-            cvx, weth, cvx_balance, deadline=DEADLINE, coef=COEF
-        )
+        safe.cow.market_sell(cvx, weth, cvx_balance, deadline=DEADLINE, coef=COEF)
 
     cvxCrv_balance = cvxCrv.balanceOf(safe)
     if cvxCrv_balance > 0:
-        safe.cow.market_sell(
-            cvxCrv, weth, cvxCrv_balance, deadline=DEADLINE, coef=COEF
-        )
+        safe.cow.market_sell(cvxCrv, weth, cvxCrv_balance, deadline=DEADLINE, coef=COEF)
 
     safe.print_snapshot()
     safe.post_safe_tx()
