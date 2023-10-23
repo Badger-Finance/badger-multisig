@@ -1,7 +1,0 @@
-{
-    "data": "00000000000000000000000019d97d8fa813ee2f51ad4b4e04ea08baf4dffc280000000000000000000000009376b47e7ec9d4cfd5313dc1fb0dff4f61e8c481",
-    "eta": 1653401403,
-    "eth": 0,
-    "signature": "upgrade(address,address)",
-    "target": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF"
-}

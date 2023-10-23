@@ -1,7 +1,0 @@
-{
-    "data": "00000000000000000000000055912d0cf83b75c492e761932abc4db4a5cb1b17000000000000000000000000933fdbac3773514384c6db30eb196a0be543d617",
-    "eta": 1669130531,
-    "eth": 0,
-    "signature": "changeProxyAdmin(address,address)",
-    "target": "0x20Dce41Acca85E8222D6861Aa6D23B6C941777bF"
-}

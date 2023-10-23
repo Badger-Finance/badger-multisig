@@ -1,7 +1,0 @@
-{
-    "data": "000000000000000000000000fbdca68601f835b27790d98bbb8ec7f05fdeaa9b000000000000000000000000ae96ff08771a109dc6650a1bdca62f2d558e40af",
-    "eta": 1656338436,
-    "eth": 0,
-    "signature": "setVault(address,address)",
-    "target": "0x63cF44B2548e4493Fd099222A1eC79F3344D9682"
-}
