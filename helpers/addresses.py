@@ -6,12 +6,10 @@ from web3 import Web3
 import json
 
 ADDRESSES_ETH = {
-    "ebtc": {
-        "placeholder":"0x0"
-    },
+    "ebtc": {"placeholder": "0x0"},
     "ebtc_wallets": {
         "ebtc_deployer": "0xC39A1159eDd78458E7b4943fcCa45c769b0E223e",
-    }
+    },
 }
 
 ADDRESSES_SEPOLIA = {
@@ -28,11 +26,11 @@ ADDRESSES_SEPOLIA = {
         "sorted_cdps": "0xdA3Bb1b380C7Cfd9279dC3334F6122587C8e52A9",
         "hint_helpers": "0x52A6C2C30Eb6E3c9E8a0BF1479d8d81ad4c6fCE4",
         "fee_recipient": "0xeAB976bBE69fE936beD9D079B4f61A19be4Cb69A",
-        "multi_cdp_getter": "0xE9F8c2ff6014184959b970ac7CbE7073B78C291c"
+        "multi_cdp_getter": "0xE9F8c2ff6014184959b970ac7CbE7073B78C291c",
     },
     "ebtc_wallets": {
         "ebtc_deployer": "0xC39A1159eDd78458E7b4943fcCa45c769b0E223e",
-    }
+    },
 }
 
 
@@ -58,7 +56,7 @@ with open("helpers/chaindata.json") as chaindata:
 registry = DotMap(
     {
         "eth": checksum_address_dict(ADDRESSES_ETH),
-        "sepolia": checksum_address_dict(ADDRESSES_SEPOLIA)
+        "sepolia": checksum_address_dict(ADDRESSES_SEPOLIA),
     }
 )
 
