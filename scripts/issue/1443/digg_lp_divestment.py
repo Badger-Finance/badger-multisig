@@ -8,6 +8,7 @@ DEADLINE = 60 * 60 * 24
 
 BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD"
 
+
 def main(unwrap="true"):
     vault = GreatApeSafe(r.badger_wallets.treasury_vault_multisig)
     vault.init_aura()
