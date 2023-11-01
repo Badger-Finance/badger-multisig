@@ -1,6 +1,5 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
-from helpers.constants import AddressZero
 
 # slippages
 COEF = 0.95
@@ -39,14 +38,17 @@ def main(unwrap="true"):
             )
 
     # Selling graviAURA for wETH as per TCD 36
+    aura_before = aura.balanceOf(vault)
     graviaura.withdrawAll()
-    vault.cow.market_sell(
-        aura, weth, aura.balanceOf(vault), deadline=DEADLINE, coef=COEF
-    )
+    aura_witdrawn = aura.balanceOf(vault) - aura_before
+    assert aura_witdrawn > 0
+    vault.cow.market_sell(aura, weth, aura_witdrawn, deadline=DEADLINE, coef=COEF)
 
-    # Burning all Digg holdings by transfering to AddressZero
+    # Burning all Digg holdings by transfering to the 0xDead address
     vault_digg_balance = digg.balanceOf(vault)
+    burn_digg_baalnce = digg.balanceOf(BURN_ADDRESS)
     digg.transfer(BURN_ADDRESS, vault_digg_balance)
     assert digg.balanceOf(vault) == 0
+    assert digg.balanceOf(BURN_ADDRESS) - burn_digg_baalnce == vault_digg_balance
 
     vault.post_safe_tx()
