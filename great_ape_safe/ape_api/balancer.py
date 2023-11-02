@@ -474,7 +474,7 @@ class Balancer:
         pool_id = pool.getPoolId()
 
         if unstake:
-            self.unstake_all(pool)
+            self.unstake_all(pool, claim)
 
         balances_before = [Contract(x).balanceOf(destination) for x in request[0]]
 
