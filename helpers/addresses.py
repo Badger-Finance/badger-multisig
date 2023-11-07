@@ -600,6 +600,7 @@ ADDRESSES_ETH = {
         "aura_briber": "0xcBf242F20D183B4116C22Dd5e441b9aE15b0d35A",
         "frax_briber": "0x2694214a4EA6A2C9A9427AA12251705B67e86960",
         "bunni_briber": "0x175b01eF7CEa8615B1D9485BC827378EA5D50C86",
+        "liquis_briber": "0xA44C4c85eB01f02d8cEa9BC416174Bb13d13Aa72",
         "_deprecated": {
             "bribe_vault_v1": "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212",
             "balancer_briber_v1": "0x7Cdf753b45AB0729bcFe33DC12401E55d28308A9",
