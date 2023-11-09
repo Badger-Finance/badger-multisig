@@ -66,6 +66,7 @@ def main(
     badger_bribe_in_liquis=0,  # NOTE: dollar denominated. Badger calculation is done internaly, the incentive gets process via Paladin
     duration_paladin_quest=1,  # Duration (in number of periods) of the Quest
     reward_per_vote_liquis=0,  # Amount of reward per vlLIQ
+    liquis_incentive_in_paladin=False,  # Indicates if the incentive is going to be post in paladin or HH
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -96,6 +97,7 @@ def main(
     votium_briber = safe.contract(r.votium.bribe, interface.IVotiumBribe)
     frax_briber = safe.contract(r.hidden_hand.frax_briber, interface.IBribeMarket)
     bunni_briber = safe.contract(r.hidden_hand.bunni_briber, interface.IBribeMarket)
+    liquis_briber = safe.contract(r.hidden_hand.liquis_briber, interface.IBribeMarket)
 
     palading_quest_board_veliq = safe.contract(
         r.paladin.quest_board_veliq, interface.IQuestBoard
@@ -220,32 +222,48 @@ def main(
 
         mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
 
-        platform_fee = int(
-            (Decimal(mantissa) * palading_quest_board_veliq.platformFee()) / MAX_BPS
-        )
+        if liquis_incentive_in_paladin:
+            platform_fee = int(
+                (Decimal(mantissa) * palading_quest_board_veliq.platformFee()) / MAX_BPS
+            )
 
-        min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
-            badger
-        )
+            min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
+                badger
+            )
 
-        reward_per_vote_liquis = reward_per_vote_liquis * 1e18
-        objective = (Decimal(mantissa) * Decimal(1e18)) / Decimal(
-            reward_per_vote_liquis
-        )
+            reward_per_vote_liquis = reward_per_vote_liquis * 1e18
+            objective = (Decimal(mantissa) * Decimal(1e18)) / Decimal(
+                reward_per_vote_liquis
+            )
 
-        assert reward_per_vote_liquis > min_reward_per_vote
-        assert objective > palading_quest_board_veliq.minObjective()
-        assert duration_paladin_quest >= 1
+            assert reward_per_vote_liquis > min_reward_per_vote
+            assert objective > palading_quest_board_veliq.minObjective()
+            assert duration_paladin_quest >= 1
 
-        badger.approve(palading_quest_board_veliq, mantissa + platform_fee)
-        palading_quest_board_veliq.createQuest(
-            r.bunni.badger_wbtc_bunni_gauge_309720_332580,  # address gauge
-            badger.address,  # address rewardToken
-            duration_paladin_quest,  # uint48 duration
-            objective,  # uint256 objective
-            reward_per_vote_liquis,  # uint256 rewardPerVote
-            mantissa,  # uint256 totalRewardAmount
-            platform_fee,  # uint256 feeAmount
-        )
+            badger.approve(palading_quest_board_veliq, mantissa + platform_fee)
+            palading_quest_board_veliq.createQuest(
+                r.bunni.badger_wbtc_bunni_gauge_309720_332580,  # address gauge
+                badger.address,  # address rewardToken
+                duration_paladin_quest,  # uint48 duration
+                objective,  # uint256 objective
+                reward_per_vote_liquis,  # uint256 rewardPerVote
+                mantissa,  # uint256 totalRewardAmount
+                platform_fee,  # uint256 feeAmount
+            )
+        else:
+            # api for prop check: https://api.hiddenhand.finance/proposal/liquis
+            prop = web3.solidityKeccak(
+                ["address"], [r.bunni.badger_wbtc_bunni_gauge_309720_332580]
+            )
+            print("prop", prop.hex())
+
+            badger.approve(bribe_vault, mantissa)
+            liquis_briber.depositBribe(
+                prop,  # bytes32 proposal
+                badger,  # address token
+                mantissa,  # uint256 amount
+                max_tokens_per_vote,  # uint256 _maxTokensPerVote,
+                periods,  #  uint256 _periods
+            )
 
     safe.post_safe_tx()
