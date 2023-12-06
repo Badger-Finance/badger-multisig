@@ -214,11 +214,7 @@ class Aave:
 
         bal_borrow_token_after = borrow_token.balanceOf(self.safe)
 
-        ## Swap remaining margin of borrow token back into collateral token
-        self.safe.init_uni_v3()
-        self.safe.uni_v3.swap(
-            [borrow_token, collateral_token],
-            bal_borrow_token_after - bal_borrow_token_before,
-        )
-
         assert self._get_debt_in_token(borrow_token) == 0
+
+        ## Return margin of borrow token in case a swap back to collateral is desired
+        return bal_borrow_token_after - bal_borrow_token_before

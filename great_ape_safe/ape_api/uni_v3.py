@@ -455,7 +455,7 @@ class UniV3:
         path_encoded = self._encode_path(multihop_path)
 
         min_out = self.quoter.quoteExactInput.call(path_encoded, mantissa) * (
-            1 - self.slippage
+            self.slippage
         )
 
         params = (
