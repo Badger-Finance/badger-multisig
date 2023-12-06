@@ -149,8 +149,8 @@ class Aave:
             [borrow_token, collateral_token], we_want_to_borrow
         )
         self.deposit(collateral_token, to_reinvest)
-
-    def delever(self, collateral_token, borrow_token):
+ 
+    def delever(self, collateral_token, borrow_token, gains_token):
         debt_to_repay = self._get_debt_in_token(borrow_token)
         debt_paid = 0
         while debt_paid < debt_to_repay:
@@ -214,11 +214,12 @@ class Aave:
 
         bal_borrow_token_after = borrow_token.balanceOf(self.safe)
 
-        ## Swap remaining margin of borrow token back into collateral token
-        self.safe.init_uni_v3()
-        self.safe.uni_v3.swap(
-            [borrow_token, collateral_token],
-            bal_borrow_token_after - bal_borrow_token_before,
-        )
+        if gains_token == collateral_token:
+            ## Swap remaining margin of borrow token back into collateral token
+            self.safe.init_uni_v3()
+            self.safe.uni_v3.swap(
+                [borrow_token, collateral_token],
+                bal_borrow_token_after - bal_borrow_token_before,
+            )  
 
         assert self._get_debt_in_token(borrow_token) == 0
