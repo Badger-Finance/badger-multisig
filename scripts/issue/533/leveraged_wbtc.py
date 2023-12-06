@@ -32,7 +32,7 @@ def delever():
     SAFE.take_snapshot([WBTC, AWBTC, USDC])
 
     wbtc_bal_before = WBTC.balanceOf(SAFE.account)
-    SAFE.aave.delever(WBTC, USDC, USDC)
+    SAFE.aave.delever(WBTC, USDC)
     SAFE.aave.withdraw_all(WBTC)
     wbtc_bal_after = WBTC.balanceOf(SAFE.account)
 
