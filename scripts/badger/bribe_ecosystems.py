@@ -229,7 +229,7 @@ def main(
             liquis_rate = Decimal(
                 cg.get_price(ids="liquis", vs_currencies="usd")["liquis"]["usd"]
             )
-
+        print("liquis_rate", liquis_rate)
         if liquis_incentive_in_paladin:
             rate = badger_rate if is_governance_incentive_token else liquis_rate
             mantissa = int(bribes["liquis"] / rate * Decimal(1e18))
@@ -240,6 +240,8 @@ def main(
             min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
                 badger if is_governance_incentive_token else liquis
             )
+
+            print("min_reward_per_vote", min_reward_per_vote)
 
             reward_per_vote_liquis = reward_per_vote_liquis * 1e18
             objective = (Decimal(mantissa) * Decimal(1e18)) / Decimal(
@@ -253,7 +255,7 @@ def main(
             # approve incentive token conditional based on flag
             if is_governance_incentive_token:
                 badger.approve(palading_quest_board_veliq, mantissa + platform_fee)
-            else: 
+            else:
                 liquis.approve(palading_quest_board_veliq, mantissa + platform_fee)
 
             # create incentive quest
