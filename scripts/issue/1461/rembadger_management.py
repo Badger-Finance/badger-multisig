@@ -1,6 +1,6 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
-from brownie import Contract
+from brownie import Contract, chain
 
 # Emissions constants
 EMISSION_AMOUNT = 37591575106071500000000  # 37591.5751060715
@@ -13,7 +13,7 @@ OUTSTANDING_BADGER_DEPOSIT = 20703934702652000000000  # 20,703.934702652
 OUTSTANDING_BADGER_DEPOSIT_PER_WEEK = OUTSTANDING_BADGER_DEPOSIT / 5  # 4140.7869405304
 
 
-def rembadger_techops_operations():
+def rembadger_techops_operations(test=False):
     """
     The following operations are to be executed by the techops multisig:
     - Sweep BADGER from both drippers
@@ -64,7 +64,36 @@ def rembadger_techops_operations():
         DURATION,
     )
 
-    safe.post_safe_tx()
+    if not test:
+        safe.post_safe_tx()
+
+
+def clawback_link(test=False):
+    """
+    50 blocks after the two upkeeps are cancelled on the UpKeep Manager, their LINK can be clawed back and
+    the memebers can be fully deleted from the contract's storage. To be called by TechOps.
+    """
+    safe = GreatApeSafe(r.badger_wallets.techops_multisig)
+    upkeep_manager = safe.contract(r.badger_wallets.upkeep_manager)
+    rembadger_2023 = safe.contract(r.drippers.rembadger_2023)
+    tree_2023 = safe.contract(r.drippers.tree_2023)
+    link = safe.contract(r.treasury_tokens.LINK)
+
+    prev_balance = link.balanceOf(upkeep_manager.address)
+
+    upkeep_manager.withdrawLinkFundsAndRemoveMember(rembadger_2023.address)
+    upkeep_manager.withdrawLinkFundsAndRemoveMember(tree_2023.address)
+
+    assert link.balanceOf(upkeep_manager.address) > prev_balance 
+
+    if not test:
+        safe.post_safe_tx()
+
+
+def test_techops_operations():
+    rembadger_techops_operations(test=True)
+    chain.mine(51)
+    clawback_link(test=True)
 
 
 def tree_top_up():
