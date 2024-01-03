@@ -84,7 +84,7 @@ def clawback_link(test=False):
     upkeep_manager.withdrawLinkFundsAndRemoveMember(rembadger_2023.address)
     upkeep_manager.withdrawLinkFundsAndRemoveMember(tree_2023.address)
 
-    assert link.balanceOf(upkeep_manager.address) > prev_balance 
+    assert link.balanceOf(upkeep_manager.address) > prev_balance
 
     if not test:
         safe.post_safe_tx()
