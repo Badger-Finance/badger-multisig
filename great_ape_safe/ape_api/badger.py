@@ -5,6 +5,7 @@ from decimal import Decimal
 
 import pandas as pd
 from brownie import chain, interface, ZERO_ADDRESS
+from eth_utils import to_checksum_address
 from eth_abi import encode_abi
 
 from helpers.addresses import r
@@ -49,9 +50,20 @@ class Badger:
         self.station = self.safe.contract(r.badger_wallets.gas_station)
         self.rewards = self.safe.contract(r.hidden_hand.rewards_distributor)
 
+        # paladin
+        self.paladin_merkle_tree = self.safe.contract(
+            r.paladin.multi_merkle_distributor
+        )
+        self.paladin_merkle_tree_legacy = self.safe.contract(
+            r.paladin.merkle_distributor_legacy
+        )
+
         # misc
         self.api_url = "https://api.badger.com/v2/"
         self.api_hh_url = f"https://api.hiddenhand.finance/reward/{chain.id}/"
+        self.api_paladin_claim_url = (
+            f"https://api.paladin.vote/quest/v2/copilot/claims/"
+        )
 
     def claim_all(self, json_file_path=None):
         """
@@ -209,6 +221,57 @@ class Badger:
             self.rewards.claim(metadata)
 
         return dict(zip(aggregate["tokens"], aggregate["amounts"]))
+
+    def get_paladin_data(self, address=None):
+        """
+        get hidden hand data for a particular address
+        """
+        address = address if address else self.safe.address
+        url = self.api_paladin_claim_url + address
+        r = requests.get(url)
+        if not r.ok:
+            r.raise_for_status()
+        return r.json()["claims"]
+
+    def claim_bribes_from_paladin(self):
+        """
+        grabs the available claimable tokens from Paladin endpoint,
+        shape the endpoint information and claims tokens for the safe.
+        """
+        data = self.get_paladin_data()
+
+        claim_data = []
+        claim_data_legacy = []
+        for entry in data:
+            if (
+                to_checksum_address(entry["distributor"])
+                == self.paladin_merkle_tree.address
+            ):
+                # https://etherscan.io/address/0xccd73d064ed07964ad2144fdfd1b99e7e6b5f626#code#F2#L162
+                claim_data.append(
+                    (
+                        entry["questId"],
+                        entry["period"],
+                        entry["index"],
+                        entry["amount"],
+                        entry["proofs"],
+                    )
+                )
+            else:
+                claim_data_legacy.append(
+                    (
+                        entry["questId"],
+                        entry["period"],
+                        entry["index"],
+                        entry["amount"],
+                        entry["proofs"],
+                    )
+                )
+
+        if len(claim_data) > 0:
+            self.paladin_merkle_tree.multiClaim(self.safe, claim_data)
+        if len(claim_data_legacy) > 0:
+            self.paladin_merkle_tree_legacy.multiClaim(self.safe, claim_data_legacy)
 
     def sweep_reward_token(self, token_addr):
         """
