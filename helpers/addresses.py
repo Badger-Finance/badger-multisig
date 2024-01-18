@@ -693,9 +693,13 @@ ADDRESSES_ETH = {
         "claim_zap": "0xad161b8bEb5bf2Af9cDA30E3988B13F62E70431B",
         "liq_vested_escrow": "0xf97964749b52c55d64E971571E1370b2618B718f",
         "rewards_pool_309720_332580": "0xB99ca33d35Ea7B520EC779F001C0C0b971aAb395",
+        "voter_proxy": "0x37aeB332D6E57112f1BFE36923a7ee670Ee9278b",
     },
     "paladin": {
-        "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
+        "quest_board_veliq": "0x1B921DBD13A280ee14BA6361c1196EB72aaa094e",
+        "_deprecated": {
+            "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
+        },
     },
 }
 

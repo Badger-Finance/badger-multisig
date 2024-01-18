@@ -40,6 +40,12 @@ AURA_SNAP_DIFF_FACTOR = 1000000
 
 MAX_BPS = 10_000
 
+# vote type. ref: https://etherscan.io/address/0x1b921dbd13a280ee14ba6361c1196eb72aaa094e#code#F6#L16
+PALADIN_VOTE_TYPE_WHITELISTING = 2
+
+# close type. ref: https://etherscan.io/address/0x1b921dbd13a280ee14ba6361c1196eb72aaa094e#code#F6#L27
+PALADIN_CLOSE_TYPE_ROLLOVER = 1
+
 
 def get_index(proposal_id, target):
     # grab data from the snapshot endpoint re proposal choices
@@ -67,6 +73,7 @@ def main(
     duration_paladin_quest=1,  # Duration (in number of periods) of the Quest
     reward_per_vote_liquis=0,  # Amount of reward per vlLIQ
     liquis_incentive_in_paladin=False,  # Indicates if the incentive is going to be post in paladin or HH
+    is_governance_incentive_token=True,  # Indicates if the incentive is going to be governance token ($badger) or different. Applicable only in Paladin.
     aura_proposal_id=None,
     convex_proposal_id=None,
 ):
@@ -86,8 +93,12 @@ def main(
 
     safe = GreatApeSafe(r.badger_wallets.treasury_ops_multisig)
     badger = safe.contract(r.treasury_tokens.BADGER)
+    liquis = safe.contract(r.treasury_tokens.LIQ)
 
-    safe.take_snapshot([badger])
+    # tokens with consensus within the dao to be used for incentives in marketplaces
+    # badger: across all platforms and markets
+    # liquis: uniquely for liquis marketplace in either HH or Paladin
+    safe.take_snapshot([badger, liquis])
 
     bribe_vault = safe.contract(r.hidden_hand.bribe_vault, interface.IBribeVault)
     aura_briber = safe.contract(r.hidden_hand.aura_briber, interface.IBribeMarket)
@@ -216,19 +227,24 @@ def main(
         # NOTE: Treasury decision is expressed in dollars
         # ref: https://forum.badger.finance/t/34-liquis-partner-engagement/6029
         cg = CoinGeckoAPI(os.getenv("COINGECKO_API_KEY"))
-        badger_rate = Decimal(
-            cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
-        )
-
-        mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
-
+        if is_governance_incentive_token:
+            badger_rate = Decimal(
+                cg.get_price(ids="badger-dao", vs_currencies="usd")["badger-dao"]["usd"]
+            )
+        else:
+            liquis_rate = Decimal(
+                cg.get_price(ids="liquis", vs_currencies="usd")["liquis"]["usd"]
+            )
         if liquis_incentive_in_paladin:
+            rate = badger_rate if is_governance_incentive_token else liquis_rate
+            mantissa = int(bribes["liquis"] / rate * Decimal(1e18))
             platform_fee = int(
-                (Decimal(mantissa) * palading_quest_board_veliq.platformFee()) / MAX_BPS
+                (Decimal(mantissa) * palading_quest_board_veliq.platformFeeRatio())
+                / MAX_BPS
             )
 
             min_reward_per_vote = palading_quest_board_veliq.minRewardPerVotePerToken(
-                badger
+                badger if is_governance_incentive_token else liquis
             )
 
             reward_per_vote_liquis = reward_per_vote_liquis * 1e18
@@ -236,21 +252,36 @@ def main(
                 reward_per_vote_liquis
             )
 
-            assert reward_per_vote_liquis > min_reward_per_vote
-            assert objective > palading_quest_board_veliq.minObjective()
+            assert reward_per_vote_liquis >= min_reward_per_vote
+            assert objective > palading_quest_board_veliq.objectiveMinimalThreshold()
             assert duration_paladin_quest >= 1
 
-            badger.approve(palading_quest_board_veliq, mantissa + platform_fee)
-            palading_quest_board_veliq.createQuest(
+            # approve incentive token conditional based on flag
+            if is_governance_incentive_token:
+                badger.approve(palading_quest_board_veliq, mantissa + platform_fee)
+            else:
+                liquis.approve(palading_quest_board_veliq, mantissa + platform_fee)
+
+            # create incentive quest
+            palading_quest_board_veliq.createFixedQuest(
                 r.bunni.badger_wbtc_bunni_gauge_309720_332580,  # address gauge
-                badger.address,  # address rewardToken
+                badger.address
+                if is_governance_incentive_token
+                else liquis.address,  # address rewardToken
+                True,  # bool startNextPeriod
                 duration_paladin_quest,  # uint48 duration
-                objective,  # uint256 objective
                 reward_per_vote_liquis,  # uint256 rewardPerVote
                 mantissa,  # uint256 totalRewardAmount
                 platform_fee,  # uint256 feeAmount
+                PALADIN_VOTE_TYPE_WHITELISTING,  # uint8 voteType
+                PALADIN_CLOSE_TYPE_ROLLOVER,  # uint8 closeType
+                [
+                    r.liquis.voter_proxy  # NOTE: whitelisting only vlLIQ voters, isolating the market!
+                ],  # address[] memory voterList.
             )
         else:
+            mantissa = int(bribes["liquis"] / badger_rate * Decimal(1e18))
+
             # api for prop check: https://api.hiddenhand.finance/proposal/liquis
             prop = web3.solidityKeccak(
                 ["address"], [r.bunni.badger_wbtc_bunni_gauge_309720_332580]
