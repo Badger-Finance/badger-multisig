@@ -142,6 +142,13 @@ ADDRESSES_ETH = {
             "ops_harvester": "0x73433896620E71f7b1C72405b8D2898e951Ca4d5",
             "ops_external_harvester": "0x64E2286148Fbeba8BEb4613Ede74bAc7646B2A2B",
         },
+        "treasury_councillors": {
+            "councillor1": "0xc87e98867B392BDBA50FfCfE53014226FE1fAaE7",
+            "councillor2": "0xae3FB0474841D69AAE9446108F41D01f11E8BeF4",
+            "councillor3": "0xd1911EEDf284BCD3559de6A06ef67233023e0dFe",
+            "councillor4": "0x33Dd3EC6CCB2736dc285bde70aADe5C45bFaD588",
+            "councillor5": "0x3f993093c3917Fe7A117f37cFD008775249f59c8",
+        },
     },
     # scout stores prices for all tokens here, either from coingecko or
     # interpolation. any token here that does not have a coingeco price must be
@@ -240,6 +247,7 @@ ADDRESSES_ETH = {
         "GRT": "0xc944E90C64B2c07662A292be6244BDf05Cda44a7",
         "LIQ": "0xD82fd4D6D62f89A1E50b1db69AD19932314aa408",
         "LIQLIT": "0x03C6F0Ca0363652398abfb08d154F114e61c4Ad8",
+        "LUSD": "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -701,6 +709,7 @@ ADDRESSES_ETH = {
             "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
         },
     },
+    "llamapay": "0x3E67cc2C7fFf86d9870dB9D02c43e789B52FB296",
 }
 
 ADDRESSES_IBBTC = {
