@@ -57,7 +57,8 @@ def assoc_and_council_funding():
 
     # 1. transfer funding to assoc. wallet
     usdc.transfer(
-        r.badger_wallets.payments_multisig, ASSOC_Q1_FUNDING_STABLES * 10 ** usdc.decimals()
+        r.badger_wallets.payments_multisig,
+        ASSOC_Q1_FUNDING_STABLES * 10 ** usdc.decimals(),
     )
     badger.transfer(r.badger_wallets.payments_multisig, ASSOC_Q1_FUNDING_BADGER)
 
