@@ -9,7 +9,7 @@ It relies heavily on [`ganache-cli`](https://docs.nethereum.com/en/latest/ethere
 
 A good overview of all its tickets and their status can be found here: https://github.com/orgs/Badger-Finance/projects/25.
 
-Read more about the Badger DAO and its community at https://badger.com/dao-and-community.
+Read more about the Badger DAO and its community at https://badger.com/.
 
 ## Installation
 
@@ -80,9 +80,9 @@ rm -rf `poetry env info -p`
 |||Fantom: `0x45b798384c236ef0d78311D98AcAEc222f8c6F54` ([FTMScan](https://ftmscan.com/address/0x45b798384c236ef0d78311D98AcAEc222f8c6F54), [Fantom Safe](https://safe.fantom.network/#/safes/0x45b798384c236ef0d78311D98AcAEc222f8c6F54/), [Zapper](https://zapper.fi/account/0x45b798384c236ef0d78311D98AcAEc222f8c6F54), [DeBank](https://debank.com/profile/0x45b798384c236ef0d78311D98AcAEc222f8c6F54))|
 |`treasuryops.badgerdao.eth`|Treasury short-term holdings; beneficiary of DAO's fees and treasury's yield. Processes these incoming tokens into long-term holdings for the treasury vault.|Mainnet: `0x042B32Ac6b453485e357938bdC38e0340d4b9276` ([Etherscan](https://etherscan.io/address/0x042B32Ac6b453485e357938bdC38e0340d4b9276), [Gnosis Safe](https://gnosis-safe.io/app/eth:0x042B32Ac6b453485e357938bdC38e0340d4b9276/), [Zapper](https://zapper.fi/account/0x042B32Ac6b453485e357938bdC38e0340d4b9276), [DeBank](https://debank.com/profile/0x042B32Ac6b453485e357938bdC38e0340d4b9276))|
 |||Fantom: `0xf109c50684EFa12d4dfBF501eD4858F25A4300B3` ([FTMScan](https://ftmscan.com/address/0xf109c50684EFa12d4dfBF501eD4858F25A4300B3), [Fantom Safe](https://safe.fantom.network/#/safes/0xf109c50684EFa12d4dfBF501eD4858F25A4300B3/), [Zapper](https://zapper.fi/account/0xf109c50684EFa12d4dfBF501eD4858F25A4300B3), [DeBank](https://debank.com/profile/0xf109c50684EFa12d4dfBF501eD4858F25A4300B3))|
-|`treasuryvoter.badgerdao.eth`|Convex voting weight allocated to the treasury as per [BIP 87](https://forum.badger.finance/t/bip-87-bvecvx-restructure-voting-strategy-and-emissions-revised-with-community-feedback/5521)|Mainnet: `0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b` ([Etherscan](https://etherscan.io/address/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b/), [Zapper](https://zapper.fi/account/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [DeBank](https://debank.com/profile/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b))|
+|`treasuryvoter.badgerdao.eth`|Holder of all voting locked tokens and other influence assets. Used for gauge voting and potential involvement in the governance of other protocols if required.|Mainnet: `0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b` ([Etherscan](https://etherscan.io/address/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b/), [Zapper](https://zapper.fi/account/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b), [DeBank](https://debank.com/profile/0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b))|
 |`payments.badgerdao.eth`|Financial txs such as payments to contractors, contributors, expenses, bounties, advisors, etc.|Mainnet: `0x30a9c1D258F6c2D23005e6450E72bDD42C541105` ([Etherscan](https://etherscan.io/address/0x30a9c1D258F6c2D23005e6450E72bDD42C541105), [Gnosis Safe](https://gnosis-safe.io/app/eth:0x30a9c1D258F6c2D23005e6450E72bDD42C541105/), [Zapper](https://zapper.fi/account/0x30a9c1D258F6c2D23005e6450E72bDD42C541105), [DeBank](https://debank.com/profile/0x30a9c1D258F6c2D23005e6450E72bDD42C541105))|
-|`ibbtc.badgerdao.eth`|Internal wallet which claims yield on behalf of the [ibBTC contract](https://etherscan.io/address/0x41671BA1abcbA387b9b2B752c205e22e916BE6e3), only to redistribute it again as emissions.|Mainnet: `0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8` ([Etherscan](https://etherscan.io/address/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8/), [Zapper](https://zapper.fi/account/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [DeBank](https://debank.com/profile/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8))|
+|`ibbtc.badgerdao.eth`|Holds assets acquired from ibBTC's yield which will be used to incentivize eBTC as per [BIP 100](https://forum.badger.finance/t/bip-100-allocation-of-unclaimed-ibbtc-rewards/6012).|Mainnet: `0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8` ([Etherscan](https://etherscan.io/address/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [Gnosis Safe](https://gnosis-safe.io/app/eth:0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8/), [Zapper](https://zapper.fi/account/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8), [DeBank](https://debank.com/profile/0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8))|
 
 ## Techops Signers
 
@@ -93,7 +93,6 @@ The following is a list of all signers on `techops.badgerdao.eth`:
 | petrovska | [GitHub](https://github.com/petrovska-petro) | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
 | dapp-whisperer | [GitHub](https://github.com/dapp-whisperer/) | `0x8938bf50d1a3736bdA413510688834540858dAEA` |
 | ICEITH | [GitHub](https://github.com/ICEBADGER) | `0x5F0D1a3355a75C47324c857280043DdE27797bC0` |
-| gosuto | [GitHub](https://github.com/gosuto-inzasheru/) | `0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4` |
 | lipp | [Twitter](https://twitter.com/lipp_brian) | `0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16` |
 | mrbasado | [GitHub](https://github.com/mrbasado) | `0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e` |
 | saj | [GitHub](https://github.com/sajanrajdev) | `0xfA5bb45895Cb3C0aE5B1583Fe068f009A48F0187` |
