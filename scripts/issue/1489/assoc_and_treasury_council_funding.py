@@ -67,10 +67,20 @@ def assoc_and_council_funding():
     llamapay.deposit(TREASURY_COUNCIL_YEARLY_FUNDING)
 
     # 3. transfer $usdc to councillors members for covering payment before stream initialisation this month
-    usdc.transfer(r.treasury_councillors.councillor1, COUNCILLOR_PAYMENT_COVERED)
-    usdc.transfer(r.treasury_councillors.councillor2, COUNCILLOR_PAYMENT_COVERED)
-    usdc.transfer(r.treasury_councillors.councillor3, COUNCILLOR_PAYMENT_COVERED)
-    usdc.transfer(r.treasury_councillors.councillor4, COUNCILLOR_PAYMENT_COVERED)
-    usdc.transfer(r.treasury_councillors.councillor5, COUNCILLOR_PAYMENT_COVERED)
+    usdc.transfer(
+        r.badger_wallets.treasury_councillors.councillor1, COUNCILLOR_PAYMENT_COVERED
+    )
+    usdc.transfer(
+        r.badger_wallets.treasury_councillors.councillor2, COUNCILLOR_PAYMENT_COVERED
+    )
+    usdc.transfer(
+        r.badger_wallets.treasury_councillors.councillor3, COUNCILLOR_PAYMENT_COVERED
+    )
+    usdc.transfer(
+        r.badger_wallets.treasury_councillors.councillor4, COUNCILLOR_PAYMENT_COVERED
+    )
+    usdc.transfer(
+        r.badger_wallets.treasury_councillors.councillor5, COUNCILLOR_PAYMENT_COVERED
+    )
 
     vault.post_safe_tx()
