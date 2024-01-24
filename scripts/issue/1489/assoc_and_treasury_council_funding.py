@@ -11,7 +11,8 @@ TREASURY_COUNCIL_YEARLY_FUNDING = 300_000e6
 COUNCILLOR_PAYMENT_COVERED = 2927.777777777777784336e6
 
 # funding figure (association)
-ASSOC_Q1_FUNDING = 1_154_918
+ASSOC_Q1_FUNDING_STABLES = 1_154_918
+ASSOC_Q1_FUNDING_BADGER = 137_706e18
 
 
 def sell_stable_for_usdc():
@@ -27,7 +28,7 @@ def sell_stable_for_usdc():
     vault.cow.market_sell(
         asset_sell=dai,
         asset_buy=usdc,
-        mantissa_sell=ASSOC_Q1_FUNDING * 10 ** dai.decimals(),
+        mantissa_sell=ASSOC_Q1_FUNDING_STABLES * 10 ** dai.decimals(),
         deadline=DEADLINE,
         coef=COEF,
     )
@@ -49,14 +50,16 @@ def assoc_and_council_funding():
 
     # tokens
     usdc = vault.contract(r.treasury_tokens.USDC)
+    badger = vault.contract(r.treasury_tokens.BADGER)
 
     # contracts
     llamapay = vault.contract(r.llamapay)
 
     # 1. transfer funding to assoc. wallet
-    vault.transfer(
-        r.badger_wallets.payments_multisig, ASSOC_Q1_FUNDING * 10 ** usdc.decimals()
+    usdc.transfer(
+        r.badger_wallets.payments_multisig, ASSOC_Q1_FUNDING_STABLES * 10 ** usdc.decimals()
     )
+    badger.transfer(r.badger_wallets.payments_multisig, ASSOC_Q1_FUNDING_BADGER)
 
     # 2. top-up yearly funding for treasury council
     usdc.approve(llamapay, TREASURY_COUNCIL_YEARLY_FUNDING)
