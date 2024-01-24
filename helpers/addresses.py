@@ -78,6 +78,7 @@ ADDRESSES_ETH = {
         "ibbtc_multisig": "0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8",
         "treasury_voter_multisig": "0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",
         "payments_multisig": "0x30a9c1D258F6c2D23005e6450E72bDD42C541105",
+        "payments_multisig_2024": "0x1c2C8b6B5EcFFdF242158Eb21366c48B4A2164Fa",
         "dfdBadgerShared": "0xCF7346A5E41b0821b80D5B3fdc385EEB6Dc59F44",
         "mstableBadgerShared": "0xCa045cC466f14C33a516D98abcab5C55C2f5112c",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
