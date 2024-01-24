@@ -57,10 +57,10 @@ def assoc_and_council_funding():
 
     # 1. transfer funding to assoc. wallet
     usdc.transfer(
-        r.badger_wallets.payments_multisig,
+        r.badger_wallets.payments_multisig_2024,
         ASSOC_Q1_FUNDING_STABLES * 10 ** usdc.decimals(),
     )
-    badger.transfer(r.badger_wallets.payments_multisig, ASSOC_Q1_FUNDING_BADGER)
+    badger.transfer(r.badger_wallets.payments_multisig_2024, ASSOC_Q1_FUNDING_BADGER)
 
     # 2. top-up yearly funding for treasury council
     usdc.approve(llamapay, TREASURY_COUNCIL_YEARLY_FUNDING)
