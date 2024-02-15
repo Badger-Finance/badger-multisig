@@ -34,6 +34,8 @@ def main(pendant_bunni_gauge_rewards=True):
     lit_balance = lit.balanceOf(vault)
     vault.balancer.swap(lit, weth, lit_balance, pool=bpt_lit_weth)
 
-    # TBD: processing of LIQ rewards
+    # sent full balance LIQ rewards to trops
+    liq_balance = liq.balanceOf(vault)
+    liq.transfer(r.badger_wallets.treasury_ops_multisig, liq_balance)
 
     vault.post_safe_tx()
