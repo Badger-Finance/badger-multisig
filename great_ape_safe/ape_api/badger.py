@@ -64,6 +64,9 @@ class Badger:
         self.api_paladin_claim_url = (
             f"https://api.paladin.vote/quest/v2/copilot/claims/"
         )
+        self.api_paladin_clawback_incentives_url = (
+            f"https://api.paladin.vote/quest/v2/copilot/user/"
+        )
 
     def claim_all(self, json_file_path=None):
         """
@@ -224,7 +227,7 @@ class Badger:
 
     def get_paladin_data(self, address=None):
         """
-        get hidden hand data for a particular address
+        get paladin data for a particular address for claiming its rewards (merkle tree data)
         """
         address = address if address else self.safe.address
         url = self.api_paladin_claim_url + address
@@ -233,12 +236,24 @@ class Badger:
             r.raise_for_status()
         return r.json()["claims"]
 
+    def get_paladin_quests_info(self, address=None):
+        """
+        get paladin data for a particular address related to posted quests
+        which are closed currently and there may be withdrawable incentives unallocated
+        """
+        address = address if address else self.safe.address
+        url = self.api_paladin_clawback_incentives_url + address
+        r = requests.get(url)
+        if not r.ok:
+            r.raise_for_status()
+        return r.json()["quests"]
+
     def claim_bribes_from_paladin(self):
         """
         grabs the available claimable tokens from Paladin endpoint,
         shape the endpoint information and claims tokens for the safe.
         """
-        data = self.get_paladin_data()
+        data = [self.get_paladin_data()[-1]]
 
         claim_data = []
         claim_data_legacy = []
@@ -272,6 +287,19 @@ class Badger:
             self.paladin_merkle_tree.multiClaim(self.safe, claim_data)
         if len(claim_data_legacy) > 0:
             self.paladin_merkle_tree_legacy.multiClaim(self.safe, claim_data_legacy)
+
+    def claw_back_incentives_from_paladin(self):
+        """
+        Inspects the quests available in Paladin endpoint for the safe,
+        check if there are still pending questID, which needs to be claim back.
+        """
+        data = self.get_paladin_quests_info()
+
+        for entry in data:
+            if int(entry["general"]["withdrawable"]) > 0:
+                self.safe.contract(entry["general"]["board"]).withdrawUnusedRewards(
+                    entry["general"]["questId"], self.safe
+                )
 
     def sweep_reward_token(self, token_addr):
         """
