@@ -4,8 +4,6 @@ pragma solidity ^0.8.20;
 interface IQuestBoard {
     function GAUGE_CONTROLLER() external view returns (address);
 
-    function KILL_DELAY() external view returns (uint256);
-
     function acceptOwnership() external;
 
     function addMerkleRoot(
@@ -24,6 +22,8 @@ interface IQuestBoard {
 
     function approveManager(address newManager) external;
 
+    function biasCalculator() external view returns (address);
+
     function closePartOfQuestPeriod(uint256 period, uint256[] memory questIDs)
         external
         returns (uint256 closed, uint256 skipped);
@@ -32,19 +32,51 @@ interface IQuestBoard {
         external
         returns (uint256 closed, uint256 skipped);
 
-    function createQuest(
+    function createFixedQuest(
         address gauge,
         address rewardToken,
+        bool startNextPeriod,
         uint48 duration,
-        uint256 objective,
         uint256 rewardPerVote,
         uint256 totalRewardAmount,
-        uint256 feeAmount
+        uint256 feeAmount,
+        uint8 voteType,
+        uint8 closeType,
+        address[] memory voterList
     ) external returns (uint256);
+
+    function createRangedQuest(
+        address gauge,
+        address rewardToken,
+        bool startNextPeriod,
+        uint48 duration,
+        uint256 minRewardPerVote,
+        uint256 maxRewardPerVote,
+        uint256 totalRewardAmount,
+        uint256 feeAmount,
+        uint8 voteType,
+        uint8 closeType,
+        address[] memory voterList
+    ) external returns (uint256);
+
+    function customPlatformFeeRatio(address) external view returns (uint256);
 
     function distributor() external view returns (address);
 
     function emergencyWithdraw(uint256 questID, address recipient) external;
+
+    function extendQuestDuration(
+        uint256 questID,
+        uint48 addedDuration,
+        uint256 addedRewardAmount,
+        uint256 feeAmount
+    ) external;
+
+    function fixQuestPeriodBias(
+        uint256 period,
+        uint256 questID,
+        uint256 correctReducedBias
+    ) external;
 
     function getAllPeriodsForQuestId(uint256 questId)
         external
@@ -54,49 +86,40 @@ interface IQuestBoard {
     function getAllQuestPeriodsForQuestId(uint256 questId)
         external
         view
-        returns (QuestBoard.QuestPeriod[] memory);
+        returns (IQuestBoardStruct.QuestPeriod[] memory);
 
     function getCurrentPeriod() external view returns (uint256);
+
+    function getCurrentReducedBias(uint256 questID)
+        external
+        view
+        returns (uint256);
+
+    function getQuestCreator(uint256 questID) external view returns (address);
 
     function getQuestIdsForPeriod(uint256 period)
         external
         view
         returns (uint256[] memory);
 
-    function increaseQuestDuration(
-        uint256 questID,
-        uint48 addedDuration,
-        uint256 addedRewardAmount,
-        uint256 feeAmount
-    ) external;
+    function getQuestIdsForPeriodForGauge(address gauge, uint256 period)
+        external
+        view
+        returns (uint256[] memory);
 
-    function increaseQuestObjective(
-        uint256 questID,
-        uint256 newObjective,
-        uint256 addedRewardAmount,
-        uint256 feeAmount
-    ) external;
-
-    function increaseQuestReward(
-        uint256 questID,
-        uint256 newRewardPerVote,
-        uint256 addedRewardAmount,
-        uint256 feeAmount
-    ) external;
-
-    function initiateDistributor(address newDistributor) external;
+    function init(address _distributor, address _biasCalculator) external;
 
     function isKilled() external view returns (bool);
 
     function killBoard() external;
 
-    function kill_ts() external view returns (uint256);
-
-    function minObjective() external view returns (uint256);
+    function killTs() external view returns (uint256);
 
     function minRewardPerVotePerToken(address) external view returns (uint256);
 
     function nextID() external view returns (uint256);
+
+    function objectiveMinimalThreshold() external view returns (uint256);
 
     function owner() external view returns (address);
 
@@ -107,21 +130,22 @@ interface IQuestBoard {
         view
         returns (
             uint256 rewardAmountPerPeriod,
-            uint256 rewardPerVote,
-            uint256 objectiveVotes,
+            uint256 minRewardPerVote,
+            uint256 maxRewardPerVote,
+            uint256 minObjectiveVotes,
+            uint256 maxObjectiveVotes,
             uint256 rewardAmountDistributed,
-            uint256 withdrawableAmount,
             uint48 periodStart,
             uint8 currentState
         );
 
-    function platformFee() external view returns (uint256);
+    function platformFeeRatio() external view returns (uint256);
 
     function questChest() external view returns (address);
 
     function questDistributors(uint256) external view returns (address);
 
-    function questPeriods(uint256, uint256) external view returns (uint48);
+    function questWithdrawableAmount(uint256) external view returns (uint256);
 
     function quests(uint256)
         external
@@ -132,16 +156,17 @@ interface IQuestBoard {
             address gauge,
             uint48 duration,
             uint48 periodStart,
-            uint256 totalRewardAmount
+            uint256 totalRewardAmount,
+            IQuestBoardStruct.QuestTypes memory types
         );
-
-    function questsByPeriod(uint256, uint256) external view returns (uint256);
 
     function recoverERC20(address token) external returns (bool);
 
     function removeManager(address manager) external;
 
     function renounceOwnership() external;
+
+    function setCustomFeeRatio(address user, uint256 customFeeRatio) external;
 
     function transferOwnership(address newOwner) external;
 
@@ -154,6 +179,15 @@ interface IQuestBoard {
     function updateMinObjective(uint256 newMinObjective) external;
 
     function updatePlatformFee(uint256 newFee) external;
+
+    function updateQuestParameters(
+        uint256 questID,
+        uint256 newMinRewardPerVote,
+        uint256 newMaxRewardPerVote,
+        uint256 addedPeriodRewardAmount,
+        uint256 addedTotalRewardAmount,
+        uint256 feeAmount
+    ) external;
 
     function updateRewardToken(address newToken, uint256 newMinRewardPerVote)
         external;
@@ -171,14 +205,21 @@ interface IQuestBoard {
     function withdrawUnusedRewards(uint256 questID, address recipient) external;
 }
 
-interface QuestBoard {
+interface IQuestBoardStruct {
     struct QuestPeriod {
         uint256 rewardAmountPerPeriod;
-        uint256 rewardPerVote;
-        uint256 objectiveVotes;
+        uint256 minRewardPerVote;
+        uint256 maxRewardPerVote;
+        uint256 minObjectiveVotes;
+        uint256 maxObjectiveVotes;
         uint256 rewardAmountDistributed;
-        uint256 withdrawableAmount;
         uint48 periodStart;
         uint8 currentState;
+    }
+
+    struct QuestTypes {
+        uint8 voteType;
+        uint8 rewardsType;
+        uint8 closeType;
     }
 }

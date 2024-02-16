@@ -78,6 +78,7 @@ ADDRESSES_ETH = {
         "ibbtc_multisig": "0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8",
         "treasury_voter_multisig": "0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",
         "payments_multisig": "0x30a9c1D258F6c2D23005e6450E72bDD42C541105",
+        "payments_multisig_2024": "0x1c2C8b6B5EcFFdF242158Eb21366c48B4A2164Fa",
         "dfdBadgerShared": "0xCF7346A5E41b0821b80D5B3fdc385EEB6Dc59F44",
         "mstableBadgerShared": "0xCa045cC466f14C33a516D98abcab5C55C2f5112c",
         "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
@@ -141,6 +142,13 @@ ADDRESSES_ETH = {
             "ops_earner": "0x46099Ffa86aAeC689D11F5D5130044Ff7082C2AD",
             "ops_harvester": "0x73433896620E71f7b1C72405b8D2898e951Ca4d5",
             "ops_external_harvester": "0x64E2286148Fbeba8BEb4613Ede74bAc7646B2A2B",
+        },
+        "treasury_councillors": {
+            "councillor1": "0xc87e98867B392BDBA50FfCfE53014226FE1fAaE7",
+            "councillor2": "0xae3FB0474841D69AAE9446108F41D01f11E8BeF4",
+            "councillor3": "0xd1911EEDf284BCD3559de6A06ef67233023e0dFe",
+            "councillor4": "0x33Dd3EC6CCB2736dc285bde70aADe5C45bFaD588",
+            "councillor5": "0x3f993093c3917Fe7A117f37cFD008775249f59c8",
         },
     },
     # scout stores prices for all tokens here, either from coingecko or
@@ -240,6 +248,7 @@ ADDRESSES_ETH = {
         "GRT": "0xc944E90C64B2c07662A292be6244BDf05Cda44a7",
         "LIQ": "0xD82fd4D6D62f89A1E50b1db69AD19932314aa408",
         "LIQLIT": "0x03C6F0Ca0363652398abfb08d154F114e61c4Ad8",
+        "LUSD": "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -693,6 +702,7 @@ ADDRESSES_ETH = {
         "claim_zap": "0xad161b8bEb5bf2Af9cDA30E3988B13F62E70431B",
         "liq_vested_escrow": "0xf97964749b52c55d64E971571E1370b2618B718f",
         "rewards_pool_309720_332580": "0xB99ca33d35Ea7B520EC779F001C0C0b971aAb395",
+        "voter_proxy": "0x37aeB332D6E57112f1BFE36923a7ee670Ee9278b",
     },
     "paladin": {
         "quest_board_veliq": "0x1B921DBD13A280ee14BA6361c1196EB72aaa094e",
@@ -702,6 +712,7 @@ ADDRESSES_ETH = {
             "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
         },
     },
+    "llamapay": "0x3E67cc2C7fFf86d9870dB9D02c43e789B52FB296",
 }
 
 ADDRESSES_IBBTC = {
