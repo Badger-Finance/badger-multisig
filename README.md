@@ -104,7 +104,7 @@ The following is a list of all Treasury Council members and therefore the signer
 | Signer | Profiles | Address |
 |-|-|-|
 | petrovska | [GitHub](https://github.com/petrovska-petro) | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
-| Spadaboom | [Twitter](https://twitter.com/spadaboom1) | `0x54cF9dF9dCd78E470AB7CB892D7bFbE114c025fc` |
+| adcv | [Twitter](https://twitter.com/adcv_) | `0x2afc096981c2CFe3501bE4054160048718F6C0C8` |
 | 1500$Badger | [Twitter](https://twitter.com/haal69k) | `0x66496eBB9d848C6A8F19612a6Dd10E09954532D0` |
 | gosuto | [GitHub](https://github.com/gosuto-inzasheru/) | `0x6C6238309f4f36DFF9942e655A678bbd4EA3BC5d` |
 | Po | [Forum](https://forum.badger.finance/u/mr_po/summary) | `0x9c8C8bcD625Ed2903823b0b60DeaB2D70B92aFd9` |
