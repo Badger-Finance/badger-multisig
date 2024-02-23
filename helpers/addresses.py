@@ -706,6 +706,8 @@ ADDRESSES_ETH = {
     },
     "paladin": {
         "quest_board_veliq": "0x1B921DBD13A280ee14BA6361c1196EB72aaa094e",
+        "merkle_distributor_legacy": "0x069B449d8fd744ef09cBC07FE871F52627FE22B0",
+        "multi_merkle_distributor": "0xCcD73d064Ed07964Ad2144fDFd1b99e7E6b5f626",
         "_deprecated": {
             "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
         },
