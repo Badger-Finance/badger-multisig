@@ -89,13 +89,17 @@ ADDRESSES_ETH = {
         # "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",  # can execute from deployer
         # "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         # "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",  # can execute from deployer
-        "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
         # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
         "ops_executor14": "0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e",
         "ops_executor15": "0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16",
         "ops_executor16": "0x5F0D1a3355a75C47324c857280043DdE27797bC0",
         "ops_executor17": "0x6dd1e005c90cedbea99909fa9ff82497e2424357",
         # "ops_executor18": "0xD10617AE4Da733d79eF0371aa44cd7fa74C41f6B",  # can execute from deployer
+        # "ops_executor19": "0xfA5bb45895Cb3C0aE5B1583Fe068f009A48F0187",  # can execute from deployer
+        "ops_executor20": "0xDA82F543613f90deA718c46D02Ca15e05e88e4aC",
+        "ops_executor21": "0xE2C5B2008d9cc8F8E1FDa8552f7df63Af1f747f8",
+        # "ops_executor22": "0xcC692077C65dd464cAA7e7ae614328914f8469b3",  # eBTC Back-up
+        # "ops_executor23": "0x20359b5f320Ee24FA0B1000D80DAc4aFBF49738C",  # eBTC Back-up
         "ops_root-validator_v3": "0xcA63a374ec5f41dA402dD17b6d90DddFea3d64C4",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
@@ -133,6 +137,7 @@ ADDRESSES_ETH = {
             "ops_executor4_v2": "0xE8eA1D8B3a5A4CEC7E94AE330fF18E82B5D22fA6",
             "ops_executor5": "0xcDAb3AcC1AD3870a93BB72377092B67e290D76f3",
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
+            "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
             "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
             "ops_guardian": "0x29F7F8896Fb913CF7f9949C623F896a154727919",
             "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
