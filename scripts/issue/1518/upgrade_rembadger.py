@@ -29,9 +29,7 @@ def main(queue="true", simulation="false"):
     safe.init_badger()
 
     print(registry.eth.sett_vaults.remBADGER)
-    rembadger = safe.contract(
-        registry.eth.sett_vaults.remBADGER, interface.IRemBadger
-    )
+    rembadger = safe.contract(registry.eth.sett_vaults.remBADGER, interface.IRemBadger)
     badger = safe.badger.badger
 
     if queue == "true":
