@@ -43,6 +43,8 @@ interface IRemBadger {
 
     function brickDeposits() external;
 
+    function enableDeposits() external;
+
     function controller() external view returns (address);
 
     function decimals() external view returns (uint8);
