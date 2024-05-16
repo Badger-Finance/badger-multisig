@@ -71,12 +71,6 @@ def main(queue="true", simulation="false"):
             timelock = accounts.at(registry.eth.governance_timelock, force=True)
             proxyAdmin = interface.IProxyAdmin(DEV_PROXY, owner=timelock)
             proxyAdmin.upgrade(rembadger.address, NEW_LOGIC)
-            # Have user transfer BADGER to governance (whale transfer BADGER for the time being)
-            for deposit_user, deposit_amount in USERS_AMOUNTS.items():
-                user = accounts.at(BADGER_WHALE, force=True)
-                assert badger.balanceOf(user) >= deposit_amount
-                badger.transfer(safe.account, deposit_amount, {"from": user})
-                assert badger.balanceOf(safe.account) >= deposit_amount
         else:
             safe.badger.execute_timelock("data/badger/timelock/upgrade_remBadger_2_0/")
 
