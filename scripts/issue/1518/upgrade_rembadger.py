@@ -1,5 +1,6 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import registry
+from helpers.utils import approx
 from brownie import accounts, interface, chain
 from rich.console import Console
 from eth_abi import encode_abi
@@ -10,7 +11,7 @@ NEW_LOGIC = registry.eth.logic["remBadger"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 USERS_AMOUNTS = {
     "0x138Dd537D56F2F2761a6fC0A2A0AcE67D55480FE": 1788000000000000000000, # 1788
-    "0x39e40AB1eAEc3daBd19c6830f24cF6342Df7f476": 11387784080001404195187, # 11387.784080001404195187
+    "0x39e40AB1eAEc3daBd19c6830f24cF6342Df7f476": 11388000000000000000000, # 11,387 + 1
 }
 
 # For testing purposes, in practice each user will transfer their BADGER amount to the governance multisig
@@ -143,12 +144,3 @@ def main(queue="true", simulation="false"):
 
     if simulation == "false":
         safe.post_safe_tx()
-
-
-def approx(actual, expected, percentage_threshold):
-    print(actual, expected, percentage_threshold)
-    diff = int(abs(actual - expected))
-    # 0 diff should automtically be a match
-    if diff == 0:
-        return True
-    return diff < (actual * percentage_threshold // 100)
