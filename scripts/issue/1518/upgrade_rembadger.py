@@ -14,9 +14,6 @@ USERS_AMOUNTS = {
     "0x39e40AB1eAEc3daBd19c6830f24cF6342Df7f476": 11388000000000000000000,  # 11,387 + 1
 }
 
-# For testing purposes, in practice each user will transfer their BADGER amount to the governance multisig
-BADGER_WHALE = registry.eth.badger_wallets.treasury_vault_multisig
-
 
 def queue():
     main(queue="true", simulation="false")
