@@ -5,6 +5,7 @@ from great_ape_safe import GreatApeSafe
 TECHOPS = r.badger_wallets.techops_multisig
 BREMBADGER = r.brembadger
 
+
 def enable_deposits():
     safe = GreatApeSafe(TECHOPS)
 

@@ -10,12 +10,13 @@ C = Console()
 NEW_LOGIC = registry.eth.logic["remBadger"]
 DEV_PROXY = registry.eth.badger_wallets.devProxyAdmin
 USERS_AMOUNTS = {
-    "0x138Dd537D56F2F2761a6fC0A2A0AcE67D55480FE": 1788000000000000000000, # 1788
-    "0x39e40AB1eAEc3daBd19c6830f24cF6342Df7f476": 11388000000000000000000, # 11,387 + 1
+    "0x138Dd537D56F2F2761a6fC0A2A0AcE67D55480FE": 1788000000000000000000,  # 1788
+    "0x39e40AB1eAEc3daBd19c6830f24cF6342Df7f476": 11388000000000000000000,  # 11,387 + 1
 }
 
 # For testing purposes, in practice each user will transfer their BADGER amount to the governance multisig
 BADGER_WHALE = registry.eth.badger_wallets.treasury_vault_multisig
+
 
 def queue():
     main(queue="true", simulation="false")
@@ -114,9 +115,7 @@ def main(queue="true", simulation="false"):
 
             assert prev_balance + deposit_amount == rembadger.balance()
             assert approx(
-                prev_getPricePerFullShare, 
-                rembadger.getPricePerFullShare(),
-                0.0001
+                prev_getPricePerFullShare, rembadger.getPricePerFullShare(), 0.0001
             )  # There is a 2 wei increase in the second deposit for some reason (perhaps Brownie weirdness?)
             assert approx(
                 rembadger.balanceOf(deposit_user),
