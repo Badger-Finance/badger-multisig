@@ -25,6 +25,7 @@ ADDRESSES_ETH = {
     "aragon_voting": "0xDc344bFB12522bF3fa58EF0d6b9a41256fc79A1b",
     "badger_voting_shares": "0x49fa0D0619BdeD9aAc4106974E34CeB516bdeAeF",
     "brickedProxyAdmin": "0x933FDBAc3773514384c6db30Eb196a0be543D617",
+    "brembadger": "0x170D9fA0Cb0226f0d87952905228e5AA7323DdA6",
     "drippers": {
         "rembadger_2022_q2": "0xD87F434fE6d5B349f4376d2daBA762b213E403c7",
         "tree_2022_q2": "0xfA55d407F48849aE98a6e4f11Dc5C18E035F46Ec",
