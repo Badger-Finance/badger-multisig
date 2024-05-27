@@ -8,12 +8,13 @@ GAUGE = r.crv_gauges.ebtc_wsteth_gauge
 
 TROPS = r.badger_wallets.treasury_ops_multisig
 
-MONTH = 60 * 60 * 24 * 7 * 4 # Epoch
+MONTH = 60 * 60 * 24 * 7 * 4  # Epoch
+
 
 def main(amount=0, epoch=MONTH, use_wsteth=True):
     """
     Deposit stETH or wstETH into the eBTC/wstETH Curve gauge for a given epoch
-    
+
     Args:
         amount (int): Decimal amount of stETH or wstETH to deposit
         epoch (int): Epoch length to deposit the amount, default 1 month
