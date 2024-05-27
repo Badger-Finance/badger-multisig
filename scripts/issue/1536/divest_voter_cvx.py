@@ -85,8 +85,6 @@ def main():
     bvecvx.withdrawAll()
     bcvxcrv.withdrawAll()
 
-    safe.print_snapshot()
-
     # Sell CVX and cvxCRV for USDC
     safe.cow.market_sell(
         cvx, usdc, cvx.balanceOf(safe), deadline=DEADLINE, coef=COEF, destination=VAULT
@@ -100,4 +98,4 @@ def main():
         destination=VAULT,
     )
 
-    safe.post_safe_tx()
+    safe.post_safe_tx(skip_preview=True)
