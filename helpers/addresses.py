@@ -256,6 +256,8 @@ ADDRESSES_ETH = {
         "LIQ": "0xD82fd4D6D62f89A1E50b1db69AD19932314aa408",
         "LIQLIT": "0x03C6F0Ca0363652398abfb08d154F114e61c4Ad8",
         "LUSD": "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
+        "STETH": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+        "WSTETH": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
@@ -306,6 +308,10 @@ ADDRESSES_ETH = {
         "t_eth_f": "0x752eBeb79963cf0732E9c0fec72a49FD1DEfAEAC",
         "cvx_eth_f": "0xB576491F1E6e5E62f1d8F26062Ee822B40B0E0d4",
         "badgerFRAXBP_f": "0x13B876C26Ad6d21cb87AE459EaF6d7A1b788A113",
+        "ebtc_wsteth": "0x94a5B3A7AAF67415B7F5973ed1Adf542897a45F1",
+    },
+    "crv_gauges": {
+        "ebtc_wsteth_gauge": "0xBEb468BEb5C72d8b4d4f076F473Db398562769ed",
     },
     # mStable want tokens
     "mstable_vaults": {
