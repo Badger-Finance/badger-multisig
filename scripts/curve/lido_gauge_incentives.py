@@ -1,6 +1,7 @@
 from great_ape_safe import GreatApeSafe
 from helpers.addresses import r
 from brownie import interface
+from decimal import Decimal
 
 STETH = r.treasury_tokens.STETH
 WSTETH = r.treasury_tokens.WSTETH
@@ -13,6 +14,11 @@ MONTH = 60 * 60 * 24 * 7 * 4  # Epoch
 
 def main(amount=0, epoch=MONTH, use_wsteth=True):
     """
+    NOTE: Script fails with active ganache/brownie versions. As a workaround,
+    the the "Lido_incentives.json" file contains a batch of the approval and deposit transactions.
+    This can be imported into the Gnosis Safe UI to perform the operation below. Note that the
+    amount to be approved and deposited must be adjusted as needed either through the JSON or the UI.
+
     Deposit stETH or wstETH into the eBTC/wstETH Curve gauge for a given epoch
 
     Args:
@@ -22,7 +28,7 @@ def main(amount=0, epoch=MONTH, use_wsteth=True):
     """
     safe = GreatApeSafe(TROPS)
     gauge = safe.contract(GAUGE, Interface=interface.ILiquidityGaugeV6)
-    amount = int(float(amount) * 1e18)
+    amount = int(Decimal(amount) * 1e18)
 
     if use_wsteth:
         token = safe.contract(WSTETH)

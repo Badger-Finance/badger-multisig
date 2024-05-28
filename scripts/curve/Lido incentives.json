@@ -1,0 +1,68 @@
+{
+    "version": "1.0",
+    "chainId": "1",
+    "createdAt": 1716833176007,
+    "meta": {
+        "name": "Lido incentives",
+        "description": "",
+        "txBuilderVersion": "1.16.5",
+        "createdFromSafeAddress": "0x042B32Ac6b453485e357938bdC38e0340d4b9276",
+        "createdFromOwnerAddress": "",
+        "checksum": "0x399a8a1116b44bdee7fc0fd346975092a154cb5bf1698941d9a3de226986a5a8"
+    },
+    "transactions": [
+        {
+            "to": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
+            "value": "0",
+            "data": null,
+            "contractMethod": {
+                "inputs": [
+                    {
+                        "name": "spender",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ],
+                "name": "approve",
+                "payable": false
+            },
+            "contractInputsValues": {
+                "spender": "0xBEb468BEb5C72d8b4d4f076F473Db398562769ed",
+                "amount": "4220000000000000000"
+            }
+        },
+        {
+            "to": "0xBEb468BEb5C72d8b4d4f076F473Db398562769ed",
+            "value": "0",
+            "data": null,
+            "contractMethod": {
+                "inputs": [
+                    {
+                        "name": "_reward_token",
+                        "type": "address"
+                    },
+                    {
+                        "name": "_amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "name": "_epoch",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "deposit_reward_token",
+                "payable": false
+            },
+            "contractInputsValues": {
+                "_reward_token": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
+                "_amount": "4220000000000000000",
+                "_epoch": "2419200"
+            }
+        }
+    ]
+}
