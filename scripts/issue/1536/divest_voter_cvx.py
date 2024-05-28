@@ -32,6 +32,7 @@ def approve_contract_access_to_voter():
 
     safe.post_safe_tx()
 
+
 def transfer_fees_to_voter():
     """
     Transfer CVX and cvxCRV accumulated fees from Trops to Voter
@@ -49,7 +50,7 @@ def transfer_fees_to_voter():
     tokens = [cvx, cvxcrv, bvecvx, bcvxcrv, bvecvxcvxf, bvecvxcvxf_lp]
 
     safe.take_snapshot(tokens)
-    
+
     for token in tokens:
         if token.balanceOf(TROPS) > 0:
             token.transfer(VOTER, token.balanceOf(TROPS))
