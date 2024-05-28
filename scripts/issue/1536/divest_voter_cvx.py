@@ -7,6 +7,7 @@ C = Console()
 VOTER = r.badger_wallets.treasury_voter_multisig
 TROPS = r.badger_wallets.treasury_ops_multisig
 VAULT = r.badger_wallets.treasury_vault_multisig
+TECHOPS = r.badger_wallets.techops_multisig
 
 # Tokens
 CVX = r.treasury_tokens.CVX
@@ -23,6 +24,14 @@ COEF = 0.95
 DEADLINE = 60 * 60 * 12
 
 
+def approve_contract_access_to_voter():
+    safe = GreatApeSafe(TECHOPS)
+    bcvxcrv = safe.contract(BCVXCRV)
+    bcvxcrv.approveContractAccess(VOTER)
+    assert bcvxcrv.approved(VOTER)
+
+    safe.post_safe_tx()
+
 def transfer_fees_to_voter():
     """
     Transfer CVX and cvxCRV accumulated fees from Trops to Voter
@@ -32,15 +41,27 @@ def transfer_fees_to_voter():
     # Contracts
     cvx = safe.contract(CVX)
     cvxcrv = safe.contract(CVXCRV)
-    cvx.transfer(VOTER, cvx.balanceOf(TROPS))
-    cvxcrv.transfer(VOTER, cvxcrv.balanceOf(TROPS))
+    bvecvx = safe.contract(BVECVX)
+    bcvxcrv = safe.contract(BCVXCRV)
+    bvecvxcvxf = safe.contract(BVECVXCVXF)
+    bvecvxcvxf_lp = safe.contract(bvecvxcvxf.token())
+
+    tokens = [cvx, cvxcrv, bvecvx, bcvxcrv, bvecvxcvxf, bvecvxcvxf_lp]
+
+    safe.take_snapshot(tokens)
+    
+    for token in tokens:
+        if token.balanceOf(TROPS) > 0:
+            token.transfer(VOTER, token.balanceOf(TROPS))
 
     safe.post_safe_tx()
 
 
 def main():
     """
-    0. Transfer CVX and cvxCRV accumulated fees from Trops to Voter
+    0. Approve contract access to Voter on bcvxCRV
+    ----------------------------------------------------------------
+    0.1 Transfer CVX and cvxCRV accumulated fees from Trops to Voter
     ----------------------------------------------------------------
     1. Withdraw from Badger bveCVX/CVX vault from Voter
     2. Withdraw from bveCVX/CVX-f pool on Curve from Voter
@@ -98,4 +119,4 @@ def main():
         destination=VAULT,
     )
 
-    safe.post_safe_tx(skip_preview=True)
+    safe.post_safe_tx()
