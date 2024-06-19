@@ -166,7 +166,7 @@ def _range_prices(position_manager, token_id, decimals_diff):
     range_1 = 1 / (BASE ** tick_upper) * 10 ** decimals_diff
     C.print(f"[green]range_0: {range_0}[/green]")
     C.print(f"[green]range_1: {range_1}\n[/green]")
-    C.print(f"[green]price0: {1/range_0}[/green]") # To match UniV3 UI
-    C.print(f"[green]price1: {1/range_1}\n[/green]") # To match UniV3 UI
+    C.print(f"[green]price0: {1/range_0}[/green]")  # To match UniV3 UI
+    C.print(f"[green]price1: {1/range_1}\n[/green]")  # To match UniV3 UI
 
     return range_0, range_1
