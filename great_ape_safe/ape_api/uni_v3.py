@@ -149,6 +149,7 @@ class UniV3:
         It will decrease the liquidity from a specific NFT
         and collect the fees earned on it
         optional: to completly burn the NFT
+        Returns: Amount withdrawn, without fees collected
         """
         position = self.nonfungible_position_manager.positions(token_id)
         deadline = chain.time() + self.deadline
@@ -169,7 +170,7 @@ class UniV3:
             amount1Min *= withdraw_partial_percentage
 
         # requires to remove all liquidity first
-        self.nonfungible_position_manager.decreaseLiquidity(
+        tx = self.nonfungible_position_manager.decreaseLiquidity(
             (
                 token_id,
                 liquidity,
@@ -178,6 +179,9 @@ class UniV3:
                 deadline,
             )
         )
+        event = tx.events["DecreaseLiquidity"][0]
+        amount0 = event["amount0"]  # Actual amount0 withdrawn from position
+        amount1 = event["amount1"]  # Actual amount1 withdrawn from position
 
         # grab also tokens owned, otherwise cannot burn. ref: https://etherscan.io/address/0xc36442b4a4522e871399cd717abdd847ab11fe88#code#F1#L379
         position = self.nonfungible_position_manager.positions(token_id)
@@ -203,6 +207,8 @@ class UniV3:
         if burn_nft:
             # needs to be liq = 0, cleared the pos, otherwise will revert!
             self.nonfungible_position_manager.burn(token_id)
+
+        return amount0, amount1
 
     def collect_fee(self, token_id):
         """
