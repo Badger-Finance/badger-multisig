@@ -62,7 +62,7 @@ class UniV3:
         # https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps#input-parameters
         multihop = [path[0].address]
         for i in range(len(path) - 1):
-            fee_tiers = {100: 0, 3000: 0, 10000: 0}
+            fee_tiers = {100: 0, 500: 0, 3000: 0, 10000: 0}
             for tier in fee_tiers.keys():
                 pool_addr = self.factory.getPool(path[i], path[i + 1], tier)
 
@@ -72,7 +72,7 @@ class UniV3:
                 pool = interface.IUniswapV3Pool(pool_addr)
                 fee_tiers[tier] = pool.liquidity()
 
-            if list(fee_tiers.values()).count(0) == 3:
+            if list(fee_tiers.values()).count(0) == len(fee_tiers):
                 raise Exception(
                     f"No liquidity found for {path[i].symbol()} - {path[i+1].symbol()}"
                 )
@@ -144,7 +144,7 @@ class UniV3:
 
         return liquidity, amount0, amount1
 
-    def burn_token_id(self, token_id, burn_nft=False):
+    def burn_token_id(self, token_id, withdraw_partial_percentage=0, burn_nft=False):
         """
         It will decrease the liquidity from a specific NFT
         and collect the fees earned on it
@@ -161,6 +161,12 @@ class UniV3:
             position["tickUpper"],
             liquidity=position["liquidity"],
         )
+
+        # allows for partial withdrawal (conditionally)
+        if withdraw_partial_percentage > 0:
+            liquidity *= withdraw_partial_percentage
+            amount0Min *= withdraw_partial_percentage
+            amount1Min *= withdraw_partial_percentage
 
         # requires to remove all liquidity first
         self.nonfungible_position_manager.decreaseLiquidity(
@@ -345,6 +351,9 @@ class UniV3:
 
         pool = interface.IUniswapV3Pool(pool_addr, owner=self.safe.account)
 
+        # @note: each pool depending on its fee tier has a different tick spacing
+        tick_spacing = pool.tickSpacing()
+
         token0 = self.safe.contract(pool.token0())
         token1 = self.safe.contract(pool.token1())
 
@@ -356,8 +365,22 @@ class UniV3:
         decimals_diff = token1.decimals() - token0.decimals()
 
         # params for minting method
-        lower_tick = int(math.log((1 / range1) * 10 ** decimals_diff, BASE) // 60 * 60)
-        upper_tick = int(math.log((1 / range0) * 10 ** decimals_diff, BASE) // 60 * 60)
+        lower_tick = int(
+            math.log(
+                range1 if decimals_diff == 0 else (1 / range1) * 10 ** decimals_diff,
+                BASE,
+            )
+            // tick_spacing
+            * tick_spacing
+        )
+        upper_tick = int(
+            math.log(
+                range0 if decimals_diff == 0 else (1 / range0) * 10 ** decimals_diff,
+                BASE,
+            )
+            // tick_spacing
+            * tick_spacing
+        )
         deadline = chain.time() + self.deadline
 
         # calcs for min amounts
