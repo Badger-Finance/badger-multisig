@@ -256,6 +256,7 @@ ADDRESSES_ETH = {
         "LIQ": "0xD82fd4D6D62f89A1E50b1db69AD19932314aa408",
         "LIQLIT": "0x03C6F0Ca0363652398abfb08d154F114e61c4Ad8",
         "LUSD": "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
+        "EBTC": "0x661c70333AA1850CcDBAe82776Bb436A0fCfeEfB",
     },
     # every slp token listed in treasury tokens above must also be listed here.
     # the lp_tokens in this list are processed by scount to determine holdings
