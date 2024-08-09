@@ -69,16 +69,12 @@ def check_upgradeability():
     # Check upgradeability for Vaults with progress bar
     C.print("[bold green]Checking Upgradeability for Vaults...[/bold green]")
     for key, address in track(VAULTS.items(), description="Checking Vaults"):
-        upgradeability_data.append(
-            check_admin_upgradeability(key, address, "vault")
-        )
+        upgradeability_data.append(check_admin_upgradeability(key, address, "vault"))
 
     # Check upgradeability for Strategies with progress bar
     C.print("[bold green]Checking Upgradeability for Strategies...[/bold green]")
     for key, address in track(STRATEGIES.items(), description="Checking Strategies"):
-        upgradeability_data.append(
-            check_admin_upgradeability(key, address, "strategy")
-        )
+        upgradeability_data.append(check_admin_upgradeability(key, address, "strategy"))
 
     # Check upgradeability for Controllers with progress bar
     C.print("[bold green]Checking Upgradeability for Controllers...[/bold green]")
@@ -99,9 +95,7 @@ def check_upgradeability():
     C.print("[bold green]Checking Upgradeability for Wallets...[/bold green]")
     for key in track(WALLETS_TAGS, description="Checking Wallets"):
         address = r.badger_wallets[key]
-        upgradeability_data.append(
-            check_admin_upgradeability(key, address, "wallet")
-        )
+        upgradeability_data.append(check_admin_upgradeability(key, address, "wallet"))
 
     # Convert to DataFrame
     upgradeability_df = pd.DataFrame(
@@ -133,7 +127,9 @@ def check_upgradeability():
 
     # Generate the CSV file name
     date_str = datetime.now().strftime("%Y%m%d")
-    filename = f"data/badger/governance_audit/upgradeablilty_audit_{date_str}_{ACCOUNT}.csv"
+    filename = (
+        f"data/badger/governance_audit/upgradeablilty_audit_{date_str}_{ACCOUNT}.csv"
+    )
 
     # Save DataFrame to CSV
     upgradeability_df.to_csv(filename, index=False)
@@ -143,16 +139,19 @@ def check_upgradeability():
 def check_admin_upgradeability(key, address, contract_type):
     try:
         admin_storage_slot = web3.eth.getStorageAt(
-            address, "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103"
+            address,
+            "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103",
         ).hex()
 
         if admin_storage_slot in [
             "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "0x0x"
+            "0x0x",
         ]:
             admin = "Not a proxy"
         else:
-            admin = web3.toChecksumAddress(f"0x{admin_storage_slot[-40:]}")  # Extract admin address
+            admin = web3.toChecksumAddress(
+                f"0x{admin_storage_slot[-40:]}"
+            )  # Extract admin address
     except ValueError:
         admin = "Not a proxy"
 

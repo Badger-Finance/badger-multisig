@@ -19,7 +19,14 @@ CONTROLLERS = {
     k: v for k, v in r.controllers.items() if k != "dummy"
 }  # Filter out dummy controller
 
-PERMISSIONED_FUNCTIONS = ['governance', 'strategist', 'manager', 'owner', "admin", "guardian"]
+PERMISSIONED_FUNCTIONS = [
+    "governance",
+    "strategist",
+    "manager",
+    "owner",
+    "admin",
+    "guardian",
+]
 
 INFRASTRUCTURE_TAGS = [
     "governance_timelock",
@@ -152,7 +159,7 @@ def check_permissions():
 
 def check_individual_permissions(key, address, contract_type, contract):
     data = []
-    
+
     for permission in PERMISSIONED_FUNCTIONS:
         try:
             func = getattr(contract, permission)
