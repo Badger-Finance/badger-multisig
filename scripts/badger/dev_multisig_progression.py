@@ -59,6 +59,16 @@ VAULTS = [
 DEFAULT_ADMIN_ROLE = (
     "0x0000000000000000000000000000000000000000000000000000000000000000"
 )
+SENTINEL_OWNERS = "0x0000000000000000000000000000000000000001"
+
+FINAL_DEV_MULTISG_STATE = [
+    TREASURY,
+    TECHOPS,
+    COMMUNITY,
+    BACKUP,
+]
+
+FINAL_POLICY = 3
 
 
 def step_1_1():
@@ -108,3 +118,62 @@ def step_1_2():
         assert controller.governance() == TIMELOCK
 
     dev.post_safe_tx()
+
+
+def step_2():
+    """
+    Replace Dev Multisig signers with the following multisigs and change its policy to 3/4:
+        - Treasury Vault
+        - Badger TechOps
+        - Community Council
+        - Security Backup (Third party security partner)
+    """
+
+    dev = GreatApeSafe(DEV)
+    dev_multisig = interface.IGnosisSafe_v1_3_0(DEV, owner=dev.account)
+
+    dev_current = dev_multisig.getOwners()
+
+    unique_to_current = list(set(dev_current).difference(set(FINAL_DEV_MULTISG_STATE)))
+    unique_to_final = list(set(FINAL_DEV_MULTISG_STATE).difference(set(dev_current)))
+
+    # Swap out any unique addresses to the Dev Multisig
+    for i in range(len(unique_to_final)):
+        C.print(f"Swapping {unique_to_current[i]} for {unique_to_final[i]}...")
+
+        dev_multisig.swapOwner(
+            get_previous_owner(dev_multisig, unique_to_current[i]),
+            unique_to_current[i],
+            unique_to_final[i],
+        )
+
+    # Remove any outstanding owners
+    dev_current = dev_multisig.getOwners()
+    for owner in dev_current:
+        if owner not in FINAL_DEV_MULTISG_STATE:
+            C.print(f"Removing {owner}...")
+            dev_multisig.removeOwner(
+                get_previous_owner(dev_multisig, owner), owner, FINAL_POLICY
+            )
+
+    # Confirm all owners
+    for owner in dev_multisig.getOwners():
+        assert owner in FINAL_DEV_MULTISG_STATE
+    assert len(dev_multisig.getOwners()) == len(FINAL_DEV_MULTISG_STATE)
+    assert dev_multisig.getThreshold() == FINAL_POLICY
+
+    C.print(f"\nNew Owners at dev_multisig Multisig:")
+    C.print(f"[green]{dev_multisig.getOwners()}[/green]\n")
+    C.print(f"[green]{dev_multisig.getThreshold()}[/green]\n")
+
+    dev.post_safe_tx()
+
+
+def get_previous_owner(dev, owner):
+    owners = dev.getOwners()
+    for i in range(len(owners)):
+        if owners[i] == owner:
+            if i == 0:
+                return SENTINEL_OWNERS
+            else:
+                return owners[i - 1]
