@@ -90,11 +90,11 @@ The following is a list of all signers on `techops.badgerdao.eth`:
 
 | Signer | Profiles | Address |
 |-|-|-|
-| petrovska | [GitHub](https://github.com/petrovska-petro) | `0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2` |
-| dapp-whisperer | [GitHub](https://github.com/dapp-whisperer/) | `0x8938bf50d1a3736bdA413510688834540858dAEA` |
+| Martyn | [Twitter](https://x.com/BadgerMartyn) | `0x30d9168a7D9f8fa7b6c3011534446645b3c1b54a` |
+| Jwei | [GitHub](https://github.com/wtj2021) | `0xDA82F543613f90deA718c46D02Ca15e05e88e4aC` |
 | ICEITH | [GitHub](https://github.com/ICEBADGER) | `0x5F0D1a3355a75C47324c857280043DdE27797bC0` |
-| mrbasado | [GitHub](https://github.com/mrbasado) | `0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e` |
-| saj | [GitHub](https://github.com/sajanrajdev) | `0xfA5bb45895Cb3C0aE5B1583Fe068f009A48F0187` |
+| Abdullah | [GitHub](https://github.com/abdullah-almesbahi) | `0xE2C5B2008d9cc8F8E1FDa8552f7df63Af1f747f8` |
+| Saj | [GitHub](https://github.com/sajanrajdev) | `0xfA5bb45895Cb3C0aE5B1583Fe068f009A48F0187` |
 
 ## Treasury Signers
 
