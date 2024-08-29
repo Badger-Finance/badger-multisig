@@ -104,7 +104,7 @@ ADDRESSES_ETH = {
         "ops_root-validator_v3": "0xcA63a374ec5f41dA402dD17b6d90DddFea3d64C4",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
-        "ops_ebtc_mevbot": "0xdCC245642dfFd0C1DCB93cB5C84d5748a504e75a",
+        "ops_ebtc_mevbot": "0xFBC472DdbE6DaE23fc0771518d1791D06a52cf4D",
         "digg_treasury": "0x5A54Ca44e8F5A1A695f8621f15Bfa159a140bB61",
         "uniswap_rewards": "0x0c79406977314847a9545b11783635432d7fe019",
         "defiDollar_fees": "0x5b5cf8620292249669e1dcc73b753d01543d6ac7",
