@@ -1,4 +1,4 @@
-# brownie/python/pytest
+# brownie/python/pytest/web3
 __pycache__
 .history
 .hypothesis/
@@ -7,6 +7,7 @@ reports/
 .env
 *venv*
 .pytest_cache
+.build/
 
 # editors
 .idea/
