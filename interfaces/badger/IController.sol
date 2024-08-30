@@ -20,6 +20,8 @@ interface IController {
 
     function setVault(address, address) external;
 
+    function setGovernance(address _governance) external;
+
     function setRewards(address) external;
 
     function want(address) external view returns (address);
