@@ -1234,6 +1234,8 @@ def get_registry():
             return registry.op
         elif chain.id == 42:
             return registry.kovan
+        elif chain.id == 5:
+            return registry.goerli
     except:
         return registry.eth
 
