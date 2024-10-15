@@ -808,6 +808,7 @@ ADDRESSES_BSC = {
     "pancakeswap": {
         "router_v1": "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F",
         "router_v2": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+        "factory_v1": "0xBCfCcbde45cE874adCB698cC183deBcF17952812",
         "factory_v2": "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
     },
 }
