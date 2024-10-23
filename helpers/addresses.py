@@ -82,29 +82,29 @@ ADDRESSES_ETH = {
         "payments_multisig_2024": "0x1c2C8b6B5EcFFdF242158Eb21366c48B4A2164Fa",
         "dfdBadgerShared": "0xCF7346A5E41b0821b80D5B3fdc385EEB6Dc59F44",
         "mstableBadgerShared": "0xCa045cC466f14C33a516D98abcab5C55C2f5112c",
-        "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
         "ops_deployer2": "0xeE8b29AA52dD5fF2559da2C50b1887ADee257556",
         "ops_deployer4": "0xef42D748e09A2d9eF89238c053CE0B6f00236210",
+        "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
         # "ops_executor2": "0x8938bf50d1a3736bdA413510688834540858dAEA",  # can execute from deployer
         "ops_executor6": "0x66496eBB9d848C6A8F19612a6Dd10E09954532D0",
         # "ops_executor8": "0x0a9af7FAba0d5DF7A8C881e1B9cd679ee07Af8A2",  # can execute from deployer
         # "ops_executor9": "0x69874C84a30A3742cC2b624238CfEEa24CF5eF82",
         # "ops_executor10": "0xaF94D299a73c4545ff702E79D16d9fb1AB5BDAbF",  # can execute from deployer
         # "ops_executor12": "0xD3cee5e327715Ad1195DcE8FD571c564cD2100E7",
-        "ops_executor14": "0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e",
-        "ops_executor15": "0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16",
         "ops_executor16": "0x5F0D1a3355a75C47324c857280043DdE27797bC0",
-        "ops_executor17": "0x6dd1e005c90cedbea99909fa9ff82497e2424357",
         # "ops_executor18": "0xD10617AE4Da733d79eF0371aa44cd7fa74C41f6B",  # can execute from deployer
         # "ops_executor19": "0xfA5bb45895Cb3C0aE5B1583Fe068f009A48F0187",  # can execute from deployer
         "ops_executor20": "0xDA82F543613f90deA718c46D02Ca15e05e88e4aC",
         "ops_executor21": "0xE2C5B2008d9cc8F8E1FDa8552f7df63Af1f747f8",
         # "ops_executor22": "0xcC692077C65dd464cAA7e7ae614328914f8469b3",  # eBTC Back-up
         # "ops_executor23": "0x20359b5f320Ee24FA0B1000D80DAc4aFBF49738C",  # eBTC Back-up
+        "ops_executor24": "0xB8Dcad009E533066F12e408075E10E3a30F1f15A",
+        "ops_executor25": "0x9c8C8bcD625Ed2903823b0b60DeaB2D70B92aFd9",
+        "ops_executor26": "0xaFD01c6161729aa857404763c9577498327c6Aee",
         "ops_root-validator_v3": "0xcA63a374ec5f41dA402dD17b6d90DddFea3d64C4",
         "ops_botsquad": "0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e",
         "ops_botsquad_cycle0": "0x1a6D6D120a7e3F71B084b4023a518c72F1a93EE9",
-        "ops_ebtc_mevbot": "0xdCC245642dfFd0C1DCB93cB5C84d5748a504e75a",
+        "ops_ebtc_mevbot": "0xFBC472DdbE6DaE23fc0771518d1791D06a52cf4D",
         "digg_treasury": "0x5A54Ca44e8F5A1A695f8621f15Bfa159a140bB61",
         "uniswap_rewards": "0x0c79406977314847a9545b11783635432d7fe019",
         "defiDollar_fees": "0x5b5cf8620292249669e1dcc73b753d01543d6ac7",
@@ -125,12 +125,12 @@ ADDRESSES_ETH = {
             "defender2": "0x211b82242076792A07C7554A5B968F0DE4414938",
         },
         "_deprecated": {
+            "ops_deployer": "0xDA25ee226E534d868f0Dd8a459536b03fEE9079b",
             "ops_deployer3": "0x283C857BA940A61828d9F4c09e3fceE2e7aEF3f7",
             "ops_deployer5": "0xC6a902de22b10cb176460777ce6e7A12A6b6AE5a",
             "ops_deployer6": "0x7c1D678685B9d2F65F1909b9f2E544786807d46C",
             "ops_deployer6_v2": "0x96AC69183216074dd8CFA7A380e873380445EaDc",
             "ops_deployer7": "0x7140B5254d80154f9Fc5F86054efB210f3a1e2c6",
-            "ops_deployer8": "0x9082b0dD7A72c328833e6461965C9E91Cf59a960",
             "ops_deployer9": "0xd49177c4cF4b8cCdf58475c9a155C4CD8b9F3F31",
             "ops_executor1": "0xcf4fF1e03830D692F52EB094c52A5A6A2181Ab3F",
             "ops_executor3": "0xC69Fb085481bC8C4bfF99B924076656305D9a25D",
@@ -140,6 +140,9 @@ ADDRESSES_ETH = {
             "ops_executor7": "0xaaE2051c2f74920C6662EF5C9B0d602C40D36DF4",
             "ops_executor11": "0x54cf9df9dcd78e470ab7cb892d7bfbe114c025fc",
             "ops_executor13": "0x95c1D2014909c04202fa73820B894b45F054F25e",
+            "ops_executor14": "0xE78e3E1668D42FfCa767e22e57d7d249e02B5F0e",
+            "ops_executor15": "0xaC7B5f4E631b7b5638B9b41d07f1eBED30753f16",
+            "ops_executor17": "0x6dd1e005c90cedbea99909fa9ff82497e2424357",
             "ops_guardian": "0x29F7F8896Fb913CF7f9949C623F896a154727919",
             "ops_keeper": "0x872213E29C85d7e30F1C8202FC47eD1Ec124BB1D",
             "ops_root-validator": "0x626f69162ea1556a75dd4443d87d2fe38dd25901",
