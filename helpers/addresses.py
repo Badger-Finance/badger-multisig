@@ -722,6 +722,7 @@ ADDRESSES_ETH = {
             "quest_board_veliq": "0xcbd27bf506aB5580Ef86Fe6a169449bc24Be471B",
         },
     },
+    "gitcoin": {"matching_pools_funds": "0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6"},
     "llamapay": "0x3E67cc2C7fFf86d9870dB9D02c43e789B52FB296",
 }
 
