@@ -28,5 +28,6 @@ node_modules
 audit_owners_mapper.py
 data/Convex_EPS
 data/badger/acl_roles_audit
+data/badger/governance_audit
 logs/
 great_ape_safe/ape_api/helpers/balancer/pools.json

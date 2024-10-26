@@ -76,6 +76,8 @@ ADDRESSES_ETH = {
         "ops_multisig_old": "0x576cD258835C529B54722F84Bb7d4170aA932C64",
         "treasury_ops_multisig": "0x042B32Ac6b453485e357938bdC38e0340d4b9276",
         "treasury_vault_multisig": "0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e",
+        "community_council_multisig": "0x1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+        "dev_multisig_backup": "0x2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b",
         "ibbtc_multisig": "0xB76782B51BFf9C27bA69C77027e20Abd92Bcf3a8",
         "treasury_voter_multisig": "0xA9ed98B5Fb8428d68664f3C5027c62A10d45826b",
         "payments_multisig": "0x30a9c1D258F6c2D23005e6450E72bDD42C541105",
