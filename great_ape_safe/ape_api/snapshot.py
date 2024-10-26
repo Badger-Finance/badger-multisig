@@ -3,8 +3,9 @@ import json
 import time
 from rich.console import Console
 
-from eth_account import messages
-from brownie import interface
+from eip712.hashing import hash_message as hash_eip712_message
+from eip712.validation import validate_structured_data
+from brownie import interface, web3
 from helpers.addresses import registry
 
 
@@ -18,8 +19,8 @@ class Snapshot:
         self.sign_message_lib = interface.ISignMessageLib(
             registry.eth.gnosis.sign_message_lib, owner=self.safe.account
         )
-
-        self.vote_relayer = "https://relayer.snapshot.org/api/message"
+        # https://github.com/snapshot-labs/snapshot-relayer/blob/master/src/constants.json#L3
+        self.vote_relayer = "https://relayer.snapshot.org/api/msg"
         self.subgraph = "https://hub.snapshot.org/graphql?"
         self.proposal_query = """
             query($proposal_id: String) {
@@ -39,9 +40,68 @@ class Snapshot:
             "Content-Type": "application/json",
             "Referer": "https://snapshot.org/",
         }
+        self.domain = {
+            "name": "snapshot",
+            "version": "0.1.4",
+        }
+        # `string` proposal type: https://vote.convexfinance.com/#/proposal/bafkreihkhe75abvrfl67oz7ucxxm42mn3ofxb267z3wyzxj7rcc7e7hq3a
+        self.eip_712_type = {
+            "EIP712Domain": [
+                {"name": "name", "type": "string"},
+                {"name": "version", "type": "string"},
+            ],
+            "Vote": [
+                {"name": "from", "type": "address"},
+                {"name": "space", "type": "string"},
+                {"name": "timestamp", "type": "uint64"},
+                {"name": "proposal", "type": "string"},
+                {"name": "choice", "type": "string"},
+                {"name": "reason", "type": "string"},
+                {"name": "app", "type": "string"},
+                {"name": "metadata", "type": "string"},
+            ],
+        }
+        # `bytes32` proposal type: https://vote.aura.finance/#/proposal/0x022c66d408c9bccdf4f7e514718415d2717bc22290adea71f1b5261dbeb92f3c
+        self.eip_712_type_2 = {
+            "EIP712Domain": [
+                {"name": "name", "type": "string"},
+                {"name": "version", "type": "string"},
+            ],
+            "Vote": [
+                {"name": "from", "type": "address"},
+                {"name": "space", "type": "string"},
+                {"name": "timestamp", "type": "uint64"},
+                {"name": "proposal", "type": "bytes32"},
+                {"name": "choice", "type": "string"},
+                {"name": "reason", "type": "string"},
+                {"name": "app", "type": "string"},
+                {"name": "metadata", "type": "string"},
+            ],
+        }
 
         self.proposal_id = proposal_id
         self.proposal_data = self._get_proposal_data(self.proposal_id)
+
+    def post_payload_relayer_api(self, payload):
+        # https://github.com/snapshot-labs/snapshot-relayer/blob/master/src/api.ts#L63
+        r = requests.post(
+            self.vote_relayer,
+            headers=self.headers,
+            data=json.dumps(
+                {
+                    "address": self.safe.address,
+                    "data": payload,
+                    "sig": "0x",
+                },
+                separators=(",", ":"),
+            ),
+        )
+
+        self.handle_response(r)
+
+        msg_hash = r.json()["id"]
+
+        return msg_hash
 
     def handle_response(self, response):
         if not response.ok:
@@ -84,37 +144,44 @@ class Snapshot:
         timestamp=None,
         choice=None,
         proposal=None,
-        version="0.1.3",
-        type="vote",
-        metadata=None,
+        reason="",
     ):
         # helper method to create message hash from payload and output to console
         # can be used externally to verify generated hash
         if not payload:
             assert all([timestamp, choice])
 
-            internal_payload = {}
-            internal_payload["proposal"] = (
-                self.proposal_id if not proposal else proposal
-            )
-            internal_payload["choice"] = self.format_choice(choice)
-            if metadata:
-                internal_payload["metadata"] = metadata
+            if self.proposal_id.startswith("0x"):
+                types = self.eip_712_type_2
+                proposal = web3.toBytes(hexstr=self.proposal_id)
+            else:
+                types = self.eip_712_type
+                proposal = self.proposal_id
 
             payload = {
-                "version": version,
-                "timestamp": str(timestamp),
-                "space": self.proposal_data["space"]["id"],
-                "type": type,
-                "payload": internal_payload,
+                "domain": self.domain,
+                "message": {
+                    "from": self.safe.address,
+                    "space": self.proposal_data["space"]["id"],
+                    "timestamp": int(timestamp),
+                    "proposal": proposal,
+                    "choice": json.dumps(self.format_choice(choice)),
+                    "reason": reason,
+                    "app": "snapshot",
+                    "metadata": json.dumps({}),
+                },
+                "primaryType": "Vote",
+                "types": types,
             }
 
-        payload_stringify = json.dumps(payload, separators=(",", ":"))
-        hash = messages.defunct_hash_message(text=payload_stringify)
-        console.print(f"msg hash: {hash.hex()}")
-        return hash, payload_stringify
+            validate_structured_data(payload)
 
-    def vote_and_post(self, choice, version="0.1.3", type="vote", metadata=None):
+        # https://github.com/ApeWorX/eip712/blob/main/eip712/hashing.py#L261
+        hash = hash_eip712_message(payload)
+
+        return hash, payload
+
+    def vote_and_post(self, choice, reason="", metadata=None):
         # given a choice, contruct payload, post to vote relayer and post safe tx
         # for single vote, pass in choice as str ex: "yes"
         # for weighted vote, pass in choice(s) as dict ex: {"80/20 BADGER/WBTC": 1}
@@ -128,22 +195,33 @@ class Snapshot:
 
         choice_formatted = self.format_choice(choice)
 
-        internal_payload = {}
-        internal_payload["proposal"] = self.proposal_id
-        internal_payload["choice"] = choice_formatted
-        if metadata:
-            internal_payload["metadata"] = metadata
+        if self.proposal_id.startswith("0x"):
+            types = self.eip_712_type_2
+            proposal = web3.toBytes(hexstr=self.proposal_id)
+        else:
+            types = self.eip_712_type
+            proposal = self.proposal_id
 
         payload = {
-            "version": version,
-            "timestamp": str(int(time.time())),
-            "space": space,
-            "type": type,
-            "payload": internal_payload,
+            "domain": self.domain,
+            "message": {
+                "from": self.safe.address,
+                "space": space,
+                "timestamp": int(time.time()),
+                "proposal": proposal,
+                "choice": json.dumps(choice_formatted, separators=(",", ":")),
+                "reason": reason,
+                "app": "snapshot",
+                "metadata": json.dumps({}) if not metadata else metadata,
+            },
+            "primaryType": "Vote",
+            "types": types,
         }
 
+        validate_structured_data(payload)
+
         console.print("payload", payload)
-        hash, payload_stringify = self.create_payload_hash(payload)
+        hash, _ = self.create_payload_hash(payload)
 
         if is_weighted:
             for label, weight in choice_formatted.items():
@@ -155,20 +233,12 @@ class Snapshot:
 
         tx_data = self.sign_message_lib.signMessage.encode_input(hash)
 
-        response = requests.post(
-            self.vote_relayer,
-            headers=self.headers,
-            data=json.dumps(
-                {
-                    "address": self.safe.address,
-                    "msg": payload_stringify,
-                    "sig": "0x",
-                },
-                separators=(",", ":"),
-            ),
-        )
+        # NOTE: remove unused types as per endpoint 500 error
+        payload["types"].pop("EIP712Domain")
+        # NOTE: prior to json stringify, convert proposal[bytes -> string]
+        payload["message"]["proposal"] = self.proposal_id
 
-        self.handle_response(response)
+        self.post_payload_relayer_api(payload)
 
         safe_tx = self.safe.build_multisig_tx(
             to=registry.eth.gnosis.sign_message_lib, value=0, data=tx_data, operation=1
